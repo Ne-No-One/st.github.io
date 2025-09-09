@@ -1,4 +1,4 @@
-# Jekyll Configuration
+# Jekyll Configuration for GitHub Pages
 title: "ST - Django Site"
 description: "Красивий Django сайт з чорним фоном, плаваючими білими шарами та модульною структурою компонентів"
 author: "ST Developer"
@@ -23,16 +23,22 @@ exclude:
   - photo_2025-09-09_15-52-44.jpg
   - .gitignore
   - .git/
+  - vendor/
+  - Gemfile
+  - Gemfile.lock
+  - .bundle/
+  - node_modules/
 
 # Include files
 include:
   - _redirects
 
-# Plugins
+# Plugins (GitHub Pages compatible)
 plugins:
   - jekyll-feed
   - jekyll-sitemap
   - jekyll-seo-tag
+  - jekyll-github-metadata
 
 # Collections
 collections:
@@ -66,6 +72,10 @@ safe: true
 lsi: false
 excerpt_separator: "\n\n"
 incremental: false
+
+# GitHub Pages specific settings
+github: [metadata]
+repository: your-username/st
 
 # Liquid settings
 liquid:

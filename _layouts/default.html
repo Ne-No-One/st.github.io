@@ -22,6 +22,11 @@
     
     <!-- RSS Feed -->
     <link rel="alternate" type="application/rss+xml" title="{{ site.title }}" href="{{ '/feed.xml' | relative_url }}">
+    
+    <!-- GitHub Pages metadata -->
+    {% if site.github %}
+    <meta name="github-repo" content="{{ site.github.repository_nwo }}">
+    {% endif %}
 </head>
 <body>
     <!-- Header -->
