@@ -1,0 +1,37 @@
+/* Основні стилі */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #000000;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+    position: relative;
+    min-height: 100vh;
+}
+
+/* Стилі для секцій */
+.section {
+    max-width: 80%;
+    margin: 0 auto;
+    padding: 40px 20px;
+    position: relative;
+    z-index: 10;
+}
+
+/* Стилі для шапки */
+.header {
+    position: relative;
+    z-index: 10;
+}
+
+/* Адаптивність */
+@media (max-width: 768px) {
+    .section {
+        padding: 20px 10px;
+    }
+}

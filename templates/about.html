@@ -1,0 +1,105 @@
+<!-- Секція "Про нас" -->
+<section id="about" class="section about-section">
+    <div class="about-content">
+        <h2 class="section-title">Про нас</h2>
+        <div class="about-grid">
+            <div class="about-text">
+                <p>
+                    Ми - команда професіоналів, які створюють унікальні веб-рішення 
+                    з використанням сучасних технологій та креативного підходу.
+                </p>
+                <p>
+                    Наш сайт демонструє красивий дизайн з плаваючими елементами 
+                    та сучасним підходом до веб-розробки.
+                </p>
+            </div>
+            <div class="about-features">
+                <div class="feature">
+                    <h3>Креативність</h3>
+                    <p>Унікальні рішення для кожного проекту</p>
+                </div>
+                <div class="feature">
+                    <h3>Якість</h3>
+                    <p>Високі стандарти розробки</p>
+                </div>
+                <div class="feature">
+                    <h3>Сучасність</h3>
+                    <p>Використання новітніх технологій</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.section-title {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 50px;
+    color: #ffffff;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+.about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: start;
+}
+
+.about-text p {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #cccccc;
+    margin-bottom: 20px;
+}
+
+.about-features {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.feature {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 25px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.feature:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-5px);
+}
+
+.feature h3 {
+    font-size: 1.4rem;
+    color: #ffffff;
+    margin-bottom: 10px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.feature p {
+    color: #aaaaaa;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .about-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .about-text p {
+        font-size: 1.1rem;
+    }
+}
+</style>

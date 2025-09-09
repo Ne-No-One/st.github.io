@@ -1,0 +1,224 @@
+<section id="home" class="section hero-section">
+    <div class="product-container">
+        <div class="product-gallery">
+            <div class="product-image-container">
+                <img id="product-image" src="https://via.placeholder.com/400x400/ff6b6b/ffffff?text=Червоний" alt="Товар" class="product-image">
+                <div class="image-nav">
+                    <button class="nav-btn prev-btn" onclick="changeImage(-1)">‹</button>
+                    <button class="nav-btn next-btn" onclick="changeImage(1)">›</button>
+                </div>
+            </div>
+            <div class="color-selector">
+                <h3>Виберіть колір:</h3>
+                <div class="color-dots">
+                    <div class="color-dot active" data-color="red" data-image="https://via.placeholder.com/400x400/ff6b6b/ffffff?text=Червоний" style="background-color: #ff6b6b;"></div>
+                    <div class="color-dot" data-color="blue" data-image="https://via.placeholder.com/400x400/4ecdc4/ffffff?text=Синій" style="background-color: #4ecdc4;"></div>
+                    <div class="color-dot" data-color="green" data-image="https://via.placeholder.com/400x400/45b7d1/ffffff?text=Зелений" style="background-color: #45b7d1;"></div>
+                    <div class="color-dot" data-color="purple" data-image="https://via.placeholder.com/400x400/96ceb4/ffffff?text=Фіолетовий" style="background-color: #96ceb4;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="product-info">
+            <h2 class="product-title">Преміум товар</h2>
+            <div class="product-price-container">
+                <span class="product-price" id="cart-button" onclick="toggleCart()">2800 грн</span>
+                <span class="price-label" id="price-label">Додати в кошик</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.hero-section {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    max-width: 1200px;
+    width: 100%;
+}
+
+.product-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.product-image-container {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.product-image {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    transition: all 0.3s ease;
+}
+
+.image-nav {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.product-image-container:hover .image-nav {
+    opacity: 1;
+}
+
+.nav-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: #ffffff;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+.color-selector h3 {
+    color: #ffffff;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.color-dots {
+    display: flex;
+    gap: 15px;
+}
+
+.color-dot {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.color-dot:hover {
+    transform: scale(1.1);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.color-dot.active {
+    border-color: #ffffff;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
+.product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.product-title {
+    font-size: 2.5rem;
+    color: #ffffff;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    margin-bottom: 10px;
+}
+
+.product-description {
+    font-size: 1.2rem;
+    color: #cccccc;
+    line-height: 1.6;
+}
+
+.product-price-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.product-price {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ffffff;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.2));
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    padding: 15px 30px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.product-price:hover {
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.3));
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
+}
+
+/* Стилі для різних станів кнопки */
+.product-price.in-cart {
+    background: linear-gradient(45deg, rgba(244, 67, 54, 0.1), rgba(244, 67, 54, 0.2));
+    border-color: rgba(244, 67, 54, 0.3);
+}
+
+.product-price.in-cart:hover {
+    background: linear-gradient(45deg, rgba(244, 67, 54, 0.2), rgba(244, 67, 54, 0.3));
+    border-color: rgba(244, 67, 54, 0.5);
+}
+
+.price-label {
+    color: #aaaaaa;
+    font-size: 0.9rem;
+    margin-left: 10px;
+}
+
+@media (max-width: 768px) {
+    .product-container {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    
+    .product-title {
+        font-size: 2rem;
+    }
+    
+    .product-description {
+        font-size: 1.1rem;
+    }
+    
+    .product-price {
+        font-size: 1.5rem;
+        padding: 12px 25px;
+    }
+    
+    .product-image {
+        height: 300px;
+    }
+}
+</style>

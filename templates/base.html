@@ -1,0 +1,20 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мій Сайт</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+    {% include 'floating-shapes.html' %}
+    {% include 'header.html' %}
+    {% include 'hero.html' %}
+    {% include 'about.html' %}
+    {% include 'services.html' %}
+    {% include 'contact.html' %}
+    
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
