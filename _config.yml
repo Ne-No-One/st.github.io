@@ -28,10 +28,14 @@ exclude:
   - Gemfile.lock
   - .bundle/
   - node_modules/
+  - static/
+  - templates/
 
 # Include files
 include:
   - _redirects
+  - css/style.css
+  - js/main.js
 
 # Plugins (GitHub Pages compatible)
 plugins:

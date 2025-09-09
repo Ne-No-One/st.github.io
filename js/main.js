@@ -1,35 +1,3 @@
-// Функція для завантаження HTML компонентів
-async function loadComponent(componentPath, containerId) {
-    try {
-        const response = await fetch(componentPath);
-        const html = await response.text();
-        document.getElementById(containerId).innerHTML = html;
-    } catch (error) {
-        console.error(`Помилка завантаження компонента ${componentPath}:`, error);
-    }
-}
-
-// Функція для ініціалізації сайту
-async function initializeSite() {
-    // Завантажуємо плаваючі шари
-    await loadComponent('components/floating-shapes.html', 'floating-shapes-container');
-    
-    // Завантажуємо шапку
-    await loadComponent('components/header.html', 'header-container');
-    
-    // Завантажуємо всі секції окремо
-    await loadComponent('components/hero.html', 'hero-container');
-    await loadComponent('components/about.html', 'about-container');
-    await loadComponent('components/services.html', 'services-container');
-    await loadComponent('components/contact.html', 'contact-container');
-    
-    // Ініціалізуємо плавну прокрутку для навігації
-    initializeSmoothScrolling();
-    
-    // Ініціалізуємо анімації при скролі
-    initializeScrollAnimations();
-}
-
 // Функція для плавної прокрутки
 function initializeSmoothScrolling() {
     const navLinks = document.querySelectorAll('.nav-link');
@@ -93,13 +61,10 @@ function initializeContactForm() {
 }
 
 // Ініціалізуємо сайт після завантаження DOM
-document.addEventListener('DOMContentLoaded', async () => {
-    await initializeSite();
-    
-    // Додаємо невелику затримку для завантаження стилів
-    setTimeout(() => {
-        initializeContactForm();
-    }, 100);
+document.addEventListener('DOMContentLoaded', () => {
+    initializeSmoothScrolling();
+    initializeScrollAnimations();
+    initializeContactForm();
 });
 
 // Додаємо обробник для кнопки CTA
@@ -114,4 +79,153 @@ document.addEventListener('click', function(e) {
             });
         }
     }
+});
+
+// Функція для обробки кнопки B2B
+function initializeB2BButton() {
+    const b2bButton = document.querySelector('.b2b-button');
+    if (b2bButton) {
+        b2bButton.addEventListener('click', function() {
+            alert('B2B функціональність буде додана пізніше!');
+        });
+    }
+}
+
+// Функція для обробки кошика
+function initializeCart() {
+    const cartIcon = document.querySelector('.cart-icon');
+    const cartCount = document.querySelector('.cart-count');
+    let cartItems = 0;
+    
+    if (cartIcon && cartCount) {
+        cartIcon.addEventListener('click', function() {
+            alert('Кошик порожній. Додайте товари для покупки!');
+        });
+        
+        // Функція для додавання товарів в кошик (для демонстрації)
+        window.addToCart = function() {
+            cartItems++;
+            cartCount.textContent = cartItems;
+            cartCount.style.display = cartItems > 0 ? 'flex' : 'none';
+        };
+        
+        // Функція для очищення кошика
+        window.clearCart = function() {
+            cartItems = 0;
+            cartCount.textContent = '0';
+            cartCount.style.display = 'none';
+        };
+    }
+}
+
+// Функція для каруселі товару
+function initializeProductCarousel() {
+    const colorDots = document.querySelectorAll('.color-dot');
+    const productImage = document.getElementById('product-image');
+    let currentImageIndex = 0;
+    
+    // Обробка вибору кольору
+    colorDots.forEach(dot => {
+        dot.addEventListener('click', function() {
+            // Видаляємо активний клас з усіх точок
+            colorDots.forEach(d => d.classList.remove('active'));
+            // Додаємо активний клас до поточної точки
+            this.classList.add('active');
+            
+            // Змінюємо зображення
+            const newImageSrc = this.getAttribute('data-image');
+            if (productImage && newImageSrc) {
+                productImage.src = newImageSrc;
+            }
+        });
+    });
+    
+    // Функція для зміни зображення (кнопки навігації)
+    window.changeImage = function(direction) {
+        const activeDot = document.querySelector('.color-dot.active');
+        const allDots = Array.from(colorDots);
+        const currentIndex = allDots.indexOf(activeDot);
+        
+        let newIndex = currentIndex + direction;
+        
+        // Зациклюємо навігацію
+        if (newIndex >= allDots.length) {
+            newIndex = 0;
+        } else if (newIndex < 0) {
+            newIndex = allDots.length - 1;
+        }
+        
+        // Клікаємо на нову точку
+        allDots[newIndex].click();
+    };
+}
+
+// Глобальна змінна для відстеження стану товару в кошику
+let productInCart = false;
+
+// Функція для додавання товару в кошик
+function initializeProductCart() {
+    // Функція перемикання стану товару в кошику
+    window.toggleCart = function() {
+        const cartButton = document.getElementById('cart-button');
+        const priceLabel = document.getElementById('price-label');
+        const cartCount = document.querySelector('.cart-count');
+        
+        if (!productInCart) {
+            // Додаємо товар в кошик
+            productInCart = true;
+            
+            // Оновлюємо кнопку
+            cartButton.textContent = 'Відняти з кошика';
+            cartButton.style.background = 'linear-gradient(45deg, rgba(244, 67, 54, 0.3), rgba(244, 67, 54, 0.5))';
+            priceLabel.textContent = 'Відняти з кошика';
+            
+            // Оновлюємо лічильник кошика
+            if (cartCount) {
+                let currentCount = parseInt(cartCount.textContent) || 0;
+                currentCount++;
+                cartCount.textContent = currentCount;
+                cartCount.style.display = 'flex';
+            }
+            
+            // Показуємо повідомлення
+            setTimeout(() => {
+                cartButton.textContent = '2800 грн';
+                cartButton.classList.add('in-cart');
+                priceLabel.textContent = 'Відняти з кошика';
+            }, 1000);
+            
+        } else {
+            // Віднімаємо товар з кошика
+            productInCart = false;
+            
+            // Оновлюємо кнопку
+            cartButton.textContent = 'Додано назад!';
+            cartButton.style.background = 'linear-gradient(45deg, rgba(76, 175, 80, 0.3), rgba(76, 175, 80, 0.5))';
+            priceLabel.textContent = 'Додано назад!';
+            
+            // Оновлюємо лічильник кошика
+            if (cartCount) {
+                let currentCount = parseInt(cartCount.textContent) || 0;
+                currentCount = Math.max(0, currentCount - 1);
+                cartCount.textContent = currentCount;
+                cartCount.style.display = currentCount > 0 ? 'flex' : 'none';
+            }
+            
+            // Повертаємо до початкового стану
+            setTimeout(() => {
+                cartButton.textContent = '2800 грн';
+                cartButton.classList.remove('in-cart');
+                priceLabel.textContent = 'Додати в кошик';
+            }, 1000);
+        }
+    };
+}
+
+// Ініціалізуємо нові функції
+document.addEventListener('DOMContentLoaded', () => {
+    initializeB2BButton();
+    initializeCart();
+    initializeProductCarousel();
+    initializeProductCart();
 });
