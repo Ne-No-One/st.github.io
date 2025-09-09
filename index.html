@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мій Сайт</title>
     <meta name="description" content="Красивий сайт з чорним фоном, плаваючими білими шарами та сучасним дизайном">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="{% load static %}{% static 'css/style.css' %}">
 </head>
 <body>
 <!-- Плаваючі білі шари -->
@@ -38,7 +38,7 @@
     <div class="product-container">
         <div class="product-gallery">
             <div class="product-image-container">
-                <img id="product-image" src="foto.jpg" alt="Товар" class="product-image">
+                    <img id="product-image" src="{% static 'foto.jpg' %}" alt="Товар" class="product-image">
                 <div class="image-nav">
                     <button class="nav-btn prev-btn" onclick="changeImage(-1)">‹</button>
                     <button class="nav-btn next-btn" onclick="changeImage(1)">›</button>
@@ -47,10 +47,10 @@
             <div class="color-selector">
                 <h3>Виберіть колір:</h3>
                 <div class="color-dots">
-                    <div class="color-dot active" data-color="red" data-image="foto.jpg" style="background-color: #ff6b6b;"></div>
-                    <div class="color-dot" data-color="blue" data-image="foto.jpg" style="background-color: #4ecdc4;"></div>
-                    <div class="color-dot" data-color="green" data-image="foto.jpg" style="background-color: #45b7d1;"></div>
-                    <div class="color-dot" data-color="purple" data-image="foto.jpg" style="background-color: #96ceb4;"></div>
+                        <div class="color-dot active" data-color="red" data-image="{% static 'foto.jpg' %}" style="background-color: #ff6b6b;"></div>
+                        <div class="color-dot" data-color="blue" data-image="{% static 'foto.jpg' %}" style="background-color: #4ecdc4;"></div>
+                        <div class="color-dot" data-color="green" data-image="{% static 'foto.jpg' %}" style="background-color: #45b7d1;"></div>
+                        <div class="color-dot" data-color="purple" data-image="{% static 'foto.jpg' %}" style="background-color: #96ceb4;"></div>
                 </div>
             </div>
         </div>
@@ -178,6 +178,6 @@
     </div>
 </section>
 
-<script src="assets/js/main.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>
