@@ -34,8 +34,8 @@ exclude:
 # Include files
 include:
   - _redirects
-  - css/style.css
-  - js/main.js
+  - assets/css/style.css
+  - assets/js/main.js
 
 # Plugins (GitHub Pages compatible)
 plugins:
