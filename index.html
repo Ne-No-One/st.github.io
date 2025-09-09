@@ -23,9 +23,9 @@
     <nav class="navbar">
         <div class="nav-brand">
             <h1>Логотип</h1>
+            <button class="b2b-button">B2B</button>
         </div>
         <div class="nav-actions">
-            <button class="b2b-button">B2B</button>
             <div class="cart-icon">
                 <span class="cart-icon-symbol">🛒</span>
                 <span class="cart-count">0</span>
@@ -39,145 +39,103 @@
     <div class="product-container">
         <div class="product-gallery">
             <div class="product-image-container">
-                    <img id="product-image" src="{% if is_django %}{% static 'foto.jpg' %}{% else %}foto.jpg{% endif %}" alt="Товар" class="product-image">
-                <div class="image-nav">
-                    <button class="nav-btn prev-btn" onclick="changeImage(-1)">‹</button>
-                    <button class="nav-btn next-btn" onclick="changeImage(1)">›</button>
+                <div class="product-label">Преміум товар</div>
+                <div class="image-gallery">
+                    <img id="product-image" src="{% if is_django %}{% static 'images/foto 2.jpg' %}{% else %}foto 2.jpg{% endif %}" alt="Товар" class="product-image">
+                    <div class="image-nav">
+                        <button class="nav-btn prev-btn" onclick="changeImage(-1)">‹</button>
+                        <button class="nav-btn next-btn" onclick="changeImage(1)">›</button>
+                    </div>
                 </div>
             </div>
             <div class="color-selector">
                 <h3>Виберіть колір:</h3>
                 <div class="color-dots">
-                        <div class="color-dot active" data-color="red" data-image="{% if is_django %}{% static 'foto.jpg' %}{% else %}foto.jpg{% endif %}" style="background-color: #ff6b6b;"></div>
-                        <div class="color-dot" data-color="blue" data-image="{% if is_django %}{% static 'foto 2.jpg' %}{% else %}foto 2.jpg{% endif %}" style="background-color: #4ecdc4;"></div>
-                        <div class="color-dot" data-color="green" data-image="{% if is_django %}{% static 'foto 3.jpg' %}{% else %}foto 3.jpg{% endif %}" style="background-color: #45b7d1;"></div>
-                        <div class="color-dot" data-color="purple" data-image="{% if is_django %}{% static 'foto 4.jpg' %}{% else %}foto 4.jpg{% endif %}" style="background-color: #96ceb4;"></div>
+                        <div class="color-dot active" data-color="blue" data-image="{% if is_django %}{% static 'images/foto 2.jpg' %}{% else %}foto 2.jpg{% endif %}" style="background-color: #4ecdc4;"></div>
+                        <div class="color-dot" data-color="green" data-image="{% if is_django %}{% static 'images/foto 3.jpg' %}{% else %}foto 3.jpg{% endif %}" style="background-color: #45b7d1;"></div>
+                        <div class="color-dot" data-color="purple" data-image="{% if is_django %}{% static 'images/foto 4.jpg' %}{% else %}foto 4.jpg{% endif %}" style="background-color: #96ceb4;"></div>
                 </div>
             </div>
         </div>
         <div class="product-info">
             <h2 class="product-title">Преміум товар</h2>
             <div class="product-price-container">
-                <span class="product-price" id="cart-button" onclick="toggleCart()">2800 грн</span>
-                <span class="price-label" id="price-label">Додати в кошик</span>
+                <div class="product-price">2800 грн</div>
+                <button class="add-to-cart-btn" id="cart-button" onclick="toggleCart()">Додати в кошик</button>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Секція "Про нас" -->
-<section id="about" class="section about-section">
-    <div class="about-content">
-        <h2 class="section-title">Про нас</h2>
-        <div class="about-grid">
-            <div class="about-text">
-                <p>
-                    Ми - команда професіоналів, які створюють унікальні веб-рішення 
-                    з використанням сучасних технологій та креативного підходу.
-                </p>
-                <p>
-                    Наш сайт демонструє красивий дизайн з плаваючими елементами 
-                    та сучасним підходом до веб-розробки.
-                </p>
+<!-- Секція "Додаткові товари" -->
+<section id="additional-products" class="section additional-products-section">
+    <div class="additional-products-content">
+        <div class="additional-products-header">
+            <h2 class="section-title">Додаткові товари</h2>
+            <button class="add-all-btn" onclick="toggleAllAdditionalProducts()">Додати всі</button>
+        </div>
+        <div class="additional-products-grid">
+            <div class="additional-product-card" data-product-id="1">
+                <div class="additional-product-image">
+                    <img src="{% if is_django %}{% static 'images/foto 1.jpg' %}{% else %}foto 1.jpg{% endif %}" alt="Додатковий товар 1">
+                    <div class="product-status">В кошику</div>
+                </div>
+                <div class="additional-product-info">
+                    <h3>Букет квітів</h3>
+                    <div class="additional-product-price-container">
+                        <div class="additional-product-price">2800 грн</div>
+                        <button class="additional-add-to-cart-btn" onclick="toggleAdditionalProduct(1)">Додати в кошик</button>
+                    </div>
+                </div>
             </div>
-            <div class="about-features">
-                <div class="feature">
-                    <h3>Креативність</h3>
-                    <p>Унікальні рішення для кожного проекту</p>
+            <div class="additional-product-card" data-product-id="2">
+                <div class="additional-product-image">
+                    <img src="{% if is_django %}{% static 'images/foto 2.jpg' %}{% else %}foto 2.jpg{% endif %}" alt="Додатковий товар 2">
+                    <div class="product-status">В кошику</div>
                 </div>
-                <div class="feature">
-                    <h3>Якість</h3>
-                    <p>Високі стандарти розробки</p>
+                <div class="additional-product-info">
+                    <h3>Пейзажне мистецтво</h3>
+                    <div class="additional-product-price-container">
+                        <div class="additional-product-price">3200 грн</div>
+                        <button class="additional-add-to-cart-btn" onclick="toggleAdditionalProduct(2)">Додати в кошик</button>
+                    </div>
                 </div>
-                <div class="feature">
-                    <h3>Сучасність</h3>
-                    <p>Використання новітніх технологій</p>
+            </div>
+            <div class="additional-product-card" data-product-id="3">
+                <div class="additional-product-image">
+                    <img src="{% if is_django %}{% static 'images/foto 3.jpg' %}{% else %}foto 3.jpg{% endif %}" alt="Додатковий товар 3">
+                    <div class="product-status">В кошику</div>
+                </div>
+                <div class="additional-product-info">
+                    <h3>Автомобільна палітра</h3>
+                    <div class="additional-product-price-container">
+                        <div class="additional-product-price">1800 грн</div>
+                        <button class="additional-add-to-cart-btn" onclick="toggleAdditionalProduct(3)">Додати в кошик</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Секція "Послуги" -->
-<section id="services" class="section services-section">
-    <div class="services-content">
-        <h2 class="section-title">Наші послуги</h2>
-        <div class="services-grid">
-            <div class="service-card">
-                <div class="service-icon">🎨</div>
-                <h3>Веб-дизайн</h3>
-                <p>Створення унікальних та привабливих дизайнів для вашого сайту</p>
+<!-- Вспливаюче вікно кошика -->
+<div id="cart-popup" class="cart-popup">
+    <div class="cart-popup-content">
+        <div class="cart-popup-header">
+            <h3>Кошик</h3>
+            <button class="close-cart-btn" onclick="closeCart()">×</button>
+        </div>
+        <div class="cart-popup-body">
+            <div id="cart-items" class="cart-items">
+                <!-- Товари будуть додаватись тут -->
             </div>
-            <div class="service-card">
-                <div class="service-icon">💻</div>
-                <h3>Розробка сайтів</h3>
-                <p>Повноцінна розробка сучасних веб-додатків та сайтів</p>
-            </div>
-            <div class="service-card">
-                <div class="service-icon">📱</div>
-                <h3>Мобільні додатки</h3>
-                <p>Розробка мобільних додатків для iOS та Android</p>
-            </div>
-            <div class="service-card">
-                <div class="service-icon">⚡</div>
-                <h3>Оптимізація</h3>
-                <p>Покращення швидкості та продуктивності існуючих сайтів</p>
+            <div class="cart-total">
+                <div class="total-price">Загальна сума: <span id="total-amount">0</span> грн</div>
+                <button class="checkout-btn">Оформити замовлення</button>
             </div>
         </div>
     </div>
-</section>
-
-<!-- Секція "Контакти" -->
-<section id="contact" class="section contact-section">
-    <div class="contact-content">
-        <h2 class="section-title">Контакти</h2>
-        <div class="contact-grid">
-            <div class="contact-info">
-                <h3>Зв'яжіться з нами</h3>
-                <p>Ми завжди готові обговорити ваш проект та надати професійну консультацію.</p>
-                
-                <div class="contact-item">
-                    <div class="contact-icon">📧</div>
-                    <div>
-                        <h4>Email</h4>
-                        <p>info@example.com</p>
-                    </div>
-                </div>
-                
-                <div class="contact-item">
-                    <div class="contact-icon">📞</div>
-                    <div>
-                        <h4>Телефон</h4>
-                        <p>+380 (XX) XXX-XX-XX</p>
-                    </div>
-                </div>
-                
-                <div class="contact-item">
-                    <div class="contact-icon">📍</div>
-                    <div>
-                        <h4>Адреса</h4>
-                        <p>Київ, Україна</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="contact-form">
-                <form>
-                    <div class="form-group">
-                        <input type="text" placeholder="Ваше ім'я" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="email" placeholder="Ваш email" required>
-                    </div>
-                    <div class="form-group">
-                        <textarea placeholder="Повідомлення" rows="5" required></textarea>
-                    </div>
-                    <button type="submit" class="submit-btn">Надіслати</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</section>
+</div>
 
     <script src="{% if is_django %}{% static 'js/main.js' %}{% else %}assets/js/main.js{% endif %}"></script>
 </body>

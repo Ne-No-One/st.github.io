@@ -72,5 +72,16 @@ STATICFILES_DIRS = [
     BASE_DIR / 'assets',
 ]
 
+# Media files (Images)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR
+
+# Additional static files directories
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+    BASE_DIR / 'assets',
+    BASE_DIR,  # Add root directory for images
+]
+
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

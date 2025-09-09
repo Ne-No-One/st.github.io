@@ -99,7 +99,7 @@ function initializeCart() {
     
     if (cartIcon && cartCount) {
         cartIcon.addEventListener('click', function() {
-            alert('Кошик порожній. Додайте товари для покупки!');
+            openCart();
         });
         
         // Функція для додавання товарів в кошик (для демонстрації)
@@ -163,12 +163,18 @@ function initializeProductCarousel() {
 // Глобальна змінна для відстеження стану товару в кошику
 let productInCart = false;
 
+// Глобальна змінна для відстеження стану додаткових товарів в кошику
+let additionalProductsInCart = {
+    1: false,
+    2: false,
+    3: false
+};
+
 // Функція для додавання товару в кошик
 function initializeProductCart() {
     // Функція перемикання стану товару в кошику
     window.toggleCart = function() {
         const cartButton = document.getElementById('cart-button');
-        const priceLabel = document.getElementById('price-label');
         const cartCount = document.querySelector('.cart-count');
         
         if (!productInCart) {
@@ -177,8 +183,7 @@ function initializeProductCart() {
             
             // Оновлюємо кнопку
             cartButton.textContent = 'Відняти з кошика';
-            cartButton.style.background = 'linear-gradient(45deg, rgba(244, 67, 54, 0.3), rgba(244, 67, 54, 0.5))';
-            priceLabel.textContent = 'Відняти з кошика';
+            cartButton.classList.add('in-cart');
             
             // Оновлюємо лічильник кошика
             if (cartCount) {
@@ -188,21 +193,13 @@ function initializeProductCart() {
                 cartCount.style.display = 'flex';
             }
             
-            // Показуємо повідомлення
-            setTimeout(() => {
-                cartButton.textContent = '2800 грн';
-                cartButton.classList.add('in-cart');
-                priceLabel.textContent = 'Відняти з кошика';
-            }, 1000);
-            
         } else {
             // Віднімаємо товар з кошика
             productInCart = false;
             
             // Оновлюємо кнопку
-            cartButton.textContent = 'Додано назад!';
-            cartButton.style.background = 'linear-gradient(45deg, rgba(76, 175, 80, 0.3), rgba(76, 175, 80, 0.5))';
-            priceLabel.textContent = 'Додано назад!';
+            cartButton.textContent = 'Додати в кошик';
+            cartButton.classList.remove('in-cart');
             
             // Оновлюємо лічильник кошика
             if (cartCount) {
@@ -211,16 +208,212 @@ function initializeProductCart() {
                 cartCount.textContent = currentCount;
                 cartCount.style.display = currentCount > 0 ? 'flex' : 'none';
             }
-            
-            // Повертаємо до початкового стану
-            setTimeout(() => {
-                cartButton.textContent = '2800 грн';
-                cartButton.classList.remove('in-cart');
-                priceLabel.textContent = 'Додати в кошик';
-            }, 1000);
         }
     };
 }
+
+// Функція для перемикання додаткового товару в кошику
+window.toggleAdditionalProduct = function(productId) {
+    const productCard = document.querySelector(`[data-product-id="${productId}"]`);
+    const button = productCard.querySelector('.additional-add-to-cart-btn');
+    const cartCount = document.querySelector('.cart-count');
+    
+    // Додаємо затримку для запобігання подвійному натисканню
+    if (button.disabled) return;
+    button.disabled = true;
+    
+    setTimeout(() => {
+        button.disabled = false;
+    }, 300);
+    
+    if (!additionalProductsInCart[productId]) {
+        // Додаємо товар в кошик
+        additionalProductsInCart[productId] = true;
+        
+        // Оновлюємо кнопку
+        button.textContent = 'Відняти з кошика';
+        button.classList.add('in-cart');
+        
+        // Оновлюємо картку
+        productCard.classList.add('in-cart');
+        
+        // Оновлюємо лічильник кошика
+        if (cartCount) {
+            let currentCount = parseInt(cartCount.textContent) || 0;
+            currentCount++;
+            cartCount.textContent = currentCount;
+            cartCount.style.display = 'flex';
+        }
+        
+    } else {
+        // Віднімаємо товар з кошика
+        additionalProductsInCart[productId] = false;
+        
+        // Оновлюємо кнопку
+        button.textContent = 'Додати в кошик';
+        button.classList.remove('in-cart');
+        
+        // Оновлюємо картку
+        productCard.classList.remove('in-cart');
+        
+        // Оновлюємо лічильник кошика
+        if (cartCount) {
+            let currentCount = parseInt(cartCount.textContent) || 0;
+            currentCount = Math.max(0, currentCount - 1);
+            cartCount.textContent = currentCount;
+            cartCount.style.display = currentCount > 0 ? 'flex' : 'none';
+        }
+    }
+};
+
+// Функція для перемикання всіх додаткових товарів
+window.toggleAllAdditionalProducts = function() {
+    const allInCart = Object.values(additionalProductsInCart).every(status => status);
+    
+    // Якщо всі в кошику - видаляємо всі, інакше додаємо всі
+    Object.keys(additionalProductsInCart).forEach(productId => {
+        if (allInCart) {
+            // Видаляємо з кошика
+            if (additionalProductsInCart[productId]) {
+                toggleAdditionalProduct(parseInt(productId));
+            }
+        } else {
+            // Додаємо в кошик
+            if (!additionalProductsInCart[productId]) {
+                toggleAdditionalProduct(parseInt(productId));
+            }
+        }
+    });
+};
+
+// Функція для відкриття кошика
+window.openCart = function() {
+    const cartPopup = document.getElementById('cart-popup');
+    if (cartPopup) {
+        cartPopup.classList.add('show');
+        updateCartDisplay();
+    }
+};
+
+// Функція для закриття кошика
+window.closeCart = function() {
+    const cartPopup = document.getElementById('cart-popup');
+    if (cartPopup) {
+        cartPopup.classList.remove('show');
+    }
+};
+
+// Функція для оновлення відображення кошика
+function updateCartDisplay() {
+    const cartItems = document.getElementById('cart-items');
+    const totalAmount = document.getElementById('total-amount');
+    
+    if (!cartItems || !totalAmount) return;
+    
+    cartItems.innerHTML = '';
+    let total = 0;
+    
+    // Додаємо головний товар якщо він в кошику
+    if (productInCart) {
+        const mainProductItem = document.createElement('div');
+        mainProductItem.className = 'cart-item';
+        mainProductItem.innerHTML = `
+            <img src="foto 2.jpg" alt="Преміум товар">
+            <div class="cart-item-info">
+                <h4>Преміум товар</h4>
+                <div class="price">2800 грн</div>
+            </div>
+            <button class="remove-item-btn" onclick="removeMainProduct()">×</button>
+        `;
+        cartItems.appendChild(mainProductItem);
+        total += 2800;
+    }
+    
+    // Додаємо додаткові товари
+    const productNames = {
+        1: 'Букет квітів',
+        2: 'Пейзажне мистецтво',
+        3: 'Автомобільна палітра'
+    };
+    
+    const productPrices = {
+        1: 2800,
+        2: 3200,
+        3: 1800
+    };
+    
+    const productImages = {
+        1: 'foto 1.jpg',
+        2: 'foto 2.jpg',
+        3: 'foto 3.jpg'
+    };
+    
+    Object.keys(additionalProductsInCart).forEach(productId => {
+        if (additionalProductsInCart[productId]) {
+            const cartItem = document.createElement('div');
+            cartItem.className = 'cart-item';
+            cartItem.innerHTML = `
+                <img src="${productImages[productId]}" alt="${productNames[productId]}">
+                <div class="cart-item-info">
+                    <h4>${productNames[productId]}</h4>
+                    <div class="price">${productPrices[productId]} грн</div>
+                </div>
+                <button class="remove-item-btn" onclick="removeAdditionalProduct(${productId})">×</button>
+            `;
+            cartItems.appendChild(cartItem);
+            total += productPrices[productId];
+        }
+    });
+    
+    totalAmount.textContent = total;
+}
+
+// Функція для видалення головного товару
+window.removeMainProduct = function() {
+    productInCart = false;
+    const cartButton = document.getElementById('cart-button');
+    const cartCount = document.querySelector('.cart-count');
+    
+    if (cartButton) {
+        cartButton.textContent = 'Додати в кошик';
+        cartButton.classList.remove('in-cart');
+    }
+    
+    if (cartCount) {
+        let currentCount = parseInt(cartCount.textContent) || 0;
+        currentCount = Math.max(0, currentCount - 1);
+        cartCount.textContent = currentCount;
+        cartCount.style.display = currentCount > 0 ? 'flex' : 'none';
+    }
+    
+    updateCartDisplay();
+};
+
+// Функція для видалення додаткового товару
+window.removeAdditionalProduct = function(productId) {
+    additionalProductsInCart[productId] = false;
+    const productCard = document.querySelector(`[data-product-id="${productId}"]`);
+    const button = productCard.querySelector('.additional-add-to-cart-btn');
+    const cartCount = document.querySelector('.cart-count');
+    
+    if (button) {
+        button.textContent = 'Додати в кошик';
+        button.classList.remove('in-cart');
+    }
+    
+    if (productCard) {
+        productCard.classList.remove('in-cart');
+    }
+    
+    if (cartCount) {
+        let currentCount = parseInt(cartCount.textContent) || 0;
+        currentCount = Math.max(0, currentCount - 1);
+        cartCount.textContent = currentCount;
+        cartCount.style.display = currentCount > 0 ? 'flex' : 'none';
+    }
+    
+    updateCartDisplay();
+};
 
 // Ініціалізуємо нові функції
 document.addEventListener('DOMContentLoaded', () => {
@@ -228,4 +421,14 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeCart();
     initializeProductCarousel();
     initializeProductCart();
+    
+    // Додаткова ініціалізація для першого зображення
+    const firstDot = document.querySelector('.color-dot.active');
+    const productImage = document.getElementById('product-image');
+    if (firstDot && productImage) {
+        const firstImageSrc = firstDot.getAttribute('data-image');
+        if (firstImageSrc) {
+            productImage.src = firstImageSrc;
+        }
+    }
 });
