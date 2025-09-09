@@ -1,122 +1,231 @@
-// Main JavaScript functionality
-document.addEventListener('DOMContentLoaded', function() {
-    // Smooth scrolling for navigation links
-    const navLinks = document.querySelectorAll('a[href^="#"]');
+// Функція для плавної прокрутки
+function initializeSmoothScrolling() {
+    const navLinks = document.querySelectorAll('.nav-link');
     
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
-            
-            const targetId = this.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
             
             if (targetElement) {
-                const headerHeight = document.querySelector('.site-header').offsetHeight;
-                const targetPosition = targetElement.offsetTop - headerHeight - 20;
-                
-                window.scrollTo({
-                    top: targetPosition,
-                    behavior: 'smooth'
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
                 });
             }
         });
     });
-    
-    // Add active class to navigation links based on scroll position
-    const sections = document.querySelectorAll('section[id]');
-    const navItems = document.querySelectorAll('.nav-link[href^="#"]');
-    
-    function updateActiveNav() {
-        let current = '';
-        
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            const sectionHeight = section.clientHeight;
-            const headerHeight = document.querySelector('.site-header').offsetHeight;
-            
-            if (window.pageYOffset >= (sectionTop - headerHeight - 100)) {
-                current = section.getAttribute('id');
-            }
-        });
-        
-        navItems.forEach(item => {
-            item.classList.remove('active');
-            if (item.getAttribute('href') === '#' + current) {
-                item.classList.add('active');
-            }
-        });
-    }
-    
-    // Update active navigation on scroll
-    window.addEventListener('scroll', updateActiveNav);
-    
-    // Add scroll effect to header
-    const header = document.querySelector('.site-header');
-    
-    window.addEventListener('scroll', function() {
-        if (window.scrollY > 100) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
-        }
-    });
-    
-    // Add animation classes when elements come into view
+}
+
+// Функція для анімацій при скролі
+function initializeScrollAnimations() {
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
     };
     
-    const observer = new IntersectionObserver(function(entries) {
+    const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('animate-in');
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
             }
         });
     }, observerOptions);
     
-    // Observe elements for animation
-    const animateElements = document.querySelectorAll('.service-card, .hero, .about, .contact');
-    animateElements.forEach(el => {
-        observer.observe(el);
+    // Спостерігаємо за секціями
+    const sections = document.querySelectorAll('.section');
+    sections.forEach(section => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(30px)';
+        section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(section);
     });
+}
+
+// Функція для обробки форми контактів
+function initializeContactForm() {
+    const contactForm = document.querySelector('.contact-form form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Тут можна додати логіку відправки форми
+            alert('Дякуємо за ваше повідомлення! Ми зв\'яжемося з вами найближчим часом.');
+            
+            // Очищуємо форму
+            this.reset();
+        });
+    }
+}
+
+// Ініціалізуємо сайт після завантаження DOM
+document.addEventListener('DOMContentLoaded', () => {
+    initializeSmoothScrolling();
+    initializeScrollAnimations();
+    initializeContactForm();
 });
 
-// Add CSS for animations
-const style = document.createElement('style');
-style.textContent = `
-    .nav-link.active {
-        color: #667eea !important;
-        font-weight: 600;
-    }
-    
-    .site-header.scrolled {
-        background-color: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-    }
-    
-    .animate-in {
-        animation: fadeInUp 0.6s ease-out forwards;
-    }
-    
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
+// Додаємо обробник для кнопки CTA
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('cta-button')) {
+        e.preventDefault();
+        const aboutSection = document.getElementById('about');
+        if (aboutSection) {
+            aboutSection.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
         }
     }
-    
-    .service-card,
-    .hero,
-    .about,
-    .contact {
-        opacity: 0;
-        transform: translateY(30px);
-        transition: all 0.6s ease-out;
+});
+
+// Функція для обробки кнопки B2B
+function initializeB2BButton() {
+    const b2bButton = document.querySelector('.b2b-button');
+    if (b2bButton) {
+        b2bButton.addEventListener('click', function() {
+            alert('B2B функціональність буде додана пізніше!');
+        });
     }
-`;
-document.head.appendChild(style);
+}
+
+// Функція для обробки кошика
+function initializeCart() {
+    const cartIcon = document.querySelector('.cart-icon');
+    const cartCount = document.querySelector('.cart-count');
+    let cartItems = 0;
+    
+    if (cartIcon && cartCount) {
+        cartIcon.addEventListener('click', function() {
+            alert('Кошик порожній. Додайте товари для покупки!');
+        });
+        
+        // Функція для додавання товарів в кошик (для демонстрації)
+        window.addToCart = function() {
+            cartItems++;
+            cartCount.textContent = cartItems;
+            cartCount.style.display = cartItems > 0 ? 'flex' : 'none';
+        };
+        
+        // Функція для очищення кошика
+        window.clearCart = function() {
+            cartItems = 0;
+            cartCount.textContent = '0';
+            cartCount.style.display = 'none';
+        };
+    }
+}
+
+// Функція для каруселі товару
+function initializeProductCarousel() {
+    const colorDots = document.querySelectorAll('.color-dot');
+    const productImage = document.getElementById('product-image');
+    let currentImageIndex = 0;
+    
+    // Обробка вибору кольору
+    colorDots.forEach(dot => {
+        dot.addEventListener('click', function() {
+            // Видаляємо активний клас з усіх точок
+            colorDots.forEach(d => d.classList.remove('active'));
+            // Додаємо активний клас до поточної точки
+            this.classList.add('active');
+            
+            // Змінюємо зображення
+            const newImageSrc = this.getAttribute('data-image');
+            if (productImage && newImageSrc) {
+                productImage.src = newImageSrc;
+            }
+        });
+    });
+    
+    // Функція для зміни зображення (кнопки навігації)
+    window.changeImage = function(direction) {
+        const activeDot = document.querySelector('.color-dot.active');
+        const allDots = Array.from(colorDots);
+        const currentIndex = allDots.indexOf(activeDot);
+        
+        let newIndex = currentIndex + direction;
+        
+        // Зациклюємо навігацію
+        if (newIndex >= allDots.length) {
+            newIndex = 0;
+        } else if (newIndex < 0) {
+            newIndex = allDots.length - 1;
+        }
+        
+        // Клікаємо на нову точку
+        allDots[newIndex].click();
+    };
+}
+
+// Глобальна змінна для відстеження стану товару в кошику
+let productInCart = false;
+
+// Функція для додавання товару в кошик
+function initializeProductCart() {
+    // Функція перемикання стану товару в кошику
+    window.toggleCart = function() {
+        const cartButton = document.getElementById('cart-button');
+        const priceLabel = document.getElementById('price-label');
+        const cartCount = document.querySelector('.cart-count');
+        
+        if (!productInCart) {
+            // Додаємо товар в кошик
+            productInCart = true;
+            
+            // Оновлюємо кнопку
+            cartButton.textContent = 'Відняти з кошика';
+            cartButton.style.background = 'linear-gradient(45deg, rgba(244, 67, 54, 0.3), rgba(244, 67, 54, 0.5))';
+            priceLabel.textContent = 'Відняти з кошика';
+            
+            // Оновлюємо лічильник кошика
+            if (cartCount) {
+                let currentCount = parseInt(cartCount.textContent) || 0;
+                currentCount++;
+                cartCount.textContent = currentCount;
+                cartCount.style.display = 'flex';
+            }
+            
+            // Показуємо повідомлення
+            setTimeout(() => {
+                cartButton.textContent = '2800 грн';
+                cartButton.classList.add('in-cart');
+                priceLabel.textContent = 'Відняти з кошика';
+            }, 1000);
+            
+        } else {
+            // Віднімаємо товар з кошика
+            productInCart = false;
+            
+            // Оновлюємо кнопку
+            cartButton.textContent = 'Додано назад!';
+            cartButton.style.background = 'linear-gradient(45deg, rgba(76, 175, 80, 0.3), rgba(76, 175, 80, 0.5))';
+            priceLabel.textContent = 'Додано назад!';
+            
+            // Оновлюємо лічильник кошика
+            if (cartCount) {
+                let currentCount = parseInt(cartCount.textContent) || 0;
+                currentCount = Math.max(0, currentCount - 1);
+                cartCount.textContent = currentCount;
+                cartCount.style.display = currentCount > 0 ? 'flex' : 'none';
+            }
+            
+            // Повертаємо до початкового стану
+            setTimeout(() => {
+                cartButton.textContent = '2800 грн';
+                cartButton.classList.remove('in-cart');
+                priceLabel.textContent = 'Додати в кошик';
+            }, 1000);
+        }
+    };
+}
+
+// Ініціалізуємо нові функції
+document.addEventListener('DOMContentLoaded', () => {
+    initializeB2BButton();
+    initializeCart();
+    initializeProductCarousel();
+    initializeProductCart();
+});
