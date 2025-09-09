@@ -1,0 +1,185 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мій Сайт</title>
+    <meta name="description" content="Красивий сайт з чорним фоном, плаваючими білими шарами та сучасним дизайном">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+<!-- Плаваючі білі шари -->
+<div class="floating-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    <div class="shape shape-4"></div>
+    <div class="shape shape-5"></div>
+</div>
+
+<!-- Шапка сайту -->
+<header class="header">
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h1>Мій Сайт</h1>
+        </div>
+        <div class="nav-actions">
+            <button class="b2b-button">B2B</button>
+            <div class="cart-icon">
+                <span class="cart-icon-symbol">🛒</span>
+                <span class="cart-count" style="display: none;">0</span>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<!-- Головна секція з товаром -->
+<section id="home" class="section hero-section">
+    <div class="product-container">
+        <div class="product-gallery">
+            <div class="product-image-container">
+                    <img id="product-image" src="{% static 'foto.jpg' %}" alt="Товар" class="product-image">
+                <div class="image-nav">
+                    <button class="nav-btn prev-btn" onclick="changeImage(-1)">‹</button>
+                    <button class="nav-btn next-btn" onclick="changeImage(1)">›</button>
+                </div>
+            </div>
+            <div class="color-selector">
+                <h3>Виберіть колір:</h3>
+                <div class="color-dots">
+                        <div class="color-dot active" data-color="red" data-image="{% static 'foto.jpg' %}" style="background-color: #ff6b6b;"></div>
+                        <div class="color-dot" data-color="blue" data-image="{% static 'foto.jpg' %}" style="background-color: #4ecdc4;"></div>
+                        <div class="color-dot" data-color="green" data-image="{% static 'foto.jpg' %}" style="background-color: #45b7d1;"></div>
+                        <div class="color-dot" data-color="purple" data-image="{% static 'foto.jpg' %}" style="background-color: #96ceb4;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="product-info">
+            <h2 class="product-title">Преміум товар</h2>
+            <p class="product-description">
+                Високоякісний товар з сучасним дизайном та передовими технологіями. 
+                Ідеально підходить для повсякденного використання та особливих моментів.
+            </p>
+            <div class="product-price-container">
+                <button id="cart-button" class="product-price" onclick="toggleCart()">2800 грн</button>
+                <span id="price-label" class="price-label">Додати в кошик</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Секція "Про нас" -->
+<section id="about" class="section">
+    <h2 class="section-title">Про нас</h2>
+    <div class="about-grid">
+        <div class="about-text">
+            <p>
+                Ми - команда професіоналів, яка створює високоякісні продукти 
+                для сучасного життя. Наша місія - зробити ваш досвід використання 
+                наших товарів незабутнім.
+            </p>
+            <p>
+                З понад 10 роками досвіду в індустрії, ми постійно вдосконалюємо 
+                наші продукти та послуги, щоб задовольнити найвищі вимоги наших клієнтів.
+            </p>
+        </div>
+        <div class="about-features">
+            <div class="feature">
+                <h3>Якість</h3>
+                <p>Використовуємо тільки найкращі матеріали та технології</p>
+            </div>
+            <div class="feature">
+                <h3>Надійність</h3>
+                <p>Наші продукти протестовані часом та тисячами клієнтів</p>
+            </div>
+            <div class="feature">
+                <h3>Інновації</h3>
+                <p>Постійно розвиваємося та впроваджуємо нові рішення</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Секція "Послуги" -->
+<section id="services" class="section">
+    <h2 class="section-title">Наші послуги</h2>
+    <div class="services-grid">
+        <div class="service-card">
+            <span class="service-icon">🚚</span>
+            <h3>Швидка доставка</h3>
+            <p>Доставляємо ваші замовлення в найкоротші терміни по всій країні</p>
+        </div>
+        <div class="service-card">
+            <span class="service-icon">🛠️</span>
+            <h3>Технічна підтримка</h3>
+            <p>Надаємо повну технічну підтримку та консультації</p>
+        </div>
+        <div class="service-card">
+            <span class="service-icon">💎</span>
+            <h3>Преміум якість</h3>
+            <p>Гарантуємо високу якість всіх наших продуктів</p>
+        </div>
+        <div class="service-card">
+            <span class="service-icon">🎯</span>
+            <h3>Індивідуальний підхід</h3>
+            <p>Кожен клієнт отримує персональний підхід та увагу</p>
+        </div>
+    </div>
+</section>
+
+<!-- Секція "Контакти" -->
+<section id="contact" class="section">
+    <h2 class="section-title">Контакти</h2>
+    <div class="contact-grid">
+        <div class="contact-info">
+            <h3>Зв'яжіться з нами</h3>
+            <p>
+                Маєте питання або хочете дізнатися більше про наші продукти? 
+                Ми завжди раді допомогти та надати необхідну інформацію.
+            </p>
+            <div class="contact-item">
+                <span class="contact-icon">📞</span>
+                <div>
+                    <h4>Телефон</h4>
+                    <p>+380 (XX) XXX-XX-XX</p>
+                </div>
+            </div>
+            <div class="contact-item">
+                <span class="contact-icon">✉️</span>
+                <div>
+                    <h4>Email</h4>
+                    <p>info@example.com</p>
+                </div>
+            </div>
+            <div class="contact-item">
+                <span class="contact-icon">📍</span>
+                <div>
+                    <h4>Адреса</h4>
+                    <p>м. Київ, вул. Прикладна, 123</p>
+                </div>
+            </div>
+        </div>
+        <div class="contact-form">
+            <form>
+                <div class="form-group">
+                    <input type="text" placeholder="Ваше ім'я" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" placeholder="Ваш email" required>
+                </div>
+                <div class="form-group">
+                    <input type="tel" placeholder="Ваш телефон">
+                </div>
+                <div class="form-group">
+                    <textarea placeholder="Повідомлення" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Надіслати</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
