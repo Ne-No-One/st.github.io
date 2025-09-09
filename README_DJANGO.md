@@ -67,19 +67,19 @@ python manage.py runserver
 
 ### Головний template (base.html)
 ```html
-{% load static %}
+{% raw %}{% load static %}{% endraw %}
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% raw %}{% static 'css/main.css' %}{% endraw %}">
 </head>
 <body>
-    {% include 'floating-shapes.html' %}
-    {% include 'header.html' %}
-    {% include 'hero.html' %}
-    {% include 'about.html' %}
-    {% include 'services.html' %}
-    {% include 'contact.html' %}
+    {% raw %}{% include 'floating-shapes.html' %}{% endraw %}
+    {% raw %}{% include 'header.html' %}{% endraw %}
+    {% raw %}{% include 'hero.html' %}{% endraw %}
+    {% raw %}{% include 'about.html' %}{% endraw %}
+    {% raw %}{% include 'services.html' %}{% endraw %}
+    {% raw %}{% include 'contact.html' %}{% endraw %}
 </body>
 </html>
 ```
@@ -114,7 +114,7 @@ python manage.py runserver
 
 1. Створіть новий файл в `templates/` (наприклад, `footer.html`)
 2. Додайте HTML та CSS в цей файл
-3. Імпортуйте в `base.html`: `{% include 'footer.html' %}`
+3. Імпортуйте в `base.html`: `{% raw %}{% include 'footer.html' %}{% endraw %}`
 
 ## Технології
 

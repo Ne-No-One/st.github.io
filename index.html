@@ -1,0 +1,279 @@
+---
+layout: default
+title: "ST - Django Site"
+description: "Красивий Django сайт з чорним фоном, плаваючими білими шарами та модульною структурою компонентів"
+---
+
+<div class="home">
+  <div class="hero">
+    <h1 class="hero-title">ST - Django Site</h1>
+    <p class="hero-description">
+      Красивий Django сайт з чорним фоном, плаваючими білими шарами та модульною структурою компонентів
+    </p>
+    <div class="hero-buttons">
+      <a href="#about" class="btn btn-primary">Дізнатися більше</a>
+      <a href="#contact" class="btn btn-secondary">Зв'язатися з нами</a>
+    </div>
+  </div>
+
+  <section id="about" class="about">
+    <div class="container">
+      <h2>Про проект</h2>
+      <p>
+        Цей проект демонструє сучасний підхід до створення веб-сайтів з використанням Django та модульної архітектури.
+        Кожен компонент має свій власний CSS файл, що робить код більш організованим та легким для підтримки.
+      </p>
+    </div>
+  </section>
+
+  <section id="services" class="services">
+    <div class="container">
+      <h2>Особливості</h2>
+      <div class="services-grid">
+        <div class="service-card">
+          <h3>🎨 Дизайн</h3>
+          <p>Чорний фон з плаваючими білими шарами (5 штук)</p>
+        </div>
+        <div class="service-card">
+          <h3>📱 Адаптивність</h3>
+          <p>Повністю адаптивний дизайн для всіх пристроїв</p>
+        </div>
+        <div class="service-card">
+          <h3>🧩 Модульність</h3>
+          <p>Модульна структура з Django templates</p>
+        </div>
+        <div class="service-card">
+          <h3>✨ Анімації</h3>
+          <p>Плавні анімації та ефекти</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <div class="container">
+      <h2>Контакти</h2>
+      <p>Зв'яжіться з нами для отримання додаткової інформації про проект.</p>
+      <div class="contact-info">
+        <p>📧 Email: your-email@example.com</p>
+        <p>🐙 GitHub: <a href="https://github.com/your-username">your-username</a></p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<style>
+/* Global styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f8f9fa;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Hero section */
+.hero {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-align: center;
+  padding: 100px 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.hero-description {
+  font-size: 1.3rem;
+  margin-bottom: 40px;
+  max-width: 600px;
+  opacity: 0.9;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn {
+  display: inline-block;
+  padding: 15px 30px;
+  text-decoration: none;
+  border-radius: 50px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.btn-primary {
+  background-color: #fff;
+  color: #667eea;
+}
+
+.btn-primary:hover {
+  background-color: transparent;
+  color: #fff;
+  border-color: #fff;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: #fff;
+  border-color: #fff;
+}
+
+.btn-secondary:hover {
+  background-color: #fff;
+  color: #667eea;
+}
+
+/* About section */
+.about {
+  padding: 80px 0;
+  background-color: #fff;
+}
+
+.about h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 40px;
+  color: #333;
+}
+
+.about p {
+  font-size: 1.1rem;
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+  color: #666;
+}
+
+/* Services section */
+.services {
+  padding: 80px 0;
+  background-color: #f8f9fa;
+}
+
+.services h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 60px;
+  color: #333;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.service-card {
+  background: #fff;
+  padding: 40px 30px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-10px);
+}
+
+.service-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.service-card p {
+  color: #666;
+  line-height: 1.6;
+}
+
+/* Contact section */
+.contact {
+  padding: 80px 0;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+}
+
+.contact h2 {
+  font-size: 2.5rem;
+  margin-bottom: 40px;
+}
+
+.contact p {
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+  opacity: 0.9;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+}
+
+.contact-info a {
+  color: #667eea;
+  text-decoration: none;
+}
+
+.contact-info a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .hero-description {
+    font-size: 1.1rem;
+  }
+  
+  .hero-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .btn {
+    width: 200px;
+  }
+  
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .contact-info {
+    flex-direction: column;
+  }
+}
+</style>

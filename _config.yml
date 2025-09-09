@@ -1,0 +1,74 @@
+# Jekyll Configuration
+title: "ST - Django Site"
+description: "Красивий Django сайт з чорним фоном, плаваючими білими шарами та модульною структурою компонентів"
+author: "ST Developer"
+email: "your-email@example.com"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+syntax_highlighter: rouge
+
+# Exclude files from processing
+exclude:
+  - README.md
+  - README_DJANGO.md
+  - requirements.txt
+  - manage.py
+  - db.sqlite3
+  - mysite/
+  - main/
+  - components/
+  - styles/
+  - photo_2025-09-09_15-52-44.jpg
+  - .gitignore
+  - .git/
+
+# Include files
+include:
+  - _redirects
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Collections
+collections:
+  docs:
+    output: true
+    permalink: /:collection/:name/
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+
+# Site settings
+url: "https://your-username.github.io"
+baseurl: "/st"
+
+# Social links
+social:
+  github: your-username
+
+# Build settings
+safe: true
+lsi: false
+excerpt_separator: "\n\n"
+incremental: false
+
+# Liquid settings
+liquid:
+  error_mode: warn
+  strict_filters: false
+  strict_variables: false
