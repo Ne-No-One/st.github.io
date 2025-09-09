@@ -1,0 +1,302 @@
+---
+layout: default
+title: "Головна"
+description: "Демонстраційна версія сайту з чорним фоном, плаваючими білими шарами та сучасним дизайном"
+---
+
+<!-- Головна секція з товаром -->
+<section id="home" class="section hero-section">
+    <div class="product-container">
+        <div class="product-gallery">
+            <div class="product-image-container">
+                <img id="product-image" src="{{ '/assets/images/foto.jpg' | relative_url }}" alt="Товар" class="product-image">
+                <div class="image-nav">
+                    <button class="nav-btn prev-btn" onclick="changeImage(-1)">‹</button>
+                    <button class="nav-btn next-btn" onclick="changeImage(1)">›</button>
+                </div>
+            </div>
+            <div class="color-selector">
+                <h3>Виберіть колір:</h3>
+                <div class="color-dots">
+                    <div class="color-dot active" data-color="red" data-image="{{ '/assets/images/foto.jpg' | relative_url }}" style="background-color: #ff6b6b;"></div>
+                    <div class="color-dot" data-color="blue" data-image="{{ '/assets/images/foto 2.jpg' | relative_url }}" style="background-color: #4ecdc4;"></div>
+                    <div class="color-dot" data-color="green" data-image="{{ '/assets/images/foto 3.jpg' | relative_url }}" style="background-color: #45b7d1;"></div>
+                    <div class="color-dot" data-color="purple" data-image="{{ '/assets/images/foto 4.jpg' | relative_url }}" style="background-color: #96ceb4;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="product-info">
+            <h2 class="product-title">Преміум товар - ДЕМО</h2>
+            <p class="product-description">
+                Відкрийте для себе наш ексклюзивний товар, що поєднує в собі інноваційний дизайн та неперевершену якість.
+                Створений для тих, хто цінує досконалість у кожній деталі.
+                <br><br>
+                <strong>Це демонстраційна версія!</strong> Тут ви можете побачити дизайн та інтерфейс, але функціональність обмежена.
+            </p>
+            <div class="product-price">
+                <span class="current-price">1200 грн</span>
+                <span class="old-price">1500 грн</span>
+            </div>
+            <div class="product-actions">
+                <button class="add-to-cart-btn" onclick="addToCartDemo(1, 'Преміум товар', 1200)">Додати в кошик (ДЕМО)</button>
+                <button class="buy-now-btn" onclick="showNotification('Це демо версія! Для покупки використовуйте повну версію.')">Купити зараз</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Секція "Про нас" -->
+<section id="about" class="section about-section">
+    <h2>Про нас</h2>
+    <p>
+        Ми — команда ентузіастів, що прагне створювати унікальні та високоякісні продукти.
+        Наша місія — перевершувати очікування клієнтів, пропонуючи інноваційні рішення та бездоганний сервіс.
+        Ми віримо, що кожен продукт має бути не лише функціональним, а й естетично привабливим.
+    </p>
+    <p>
+        Завдяки багаторічному досвіду та постійному вдосконаленню, ми гарантуємо надійність та довговічність наших виробів.
+        Приєднуйтесь до нашої спільноти задоволених клієнтів!
+    </p>
+    <div class="demo-notice">
+        <h3>🎨 Демонстраційна версія</h3>
+        <p>Цей сайт створено для демонстрації дизайну та інтерфейсу. Для повноцінного функціоналу (база даних, обробка замовлень, адмін-панель) використовуйте Django версію.</p>
+    </div>
+</section>
+
+<!-- Секція "Послуги" -->
+<section id="services" class="section services-section">
+    <h2>Наші послуги</h2>
+    <div class="service-grid">
+        <div class="service-item">
+            <h3>Дизайн</h3>
+            <p>Розробка унікального та сучасного дизайну, що відповідає вашим потребам.</p>
+        </div>
+        <div class="service-item">
+            <h3>Розробка</h3>
+            <p>Створення функціональних та ефективних веб-рішень будь-якої складності.</p>
+        </div>
+        <div class="service-item">
+            <h3>Підтримка</h3>
+            <p>Повна технічна підтримка та консультації для безперебійної роботи вашого проекту.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Секція "Контакти" -->
+<section id="contact" class="section contact-section">
+    <h2>Зв'яжіться з нами</h2>
+    <div class="contact-content">
+        <div class="contact-info">
+            <p><i class="fas fa-map-marker-alt"></i> Адреса: вул. Прикладна, 10, Київ, Україна</p>
+            <p><i class="fas fa-phone"></i> Телефон: +38 (0XX) XXX-XX-XX</p>
+            <p><i class="fas fa-envelope"></i> Email: info@example.com</p>
+        </div>
+        <form class="contact-form" onsubmit="handleContactForm(event)">
+            <div class="form-group">
+                <input type="text" name="name" placeholder="Ваше ім'я" required>
+            </div>
+            <div class="form-group">
+                <input type="email" name="email" placeholder="Ваш Email" required>
+            </div>
+            <div class="form-group">
+                <textarea name="message" placeholder="Повідомлення" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="submit-btn">Надіслати (ДЕМО)</button>
+        </form>
+    </div>
+</section>
+
+<style>
+/* Додаткові стилі для демо версії */
+.demo-notice {
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 30px;
+    text-align: center;
+}
+
+.demo-notice h3 {
+    color: #ff6b6b;
+    margin-bottom: 10px;
+}
+
+.demo-notice p {
+    color: #ccc;
+    line-height: 1.6;
+}
+
+.product-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.product-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.product-image-container {
+    position: relative;
+    border-radius: 15px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+}
+
+.product-image {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.image-nav {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    transform: translateY(-50%);
+}
+
+.nav-btn {
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+    background: rgba(0, 0, 0, 0.9);
+    transform: scale(1.1);
+}
+
+.color-selector {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.color-selector h3 {
+    color: #4ecdc4;
+    margin-bottom: 15px;
+}
+
+.color-dots {
+    display: flex;
+    gap: 15px;
+}
+
+.color-dot {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.color-dot:hover {
+    transform: scale(1.1);
+}
+
+.color-dot.active {
+    border-color: white;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+.product-info {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+}
+
+.product-title {
+    color: #4ecdc4;
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.product-description {
+    color: #ccc;
+    line-height: 1.8;
+    margin-bottom: 25px;
+}
+
+.product-price {
+    margin-bottom: 25px;
+}
+
+.current-price {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #45b7d1;
+    margin-right: 15px;
+}
+
+.old-price {
+    font-size: 1.2rem;
+    color: #999;
+    text-decoration: line-through;
+}
+
+.product-actions {
+    display: flex;
+    gap: 15px;
+}
+
+.add-to-cart-btn, .buy-now-btn {
+    flex: 1;
+    padding: 15px 25px;
+    border: none;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.add-to-cart-btn {
+    background: linear-gradient(45deg, #4ecdc4, #45b7d1);
+    color: white;
+}
+
+.buy-now-btn {
+    background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+    color: white;
+}
+
+.add-to-cart-btn:hover, .buy-now-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+    .product-container {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .product-actions {
+        flex-direction: column;
+    }
+    
+    .color-dots {
+        justify-content: center;
+    }
+}
+</style>

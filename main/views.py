@@ -1,4 +1,7 @@
 from django.shortcuts import render
 
 def home(request):
-    return render(request, 'django_index.html')
+    context = {
+        'is_django': True
+    }
+    return render(request, 'index.html', context)

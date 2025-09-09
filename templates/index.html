@@ -1,4 +1,3 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -6,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мій Сайт</title>
     <meta name="description" content="Красивий сайт з чорним фоном, плаваючими білими шарами та сучасним дизайном">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% load static %}
+    <link rel="stylesheet" href="{% if is_django %}{% static 'css/style.css' %}{% else %}assets/css/style.css{% endif %}">
 </head>
 <body>
 <!-- Плаваючі білі шари -->
@@ -39,7 +39,7 @@
     <div class="product-container">
         <div class="product-gallery">
             <div class="product-image-container">
-                    <img id="product-image" src="{% static 'foto.jpg' %}" alt="Товар" class="product-image">
+                    <img id="product-image" src="{% if is_django %}{% static 'foto.jpg' %}{% else %}foto.jpg{% endif %}" alt="Товар" class="product-image">
                 <div class="image-nav">
                     <button class="nav-btn prev-btn" onclick="changeImage(-1)">‹</button>
                     <button class="nav-btn next-btn" onclick="changeImage(1)">›</button>
@@ -48,10 +48,10 @@
             <div class="color-selector">
                 <h3>Виберіть колір:</h3>
                 <div class="color-dots">
-                        <div class="color-dot active" data-color="red" data-image="{% static 'foto.jpg' %}" style="background-color: #ff6b6b;"></div>
-                        <div class="color-dot" data-color="blue" data-image="{% static 'foto 2.jpg' %}" style="background-color: #4ecdc4;"></div>
-                        <div class="color-dot" data-color="green" data-image="{% static 'foto 3.jpg' %}" style="background-color: #45b7d1;"></div>
-                        <div class="color-dot" data-color="purple" data-image="{% static 'foto 4.jpg' %}" style="background-color: #96ceb4;"></div>
+                        <div class="color-dot active" data-color="red" data-image="{% if is_django %}{% static 'foto.jpg' %}{% else %}foto.jpg{% endif %}" style="background-color: #ff6b6b;"></div>
+                        <div class="color-dot" data-color="blue" data-image="{% if is_django %}{% static 'foto 2.jpg' %}{% else %}foto 2.jpg{% endif %}" style="background-color: #4ecdc4;"></div>
+                        <div class="color-dot" data-color="green" data-image="{% if is_django %}{% static 'foto 3.jpg' %}{% else %}foto 3.jpg{% endif %}" style="background-color: #45b7d1;"></div>
+                        <div class="color-dot" data-color="purple" data-image="{% if is_django %}{% static 'foto 4.jpg' %}{% else %}foto 4.jpg{% endif %}" style="background-color: #96ceb4;"></div>
                 </div>
             </div>
         </div>
@@ -180,6 +180,6 @@
     </div>
 </section>
 
-<script src="{% static 'js/main.js' %}"></script>
+<script src="{% if is_django %}{% static 'js/main.js' %}{% else %}assets/js/main.js{% endif %}"></script>
 </body>
 </html>

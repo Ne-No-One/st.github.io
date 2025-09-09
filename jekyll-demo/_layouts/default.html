@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if page.title %}{{ page.title }} - {% endif %}{{ site.title }}</title>
+    <meta name="description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+    
+    <!-- SEO -->
+    {% seo %}
+</head>
+<body>
+    <!-- Плаваючі білі шари -->
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+        <div class="shape shape-5"></div>
+    </div>
+
+    <!-- Шапка сайту -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <h1>ДЕМО САЙТ - Jekyll</h1>
+            </div>
+            <div class="nav-actions">
+                <button class="b2b-button">B2B</button>
+                <div class="cart-icon" onclick="showCart()">
+                    <span class="cart-icon-symbol">🛒</span>
+                    <span class="cart-count" id="cart-count">0</span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Статус повідомлення -->
+    <div style="background: linear-gradient(45deg, #ff6b6b, #ee5a24); padding: 20px; text-align: center; color: white; font-weight: bold; font-size: 1.2rem;">
+        🎨 ДЕМОНСТРАЦІЙНА ВЕРСІЯ - Тільки візуалізація, без бази даних
+    </div>
+
+    <!-- Основний контент -->
+    <main>
+        {{ content }}
+    </main>
+
+    <!-- Підвал -->
+    <footer style="text-align: center; padding: 40px 20px; color: #ccc; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 60px;">
+        <p>&copy; 2024 Демо сайт. Створено з Jekyll для GitHub Pages.</p>
+        <p style="margin-top: 10px; font-size: 0.9rem;">
+            <a href="https://github.com/yourusername/st" style="color: #4ecdc4; text-decoration: none;">GitHub Repository</a>
+        </p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="{{ '/assets/js/main.js' | relative_url }}"></script>
+</body>
+</html>
