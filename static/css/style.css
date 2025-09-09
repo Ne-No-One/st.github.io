@@ -608,8 +608,10 @@ body {
     }
     
     .navbar {
-        flex-direction: column;
-        gap: 15px;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
         padding: 10px 15px;
     }
     
@@ -618,7 +620,8 @@ body {
     }
     
     .nav-actions {
-        gap: 15px;
+        gap: 10px;
+        align-items: center;
     }
     
     .b2b-button {
@@ -627,9 +630,11 @@ body {
     }
     
     .header {
-        margin: 10px auto;
+        margin: 0;
         max-width: 100%;
         border-radius: 0;
+        border-left: none;
+        border-right: none;
     }
     
     .product-container {
