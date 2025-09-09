@@ -30,46 +30,20 @@ exclude:
   - node_modules/
   - static/
   - templates/
+  - _assets/
 
 # Include files
 include:
   - _redirects
-  - _assets/css/style.css
-  - _assets/js/main.js
 
 # Plugins (GitHub Pages compatible)
 plugins:
   - jekyll-feed
   - jekyll-sitemap
-  - jekyll-seo-tag
-  - jekyll-github-metadata
-
-# Collections
-collections:
-  docs:
-    output: true
-    permalink: /:collection/:name/
-
-# Defaults
-defaults:
-  - scope:
-      path: ""
-      type: "pages"
-    values:
-      layout: "default"
-  - scope:
-      path: ""
-      type: "posts"
-    values:
-      layout: "post"
 
 # Site settings
 url: "https://your-username.github.io"
 baseurl: "/st"
-
-# Social links
-social:
-  github: your-username
 
 # Build settings
 safe: true
