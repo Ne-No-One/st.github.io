@@ -45,7 +45,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Ініціалізація лічильника кошика
     updateCartDisplay();
+    
+    // Ініціалізація прогрес бару
+    initializeProgressBar();
 });
+
+// Функція для прогрес бару
+function initializeProgressBar() {
+    const progressFill = document.querySelector('.progress-fill');
+    
+    if (progressFill) {
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.pageYOffset;
+            const docHeight = document.body.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            
+            progressFill.style.width = scrollPercent + '%';
+        });
+    }
+}
 
 // Функція для оновлення відображення кошика
 function updateCartDisplay() {

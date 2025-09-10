@@ -44,6 +44,21 @@ function initializeScrollAnimations() {
     });
 }
 
+// Функція для прогрес бару
+function initializeProgressBar() {
+    const progressFill = document.querySelector('.progress-fill');
+    
+    if (progressFill) {
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.pageYOffset;
+            const docHeight = document.body.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            
+            progressFill.style.width = scrollPercent + '%';
+        });
+    }
+}
+
 // Функція для обробки форми контактів
 function initializeContactForm() {
     const contactForm = document.querySelector('.contact-form form');
@@ -182,7 +197,7 @@ function initializeProductCart() {
             productInCart = true;
             
             // Оновлюємо кнопку
-            cartButton.textContent = 'Відняти з кошика';
+            cartButton.textContent = 'З кошику';
             cartButton.classList.add('in-cart');
             
             // Оновлюємо лічильник кошика
@@ -198,7 +213,7 @@ function initializeProductCart() {
             productInCart = false;
             
             // Оновлюємо кнопку
-            cartButton.textContent = 'Додати в кошик';
+            cartButton.textContent = 'В кошик';
             cartButton.classList.remove('in-cart');
             
             // Оновлюємо лічильник кошика
@@ -292,6 +307,13 @@ window.openCart = function() {
     if (cartPopup) {
         cartPopup.classList.add('show');
         updateCartDisplay();
+        
+        // Додаємо обробник для закриття при кліку поза кошиком
+        cartPopup.addEventListener('click', function(e) {
+            if (e.target === cartPopup) {
+                closeCart();
+            }
+        });
     }
 };
 
@@ -421,6 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeCart();
     initializeProductCarousel();
     initializeProductCart();
+    initializeProgressBar();
     
     // Додаткова ініціалізація для першого зображення
     const firstDot = document.querySelector('.color-dot.active');

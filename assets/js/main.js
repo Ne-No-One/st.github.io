@@ -44,6 +44,21 @@ function initializeScrollAnimations() {
     });
 }
 
+// Функція для прогрес бару
+function initializeProgressBar() {
+    const progressFill = document.querySelector('.progress-fill');
+    
+    if (progressFill) {
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.pageYOffset;
+            const docHeight = document.body.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            
+            progressFill.style.width = scrollPercent + '%';
+        });
+    }
+}
+
 // Функція для обробки форми контактів
 function initializeContactForm() {
     const contactForm = document.querySelector('.contact-form form');
@@ -176,7 +191,7 @@ function initializeProductCart() {
             productInCart = true;
             
             // Оновлюємо кнопку
-            cartButton.textContent = 'Відняти з кошика';
+            cartButton.textContent = 'З кошику';
             cartButton.style.background = 'linear-gradient(45deg, rgba(244, 67, 54, 0.3), rgba(244, 67, 54, 0.5))';
             priceLabel.textContent = 'Відняти з кошика';
             
@@ -216,7 +231,7 @@ function initializeProductCart() {
             setTimeout(() => {
                 cartButton.textContent = '2800 грн';
                 cartButton.classList.remove('in-cart');
-                priceLabel.textContent = 'Додати в кошик';
+                priceLabel.textContent = 'В кошик';
             }, 1000);
         }
     };
@@ -228,4 +243,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeCart();
     initializeProductCarousel();
     initializeProductCart();
+    initializeProgressBar();
 });

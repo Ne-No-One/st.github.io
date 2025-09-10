@@ -34,6 +34,11 @@
     </nav>
 </header>
 
+<!-- Прогрес бар -->
+<div class="progress-bar">
+    <div class="progress-fill"></div>
+</div>
+
 <!-- Головна секція з товаром -->
 <section id="home" class="section hero-section">
     <div class="product-container">
@@ -41,7 +46,7 @@
             <div class="product-image-container">
                 <div class="product-label">Преміум товар</div>
                 <div class="image-gallery">
-                    <img id="product-image" src="{% if is_django %}{% static 'images/foto 2.jpg' %}{% else %}foto 2.jpg{% endif %}" alt="Товар" class="product-image">
+                    <img id="product-image" src="{% if is_django %}{% static 'images/IMG_1243.PNG' %}{% else %}IMG_1243.PNG{% endif %}" alt="Товар" class="product-image">
                     <div class="image-nav">
                         <button class="nav-btn prev-btn" onclick="changeImage(-1)">‹</button>
                         <button class="nav-btn next-btn" onclick="changeImage(1)">›</button>
@@ -49,11 +54,20 @@
                 </div>
             </div>
             <div class="color-selector">
-                <h3>Виберіть колір:</h3>
+                <h3>колір</h3>
                 <div class="color-dots">
-                        <div class="color-dot active" data-color="blue" data-image="{% if is_django %}{% static 'images/foto 2.jpg' %}{% else %}foto 2.jpg{% endif %}" style="background-color: #4ecdc4;"></div>
+                        <div class="color-dot active" data-color="orange" data-image="{% if is_django %}{% static 'images/IMG_1243.PNG' %}{% else %}IMG_1243.PNG{% endif %}" style="background-color: #ff8c42;"></div>
+                        <div class="color-dot" data-color="blue" data-image="{% if is_django %}{% static 'images/foto 2.jpg' %}{% else %}foto 2.jpg{% endif %}" style="background-color: #4ecdc4;"></div>
                         <div class="color-dot" data-color="green" data-image="{% if is_django %}{% static 'images/foto 3.jpg' %}{% else %}foto 3.jpg{% endif %}" style="background-color: #45b7d1;"></div>
                         <div class="color-dot" data-color="purple" data-image="{% if is_django %}{% static 'images/foto 4.jpg' %}{% else %}foto 4.jpg{% endif %}" style="background-color: #96ceb4;"></div>
+                </div>
+            </div>
+            <div class="quantity-selector">
+                <h3>кількість</h3>
+                <div class="quantity-buttons">
+                    <button class="quantity-btn active" data-quantity="21">21</button>
+                    <button class="quantity-btn" data-quantity="51">51</button>
+                    <button class="quantity-btn" data-quantity="101">101</button>
                 </div>
             </div>
         </div>
@@ -61,7 +75,7 @@
             <h2 class="product-title">Преміум товар</h2>
             <div class="product-price-container">
                 <div class="product-price">2800 грн</div>
-                <button class="add-to-cart-btn" id="cart-button" onclick="toggleCart()">Додати в кошик</button>
+                <button class="add-to-cart-btn" id="cart-button" onclick="toggleCart()">В кошик</button>
             </div>
         </div>
     </div>
