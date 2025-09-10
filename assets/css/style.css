@@ -958,26 +958,14 @@ body {
         background-color: transparent !important;
     }
     
-    /* Спеціальний фон для IMG_1243.png (перше фото в каруселі) */
+    /* Спеціальний фон для IMG_1243.png (перше фото в каруселі) - ПОВНІСТЮ ПРОЗОРИЙ */
     .product-image[src*="IMG_1243"] {
-        background-color: #000000 !important;
-        background-image: linear-gradient(45deg, #1a1a1a 25%, transparent 25%), 
-                         linear-gradient(-45deg, #1a1a1a 25%, transparent 25%), 
-                         linear-gradient(45deg, transparent 75%, #1a1a1a 75%), 
-                         linear-gradient(-45deg, transparent 75%, #1a1a1a 75%) !important;
-        background-size: 20px 20px !important;
-        background-position: 0 0, 0 10px, 10px -10px, -10px 0px !important;
+        background-color: transparent !important;
     }
     
-    /* Спеціальний фон для контейнера з IMG_1243.png */
+    /* Спеціальний фон для контейнера з IMG_1243.png - ПОВНІСТЮ ПРОЗОРИЙ */
     .product-image-container:has(.product-image[src*="IMG_1243"]) {
-        background-color: #000000 !important;
-        background-image: linear-gradient(45deg, #1a1a1a 25%, transparent 25%), 
-                         linear-gradient(-45deg, #1a1a1a 25%, transparent 25%), 
-                         linear-gradient(45deg, transparent 75%, #1a1a1a 75%), 
-                         linear-gradient(-45deg, transparent 75%, #1a1a1a 75%) !important;
-        background-size: 20px 20px !important;
-        background-position: 0 0, 0 10px, 10px -10px, -10px 0px !important;
+        background-color: transparent !important;
     }
     
     /* Прибираємо написи "Преміум товар" на мобільній версії */
@@ -1014,10 +1002,10 @@ body {
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
-        width: 100% !important;
-        max-width: 280px !important;
+        width: 95% !important;
+        max-width: none !important;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
-        margin-bottom: 5px !important;
+        margin-bottom: 0px !important;
     }
     
     .color-selector h3 {
@@ -1047,8 +1035,8 @@ body {
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
-        width: 100% !important;
-        max-width: 280px !important;
+        width: 90% !important;
+        max-width: none !important;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
         margin-bottom: 5px !important;
     }
