@@ -1,0 +1,190 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Головний товар - Адмін Панель{% endblock %}
+{% block page_title %}Налаштування головного товару{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-star me-2"></i>
+                    Основна інформація
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="title" class="form-label">Назва товару</label>
+                            <input type="text" class="form-control" id="title" name="title" 
+                                   value="{{ product.title }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="base_price" class="form-label">Базова ціна</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="base_price" name="base_price" 
+                                       value="{{ product.base_price }}" step="0.01" min="0" required>
+                                <span class="input-group-text">{{ product.currency }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Опис товару</label>
+                        <textarea class="form-control" id="description" name="description" rows="4">{{ product.description }}</textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="currency" class="form-label">Валюта</label>
+                            <select class="form-select" id="currency" name="currency">
+                                <option value="грн" {% if product.currency == 'грн' %}selected{% endif %}>грн</option>
+                                <option value="USD" {% if product.currency == 'USD' %}selected{% endif %}>USD</option>
+                                <option value="EUR" {% if product.currency == 'EUR' %}selected{% endif %}>EUR</option>
+                                <option value="₴" {% if product.currency == '₴' %}selected{% endif %}>₴</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="premium_label_text" class="form-label">Текст преміум лейбла</label>
+                            <input type="text" class="form-control" id="premium_label_text" name="premium_label_text" 
+                                   value="{{ product.premium_label_text }}">
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h6 class="mb-3">Налаштування кнопок</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="add_to_cart_text" class="form-label">Текст кнопки "Додати в кошик"</label>
+                            <input type="text" class="form-control" id="add_to_cart_text" name="add_to_cart_text" 
+                                   value="{{ product.add_to_cart_text }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="remove_from_cart_text" class="form-label">Текст кнопки "Прибрати з кошика"</label>
+                            <input type="text" class="form-control" id="remove_from_cart_text" name="remove_from_cart_text" 
+                                   value="{{ product.remove_from_cart_text }}">
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h6 class="mb-3">Налаштування відображення</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="show_premium_label" name="show_premium_label" 
+                                       {% if product.show_premium_label %}checked{% endif %}>
+                                <label class="form-check-label" for="show_premium_label">
+                                    Показувати преміум лейбл
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="is_active" name="is_active" 
+                                       {% if product.is_active %}checked{% endif %}>
+                                <label class="form-check-label" for="is_active">
+                                    Товар активний
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Зберегти налаштування
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Довідка
+                </h5>
+            </div>
+            <div class="card-body">
+                <h6>Базова ціна</h6>
+                <p class="small text-muted">
+                    Ціна, яка відображається за замовчуванням. 
+                    Може змінюватися залежно від вибраної кількості.
+                </p>
+                
+                <h6>Преміум лейбл</h6>
+                <p class="small text-muted">
+                    Спеціальний лейбл, який відображається на товарі. 
+                    Можна увімкнути/вимкнути та змінити текст.
+                </p>
+                
+                <h6>Кнопки</h6>
+                <p class="small text-muted">
+                    Тексти кнопок для додавання/видалення товару з кошика. 
+                    Впливають на користувацький досвід.
+                </p>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-eye me-2"></i>
+                    Попередній перегляд
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="border rounded p-3" style="background-color: #f8f9fa;">
+                    {% if product.show_premium_label %}
+                        <span class="badge bg-warning mb-2">{{ product.premium_label_text }}</span>
+                    {% endif %}
+                    <h6>{{ product.title }}</h6>
+                    <p class="small text-muted">{{ product.description|truncatewords:10 }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-bold">{{ product.base_price }} {{ product.currency }}</span>
+                        <button class="btn btn-success btn-sm">{{ product.add_to_cart_text }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-line me-2"></i>
+                    Статистика
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <h6 class="text-primary">{{ product.base_price }}</h6>
+                        <small class="text-muted">Базова ціна</small>
+                    </div>
+                    <div class="col-6">
+                        <h6 class="text-success">{{ product.currency }}</h6>
+                        <small class="text-muted">Валюта</small>
+                    </div>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between">
+                    <span>Статус:</span>
+                    {% if product.is_active %}
+                        <span class="badge bg-success">Активний</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Неактивний</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

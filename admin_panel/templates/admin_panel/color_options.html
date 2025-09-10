@@ -1,0 +1,221 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Кольорові варіанти - Адмін Панель{% endblock %}
+{% block page_title %}Кольорові варіанти{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-plus me-2"></i>
+                    Додати новий колір
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Назва кольору</label>
+                        <input type="text" class="form-control" id="name" name="name" 
+                               placeholder="Наприклад: Помаранчевий" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="hex_code" class="form-label">Hex код кольору</label>
+                        <div class="input-group">
+                            <input type="color" class="form-control form-control-color" id="hex_code" name="hex_code" 
+                                   style="max-width: 60px;" required>
+                            <input type="text" class="form-control" placeholder="#ff8c42" 
+                                   onchange="document.getElementById('hex_code').value = this.value">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Зображення</label>
+                        <input type="file" class="form-control" id="image" name="image" 
+                               accept="image/*" required>
+                        <div class="form-text">Завантажте зображення для цього кольору</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="order" class="form-label">Порядок відображення</label>
+                        <input type="number" class="form-control" id="order" name="order" 
+                               value="0" min="0">
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" name="add_color" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i>Додати колір
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-palette me-2"></i>
+                    Список кольорів
+                </h5>
+                <button type="button" class="btn btn-success btn-sm" onclick="saveOrder()">
+                    <i class="fas fa-save me-1"></i>Зберегти порядок
+                </button>
+            </div>
+            <div class="card-body">
+                {% if colors %}
+                    <form method="post" id="colors-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="colors_data" id="colors_data">
+                        <input type="hidden" name="update_colors">
+                        
+                        <div class="table-responsive">
+                            <table class="table table-hover sortable-list">
+                                <thead>
+                                    <tr>
+                                        <th width="50">Порядок</th>
+                                        <th width="80">Колір</th>
+                                        <th>Назва</th>
+                                        <th>Hex код</th>
+                                        <th width="100">Зображення</th>
+                                        <th width="80">Статус</th>
+                                        <th width="100">Дії</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for color in colors %}
+                                    <tr data-id="{{ color.id }}">
+                                        <td>
+                                            <i class="fas fa-grip-vertical drag-handle"></i>
+                                            <input type="number" class="form-control form-control-sm order-input" 
+                                                   value="{{ color.order }}" min="0" style="width: 60px;">
+                                        </td>
+                                        <td>
+                                            <div class="color-preview" style="background-color: {{ color.hex_code }};"></div>
+                                        </td>
+                                        <td>{{ color.name }}</td>
+                                        <td>
+                                            <code>{{ color.hex_code }}</code>
+                                        </td>
+                                        <td>
+                                            {% if color.image %}
+                                                <img src="{{ color.image.url }}" alt="{{ color.name }}" 
+                                                     class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">
+                                            {% else %}
+                                                <span class="text-muted">Немає</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input status-checkbox" type="checkbox" 
+                                                       {% if color.is_active %}checked{% endif %}>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger btn-sm" 
+                                                    onclick="deleteColor({{ color.id }})">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-palette fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Кольорові варіанти не додані</p>
+                        <p class="small text-muted">Додайте перший колір, використовуючи форму зліва</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script>
+    // Ініціалізація сортування
+    let sortable = null;
+    
+    $(document).ready(function() {
+        if (document.querySelector('.sortable-list tbody')) {
+            sortable = Sortable.create(document.querySelector('.sortable-list tbody'), {
+                handle: '.drag-handle',
+                animation: 150,
+                onEnd: function(evt) {
+                    updateOrderNumbers();
+                }
+            });
+        }
+    });
+    
+    // Оновлення номерів порядку
+    function updateOrderNumbers() {
+        $('.sortable-list tbody tr').each(function(index) {
+            $(this).find('.order-input').val(index);
+        });
+    }
+    
+    // Збереження порядку та статусів
+    function saveOrder() {
+        const colorsData = [];
+        
+        $('.sortable-list tbody tr').each(function() {
+            const id = $(this).data('id');
+            const order = $(this).find('.order-input').val();
+            const isActive = $(this).find('.status-checkbox').is(':checked');
+            
+            colorsData.push({
+                id: id,
+                order: parseInt(order),
+                is_active: isActive
+            });
+        });
+        
+        $('#colors_data').val(JSON.stringify(colorsData));
+        $('#colors-form').submit();
+    }
+    
+    // Видалення кольору
+    function deleteColor(colorId) {
+        if (confirm('Ви впевнені, що хочете видалити цей колір?')) {
+            $.ajax({
+                url: `/admin-panel/color-options/delete/${colorId}/`,
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': $('[name=csrfmiddlewaretoken]').val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        location.reload();
+                    } else {
+                        alert('Помилка: ' + response.message);
+                    }
+                },
+                error: function() {
+                    alert('Помилка при видаленні кольору');
+                }
+            });
+        }
+    }
+    
+    // Синхронізація color picker з text input
+    document.getElementById('hex_code').addEventListener('input', function() {
+        this.nextElementSibling.value = this.value;
+    });
+    
+    document.querySelector('input[placeholder="#ff8c42"]').addEventListener('input', function() {
+        document.getElementById('hex_code').value = this.value;
+    });
+</script>
+{% endblock %}

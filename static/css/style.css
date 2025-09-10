@@ -5,6 +5,59 @@
     box-sizing: border-box;
 }
 
+/* Прибираємо курсор при натисканні на текст */
+* {
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+}
+
+/* Дозволяємо вибір тексту тільки для input полів */
+input, textarea {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+}
+
+/* ПРИМУСОВІ ПРАВИЛА ДЛЯ ШИРИНИ СЕКЦІЙ - МАКСИМАЛЬНИЙ ПРІОРИТЕТ */
+@media (min-width: 769px) {
+    /* Примусове правило для hero-section на ПК */
+    #home {
+        max-width: 80% !important;
+        width: 80% !important;
+        margin: 0 auto !important;
+        padding: 40px 20px !important;
+    }
+    
+    /* Примусове правило для additional-products на ПК */
+    #additional-products {
+        max-width: 80% !important;
+        width: 80% !important;
+        margin: 0 auto !important;
+        padding: 40px 20px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Примусове правило для hero-section на мобільних */
+    #home {
+        width: 100vw !important;
+        margin-left: calc(-50vw + 50%) !important;
+        max-width: none !important;
+        padding: 0 !important;
+    }
+    
+    /* Примусове правило для additional-products на мобільних */
+    #additional-products {
+        width: 100vw !important;
+        margin-left: calc(-50vw + 50%) !important;
+        max-width: none !important;
+        padding: 0 !important;
+    }
+}
+
 body {
     background-color: #000000;
     color: #ffffff;
@@ -16,8 +69,7 @@ body {
 
 /* Стилі для секцій */
 .section {
-    max-width: none !important;
-    margin: 0 !important;
+    margin: 0;
     padding: 40px 20px;
     position: relative;
     z-index: 10;
@@ -766,6 +818,21 @@ body {
     box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
 }
 
+/* Стилі для кнопки "Прибрати всі" */
+.add-all-btn.all-in-cart {
+    background: linear-gradient(45deg, rgba(244, 67, 54, 0.2), rgba(244, 67, 54, 0.1));
+    border-color: rgba(244, 67, 54, 0.4);
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(244, 67, 54, 0.5);
+    box-shadow: 0 0 20px rgba(244, 67, 54, 0.3);
+}
+
+.add-all-btn.all-in-cart:hover {
+    background: linear-gradient(45deg, rgba(244, 67, 54, 0.3), rgba(244, 67, 54, 0.2));
+    border-color: rgba(244, 67, 54, 0.6);
+    box-shadow: 0 10px 20px rgba(244, 67, 54, 0.2);
+}
+
 .additional-products-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -1130,7 +1197,7 @@ body {
 
 /* Адаптивність */
 @media (max-width: 768px) {
-    .section {
+    .section:not(.additional-products-section):not(.hero-section) {
         padding: 0 !important;
         margin: 0 !important;
         width: 100vw !important;
@@ -1153,11 +1220,35 @@ body {
         border-radius: 0 !important;
     }
     
-    /* Зробити additional-products-section на 100% ширини як hero-section */
-    .additional-products-section {
+    /* Додаткове правило з ID селектором для мобільної версії hero-section */
+    #home.hero-section {
+        width: 100vw !important;
+        margin-left: calc(-50vw + 50%) !important;
+        min-height: 100vh !important;
+        position: relative !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        overflow: visible !important;
+        background: transparent !important;
+        border: none !important;
+        border-radius: 0 !important;
+    }
+    
+    /* Зробити additional-products-section на 100% ширини як hero-section - ТІЛЬКИ ДЛЯ МОБІЛЬНОЇ */
+    .section.additional-products-section {
         width: 100vw !important;
         margin-left: calc(-50vw + 50%) !important;
         max-width: none !important;
+        padding: 0 !important;
+    }
+    
+    /* Додаткове правило з ID селектором для мобільної версії */
+    #additional-products.section.additional-products-section {
+        width: 100vw !important;
+        margin-left: calc(-50vw + 50%) !important;
+        max-width: none !important;
+        padding: 0 !important;
     }
     
     /* Забезпечуємо видимість шапки поверх фото */
@@ -1457,16 +1548,6 @@ body {
         padding: 20px;
     }
     
-    .additional-products-section {
-        padding: 0 !important;
-        margin: 0 !important;
-        width: 100vw !important;
-        margin-left: calc(-50vw + 50%) !important;
-        position: relative;
-        left: 0;
-        right: 0;
-        max-width: none !important;
-    }
     
     .additional-products-content {
         max-width: 100% !important;
@@ -1806,10 +1887,52 @@ body {
 
 /* ===== ПОВНЕ КОПІЮВАННЯ ВСІХ СТИЛІВ З МОБІЛЬНОЇ ВЕРСІЇ НА ПК ===== */
 @media (min-width: 769px) {
-    /* Обмеження ширини additional-products-section ТІЛЬКИ на ПК */
-    .additional-products-section {
+    /* Обмеження ширини additional-products-section ТІЛЬКИ на ПК - ВИЩИЙ ПРІОРИТЕТ */
+    .section.additional-products-section {
         max-width: 80% !important;
         margin: 0 auto !important;
+        width: 80% !important;
+        padding: 40px 20px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+    
+    /* Додаткове правило з ID селектором для максимального пріоритету */
+    #additional-products.section.additional-products-section {
+        max-width: 80% !important;
+        width: 80% !important;
+        margin: 0 auto !important;
+        padding: 40px 20px !important;
+    }
+    
+    /* Правило для hero-section на ПК - 80% ширини */
+    .section.hero-section {
+        max-width: 80% !important;
+        width: 80% !important;
+        margin: 0 auto !important;
+        padding: 40px 20px !important;
+    }
+    
+    /* Додаткове правило з ID селектором для hero-section */
+    #home.section.hero-section {
+        max-width: 80% !important;
+        width: 80% !important;
+        margin: 0 auto !important;
+        padding: 40px 20px !important;
+    }
+    
+    /* Додаткове правило для контенту на ПК */
+    .additional-products-content {
+        max-width: 100% !important;
+        margin: 0 auto !important;
+        width: 100% !important;
+    }
+    
+    /* Максимальний пріоритет для контенту на ПК */
+    #additional-products .additional-products-content {
+        max-width: 100% !important;
+        margin: 0 auto !important;
+        width: 100% !important;
     }
     
     /* НОВИЙ LAYOUT ДЛЯ ПК - СЕЛЕКТОРИ ОБТІКАЮТЬ ФОТО З ПРАВОГО БОКУ */

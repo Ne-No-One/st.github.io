@@ -1,0 +1,169 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Налаштування сайту - Адмін Панель{% endblock %}
+{% block page_title %}Налаштування сайту{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-cog me-2"></i>
+                    Основні налаштування
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="site_title" class="form-label">Назва сайту</label>
+                            <input type="text" class="form-control" id="site_title" name="site_title" 
+                                   value="{{ settings.site_title }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="hero_section_title" class="form-label">Заголовок головної секції</label>
+                            <input type="text" class="form-control" id="hero_section_title" name="hero_section_title" 
+                                   value="{{ settings.hero_section_title }}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="site_description" class="form-label">Опис сайту</label>
+                        <textarea class="form-control" id="site_description" name="site_description" rows="3">{{ settings.site_description }}</textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="hero_section_description" class="form-label">Опис головної секції</label>
+                        <textarea class="form-control" id="hero_section_description" name="hero_section_description" rows="3">{{ settings.hero_section_description }}</textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="primary_color" class="form-label">Основний колір</label>
+                            <div class="input-group">
+                                <input type="color" class="form-control form-control-color" id="primary_color" name="primary_color" 
+                                       value="{{ settings.primary_color }}" style="max-width: 60px;">
+                                <input type="text" class="form-control" value="{{ settings.primary_color }}" 
+                                       onchange="document.getElementById('primary_color').value = this.value">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="secondary_color" class="form-label">Додатковий колір</label>
+                            <div class="input-group">
+                                <input type="color" class="form-control form-control-color" id="secondary_color" name="secondary_color" 
+                                       value="{{ settings.secondary_color }}" style="max-width: 60px;">
+                                <input type="text" class="form-control" value="{{ settings.secondary_color }}" 
+                                       onchange="document.getElementById('secondary_color').value = this.value">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="hero_section_width_pc" class="form-label">Ширина головної секції на ПК (%)</label>
+                            <input type="range" class="form-range" id="hero_section_width_pc" name="hero_section_width_pc" 
+                                   min="50" max="100" value="{{ settings.hero_section_width_pc }}" 
+                                   oninput="document.getElementById('hero_width_display').textContent = this.value + '%'">
+                            <div class="d-flex justify-content-between">
+                                <small class="text-muted">50%</small>
+                                <span id="hero_width_display" class="badge bg-primary">{{ settings.hero_section_width_pc }}%</span>
+                                <small class="text-muted">100%</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="additional_products_width_pc" class="form-label">Ширина секції додаткових товарів на ПК (%)</label>
+                            <input type="range" class="form-range" id="additional_products_width_pc" name="additional_products_width_pc" 
+                                   min="50" max="100" value="{{ settings.additional_products_width_pc }}" 
+                                   oninput="document.getElementById('additional_width_display').textContent = this.value + '%'">
+                            <div class="d-flex justify-content-between">
+                                <small class="text-muted">50%</small>
+                                <span id="additional_width_display" class="badge bg-primary">{{ settings.additional_products_width_pc }}%</span>
+                                <small class="text-muted">100%</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Зберегти налаштування
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Довідка
+                </h5>
+            </div>
+            <div class="card-body">
+                <h6>Кольори</h6>
+                <p class="small text-muted">
+                    Використовуйте hex коди кольорів (наприклад: #ff8c42). 
+                    Кольори впливають на загальний вигляд сайту.
+                </p>
+                
+                <h6>Ширина секцій</h6>
+                <p class="small text-muted">
+                    Налаштування ширини секцій для ПК версії. 
+                    На мобільних пристроях секції завжди займають 100% ширини.
+                </p>
+                
+                <h6>Опис сайту</h6>
+                <p class="small text-muted">
+                    Використовується в meta тегах для SEO оптимізації.
+                </p>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-eye me-2"></i>
+                    Попередній перегляд
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="border rounded p-3" style="background-color: #f8f9fa;">
+                    <h6 style="color: {{ settings.primary_color }};">{{ settings.site_title }}</h6>
+                    <p class="small text-muted">{{ settings.site_description|truncatewords:10 }}</p>
+                    <div class="d-flex gap-2">
+                        <div class="color-preview" style="background-color: {{ settings.primary_color }};"></div>
+                        <div class="color-preview" style="background-color: {{ settings.secondary_color }};"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Синхронізація color picker з text input
+    document.getElementById('primary_color').addEventListener('input', function() {
+        this.nextElementSibling.value = this.value;
+    });
+    
+    document.getElementById('secondary_color').addEventListener('input', function() {
+        this.nextElementSibling.value = this.value;
+    });
+    
+    // Синхронізація text input з color picker
+    document.querySelector('input[value="{{ settings.primary_color }}"]').addEventListener('input', function() {
+        document.getElementById('primary_color').value = this.value;
+    });
+    
+    document.querySelector('input[value="{{ settings.secondary_color }}"]').addEventListener('input', function() {
+        document.getElementById('secondary_color').value = this.value;
+    });
+</script>
+{% endblock %}

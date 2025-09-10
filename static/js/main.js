@@ -232,6 +232,7 @@ window.toggleAdditionalProduct = function(productId) {
     const productCard = document.querySelector(`[data-product-id="${productId}"]`);
     const button = productCard.querySelector('.additional-add-to-cart-btn');
     const cartCount = document.querySelector('.cart-count');
+    const addAllBtn = document.querySelector('.add-all-btn');
     
     // Додаємо затримку для запобігання подвійному натисканню
     if (button.disabled) return;
@@ -279,11 +280,24 @@ window.toggleAdditionalProduct = function(productId) {
             cartCount.style.display = currentCount > 0 ? 'flex' : 'none';
         }
     }
+    
+    // Оновлюємо текст кнопки "Додати всі" / "Прибрати всі"
+    if (addAllBtn) {
+        const allInCart = Object.values(additionalProductsInCart).every(status => status);
+        if (allInCart) {
+            addAllBtn.textContent = 'Прибрати всі';
+            addAllBtn.classList.add('all-in-cart');
+        } else {
+            addAllBtn.textContent = 'Додати всі';
+            addAllBtn.classList.remove('all-in-cart');
+        }
+    }
 };
 
 // Функція для перемикання всіх додаткових товарів
 window.toggleAllAdditionalProducts = function() {
     const allInCart = Object.values(additionalProductsInCart).every(status => status);
+    const addAllBtn = document.querySelector('.add-all-btn');
     
     // Якщо всі в кошику - видаляємо всі, інакше додаємо всі
     Object.keys(additionalProductsInCart).forEach(productId => {
@@ -299,6 +313,17 @@ window.toggleAllAdditionalProducts = function() {
             }
         }
     });
+    
+    // Оновлюємо текст кнопки
+    if (addAllBtn) {
+        if (allInCart) {
+            addAllBtn.textContent = 'Додати всі';
+            addAllBtn.classList.remove('all-in-cart');
+        } else {
+            addAllBtn.textContent = 'Прибрати всі';
+            addAllBtn.classList.add('all-in-cart');
+        }
+    }
 };
 
 // Функція для відкриття кошика
