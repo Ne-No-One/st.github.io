@@ -992,53 +992,56 @@ body {
         width: 100% !important;
     }
     
-    /* Стилізація color-selector поверх фото */
+    /* Стилізація color-selector поверх фото - однакова ширина для симетрії */
     .color-selector {
         background: rgba(255, 255, 255, 0.15) !important;
         border: 1px solid rgba(255, 255, 255, 0.3) !important;
-        border-radius: 20px !important;
-        padding: 12px !important;
+        border-radius: 15px !important;
+        padding: 8px !important;
         backdrop-filter: blur(15px) !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
-        width: 95% !important;
-        max-width: none !important;
+        width: 280px !important;
+        max-width: 280px !important;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
-        margin-bottom: 0px !important;
+        margin-bottom: 5px !important;
     }
     
+    /* Змінюємо напис на "колір пакування" і розміщуємо по центру */
     .color-selector h3 {
         display: block !important;
         color: white !important;
-        font-size: 1.2rem !important;
-        margin-bottom: 10px !important;
+        font-size: 1.1rem !important;
+        margin-bottom: 8px !important;
+        text-align: center !important;
+        width: 100% !important;
     }
     
-    /* Додаткові стилі для quantity-selector h3 */
+    /* Додаткові стилі для quantity-selector h3 - по центру */
     .quantity-selector h3 {
         display: block !important;
         color: white !important;
         font-size: 1.1rem !important;
         margin-bottom: 8px !important;
-        text-align: left !important;
+        text-align: center !important;
         width: 100% !important;
     }
     
-    /* Стилізація quantity-selector поверх фото */
+    /* Стилізація quantity-selector поверх фото - однакова ширина для симетрії */
     .quantity-selector {
         background: rgba(255, 255, 255, 0.15) !important;
         border: 1px solid rgba(255, 255, 255, 0.3) !important;
-        border-radius: 20px !important;
-        padding: 12px !important;
+        border-radius: 15px !important;
+        padding: 8px !important;
         backdrop-filter: blur(15px) !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
-        width: 90% !important;
-        max-width: none !important;
+        width: 280px !important;
+        max-width: 280px !important;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
-        margin-bottom: 5px !important;
+        margin-bottom: 0px !important;
     }
     
     .quantity-selector h3 {
@@ -1101,12 +1104,12 @@ body {
         box-shadow: 0 0 25px rgba(76, 175, 80, 0.6) !important;
     }
     
-    /* Стилізація product-info поверх фото - піднято на 10% */
+    /* Стилізація product-info поверх фото - піднято ще вище */
     .product-info {
         background: rgba(255, 255, 255, 0.2) !important;
         border: 1px solid rgba(255, 255, 255, 0.4) !important;
         border-radius: 25px !important;
-        padding: 20px !important;
+        padding: 15px !important;
         backdrop-filter: blur(20px) !important;
         display: flex !important;
         flex-direction: column !important;
@@ -1115,7 +1118,8 @@ body {
         max-width: 320px !important;
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
         margin-top: auto !important;
-        transform: translateY(-10%) !important;
+        margin-bottom: 20px !important;
+        transform: translateY(-30%) !important;
     }
     
     .product-price-container {
@@ -1146,5 +1150,16 @@ body {
         flex: 0 0 auto !important;
         font-size: 1.2rem !important;
         white-space: nowrap !important;
+    }
+    
+    /* Забезпечуємо запуск сторінки з самого верху */
+    html, body {
+        scroll-behavior: smooth !important;
+        scroll-padding-top: 0 !important;
+    }
+    
+    /* Скидаємо позицію скролу при завантаженні */
+    .hero-section {
+        scroll-margin-top: 0 !important;
     }
 }

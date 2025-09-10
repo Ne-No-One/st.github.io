@@ -197,7 +197,7 @@ function initializeProductCart() {
             productInCart = true;
             
             // Оновлюємо кнопку
-            cartButton.textContent = 'З кошику';
+            cartButton.textContent = 'Прибрати';
             cartButton.classList.add('in-cart');
             
             // Оновлюємо лічильник кошика
@@ -454,4 +454,12 @@ document.addEventListener('DOMContentLoaded', () => {
             productImage.src = firstImageSrc;
         }
     }
+    
+    // Забезпечуємо запуск сторінки з самого верху
+    window.scrollTo(0, 0);
+});
+
+// Додатково скидаємо скрол при завантаженні сторінки
+window.addEventListener('load', function() {
+    window.scrollTo(0, 0);
 });

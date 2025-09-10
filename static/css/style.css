@@ -1236,6 +1236,42 @@ body {
     /* Прозорість для image-gallery контейнера */
     .image-gallery {
         background-color: transparent !important;
+        position: relative !important;
+    }
+    
+    /* Стилізація кнопок навігації по боках картинки */
+    .image-nav {
+        position: absolute !important;
+        top: 50% !important;
+        left: 0 !important;
+        right: 0 !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        padding: 0 20px !important;
+        z-index: 10 !important;
+        pointer-events: none !important;
+    }
+    
+    .nav-btn {
+        background: rgba(255, 255, 255, 0.2) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        border-radius: 50% !important;
+        width: 40px !important;
+        height: 40px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        color: white !important;
+        font-size: 18px !important;
+        cursor: pointer !important;
+        backdrop-filter: blur(10px) !important;
+        pointer-events: auto !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .nav-btn:hover {
+        background: rgba(255, 255, 255, 0.3) !important;
+        transform: scale(1.1) !important;
     }
     
     /* Спеціальний фон для IMG_1243.png (перше фото в каруселі) - ПОВНІСТЮ ПРОЗОРИЙ */
@@ -1394,54 +1430,54 @@ body {
         display: none !important;
     }
     
-    /* Змінюємо напис на "колір" і розміщуємо зліва */
+    /* Змінюємо напис на "колір пакування" і розміщуємо по центру */
     .color-selector h3 {
         display: block !important;
         color: white !important;
         font-size: 1.1rem !important;
         margin-bottom: 8px !important;
-        text-align: left !important;
+        text-align: center !important;
         width: 100% !important;
     }
     
-    /* Стилізація color-selector поверх фото */
+    /* Стилізація color-selector поверх фото - однакова ширина для симетрії */
     .color-selector {
         background: rgba(255, 255, 255, 0.15) !important;
         border: 1px solid rgba(255, 255, 255, 0.3) !important;
-        border-radius: 20px !important;
-        padding: 12px !important;
+        border-radius: 15px !important;
+        padding: 8px !important;
         backdrop-filter: blur(15px) !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
-        width: 95% !important;
-        max-width: none !important;
+        width: 280px !important;
+        max-width: 280px !important;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
         margin-bottom: 5px !important;
     }
     
-    /* Додаткові стилі для quantity-selector h3 */
+    /* Додаткові стилі для quantity-selector h3 - по центру */
     .quantity-selector h3 {
         display: block !important;
         color: white !important;
         font-size: 1.1rem !important;
         margin-bottom: 8px !important;
-        text-align: left !important;
+        text-align: center !important;
         width: 100% !important;
     }
     
-    /* Стилізація quantity-selector поверх фото */
+    /* Стилізація quantity-selector поверх фото - однакова ширина для симетрії */
     .quantity-selector {
         background: rgba(255, 255, 255, 0.15) !important;
         border: 1px solid rgba(255, 255, 255, 0.3) !important;
-        border-radius: 20px !important;
-        padding: 12px !important;
+        border-radius: 15px !important;
+        padding: 8px !important;
         backdrop-filter: blur(15px) !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
-        width: 95% !important;
-        max-width: none !important;
+        width: 280px !important;
+        max-width: 280px !important;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
         margin-bottom: 0px !important;
     }
@@ -1498,12 +1534,12 @@ body {
         box-shadow: 0 0 25px rgba(76, 175, 80, 0.6) !important;
     }
     
-    /* Стилізація product-info поверх фото - піднято на 10% */
+    /* Стилізація product-info поверх фото - піднято ще вище */
     .product-info {
         background: rgba(255, 255, 255, 0.2) !important;
         border: 1px solid rgba(255, 255, 255, 0.4) !important;
         border-radius: 25px !important;
-        padding: 20px !important;
+        padding: 15px !important;
         backdrop-filter: blur(20px) !important;
         display: flex !important;
         flex-direction: column !important;
@@ -1512,7 +1548,8 @@ body {
         max-width: 320px !important;
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
         margin-top: auto !important;
-        transform: translateY(-10%) !important;
+        margin-bottom: 20px !important;
+        transform: translateY(-30%) !important;
     }
     
     .product-price-container {
@@ -1536,6 +1573,24 @@ body {
         text-overflow: ellipsis !important;
         font-size: 0.9rem !important;
         padding: 12px 16px !important;
+    }
+    
+    /* Стилізація кнопки "Прибрати" (червона) */
+    .add-to-cart-btn.in-cart {
+        background: linear-gradient(45deg, #f44336, #d32f2f) !important;
+        border-color: #f44336 !important;
+        box-shadow: 0 0 25px rgba(244, 67, 54, 0.6) !important;
+    }
+    
+    /* Забезпечуємо запуск сторінки з самого верху */
+    html, body {
+        scroll-behavior: smooth !important;
+        scroll-padding-top: 0 !important;
+    }
+    
+    /* Скидаємо позицію скролу при завантаженні */
+    .hero-section {
+        scroll-margin-top: 0 !important;
     }
     
     /* Стилізація ціни */

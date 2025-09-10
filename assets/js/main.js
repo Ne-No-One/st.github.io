@@ -191,7 +191,7 @@ function initializeProductCart() {
             productInCart = true;
             
             // Оновлюємо кнопку
-            cartButton.textContent = 'З кошику';
+            cartButton.textContent = 'Прибрати';
             cartButton.style.background = 'linear-gradient(45deg, rgba(244, 67, 54, 0.3), rgba(244, 67, 54, 0.5))';
             priceLabel.textContent = 'Відняти з кошика';
             
