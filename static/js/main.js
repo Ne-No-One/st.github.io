@@ -463,3 +463,46 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('load', function() {
     window.scrollTo(0, 0);
 });
+
+// ===== ОПТИМІЗАЦІЯ ДЛЯ ШВИДШОГО ЗАВАНТАЖЕННЯ =====
+
+// Debounce функція для оптимізації скролу
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Оптимізований обробник скролу
+const optimizedScrollHandler = debounce(function() {
+    updateProgressBar();
+}, 16); // ~60fps
+
+// Замінюємо звичайний обробник скролу на оптимізований
+window.removeEventListener('scroll', updateProgressBar);
+window.addEventListener('scroll', optimizedScrollHandler, { passive: true });
+
+// Preload критичних зображень
+function preloadCriticalImages() {
+    const criticalImages = [
+        '/static/images/IMG_1243.PNG',
+        '/static/images/foto 2.jpg'
+    ];
+    
+    criticalImages.forEach(src => {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.href = src;
+        document.head.appendChild(link);
+    });
+}
+
+// Запускаємо preload при завантаженні
+preloadCriticalImages();

@@ -6,7 +6,7 @@
     <title>Мій Сайт</title>
     <meta name="description" content="Красивий сайт з чорним фоном, плаваючими білими шарами та сучасним дизайном">
     {% load static %}
-    <link rel="stylesheet" href="{% if is_django %}{% static 'css/style.css' %}{% else %}assets/css/style.css{% endif %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
 <!-- Плаваючі білі шари -->
@@ -46,13 +46,16 @@
             <div class="product-image-container">
                 <div class="product-label">Преміум товар</div>
                 <div class="image-gallery">
-                    <img id="product-image" src="{% if is_django %}{% static 'images/IMG_1243.PNG' %}{% else %}IMG_1243.PNG{% endif %}" alt="Товар" class="product-image">
+                    <img id="product-image" src="{% if is_django %}{% static 'images/IMG_1243.PNG' %}{% else %}IMG_1243.PNG{% endif %}" alt="Товар" class="product-image" loading="lazy">
                     <div class="image-nav">
                         <button class="nav-btn prev-btn" onclick="changeImage(-1)">‹</button>
                         <button class="nav-btn next-btn" onclick="changeImage(1)">›</button>
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="product-info">
+            <h2 class="product-title">Преміум товар</h2>
             <div class="color-selector">
                 <h3>колір пакування</h3>
                 <div class="color-dots">
@@ -70,9 +73,6 @@
                     <button class="quantity-btn" data-quantity="101">101</button>
                 </div>
             </div>
-        </div>
-        <div class="product-info">
-            <h2 class="product-title">Преміум товар</h2>
             <div class="product-price-container">
                 <div class="product-price">2800 грн</div>
                 <button class="add-to-cart-btn" id="cart-button" onclick="toggleCart()">В кошик</button>
@@ -91,7 +91,7 @@
         <div class="additional-products-grid">
             <div class="additional-product-card" data-product-id="1">
                 <div class="additional-product-image">
-                    <img src="{% if is_django %}{% static 'images/foto 1.jpg' %}{% else %}foto 1.jpg{% endif %}" alt="Додатковий товар 1">
+                    <img src="{% if is_django %}{% static 'images/foto 1.jpg' %}{% else %}foto 1.jpg{% endif %}" alt="Додатковий товар 1" loading="lazy">
                     <div class="product-status">В кошику</div>
                 </div>
                 <div class="additional-product-info">
@@ -104,7 +104,7 @@
             </div>
             <div class="additional-product-card" data-product-id="2">
                 <div class="additional-product-image">
-                    <img src="{% if is_django %}{% static 'images/foto 2.jpg' %}{% else %}foto 2.jpg{% endif %}" alt="Додатковий товар 2">
+                    <img src="{% if is_django %}{% static 'images/foto 2.jpg' %}{% else %}foto 2.jpg{% endif %}" alt="Додатковий товар 2" loading="lazy">
                     <div class="product-status">В кошику</div>
                 </div>
                 <div class="additional-product-info">
@@ -117,7 +117,7 @@
             </div>
             <div class="additional-product-card" data-product-id="3">
                 <div class="additional-product-image">
-                    <img src="{% if is_django %}{% static 'images/foto 3.jpg' %}{% else %}foto 3.jpg{% endif %}" alt="Додатковий товар 3">
+                    <img src="{% if is_django %}{% static 'images/foto 3.jpg' %}{% else %}foto 3.jpg{% endif %}" alt="Додатковий товар 3" loading="lazy">
                     <div class="product-status">В кошику</div>
                 </div>
                 <div class="additional-product-info">
@@ -151,6 +151,6 @@
     </div>
 </div>
 
-    <script src="{% if is_django %}{% static 'js/main.js' %}{% else %}assets/js/main.js{% endif %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>
