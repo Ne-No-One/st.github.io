@@ -1,0 +1,113 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Секція "Про нас" - Адмін Панель{% endblock %}
+{% block page_title %}Секція "Про нас"{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Налаштування секції "Про нас"
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Заголовок секції</label>
+                        <input type="text" class="form-control" id="title" name="title" 
+                               value="{{ about.title }}" placeholder="Про нас" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Опис компанії</label>
+                        <textarea class="form-control" id="description" name="description" 
+                                  rows="6" required placeholder="Розкажіть про вашу компанію...">{{ about.description }}</textarea>
+                        <div class="form-text">Детальний опис вашої компанії, місії та цінностей</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="show_section" name="show_section" 
+                                   {% if about.show_section %}checked{% endif %}>
+                            <label class="form-check-label" for="show_section">
+                                Показувати секцію "Про нас" на сайті
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>
+                        Зберегти зміни
+                    </button>
+                    <a href="{% url 'admin_panel:dashboard' %}" class="btn btn-secondary ms-2">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Назад до Dashboard
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">Поточні налаштування</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <strong>Заголовок:</strong><br>
+                    {{ about.title }}
+                </div>
+                
+                <div class="mb-3">
+                    <strong>Опис:</strong><br>
+                    <p class="small">{{ about.description|truncatewords:20 }}</p>
+                </div>
+                
+                <div class="mb-0">
+                    <strong>Статус відображення:</strong><br>
+                    {% if about.show_section %}
+                        <span class="badge bg-success">Показується</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Прихована</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Підказки -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0">Підказки для написання</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled small">
+                    <li><i class="fas fa-lightbulb text-warning me-2"></i>Розкажіть історію вашої компанії</li>
+                    <li><i class="fas fa-lightbulb text-warning me-2"></i>Опишіть ваші цінності та місію</li>
+                    <li><i class="fas fa-lightbulb text-warning me-2"></i>Вкажіть досвід роботи в галузі</li>
+                    <li><i class="fas fa-lightbulb text-warning me-2"></i>Підкресліть унікальність послуг</li>
+                    <li><i class="fas fa-lightbulb text-warning me-2"></i>Додайте інформацію про команду</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Приклад -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0">Приклад тексту</h6>
+            </div>
+            <div class="card-body">
+                <p class="small text-muted">
+                    "Ми - команда професійних флористів з більш ніж 10-річним досвідом. 
+                    Наша місія - дарувати радість та красу через найсвіжіші квіти. 
+                    Кожен букет створюється з любов'ю та увагою до деталей."
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

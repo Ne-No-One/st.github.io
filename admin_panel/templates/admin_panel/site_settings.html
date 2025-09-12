@@ -5,12 +5,13 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-md-8">
+    <!-- Основні налаштування -->
+    <div class="col-lg-8">
         <div class="card">
             <div class="card-header">
                 <h5 class="mb-0">
                     <i class="fas fa-cog me-2"></i>
-                    Основні налаштування
+                    Загальні налаштування
                 </h5>
             </div>
             <div class="card-body">
@@ -18,152 +19,316 @@
                     {% csrf_token %}
                     
                     <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
                             <label for="site_title" class="form-label">Назва сайту</label>
                             <input type="text" class="form-control" id="site_title" name="site_title" 
                                    value="{{ settings.site_title }}" required>
+                                <div class="form-text">Головна назва, що відображається у браузері</div>
+                            </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="hero_section_title" class="form-label">Заголовок головної секції</label>
-                            <input type="text" class="form-control" id="hero_section_title" name="hero_section_title" 
-                                   value="{{ settings.hero_section_title }}" required>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="header_subtitle" class="form-label">Підзаголовок шапки</label>
+                                <input type="text" class="form-control" id="header_subtitle" name="header_subtitle" 
+                                       value="{{ settings.header_subtitle }}" placeholder="Красиві квіти для всіх подій">
+                                <div class="form-text">Текст під назвою сайту в шапці</div>
+                            </div>
                         </div>
                     </div>
                     
                     <div class="mb-3">
                         <label for="site_description" class="form-label">Опис сайту</label>
-                        <textarea class="form-control" id="site_description" name="site_description" rows="3">{{ settings.site_description }}</textarea>
+                        <textarea class="form-control" id="site_description" name="site_description" 
+                                  rows="3" required>{{ settings.site_description }}</textarea>
+                        <div class="form-text">Детальний опис для пошукових систем та соціальних мереж</div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <h6 class="mb-3">
+                        <i class="fas fa-mouse-pointer me-2"></i>
+                        Тексти кнопок та елементів
+                    </h6>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="cart_button_text" class="form-label">Текст кнопки "В кошик"</label>
+                                <input type="text" class="form-control" id="cart_button_text" name="cart_button_text" 
+                                       value="{{ settings.cart_button_text }}" placeholder="В кошик">
+                                <div class="form-text">Текст на кнопках додавання товарів</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="premium_label_text" class="form-label">Текст преміум лейбла</label>
+                                <input type="text" class="form-control" id="premium_label_text" name="premium_label_text" 
+                                       value="{{ settings.premium_label_text }}" placeholder="Преміум">
+                                <div class="form-text">Текст на значку преміум товару</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <h6 class="mb-3">
+                        <i class="fas fa-star me-2"></i>
+                        Головний товар
+                    </h6>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="main_product_title" class="form-label">Назва головного товару</label>
+                                <input type="text" class="form-control" id="main_product_title" name="main_product_title" 
+                                       value="{{ main_product.title }}" placeholder="Преміум букет квітів">
+                                <div class="form-text">Основна назва товару на сайті</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                    <div class="mb-3">
+                                <label for="main_product_add_to_cart_text" class="form-label">Текст кнопки товару</label>
+                                <input type="text" class="form-control" id="main_product_add_to_cart_text" name="main_product_add_to_cart_text" 
+                                       value="{{ main_product.add_to_cart_text }}" placeholder="Додати в кошик">
+                                <div class="form-text">Текст на кнопці цього товару</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="main_product_order" class="form-label">Порядок головного товару</label>
+                                <input type="number" class="form-control" id="main_product_order" name="main_product_order" 
+                                       value="{{ main_product.order|default:1 }}" min="1" max="100">
+                                <div class="form-text">Порядок відображення (менше число = вище)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="main_product_currency" class="form-label">Валюта</label>
+                                <input type="text" class="form-control" id="main_product_currency" name="main_product_currency" 
+                                       value="{{ main_product.currency|default:'грн' }}" placeholder="грн">
+                                <div class="form-text">Валюта для відображення цін</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <h6 class="mb-3">
+                        <i class="fas fa-palette me-2"></i>
+                        Заголовки секцій
+                    </h6>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="color_selector_title" class="form-label">Заголовок вибору кольору</label>
+                                <input type="text" class="form-control" id="color_selector_title" name="color_selector_title" 
+                                       value="{{ site_settings.color_selector_title|default:'колір пакування' }}" placeholder="колір пакування">
+                                <div class="form-text">Заголовок над кольоровими кружечками</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="quantity_selector_title" class="form-label">Заголовок вибору кількості</label>
+                                <input type="text" class="form-control" id="quantity_selector_title" name="quantity_selector_title" 
+                                       value="{{ site_settings.quantity_selector_title|default:'кількість квітів' }}" placeholder="кількість квітів">
+                                <div class="form-text">Заголовок над кнопками кількості</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="additional_products_title" class="form-label">Заголовок додаткових товарів</label>
+                                <input type="text" class="form-control" id="additional_products_title" name="additional_products_title" 
+                                       value="{{ additional_settings.section_title|default:'Додаткові товари' }}" placeholder="Додаткові товари">
+                                <div class="form-text">Заголовок секції додаткових товарів</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="add_all_text" class="form-label">Текст кнопки "Додати всі"</label>
+                                <input type="text" class="form-control" id="add_all_text" name="add_all_text" 
+                                       value="{{ additional_settings.add_all_text|default:'Додати всі' }}" placeholder="Додати всі">
+                                <div class="form-text">Текст на кнопці додавання всіх товарів</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <h6 class="mb-3">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Тексти про товар
+                    </h6>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="main_product_premium_label" class="form-label">Лейбл преміум товару</label>
+                                <input type="text" class="form-control" id="main_product_premium_label" name="main_product_premium_label" 
+                                       value="{{ main_product.premium_label_text|default:'⭐ Преміум якість' }}" placeholder="⭐ Преміум якість">
+                                <div class="form-text">Текст на лейблі головного товару</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="b2b_button_text" class="form-label">Текст B2B кнопки</label>
+                                <input type="text" class="form-control" id="b2b_button_text" name="b2b_button_text" 
+                                       value="{{ site_settings.b2b_button_text|default:'B2B' }}" placeholder="B2B">
+                                <div class="form-text">Текст на кнопці B2B в шапці</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <h6 class="mb-3">
+                        <i class="fas fa-building me-2"></i>
+                        Контактна інформація
+                    </h6>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="contact_phone" class="form-label">Номер телефону</label>
+                                <input type="text" class="form-control" id="contact_phone" name="contact_phone" 
+                                       value="{{ contact_info.phone|default:'+380 XX XXX XX XX' }}" placeholder="+380 XX XXX XX XX">
+                                <div class="form-text">Основний номер телефону</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="contact_email" class="form-label">Email адреса</label>
+                                <input type="email" class="form-control" id="contact_email" name="contact_email" 
+                                       value="{{ contact_info.email|default:'info@example.com' }}" placeholder="info@example.com">
+                                <div class="form-text">Основна email адреса</div>
+            </div>
+        </div>
+    </div>
+    
+                    <div class="mb-3">
+                        <label for="contact_address" class="form-label">Адреса</label>
+                        <input type="text" class="form-control" id="contact_address" name="contact_address" 
+                               value="{{ contact_info.address|default:'м. Київ, вул. Хрещатик, 1' }}" placeholder="м. Київ, вул. Хрещатик, 1">
+                        <div class="form-text">Фізична адреса компанії</div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <h6 class="mb-3">
+                        <i class="fas fa-file-alt me-2"></i>
+                        Про компанію
+                    </h6>
+                    
+                    <div class="mb-3">
+                        <label for="about_title" class="form-label">Заголовок секції "Про нас"</label>
+                        <input type="text" class="form-control" id="about_title" name="about_title" 
+                               value="{{ about_section.title|default:'Про нас' }}" placeholder="Про нас">
+                        <div class="form-text">Заголовок секції про компанію</div>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="hero_section_description" class="form-label">Опис головної секції</label>
-                        <textarea class="form-control" id="hero_section_description" name="hero_section_description" rows="3">{{ settings.hero_section_description }}</textarea>
+                        <label for="about_description" class="form-label">Опис компанії</label>
+                        <textarea class="form-control" id="about_description" name="about_description" 
+                                  rows="4" placeholder="Розкажіть про вашу компанію...">{{ about_section.description|default:'Ми - провідна компанія у сфері квітів з багаторічним досвідом.' }}</textarea>
+                        <div class="form-text">Детальний опис діяльності компанії</div>
+            </div>
+                    
+                    <hr class="my-4">
+                    
+                    <h6 class="mb-3">
+                        <i class="fas fa-tags me-2"></i>
+                        Тексти на кнопках та елементах
+                    </h6>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="cart_count_label" class="form-label">Лейбл лічильника кошика</label>
+                                <input type="text" class="form-control" id="cart_count_label" name="cart_count_label" 
+                                       value="{{ site_settings.cart_count_label|default:'шт' }}" placeholder="шт">
+                                <div class="form-text">Текст біля числа в кошику</div>
+            </div>
+        </div>
+        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="currency_symbol" class="form-label">Символ валюти</label>
+                                <input type="text" class="form-control" id="currency_symbol" name="currency_symbol" 
+                                       value="{{ site_settings.currency_symbol|default:'грн' }}" placeholder="грн">
+                                <div class="form-text">Символ валюти для цін</div>
+                            </div>
+            </div>
                     </div>
                     
                     <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="primary_color" class="form-label">Основний колір</label>
-                            <div class="input-group">
-                                <input type="color" class="form-control form-control-color" id="primary_color" name="primary_color" 
-                                       value="{{ settings.primary_color }}" style="max-width: 60px;">
-                                <input type="text" class="form-control" value="{{ settings.primary_color }}" 
-                                       onchange="document.getElementById('primary_color').value = this.value">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="loading_text" class="form-label">Текст завантаження</label>
+                                <input type="text" class="form-control" id="loading_text" name="loading_text" 
+                                       value="{{ site_settings.loading_text|default:'Сайт завантажується...' }}" placeholder="Сайт завантажується...">
+                                <div class="form-text">Текст при завантаженні сайту</div>
                             </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="secondary_color" class="form-label">Додатковий колір</label>
-                            <div class="input-group">
-                                <input type="color" class="form-control form-control-color" id="secondary_color" name="secondary_color" 
-                                       value="{{ settings.secondary_color }}" style="max-width: 60px;">
-                                <input type="text" class="form-control" value="{{ settings.secondary_color }}" 
-                                       onchange="document.getElementById('secondary_color').value = this.value">
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="error_text" class="form-label">Текст помилки</label>
+                                <input type="text" class="form-control" id="error_text" name="error_text" 
+                                       value="{{ site_settings.error_text|default:'Помилка завантаження сайту' }}" placeholder="Помилка завантаження сайту">
+                                <div class="form-text">Заголовок повідомлення про помилку</div>
                             </div>
-                        </div>
                     </div>
+                </div>
                     
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="hero_section_width_pc" class="form-label">Ширина головної секції на ПК (%)</label>
-                            <input type="range" class="form-range" id="hero_section_width_pc" name="hero_section_width_pc" 
-                                   min="50" max="100" value="{{ settings.hero_section_width_pc }}" 
-                                   oninput="document.getElementById('hero_width_display').textContent = this.value + '%'">
-                            <div class="d-flex justify-content-between">
-                                <small class="text-muted">50%</small>
-                                <span id="hero_width_display" class="badge bg-primary">{{ settings.hero_section_width_pc }}%</span>
-                                <small class="text-muted">100%</small>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="additional_products_width_pc" class="form-label">Ширина секції додаткових товарів на ПК (%)</label>
-                            <input type="range" class="form-range" id="additional_products_width_pc" name="additional_products_width_pc" 
-                                   min="50" max="100" value="{{ settings.additional_products_width_pc }}" 
-                                   oninput="document.getElementById('additional_width_display').textContent = this.value + '%'">
-                            <div class="d-flex justify-content-between">
-                                <small class="text-muted">50%</small>
-                                <span id="additional_width_display" class="badge bg-primary">{{ settings.additional_products_width_pc }}%</span>
-                                <small class="text-muted">100%</small>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save me-1"></i>Зберегти налаштування
-                        </button>
-                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>
+                        Зберегти всі налаштування
+                    </button>
                 </form>
             </div>
         </div>
     </div>
     
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-info-circle me-2"></i>
-                    Довідка
-                </h5>
-            </div>
-            <div class="card-body">
-                <h6>Кольори</h6>
-                <p class="small text-muted">
-                    Використовуйте hex коди кольорів (наприклад: #ff8c42). 
-                    Кольори впливають на загальний вигляд сайту.
-                </p>
-                
-                <h6>Ширина секцій</h6>
-                <p class="small text-muted">
-                    Налаштування ширини секцій для ПК версії. 
-                    На мобільних пристроях секції завжди займають 100% ширини.
-                </p>
-                
-                <h6>Опис сайту</h6>
-                <p class="small text-muted">
-                    Використовується в meta тегах для SEO оптимізації.
-                </p>
-            </div>
-        </div>
-        
-        <div class="card mt-3">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-eye me-2"></i>
-                    Попередній перегляд
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="border rounded p-3" style="background-color: #f8f9fa;">
-                    <h6 style="color: {{ settings.primary_color }};">{{ settings.site_title }}</h6>
-                    <p class="small text-muted">{{ settings.site_description|truncatewords:10 }}</p>
-                    <div class="d-flex gap-2">
-                        <div class="color-preview" style="background-color: {{ settings.primary_color }};"></div>
-                        <div class="color-preview" style="background-color: {{ settings.secondary_color }};"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    // Синхронізація color picker з text input
-    document.getElementById('primary_color').addEventListener('input', function() {
-        this.nextElementSibling.value = this.value;
-    });
+// Попередній перегляд в реальному часі
+document.addEventListener('DOMContentLoaded', function() {
+    const inputs = {
+        site_title: document.getElementById('site_title'),
+        header_subtitle: document.getElementById('header_subtitle'),
+        cart_button_text: document.getElementById('cart_button_text'),
+        premium_label_text: document.getElementById('premium_label_text')
+    };
     
-    document.getElementById('secondary_color').addEventListener('input', function() {
-        this.nextElementSibling.value = this.value;
-    });
+    // Функція оновлення попереднього перегляду
+    function updatePreview() {
+        // Можна додати динамічний перегляд тут
+    }
     
-    // Синхронізація text input з color picker
-    document.querySelector('input[value="{{ settings.primary_color }}"]').addEventListener('input', function() {
-        document.getElementById('primary_color').value = this.value;
+    // Додати слухачі подій для live preview
+    Object.values(inputs).forEach(input => {
+        if (input) {
+            input.addEventListener('input', updatePreview);
+        }
     });
-    
-    document.querySelector('input[value="{{ settings.secondary_color }}"]').addEventListener('input', function() {
-        document.getElementById('secondary_color').value = this.value;
     });
 </script>
 {% endblock %}

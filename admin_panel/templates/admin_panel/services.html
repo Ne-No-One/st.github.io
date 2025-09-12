@@ -1,0 +1,139 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Послуги - Адмін Панель{% endblock %}
+{% block page_title %}Послуги{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <!-- Список послуг -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-concierge-bell me-2"></i>
+                    Поточні послуги ({{ services|length }})
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if services %}
+                    <div class="row">
+                        {% for service in services %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-{{ service.icon }} fa-3x text-primary mb-3"></i>
+                                    <h6 class="card-title">{{ service.title }}</h6>
+                                    <p class="card-text small">{{ service.description }}</p>
+                                    <div class="mt-auto">
+                                        {% if service.is_active %}
+                                            <span class="badge bg-success mb-2">Активна</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary mb-2">Неактивна</span>
+                                        {% endif %}
+                                        <br>
+                                        <a href="{% url 'admin_panel:delete_service' service.id %}" 
+                                           class="btn btn-sm btn-danger" 
+                                           onclick="return confirm('Видалити цю послугу?')">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">Послуги не додані</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <!-- Додавання нової послуги -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-plus me-2"></i>
+                    Додати нову послугу
+                </h6>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Назва послуги</label>
+                        <input type="text" class="form-control" id="title" name="title" 
+                               placeholder="Швидка доставка" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Опис послуги</label>
+                        <textarea class="form-control" id="description" name="description" 
+                                  rows="3" placeholder="Доставляємо квіти в найкоротші терміни" required></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="icon" class="form-label">Іконка</label>
+                        <input type="text" class="form-control" id="icon" name="icon" 
+                               placeholder="truck" required>
+                        <div class="form-text">
+                            Назва іконки Font Awesome (без fa-): truck, heart, shield-alt, phone
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-plus me-2"></i>
+                        Додати послугу
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Популярні іконки -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0">Популярні іконки</h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-4 mb-2">
+                        <i class="fas fa-truck fa-2x text-primary"></i>
+                        <br><small>truck</small>
+                    </div>
+                    <div class="col-4 mb-2">
+                        <i class="fas fa-heart fa-2x text-danger"></i>
+                        <br><small>heart</small>
+                    </div>
+                    <div class="col-4 mb-2">
+                        <i class="fas fa-shield-alt fa-2x text-success"></i>
+                        <br><small>shield-alt</small>
+                    </div>
+                    <div class="col-4 mb-2">
+                        <i class="fas fa-phone fa-2x text-info"></i>
+                        <br><small>phone</small>
+                    </div>
+                    <div class="col-4 mb-2">
+                        <i class="fas fa-users fa-2x text-warning"></i>
+                        <br><small>users</small>
+                    </div>
+                    <div class="col-4 mb-2">
+                        <i class="fas fa-star fa-2x text-warning"></i>
+                        <br><small>star</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Швидкий доступ -->
+        <div class="card mt-3">
+            <div class="card-body text-center">
+                <a href="{% url 'admin_panel:dashboard' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Назад до Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

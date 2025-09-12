@@ -1,0 +1,119 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Редагувати товар - Адмін Панель{% endblock %}
+{% block page_title %}Редагувати додатковий товар{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-edit me-2"></i>
+                    Редагування товару: {{ product.title }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Назва товару</label>
+                        <input type="text" class="form-control" id="title" name="title" 
+                               value="{{ product.title }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Опис товару</label>
+                        <textarea class="form-control" id="description" name="description" 
+                                  rows="4" required>{{ product.description }}</textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="price" class="form-label">Ціна</label>
+                                <input type="number" step="0.01" class="form-control" id="price" 
+                                       name="price" value="{{ product.price }}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="currency" class="form-label">Валюта</label>
+                                <input type="text" class="form-control" id="currency" name="currency" 
+                                       value="{{ product.currency }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="image_url" class="form-label">URL зображення</label>
+                        <input type="url" class="form-control" id="image_url" name="image_url" 
+                               value="{{ product.image_url }}" placeholder="https://example.com/image.jpg">
+                        <div class="form-text">Посилання на зображення товару</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="order" class="form-label">Порядок відображення</label>
+                        <input type="number" class="form-control" id="order" name="order" 
+                               value="{{ product.order|default:1 }}" min="1" max="100">
+                        <div class="form-text">Порядок відображення товару (менше число = вище в списку)</div>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>
+                            Зберегти зміни
+                        </button>
+                        <a href="{% url 'admin_panel:additional_products' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            Назад до списку
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <!-- Попередній перегляд -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">Попередній перегляд</h6>
+            </div>
+            <div class="card-body">
+                {% if product.image_url %}
+                    <img src="{{ product.image_url }}" class="img-fluid rounded mb-3" 
+                         alt="{{ product.title }}" style="max-height: 200px; width: 100%; object-fit: cover;">
+                {% else %}
+                    <div class="bg-light rounded d-flex align-items-center justify-content-center mb-3" 
+                         style="height: 200px;">
+                        <i class="fas fa-image fa-3x text-muted"></i>
+                    </div>
+                {% endif %}
+                
+                <h6>{{ product.title }}</h6>
+                <p class="small text-muted">{{ product.description|truncatewords:15 }}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="badge bg-success">{{ product.price }} {{ product.currency }}</span>
+                    <span class="badge bg-info">ID: {{ product.id }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Підказки -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0">Підказки</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled small">
+                    <li><i class="fas fa-lightbulb text-warning me-2"></i>Використовуйте описові назви товарів</li>
+                    <li><i class="fas fa-lightbulb text-warning me-2"></i>Додайте детальний опис товару</li>
+                    <li><i class="fas fa-lightbulb text-warning me-2"></i>Перевірте правильність ціни</li>
+                    <li><i class="fas fa-lightbulb text-warning me-2"></i>Використовуйте якісні зображення</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

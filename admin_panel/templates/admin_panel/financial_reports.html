@@ -1,0 +1,209 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Фінансові звіти - Адмін Панель{% endblock %}
+{% block page_title %}Фінансові звіти{% endblock %}
+
+{% block content %}
+<!-- Основна статистика -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card border-primary">
+            <i class="fas fa-shopping-cart text-primary"></i>
+            <h6 class="text-primary">Всього замовлень</h6>
+            <h4>{{ stats.total_orders }}</h4>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card border-success">
+            <i class="fas fa-users text-success"></i>
+            <h6 class="text-success">Всього клієнтів</h6>
+            <h4>{{ stats.total_customers }}</h4>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card border-info">
+            <i class="fas fa-dollar-sign text-info"></i>
+            <h6 class="text-info">Місячний дохід</h6>
+            <h4>{{ stats.monthly_revenue|floatformat:0 }} грн</h4>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card border-warning">
+            <i class="fas fa-chart-line text-warning"></i>
+            <h6 class="text-warning">Місячний прибуток</h6>
+            <h4>{{ stats.monthly_profit|floatformat:0 }} грн</h4>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Місячний звіт -->
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-calendar-alt me-2"></i>
+                    Місячний звіт
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if monthly_summary %}
+                    <div class="row">
+                        <div class="col-6">
+                            <h6 class="text-muted">Місяць:</h6>
+                            <p class="h5">{{ monthly_summary.month }}</p>
+                        </div>
+                        <div class="col-6">
+                            <h6 class="text-muted">Замовлень:</h6>
+                            <p class="h5">{{ monthly_summary.total_orders }}</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-6">
+                            <h6 class="text-muted">Дохід:</h6>
+                            <p class="h5 text-success">{{ monthly_summary.total_revenue|floatformat:0 }} грн</p>
+                        </div>
+                        <div class="col-6">
+                            <h6 class="text-muted">Витрати:</h6>
+                            <p class="h5 text-danger">{{ monthly_summary.total_costs|floatformat:0 }} грн</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-6">
+                            <h6 class="text-muted">Прибуток:</h6>
+                            <p class="h5 text-warning">{{ monthly_summary.profit|floatformat:0 }} грн</p>
+                        </div>
+                        <div class="col-6">
+                            <h6 class="text-muted">Нові клієнти:</h6>
+                            <p class="h5 text-info">{{ monthly_summary.new_customers }}</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-12">
+                            <h6 class="text-muted">Найкращий товар:</h6>
+                            <p class="h6">{{ monthly_summary.best_selling_product }}</p>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="text-center py-3">
+                        <i class="fas fa-chart-bar fa-2x text-muted mb-2"></i>
+                        <p class="text-muted">Немає даних за цей місяць</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Щоденні продажі -->
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-line me-2"></i>
+                    Щоденні продажі (останні 7 днів)
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if daily_sales %}
+                    <div class="table-responsive">
+                        <table class="table table-dark table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Дата</th>
+                                    <th>Замовлень</th>
+                                    <th>Дохід</th>
+                                    <th>Прибуток</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for day in daily_sales %}
+                                <tr>
+                                    <td>{{ day.date }}</td>
+                                    <td>
+                                        <span class="badge bg-primary">{{ day.orders_count }}</span>
+                                    </td>
+                                    <td class="text-success">{{ day.total_revenue|floatformat:0 }} грн</td>
+                                    <td class="text-warning">{{ day.profit|floatformat:0 }} грн</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-3">
+                        <i class="fas fa-chart-line fa-2x text-muted mb-2"></i>
+                        <p class="text-muted">Немає даних за останні дні</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Детальний звіт -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-file-alt me-2"></i>
+                        Детальні звіти
+                    </h5>
+                    <div class="btn-group">
+                        <a href="{% url 'admin_panel:daily_sales_report' %}?days=7" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-calendar-week me-1"></i>7 днів
+                        </a>
+                        <a href="{% url 'admin_panel:daily_sales_report' %}?days=30" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-calendar-alt me-1"></i>30 днів
+                        </a>
+                        <a href="{% url 'admin_panel:daily_sales_report' %}?days=90" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-calendar me-1"></i>90 днів
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card compact-card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-shopping-cart fa-2x text-primary mb-2"></i>
+                                <h6>Замовлення</h6>
+                                <a href="{% url 'admin_panel:orders_list' %}" class="btn btn-primary btn-sm">
+                                    Переглянути всі
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card compact-card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-users fa-2x text-success mb-2"></i>
+                                <h6>Клієнти</h6>
+                                <a href="{% url 'admin_panel:customers_list' %}" class="btn btn-success btn-sm">
+                                    Переглянути всі
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card compact-card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-warehouse fa-2x text-info mb-2"></i>
+                                <h6>Склад</h6>
+                                <a href="{% url 'admin_panel:inventory_list' %}" class="btn btn-info btn-sm">
+                                    Переглянути склад
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

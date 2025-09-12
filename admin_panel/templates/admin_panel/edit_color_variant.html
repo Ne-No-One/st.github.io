@@ -1,0 +1,96 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Редагування кольору - Адмін Панель{% endblock %}
+{% block page_title %}Редагування кольорового варіанту{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-palette me-2"></i>
+                    Редагування кольору: {{ color.name }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="name" class="form-label">Назва кольору</label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   value="{{ color.name }}" required>
+                            <div class="form-text">Наприклад: Червоний, Синій, Зелений</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="hex_code" class="form-label">Hex код кольору</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="hex_code" name="hex_code" 
+                                       value="{{ color.hex_code }}" pattern="^#[0-9A-Fa-f]{6}$" required>
+                                <span class="input-group-text" id="color-preview" 
+                                      style="background-color: {{ color.hex_code }}; width: 40px;"></span>
+                            </div>
+                            <div class="form-text">Формат: #rrggbb (наприклад, #ff0000)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="image_url" class="form-label">URL зображення</label>
+                        <input type="url" class="form-control" id="image_url" name="image_url" 
+                               value="{{ color.image_url }}" required>
+                        <div class="form-text">Посилання на зображення товару цього кольору</div>
+                    </div>
+                    
+                    <!-- Превьюжображення -->
+                    {% if color.image_url %}
+                    <div class="mb-3">
+                        <label class="form-label">Поточне зображення</label>
+                        <div class="border rounded p-2" style="max-width: 200px;">
+                            <img src="{{ color.image_url }}" alt="{{ color.name }}" 
+                                 class="img-fluid rounded" style="max-height: 150px;">
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="is_active" name="is_active" 
+                                   {% if color.is_active %}checked{% endif %}>
+                            <label class="form-check-label" for="is_active">
+                                Активний (відображається на сайті)
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>
+                            Зберегти зміни
+                        </button>
+                        <a href="{% url 'admin_panel:main_product_settings' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            Скасувати
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Оновлення превью кольору при зміні hex коду
+document.getElementById('hex_code').addEventListener('input', function() {
+    const colorPreview = document.getElementById('color-preview');
+    const hexValue = this.value;
+    
+    // Перевіряємо формат hex коду
+    if (/^#[0-9A-Fa-f]{6}$/.test(hexValue)) {
+        colorPreview.style.backgroundColor = hexValue;
+    }
+});
+</script>
+{% endblock %}

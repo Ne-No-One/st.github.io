@@ -4,18 +4,77 @@
 {% block page_title %}Дашборд{% endblock %}
 
 {% block content %}
+<!-- Основна статистика -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card border-primary">
+            <i class="fas fa-shopping-cart text-primary"></i>
+            <h6 class="text-primary">Замовлення</h6>
+            <h4>{{ orders_count }}</h4>
+            <a href="{% url 'admin_panel:orders_list' %}" class="btn btn-sm btn-primary">Переглянути</a>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card border-success">
+            <i class="fas fa-users text-success"></i>
+            <h6 class="text-success">Клієнти</h6>
+            <h4>{{ customers_count }}</h4>
+            <a href="{% url 'admin_panel:customers_list' %}" class="btn btn-sm btn-success">Переглянути</a>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card border-info">
+            <i class="fas fa-warehouse text-info"></i>
+            <h6 class="text-info">Позицій на складі</h6>
+            <h4>{{ inventory_count }}</h4>
+            <a href="{% url 'admin_panel:inventory_list' %}" class="btn btn-sm btn-info">Переглянути</a>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card border-warning">
+            <i class="fas fa-exclamation-triangle text-warning"></i>
+            <h6 class="text-warning">Низькі залишки</h6>
+            <h4>{{ low_stock_count }}</h4>
+            <a href="{% url 'admin_panel:financial_reports' %}" class="btn btn-sm btn-warning">Звіти</a>
+        </div>
+    </div>
+</div>
+
+<!-- Швидкий доступ -->
 <div class="row">
-    <!-- Статистика -->
-    <div class="col-md-3 mb-4">
-        <div class="card text-center">
+    <!-- Налаштування та товари -->
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="card compact-card text-center">
             <div class="card-body">
-                <i class="fas fa-star fa-2x text-warning mb-3"></i>
-                <h5 class="card-title">Головний товар</h5>
-                <p class="card-text">
-                    {% if main_product %}
-                        <span class="badge bg-success">Налаштовано</span>
+                <i class="fas fa-cog text-primary mb-2"></i>
+                <h6 class="card-title mb-2">Налаштування сайту</h6>
+                <p class="card-text mb-2">
+                    {% if site_settings %}
+                        <span class="badge bg-success">Показується</span>
                     {% else %}
-                        <span class="badge bg-warning">Потрібно налаштувати</span>
+                        <span class="badge bg-warning">Приховано</span>
+                    {% endif %}
+                </p>
+                <a href="{% url 'admin_panel:site_settings' %}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-edit me-1"></i>Налаштувати
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="card compact-card text-center">
+            <div class="card-body">
+                <i class="fas fa-star text-warning mb-2"></i>
+                <h6 class="card-title mb-2">Головний товар</h6>
+                <p class="card-text mb-2">
+                    {% if main_product %}
+                        <span class="badge bg-success">Показується</span>
+                    {% else %}
+                        <span class="badge bg-warning">Приховано</span>
                     {% endif %}
                 </p>
                 <a href="{% url 'admin_panel:main_product_settings' %}" class="btn btn-primary btn-sm">
@@ -25,129 +84,78 @@
         </div>
     </div>
     
-    <div class="col-md-3 mb-4">
-        <div class="card text-center">
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="card compact-card text-center">
             <div class="card-body">
-                <i class="fas fa-box fa-2x text-info mb-3"></i>
-                <h5 class="card-title">Додаткові товари</h5>
-                <p class="card-text">
-                    <span class="badge bg-primary">{{ additional_products_count }}</span> товарів
+                <i class="fas fa-box text-info mb-2"></i>
+                <h6 class="card-title mb-2">Додаткові товари</h6>
+                <p class="card-text mb-2">
+                    {% if additional_products_count > 0 %}
+                        <span class="badge bg-success">Показується</span>
+                    {% else %}
+                        <span class="badge bg-warning">Приховано</span>
+                    {% endif %}
                 </p>
                 <a href="{% url 'admin_panel:additional_products' %}" class="btn btn-primary btn-sm">
-                    <i class="fas fa-plus me-1"></i>Додати
+                    <i class="fas fa-plus me-1"></i>Управляти
                 </a>
             </div>
         </div>
     </div>
     
-    <div class="col-md-3 mb-4">
-        <div class="card text-center">
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="card compact-card text-center">
             <div class="card-body">
-                <i class="fas fa-palette fa-2x text-success mb-3"></i>
-                <h5 class="card-title">Кольори</h5>
-                <p class="card-text">
-                    <span class="badge bg-primary">{{ color_options_count }}</span> варіантів
+                <i class="fas fa-concierge-bell text-success mb-2"></i>
+                <h6 class="card-title mb-2">Послуги</h6>
+                <p class="card-text mb-2">
+                    {% if services_count > 0 %}
+                        <span class="badge bg-success">Показується</span>
+                    {% else %}
+                        <span class="badge bg-warning">Приховано</span>
+                    {% endif %}
                 </p>
-                <a href="{% url 'admin_panel:color_options' %}" class="btn btn-primary btn-sm">
-                    <i class="fas fa-plus me-1"></i>Додати
+                <a href="{% url 'admin_panel:services' %}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-edit me-1"></i>Управляти
                 </a>
             </div>
         </div>
     </div>
     
-    <div class="col-md-3 mb-4">
-        <div class="card text-center">
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="card compact-card text-center">
             <div class="card-body">
-                <i class="fas fa-hashtag fa-2x text-danger mb-3"></i>
-                <h5 class="card-title">Кількість</h5>
-                <p class="card-text">
-                    <span class="badge bg-primary">{{ quantity_options_count }}</span> варіантів
+                <i class="fas fa-address-book text-danger mb-2"></i>
+                <h6 class="card-title mb-2">Контакти</h6>
+                <p class="card-text mb-2">
+                    {% if contact_info %}
+                        <span class="badge bg-success">Показується</span>
+                    {% else %}
+                        <span class="badge bg-warning">Приховано</span>
+                    {% endif %}
                 </p>
-                <a href="{% url 'admin_panel:quantity_options' %}" class="btn btn-primary btn-sm">
-                    <i class="fas fa-plus me-1"></i>Додати
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-6 mb-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-cog me-2"></i>
-                    Налаштування сайту
-                </h5>
-            </div>
-            <div class="card-body">
-                {% if site_settings %}
-                    <p><strong>Назва сайту:</strong> {{ site_settings.site_title }}</p>
-                    <p><strong>Основний колір:</strong> 
-                        <span class="color-preview" style="background-color: {{ site_settings.primary_color }}"></span>
-                        {{ site_settings.primary_color }}
-                    </p>
-                    <p><strong>Ширина секцій на ПК:</strong> {{ site_settings.hero_section_width_pc }}% / {{ site_settings.additional_products_width_pc }}%</p>
-                {% else %}
-                    <p class="text-muted">Налаштування не знайдено</p>
-                {% endif %}
-                <a href="{% url 'admin_panel:site_settings' %}" class="btn btn-primary">
+                <a href="{% url 'admin_panel:contact_info' %}" class="btn btn-primary btn-sm">
                     <i class="fas fa-edit me-1"></i>Редагувати
                 </a>
             </div>
         </div>
     </div>
     
-    <div class="col-md-6 mb-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-concierge-bell me-2"></i>
-                    Послуги
-                </h5>
-            </div>
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="card compact-card text-center">
             <div class="card-body">
-                <p><strong>Кількість послуг:</strong> {{ services_count }}</p>
-                <a href="{% url 'admin_panel:services' %}" class="btn btn-primary">
-                    <i class="fas fa-edit me-1"></i>Управляти
+                <i class="fas fa-info-circle text-secondary mb-2"></i>
+                <h6 class="card-title mb-2">Про нас</h6>
+                <p class="card-text mb-2">
+                    {% if about_section %}
+                        <span class="badge bg-success">Показується</span>
+                    {% else %}
+                        <span class="badge bg-warning">Приховано</span>
+                    {% endif %}
+                </p>
+                <a href="{% url 'admin_panel:about_section' %}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-edit me-1"></i>Редагувати
                 </a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-rocket me-2"></i>
-                    Швидкі дії
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-3 mb-2">
-                        <a href="{% url 'admin_panel:main_product_settings' %}" class="btn btn-outline-primary w-100">
-                            <i class="fas fa-star me-1"></i>Головний товар
-                        </a>
-                    </div>
-                    <div class="col-md-3 mb-2">
-                        <a href="{% url 'admin_panel:additional_products' %}" class="btn btn-outline-info w-100">
-                            <i class="fas fa-box me-1"></i>Додаткові товари
-                        </a>
-                    </div>
-                    <div class="col-md-3 mb-2">
-                        <a href="{% url 'admin_panel:color_options' %}" class="btn btn-outline-success w-100">
-                            <i class="fas fa-palette me-1"></i>Кольори
-                        </a>
-                    </div>
-                    <div class="col-md-3 mb-2">
-                        <a href="{% url 'admin_panel:contact_info' %}" class="btn btn-outline-warning w-100">
-                            <i class="fas fa-address-book me-1"></i>Контакти
-                        </a>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

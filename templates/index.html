@@ -3,12 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мій Сайт</title>
-    <meta name="description" content="Красивий сайт з чорним фоном, плаваючими білими шарами та сучасним дизайном">
+    <title>{% if site_settings %}{{ site_settings.site_title }}{% else %}Мій Сайт{% endif %}</title>
+    <meta name="description" content="{% if site_settings %}{{ site_settings.site_description }}{% else %}Красивий сайт з чорним фоном, плаваючими білими шарами та сучасним дизайном{% endif %}">
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
+{% if error %}
+<!-- Показуємо помилку якщо є -->
+<div style="background: #ff4444; color: white; padding: 20px; text-align: center; font-size: 18px;">
+    <strong>Помилка завантаження сайту:</strong> {{ error }}
+    <br><small>Будь ласка, перезавантажте сторінку або зверніться до адміністратора.</small>
+</div>
+{% endif %}
+
 <!-- Плаваючі білі шари -->
 <div class="floating-shapes">
     <div class="shape shape-1"></div>
@@ -22,8 +30,8 @@
 <header class="header">
     <nav class="navbar">
         <div class="nav-brand">
-            <h1>Логотип</h1>
-            <button class="b2b-button">B2B</button>
+            <h1>{% if site_settings %}{{ site_settings.site_title }}{% else %}Квітковий магазин{% endif %}</h1>
+            <button class="b2b-button">{{ site_settings.b2b_button_text|default:"B2B" }}</button>
         </div>
         <div class="nav-actions">
             <div class="cart-icon">
@@ -44,9 +52,21 @@
     <div class="product-container">
         <div class="product-gallery">
             <div class="product-image-container">
-                <div class="product-label">Преміум товар</div>
+                {% if main_product and main_product.show_premium_label %}
+                <div class="product-label">{{ main_product.premium_label_text|default:"⭐ Преміум якість" }}</div>
+                {% endif %}
                 <div class="image-gallery">
-                    <img id="product-image" src="{% if is_django %}{% static 'images/IMG_1243.PNG' %}{% else %}IMG_1243.PNG{% endif %}" alt="Товар" class="product-image" loading="lazy">
+                    {% if color_options %}
+                        {% for color in color_options %}
+                            {% if color.is_active and color.image_url and forloop.first %}
+                                <img id="product-image" src="{{ color.image_url }}" alt="Товар" class="product-image" loading="lazy">
+                            {% endif %}
+                        {% empty %}
+                            <img id="product-image" src="{% static 'images/IMG_1243.PNG' %}" alt="Товар" class="product-image" loading="lazy">
+                        {% endfor %}
+                    {% else %}
+                        <img id="product-image" src="{% static 'images/IMG_1243.PNG' %}" alt="Товар" class="product-image" loading="lazy">
+                    {% endif %}
                     <div class="image-nav">
                         <button class="nav-btn prev-btn" onclick="changeImage(-1)">‹</button>
                         <button class="nav-btn next-btn" onclick="changeImage(1)">›</button>
@@ -55,82 +75,114 @@
             </div>
         </div>
         <div class="product-info">
-            <h2 class="product-title">Преміум товар</h2>
+            <h2 class="product-title">{% if main_product %}{{ main_product.title }}{% else %}Преміум товар{% endif %}</h2>
+            {% if color_options %}
             <div class="color-selector">
-                <h3>колір пакування</h3>
+                <h3>{{ site_settings.color_selector_title|default:"колір пакування" }}</h3>
                 <div class="color-dots">
-                        <div class="color-dot active" data-color="orange" data-image="{% if is_django %}{% static 'images/IMG_1243.PNG' %}{% else %}IMG_1243.PNG{% endif %}" style="background-color: #ff8c42;"></div>
-                        <div class="color-dot" data-color="blue" data-image="{% if is_django %}{% static 'images/foto 2.jpg' %}{% else %}foto 2.jpg{% endif %}" style="background-color: #4ecdc4;"></div>
-                        <div class="color-dot" data-color="green" data-image="{% if is_django %}{% static 'images/foto 3.jpg' %}{% else %}foto 3.jpg{% endif %}" style="background-color: #45b7d1;"></div>
-                        <div class="color-dot" data-color="purple" data-image="{% if is_django %}{% static 'images/foto 4.jpg' %}{% else %}foto 4.jpg{% endif %}" style="background-color: #96ceb4;"></div>
+                    {% for color in color_options %}
+                        {% if color.is_active and color.image_url %}
+                        <div class="color-dot {% if forloop.first %}active{% endif %}" 
+                             data-color="{{ color.name|lower }}" 
+                             data-image="{{ color.image_url }}"
+                             style="background-color: {{ color.hex_code }};"
+                             title="{{ color.name }}">
+                        </div>
+                        {% endif %}
+                    {% endfor %}
                 </div>
             </div>
+            {% endif %}
+            {% if quantity_options %}
             <div class="quantity-selector">
-                <h3>кількість квітів</h3>
+                <h3>{{ site_settings.quantity_selector_title|default:"кількість квітів" }}</h3>
                 <div class="quantity-buttons">
-                    <button class="quantity-btn active" data-quantity="21">21</button>
-                    <button class="quantity-btn" data-quantity="51">51</button>
-                    <button class="quantity-btn" data-quantity="101">101</button>
+                    {% for qty in quantity_options %}
+                        {% if qty.is_active %}
+                        <button class="quantity-btn {% if forloop.first %}active{% endif %}" 
+                                data-quantity="{{ qty.quantity }}" 
+                                data-price-per-unit="{{ qty.price_per_unit }}" 
+                                data-currency="грн">
+                            {{ qty.quantity }}
+                        </button>
+                        {% endif %}
+                    {% endfor %}
                 </div>
             </div>
+            {% endif %}
+            {% if main_product %}
             <div class="product-price-container">
-                <div class="product-price">2800 грн</div>
-                <button class="add-to-cart-btn" id="cart-button" onclick="toggleCart()">В кошик</button>
+                <div class="product-price current-price" data-base-price="0" data-currency="{{ main_product.currency }}">
+                    {% if quantity_options %}
+                        {% with first_qty=quantity_options.0 %}
+                            {% if first_qty.price_per_unit and first_qty.quantity %}
+                                <span class="final-price">0</span> {{ main_product.currency }}
+                            {% else %}
+                                0 {{ main_product.currency }}
+                            {% endif %}
+                        {% endwith %}
+                    {% else %}
+                        0 {{ main_product.currency }}
+                    {% endif %}
+                </div>
+                <button class="add-to-cart-btn" id="cart-button" onclick="toggleCart()">
+                    {{ main_product.add_to_cart_text|default:"В кошик" }}
+                </button>
             </div>
+            {% endif %}
         </div>
     </div>
 </section>
 
+<!-- Секція "Про нас" -->
+{% if about_section and about_section.show_section %}
+<section id="about" class="section about-section">
+    <div class="about-content">
+        <h2 class="section-title">{{ about_section.title }}</h2>
+        <p class="about-description">{{ about_section.description }}</p>
+    </div>
+</section>
+{% endif %}
+
 <!-- Секція "Додаткові товари" -->
+{% if additional_settings and additional_settings.show_section %}
 <section id="additional-products" class="section additional-products-section">
     <div class="additional-products-content">
         <div class="additional-products-header">
-            <h2 class="section-title">Додаткові товари</h2>
-            <button class="add-all-btn" onclick="toggleAllAdditionalProducts()">Додати всі</button>
+            <h2 class="section-title">{{ additional_settings.section_title|default:"Додаткові товари" }}</h2>
+            <button class="add-all-btn" onclick="toggleAllAdditionalProducts()">{{ additional_settings.add_all_text|default:"Додати всі" }}</button>
         </div>
         <div class="additional-products-grid">
-            <div class="additional-product-card" data-product-id="1">
-                <div class="additional-product-image">
-                    <img src="{% if is_django %}{% static 'images/foto 1.jpg' %}{% else %}foto 1.jpg{% endif %}" alt="Додатковий товар 1" loading="lazy">
-                    <div class="product-status">В кошику</div>
-                </div>
-                <div class="additional-product-info">
-                    <h3>Букет квітів</h3>
-                    <div class="additional-product-price-container">
-                        <div class="additional-product-price">2800 грн</div>
-                        <button class="additional-add-to-cart-btn" onclick="toggleAdditionalProduct(1)">Додати в кошик</button>
+            {% if additional_products %}
+                {% for product in additional_products %}
+                    {% if product.image or product.image_url %}
+                    <div class="additional-product-card" data-product-id="{{ product.id }}">
+                        <div class="additional-product-image">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" alt="{{ product.title }}" loading="lazy">
+                            {% elif product.image_url %}
+                                <img src="{{ product.image_url }}" alt="{{ product.title }}" loading="lazy">
+                            {% endif %}
+                            <div class="product-status">В кошику</div>
+                        </div>
+                        <div class="additional-product-info">
+                            <h3>{{ product.title }}</h3>
+                            {% if product.description %}
+                            <p class="product-description">{{ product.description|truncatechars:100 }}</p>
+                            {% endif %}
+                            <div class="additional-product-price-container">
+                                <div class="additional-product-price">{{ product.price }} {{ product.currency }}</div>
+                                <button class="additional-add-to-cart-btn" onclick="toggleAdditionalProduct({{ product.id }})">{{ product.add_to_cart_text }}</button>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="additional-product-card" data-product-id="2">
-                <div class="additional-product-image">
-                    <img src="{% if is_django %}{% static 'images/foto 2.jpg' %}{% else %}foto 2.jpg{% endif %}" alt="Додатковий товар 2" loading="lazy">
-                    <div class="product-status">В кошику</div>
-                </div>
-                <div class="additional-product-info">
-                    <h3>Пейзажне мистецтво</h3>
-                    <div class="additional-product-price-container">
-                        <div class="additional-product-price">3200 грн</div>
-                        <button class="additional-add-to-cart-btn" onclick="toggleAdditionalProduct(2)">Додати в кошик</button>
-                    </div>
-                </div>
-            </div>
-            <div class="additional-product-card" data-product-id="3">
-                <div class="additional-product-image">
-                    <img src="{% if is_django %}{% static 'images/foto 3.jpg' %}{% else %}foto 3.jpg{% endif %}" alt="Додатковий товар 3" loading="lazy">
-                    <div class="product-status">В кошику</div>
-                </div>
-                <div class="additional-product-info">
-                    <h3>Автомобільна палітра</h3>
-                    <div class="additional-product-price-container">
-                        <div class="additional-product-price">1800 грн</div>
-                        <button class="additional-add-to-cart-btn" onclick="toggleAdditionalProduct(3)">Додати в кошик</button>
-                    </div>
-                </div>
-            </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
         </div>
     </div>
 </section>
+{% endif %}
 
 <!-- Вспливаюче вікно кошика -->
 <div id="cart-popup" class="cart-popup">
@@ -150,6 +202,75 @@
         </div>
     </div>
 </div>
+
+<!-- Секція послуг -->
+{% if services %}
+<section id="services" class="section services-section">
+    <div class="services-content">
+        <h2 class="section-title">Наші послуги</h2>
+        <div class="services-grid">
+            {% for service in services %}
+            <div class="service-card">
+                <div class="service-icon">{{ service.icon }}</div>
+                <h3>{{ service.title }}</h3>
+                <p>{{ service.description }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Секція контактів -->
+{% if contact_info %}
+<section id="contact" class="section contact-section">
+    <div class="contact-content">
+        <h2 class="section-title">Контакти</h2>
+        <div class="contact-info">
+            <div class="contact-item">
+                <i class="fas fa-phone"></i>
+                <span>{{ contact_info.phone }}</span>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-envelope"></i>
+                <span>{{ contact_info.email }}</span>
+            </div>
+            {% if contact_info.address %}
+            <div class="contact-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>{{ contact_info.address }}</span>
+            </div>
+            {% endif %}
+            {% if contact_info.working_hours %}
+            <div class="contact-item">
+                <i class="fas fa-clock"></i>
+                <span>{{ contact_info.working_hours }}</span>
+            </div>
+            {% endif %}
+        </div>
+        
+        {% if contact_info.instagram or contact_info.facebook or contact_info.telegram %}
+        <div class="social-links">
+            {% if contact_info.instagram %}
+            <a href="{{ contact_info.instagram }}" target="_blank" class="social-link">
+                <i class="fab fa-instagram"></i>
+            </a>
+            {% endif %}
+            {% if contact_info.facebook %}
+            <a href="{{ contact_info.facebook }}" target="_blank" class="social-link">
+                <i class="fab fa-facebook"></i>
+            </a>
+            {% endif %}
+            {% if contact_info.telegram %}
+            <a href="{{ contact_info.telegram }}" target="_blank" class="social-link">
+                <i class="fab fa-telegram"></i>
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endif %}
 
     <script src="{% static 'js/main.js' %}"></script>
 </body>

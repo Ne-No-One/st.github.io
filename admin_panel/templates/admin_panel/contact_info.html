@@ -1,0 +1,122 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Контактна інформація - Адмін Панель{% endblock %}
+{% block page_title %}Контактна інформація{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-address-book me-2"></i>
+                    Налаштування контактів
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">
+                                    <i class="fas fa-phone me-2"></i>Телефон
+                                </label>
+                                <input type="text" class="form-control" id="phone" name="phone" 
+                                       value="{{ contact.phone }}" placeholder="+380 50 123 45 67" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">
+                                    <i class="fas fa-envelope me-2"></i>Email
+                                </label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       value="{{ contact.email }}" placeholder="info@flowers.com" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="address" class="form-label">
+                            <i class="fas fa-map-marker-alt me-2"></i>Адреса
+                        </label>
+                        <input type="text" class="form-control" id="address" name="address" 
+                               value="{{ contact.address }}" placeholder="Київ, вул. Квіткова, 15" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="working_hours" class="form-label">
+                            <i class="fas fa-clock me-2"></i>Графік роботи
+                        </label>
+                        <input type="text" class="form-control" id="working_hours" name="working_hours" 
+                               value="{{ contact.working_hours }}" placeholder="Пн-Пт: 9:00-18:00" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>
+                        Зберегти зміни
+                    </button>
+                    <a href="{% url 'admin_panel:dashboard' %}" class="btn btn-secondary ms-2">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Назад до Dashboard
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">Поточні контакти</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <strong><i class="fas fa-phone me-2"></i>Телефон:</strong><br>
+                    {{ contact.phone }}
+                </div>
+                
+                <div class="mb-3">
+                    <strong><i class="fas fa-envelope me-2"></i>Email:</strong><br>
+                    <a href="mailto:{{ contact.email }}">{{ contact.email }}</a>
+                </div>
+                
+                <div class="mb-3">
+                    <strong><i class="fas fa-map-marker-alt me-2"></i>Адреса:</strong><br>
+                    {{ contact.address }}
+                </div>
+                
+                <div class="mb-3">
+                    <strong><i class="fas fa-clock me-2"></i>Графік роботи:</strong><br>
+                    {{ contact.working_hours }}
+                </div>
+                
+                <div class="mb-0">
+                    <strong>Статус:</strong><br>
+                    {% if contact.is_active %}
+                        <span class="badge bg-success">Активний</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Неактивний</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Підказки -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0">Підказки</h6>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled small">
+                    <li><i class="fas fa-lightbulb text-warning me-2"></i>Використовуйте міжнародний формат для телефону</li>
+                    <li><i class="fas fa-lightbulb text-warning me-2"></i>Перевірте правильність email адреси</li>
+                    <li><i class="fas fa-lightbulb text-warning me-2"></i>Вкажіть повну адресу з містом</li>
+                    <li><i class="fas fa-lightbulb text-warning me-2"></i>Оновлюйте графік роботи в свята</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

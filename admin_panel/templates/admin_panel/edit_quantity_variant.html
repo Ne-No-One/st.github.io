@@ -1,0 +1,92 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Редагування кількості - Адмін Панель{% endblock %}
+{% block page_title %}Редагування варіанту кількості{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-calculator me-2"></i>
+                    Редагування варіанту: {{ quantity.quantity }} шт
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Кількість (штук)</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" 
+                               value="{{ quantity.quantity }}" min="1" required>
+                        <div class="form-text">Кількість товару в одному варіанті</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="price_per_unit" class="form-label">Ціна за одиницю (грн)</label>
+                        <input type="number" class="form-control" id="price_per_unit" name="price_per_unit" 
+                               value="{{ quantity.price_per_unit }}" step="0.01" min="0" required>
+                        <div class="form-text">Ціна за одну штуку товару</div>
+                    </div>
+                    
+                    <!-- Автоматичний розрахунок загальної ціни -->
+                    <div class="mb-3">
+                        <label class="form-label">Загальна ціна</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="total_price" readonly>
+                            <span class="input-group-text">грн</span>
+                        </div>
+                        <div class="form-text">Автоматично розраховується: кількість × ціна за одиницю</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="is_active" name="is_active" 
+                                   {% if quantity.is_active %}checked{% endif %}>
+                            <label class="form-check-label" for="is_active">
+                                Активний (відображається на сайті)
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>
+                            Зберегти зміни
+                        </button>
+                        <a href="{% url 'admin_panel:main_product_settings' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>
+                            Скасувати
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Автоматичний розрахунок загальної ціни
+function calculateTotalPrice() {
+    const quantity = document.getElementById('quantity').value;
+    const pricePerUnit = document.getElementById('price_per_unit').value;
+    const totalPriceField = document.getElementById('total_price');
+    
+    if (quantity && pricePerUnit) {
+        const total = (parseFloat(quantity) * parseFloat(pricePerUnit)).toFixed(2);
+        totalPriceField.value = total;
+    } else {
+        totalPriceField.value = '';
+    }
+}
+
+// Слухаємо зміни у полях
+document.getElementById('quantity').addEventListener('input', calculateTotalPrice);
+document.getElementById('price_per_unit').addEventListener('input', calculateTotalPrice);
+
+// Розрахунок при завантаженні сторінки
+document.addEventListener('DOMContentLoaded', calculateTotalPrice);
+</script>
+{% endblock %}
