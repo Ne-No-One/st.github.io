@@ -82,7 +82,6 @@
       "add_to_cart_text": "Додати в кошик",
       "is_active": true,
       "order": 3
-
     },
     {
       "id": 2,
@@ -211,7 +210,7 @@
       "customer_name": "Петро Коваленко",
       "customer_phone": "+380 67 987 65 43",
       "customer_email": "petro@example.com",
-      "status": "в обробці",
+      "status": "виконано",
       "total_amount": 2000.0,
       "currency": "грн",
       "order_date": "2025-09-12T14:15:00",

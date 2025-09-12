@@ -12,20 +12,54 @@
     
     <style>
         :root {
-            --dark-bg: #0f0f0f;
-            --dark-sidebar: #1a1a1a;
-            --dark-card: #2a2a2a;
-            --dark-text: #e0e0e0;
-            --dark-text-muted: #888888;
-            --dark-border: #333333;
-            --dark-hover: #3a3a3a;
-            --primary-color: #0d6efd;
-            --success-color: #198754;
-            --warning-color: #ffc107;
-            --danger-color: #dc3545;
-            --info-color: #0dcaf0;
-            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-dark: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            /* Основні кольори - Єдина палітра */
+            --primary: #4f46e5;
+            --primary-light: #6366f1;
+            --primary-dark: #3730a3;
+            
+            /* Фонові кольори */
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            
+            /* Текстові кольори */
+            --text-primary: #f8fafc;
+            --text-secondary: #e2e8f0;
+            --text-muted: #94a3b8;
+            
+            /* Бордери */
+            --border-primary: #475569;
+            --border-secondary: #64748b;
+            
+            /* Hover стани */
+            --hover-bg: #475569;
+            --hover-primary: #5b21b6;
+            
+            /* Статус кольори */
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #06b6d4;
+            
+            /* Градієнти */
+            --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            --gradient-sidebar: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            --gradient-card: linear-gradient(145deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            
+            /* Сумісність зі старими змінними */
+            --dark-bg: var(--bg-primary);
+            --dark-sidebar: var(--bg-secondary);
+            --dark-card: var(--bg-tertiary);
+            --dark-text: var(--text-primary);
+            --dark-text-muted: var(--text-muted);
+            --dark-border: var(--border-primary);
+            --dark-hover: var(--hover-bg);
+            --primary-color: var(--primary);
+            --success-color: var(--success);
+            --warning-color: var(--warning);
+            --danger-color: var(--danger);
+            --info-color: var(--info);
+            --gradient-dark: var(--gradient-sidebar);
         }
         
         * {
@@ -51,26 +85,70 @@
             left: 0;
             z-index: 1000;
             transition: all 0.3s ease;
+            width: 70px;
+        }
+
+        @media (min-width: 768px) {
+            .sidebar {
+                width: 150px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .sidebar {
+                width: 120px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .sidebar {
+                width: 90px;
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .sidebar {
+                width: 180px;
+            }
         }
         
         .sidebar .nav-link {
             color: var(--dark-text-muted);
-            padding: 10px 15px;
+            padding: 8px 10px;
             border-radius: 6px;
-            margin: 1px 10px;
+            margin: 1px 5px;
             transition: all 0.2s ease;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             display: flex;
             align-items: center;
+            justify-content: center;
             text-decoration: none;
             white-space: nowrap;
+            text-align: center;
         }
         
         .sidebar .nav-link:hover {
             background-color: var(--dark-hover);
             color: var(--dark-text);
-            transform: translateX(3px);
+            transform: translateX(2px);
             text-decoration: none;
+        }
+        
+        .sidebar .nav-link[title]:hover::after {
+            content: attr(title);
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--dark-card);
+            color: var(--dark-text);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            margin-left: 8px;
         }
         
         .sidebar .nav-link.active {
@@ -79,11 +157,38 @@
         }
         
         .sidebar .nav-link i {
-            width: 18px;
-            margin-right: 10px;
-            font-size: 0.9rem;
+            width: 16px;
+            margin-right: 6px;
+            font-size: 0.85rem;
             text-align: center;
             flex-shrink: 0;
+        }
+
+        @media (min-width: 1400px) {
+            .sidebar .nav-link {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+                justify-content: flex-start;
+            }
+            
+            .sidebar .nav-link i {
+                width: 20px;
+                margin-right: 10px;
+                font-size: 1rem;
+            }
+
+            .sidebar .nav-section-header {
+                padding: 8px 15px;
+                font-size: 0.75rem;
+                justify-content: flex-start;
+                text-align: left;
+            }
+
+            .sidebar .logo {
+                padding: 15px;
+                font-size: 1rem;
+                text-align: left;
+            }
         }
         
         .main-content {
@@ -91,23 +196,60 @@
             min-height: 100vh;
             margin-left: 0;
             transition: margin-left 0.3s ease;
+            padding: 0;
+            width: calc(100% - 0px);
+            position: relative;
+            overflow-x: hidden;
         }
         
         .page-header {
-            background: var(--gradient-primary);
-            color: white;
-            padding: 12px 20px;
+            background: transparent;
+            color: var(--text-primary);
+            padding: 18px 20px;
             margin-bottom: 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-            border-bottom: 1px solid var(--dark-border);
+            border-bottom: 1px solid var(--border-primary);
             position: sticky;
             top: 0;
             z-index: 999;
         }
         
         .content-area {
-            padding: 20px;
-            background-color: var(--dark-bg);
+            padding: 15px 0 0 0;
+            background-color: var(--bg-primary);
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 767px) {
+            .content-area {
+                padding: 10px 0 0 0;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .content-area {
+                padding: 15px 0 0 0;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .content-area {
+                padding: 20px 0 0 0;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .content-area {
+                padding: 20px 0 0 0;
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .content-area {
+                padding: 25px 0 0 0;
+            }
         }
         
         .card {
@@ -184,9 +326,9 @@
         .logo {
             color: var(--dark-text);
             text-decoration: none;
-            font-size: 1.1rem;
+            font-size: 0.9rem;
             font-weight: bold;
-            padding: 12px 8px;
+            padding: 10px 5px;
             display: block;
             text-align: center;
             border-bottom: 1px solid var(--dark-border);
@@ -200,15 +342,17 @@
         
         .nav-section-header {
             color: var(--dark-text-muted);
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-top: 15px;
-            margin-bottom: 8px;
-            padding: 0 15px;
+            margin-top: 12px;
+            margin-bottom: 6px;
+            padding: 0 8px;
             display: flex;
             align-items: center;
+            justify-content: center;
+            text-align: center;
         }
         
         .table {
@@ -324,16 +468,39 @@
             margin-bottom: 5px;
         }
         
-        /* Light Theme */
+        /* Світла тема */
         body.light-theme {
-            --dark-bg: #f8f9fa;
-            --dark-sidebar: #ffffff;
-            --dark-card: #ffffff;
-            --dark-text: #212529;
-            --dark-text-muted: #6c757d;
-            --dark-border: #dee2e6;
-            --dark-hover: #e9ecef;
-            --gradient-dark: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            /* Фонові кольори світлої теми */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            
+            /* Текстові кольори світлої теми */
+            --text-primary: #0f172a;
+            --text-secondary: #334155;
+            --text-muted: #64748b;
+            
+            /* Бордери світлої теми */
+            --border-primary: #e2e8f0;
+            --border-secondary: #cbd5e1;
+            
+            /* Hover стани світлої теми */
+            --hover-bg: #f1f5f9;
+            --hover-primary: #3730a3;
+            
+            /* Градієнти світлої теми */
+            --gradient-sidebar: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            --gradient-card: linear-gradient(145deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            
+            /* Сумісність зі старими змінними */
+            --dark-bg: var(--bg-primary);
+            --dark-sidebar: var(--bg-secondary);
+            --dark-card: var(--bg-tertiary);
+            --dark-text: var(--text-primary);
+            --dark-text-muted: var(--text-muted);
+            --dark-border: var(--border-primary);
+            --dark-hover: var(--hover-bg);
+            --gradient-dark: var(--gradient-sidebar);
         }
         
         body.light-theme .sidebar {
@@ -353,50 +520,433 @@
         body.light-theme .card:hover {
             box-shadow: 0 4px 20px rgba(0,0,0,0.15);
         }
-        
-        /* Theme Switcher */
-        .theme-switcher {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1001;
-            background: var(--dark-card);
-            border: 1px solid var(--dark-border);
-            border-radius: 25px;
-            padding: 5px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+
+        /* Покращення контрастності для світлої теми */
+        body.light-theme .form-text, 
+        body.light-theme .text-muted, 
+        body.light-theme small.text-muted {
+            color: #374151 !important;
+            font-weight: 600;
+        }
+
+        body.light-theme .card-text, 
+        body.light-theme p.card-text {
+            color: #1f2937 !important;
+            font-weight: 600;
+        }
+
+        body.light-theme .form-control {
+            background-color: var(--bg-primary) !important;
+            border: 2px solid var(--border-primary) !important;
+            color: #111827 !important;
+        }
+
+        body.light-theme .form-control:focus {
+            background-color: var(--bg-primary) !important;
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.1) !important;
+        }
+
+        body.light-theme .form-select {
+            background-color: var(--bg-primary) !important;
+            border: 2px solid var(--border-primary) !important;
+            color: #111827 !important;
+        }
+
+        body.light-theme .form-select:focus {
+            background-color: var(--bg-primary) !important;
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.1) !important;
+        }
+
+        .form-select {
+            background-color: var(--bg-primary) !important;
+            border: 2px solid var(--border-primary) !important;
+            color: var(--text-primary) !important;
+        }
+
+        .form-select:focus {
+            background-color: var(--bg-primary) !important;
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.1) !important;
+        }
+
+        /* Додаткові покращення для світлої теми */
+        body.light-theme .nav-link {
+            color: #374151 !important;
+        }
+
+        body.light-theme .nav-section-header {
+            color: #1f2937 !important;
+        }
+
+        body.light-theme h1, 
+        body.light-theme h2, 
+        body.light-theme h3, 
+        body.light-theme h4, 
+        body.light-theme h5, 
+        body.light-theme h6 {
+            color: #111827 !important;
+        }
+
+        body.light-theme .table-dark {
+            background-color: #f9fafb !important;
+            color: #111827 !important;
+        }
+
+        body.light-theme .table-dark th,
+        body.light-theme .table-dark td {
+            border-color: #e5e7eb !important;
+            color: #111827 !important;
+        }
+
+        /* Модальні вікна */
+        .modal-content {
+            background-color: var(--bg-tertiary) !important;
+            border: 1px solid var(--border-primary) !important;
+            border-radius: 8px;
+        }
+
+        .modal-header {
+            background: var(--gradient-primary);
+            border-bottom: 1px solid var(--border-primary) !important;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .modal-header .modal-title {
+            color: white !important;
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--border-primary) !important;
+            background-color: var(--bg-secondary);
+            border-radius: 0 0 8px 8px;
+        }
+
+        .modal-body {
+            background-color: var(--bg-primary);
+        }
+
+        /* Кнопка закриття модального вікна */
+        .btn-close {
+            filter: invert(1);
+        }
+
+        /* Модальні вікна для світлої теми */
+        body.light-theme .modal-content {
+            background-color: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+        }
+
+        body.light-theme .modal-header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            border-bottom: 1px solid #e2e8f0 !important;
+        }
+
+        body.light-theme .modal-footer {
+            border-top: 1px solid #e2e8f0 !important;
+            background-color: #f8fafc;
+        }
+
+        body.light-theme .modal-body {
+            background-color: #ffffff;
+        }
+
+        body.light-theme .btn-close {
+            filter: none;
         }
         
-        .theme-switcher button {
+        /* Theme Switcher в Sidebar */
+        .theme-switcher-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        
+        .theme-switcher-sidebar .theme-btn {
             background: none;
             border: none;
-            padding: 8px 12px;
-            border-radius: 20px;
-            color: var(--dark-text-muted);
-            transition: all 0.2s ease;
             cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 6px;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
         }
         
-        .theme-switcher button.active {
-            background: var(--primary-color);
-            color: white;
+        .theme-switcher-sidebar .theme-btn.active {
+            background-color: var(--primary);
+            color: white !important;
         }
         
-        .theme-switcher button:hover {
-            color: var(--dark-text);
+        .theme-switcher-sidebar .theme-btn:hover {
+            background-color: var(--hover-bg);
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        /* Анімація для іконки теми */
+        .theme-switcher-sidebar .theme-btn i {
+            transition: transform 0.3s ease;
+        }
+        
+        .theme-switcher-sidebar .theme-btn:hover i {
+            transform: rotate(20deg);
         }
         
         /* Responsive */
         @media (min-width: 768px) {
             .main-content {
-                margin-left: 200px;
+                margin-left: 150px;
+                width: calc(100% - 150px);
+                padding-left: 0;
+                padding-right: 0;
             }
         }
         
         @media (min-width: 992px) {
             .main-content {
-                margin-left: 250px;
+                margin-left: 120px;
+                width: calc(100% - 120px);
+                padding-left: 0;
+                padding-right: 0;
             }
+        }
+
+        @media (min-width: 1200px) {
+            .main-content {
+                margin-left: 90px;
+                width: calc(100% - 90px);
+                padding-left: 0;
+                padding-right: 0;
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .main-content {
+                margin-left: 180px;
+                width: calc(100% - 180px);
+                padding-left: 0;
+                padding-right: 0;
+            }
+        }
+
+        /* Додатковий CSS для центрування контенту */
+        .content-area .container-fluid {
+            padding-left: 0;
+            padding-right: 0;
+            max-width: 100%;
+            width: 100%;
+            margin: 0;
+        }
+
+        .content-area .row {
+            margin-left: 0;
+            margin-right: 0;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .content-area [class*="col-"] {
+            padding-left: 8px;
+            padding-right: 8px;
+            margin-bottom: 10px;
+        }
+
+        /* Додаткові відступи для карток */
+        .content-area .card {
+            margin-bottom: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            background: var(--gradient-card);
+            border: 1px solid var(--border-primary);
+        }
+
+        .content-area .stat-card {
+            padding: 12px;
+            margin-bottom: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            background: var(--gradient-card);
+            border: 1px solid var(--border-primary);
+        }
+
+        /* Компактні картки */
+        .content-area .compact-card {
+            margin-bottom: 8px;
+        }
+
+        .content-area .compact-card .card-body {
+            padding: 10px;
+        }
+
+        /* Забезпечення правильного розтягування без overflow */
+        .page-header {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Canvas для графіків */
+        .content-area canvas {
+            max-width: 100%;
+            height: auto !important;
+        }
+
+        /* Таблиці */
+        .content-area .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        /* Покращена контрастність тексту */
+        .form-text, .text-muted, small.text-muted {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+        }
+
+        .card-text, p.card-text {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+        }
+
+        /* Покращені кнопки */
+        .btn-primary {
+            background: var(--primary) !important;
+            border-color: var(--primary) !important;
+            color: white !important;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover, .btn-primary:focus {
+            background: var(--primary-dark) !important;
+            border-color: var(--primary-dark) !important;
+            color: white !important;
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary) !important;
+            border-color: var(--border-primary) !important;
+            color: var(--text-primary) !important;
+            font-weight: 600;
+        }
+
+        .btn-secondary:hover {
+            background: var(--hover-bg) !important;
+            border-color: var(--border-secondary) !important;
+            color: var(--text-primary) !important;
+        }
+
+        .btn-success {
+            background: var(--success) !important;
+            border-color: var(--success) !important;
+            color: white !important;
+            font-weight: 600;
+        }
+
+        .btn-warning {
+            background: var(--warning) !important;
+            border-color: var(--warning) !important;
+            color: white !important;
+            font-weight: 600;
+        }
+
+        .btn-danger {
+            background: var(--danger) !important;
+            border-color: var(--danger) !important;
+            color: white !important;
+            font-weight: 600;
+        }
+
+        .btn-info {
+            background: var(--info) !important;
+            border-color: var(--info) !important;
+            color: white !important;
+            font-weight: 600;
+        }
+
+        /* Покращення input полів */
+        .form-control {
+            background-color: var(--bg-secondary) !important;
+            border: 1px solid var(--border-primary) !important;
+            color: var(--text-primary) !important;
+        }
+
+        .form-control:focus {
+            background-color: var(--bg-secondary) !important;
+            border-color: var(--primary) !important;
+            color: var(--text-primary) !important;
+            box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25) !important;
+        }
+
+        .form-label {
+            color: var(--text-primary) !important;
+            font-weight: 600;
+        }
+
+        /* Badge кольори */
+        .badge.bg-success {
+            background-color: var(--success) !important;
+            color: white !important;
+        }
+
+        .badge.bg-warning {
+            background-color: var(--warning) !important;
+            color: white !important;
+        }
+
+        .badge.bg-danger {
+            background-color: var(--danger) !important;
+            color: white !important;
+        }
+
+        .badge.bg-info {
+            background-color: var(--info) !important;
+            color: white !important;
+        }
+
+        /* Спеціальні стилі для сторінки головного товару */
+        .btn-outline-primary {
+            border: 2px solid var(--primary) !important;
+            color: var(--primary) !important;
+            background: transparent !important;
+            font-weight: 600;
+        }
+
+        .btn-outline-primary:hover, .btn-outline-primary:focus {
+            background: var(--primary) !important;
+            border-color: var(--primary) !important;
+            color: white !important;
+        }
+
+        .btn-outline-secondary {
+            border: 2px solid var(--border-secondary) !important;
+            color: var(--text-primary) !important;
+            background: transparent !important;
+            font-weight: 600;
+        }
+
+        .btn-outline-secondary:hover {
+            background: var(--bg-tertiary) !important;
+            border-color: var(--border-secondary) !important;
+            color: var(--text-primary) !important;
+        }
+
+        /* Кнопки-іконки */
+        .btn-sm {
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.4rem 0.8rem;
+        }
+
+        /* Покращення для малих кнопок редагування */
+        .btn.btn-sm.btn-warning,
+        .btn.btn-sm.btn-primary,
+        .btn.btn-sm.btn-danger {
+            min-width: 35px;
+            height: 35px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
         
         @media (max-width: 767px) {
@@ -441,120 +991,114 @@
     </style>
 </head>
 <body>
-    <!-- Theme Switcher -->
-    <div class="theme-switcher">
-        <button onclick="switchTheme('dark')" id="darkThemeBtn" class="active">
-            <i class="fas fa-moon"></i>
-        </button>
-        <button onclick="switchTheme('light')" id="lightThemeBtn">
-            <i class="fas fa-sun"></i>
-        </button>
-    </div>
     
     <div class="container-fluid p-0">
         <div class="row g-0">
             <!-- Sidebar -->
-            <div class="col-lg-2 col-md-3 sidebar compact-sidebar">
+            <div class="sidebar compact-sidebar">
                 <a href="{% url 'admin_panel:dashboard' %}" class="logo">
-                    <i class="fas fa-seedling me-2"></i>
-                    <span class="d-none d-lg-inline">Квітковий Адмін</span>
-                    <span class="d-lg-none">Адмін</span>
+                    <i class="fas fa-seedling"></i>
+                    <span class="d-none d-xl-inline ms-1">Квітковий Адмін</span>
+                    <span class="d-xl-none d-lg-inline ms-1">Адмін</span>
                 </a>
                 
                 <nav class="nav flex-column compact-nav">
                     <!-- Dashboard -->
-                    <a class="nav-link" href="{% url 'admin_panel:dashboard' %}">
+                    <a class="nav-link" href="{% url 'admin_panel:dashboard' %}" title="Dashboard">
                         <i class="fas fa-tachometer-alt"></i>
-                        <span class="d-none d-lg-inline">Dashboard</span>
+                        <span class="d-none d-xxl-inline ms-1">Dashboard</span>
                     </a>
                     
                     <!-- Основні налаштування -->
                     <div class="nav-section-header">
-                        <span class="d-none d-lg-inline">Налаштування</span>
-                        <span class="d-lg-none">⚙️</span>
+                        <span class="d-none d-xl-inline">Налаштування</span>
+                        <span class="d-xl-none">⚙️</span>
                     </div>
-                    <a class="nav-link" href="{% url 'admin_panel:site_settings' %}">
+                    <a class="nav-link" href="{% url 'admin_panel:site_settings' %}" title="Налаштування сайту">
                         <i class="fas fa-cog"></i>
-                        <span class="d-none d-lg-inline">Налаштування сайту</span>
-                        <span class="d-lg-none">Сайт</span>
+                        <span class="d-none d-xl-inline ms-1">Налаштування</span>
                     </a>
                     
                     <!-- Товари -->
                     <div class="nav-section-header">
-                        <span class="d-none d-lg-inline">Товари</span>
-                        <span class="d-lg-none">📦</span>
+                        <span class="d-none d-xl-inline">Товари</span>
+                        <span class="d-xl-none">📦</span>
                     </div>
-                    <a class="nav-link" href="{% url 'admin_panel:main_product_settings' %}">
+                    <a class="nav-link" href="{% url 'admin_panel:main_product_settings' %}" title="Головний товар">
                         <i class="fas fa-star"></i>
-                        <span class="d-none d-lg-inline">Головний товар</span>
-                        <span class="d-lg-none">Головний</span>
+                        <span class="d-none d-xl-inline ms-1">Головний</span>
                     </a>
-                    <a class="nav-link" href="{% url 'admin_panel:additional_products' %}">
+                    <a class="nav-link" href="{% url 'admin_panel:additional_products' %}" title="Додаткові товари">
                         <i class="fas fa-box"></i>
-                        <span class="d-none d-lg-inline">Додаткові товари</span>
-                        <span class="d-lg-none">Додаткові</span>
+                        <span class="d-none d-xl-inline ms-1">Додаткові</span>
                     </a>
-                    <a class="nav-link" href="{% url 'admin_panel:inventory_list' %}">
+                    <a class="nav-link" href="{% url 'admin_panel:inventory_list' %}" title="Управління складом">
                         <i class="fas fa-warehouse"></i>
-                        <span class="d-none d-lg-inline">Склад</span>
-                        <span class="d-lg-none">Склад</span>
+                        <span class="d-none d-xl-inline ms-1">Склад</span>
                     </a>
                     
                     <!-- Замовлення та клієнти -->
                     <div class="nav-section-header">
-                        <span class="d-none d-lg-inline">Продажі</span>
-                        <span class="d-lg-none">💰</span>
+                        <span class="d-none d-xl-inline">Продажі</span>
+                        <span class="d-xl-none">💰</span>
                     </div>
-                    <a class="nav-link" href="{% url 'admin_panel:orders_list' %}">
+                    <a class="nav-link" href="{% url 'admin_panel:orders_list' %}" title="Замовлення">
                         <i class="fas fa-shopping-cart"></i>
-                        <span class="d-none d-lg-inline">Замовлення</span>
-                        <span class="d-lg-none">Замовлення</span>
+                        <span class="d-none d-xl-inline ms-1">Замовлення</span>
                     </a>
-                    <a class="nav-link" href="{% url 'admin_panel:customers_list' %}">
+                    <a class="nav-link" href="{% url 'admin_panel:customers_list' %}" title="Клієнти">
                         <i class="fas fa-users"></i>
-                        <span class="d-none d-lg-inline">Клієнти</span>
-                        <span class="d-lg-none">Клієнти</span>
+                        <span class="d-none d-xl-inline ms-1">Клієнти</span>
                     </a>
-                    <a class="nav-link" href="{% url 'admin_panel:financial_reports' %}">
+                    <a class="nav-link" href="{% url 'admin_panel:financial_reports' %}" title="Фінансові звіти">
                         <i class="fas fa-chart-line"></i>
-                        <span class="d-none d-lg-inline">Звіти</span>
-                        <span class="d-lg-none">Звіти</span>
+                        <span class="d-none d-xl-inline ms-1">Звіти</span>
                     </a>
                     
                     <!-- Контент -->
                     <div class="nav-section-header">
-                        <span class="d-none d-lg-inline">Контент</span>
-                        <span class="d-lg-none">📄</span>
+                        <span class="d-none d-xl-inline">Контент</span>
+                        <span class="d-xl-none">📄</span>
                     </div>
-                    <a class="nav-link" href="{% url 'admin_panel:services' %}">
+                    <a class="nav-link" href="{% url 'admin_panel:services' %}" title="Послуги">
                         <i class="fas fa-concierge-bell"></i>
-                        <span class="d-none d-lg-inline">Послуги</span>
-                        <span class="d-lg-none">Послуги</span>
+                        <span class="d-none d-xl-inline ms-1">Послуги</span>
                     </a>
-                    <a class="nav-link" href="{% url 'admin_panel:contact_info' %}">
+                    <a class="nav-link" href="{% url 'admin_panel:contact_info' %}" title="Контактна інформація">
                         <i class="fas fa-address-book"></i>
-                        <span class="d-none d-lg-inline">Контакти</span>
-                        <span class="d-lg-none">Контакти</span>
+                        <span class="d-none d-xl-inline ms-1">Контакти</span>
                     </a>
-                    <a class="nav-link" href="{% url 'admin_panel:about_section' %}">
+                    <a class="nav-link" href="{% url 'admin_panel:about_section' %}" title="Про нас">
                         <i class="fas fa-info-circle"></i>
-                        <span class="d-none d-lg-inline">Про нас</span>
-                        <span class="d-lg-none">Про нас</span>
+                        <span class="d-none d-xl-inline ms-1">Про нас</span>
                     </a>
                     
-                    <hr class="my-3" style="border-color: var(--dark-border);">
+                    <hr class="my-2" style="border-color: var(--dark-border);">
+                    
+                    <!-- Theme Switcher -->
+                    <div class="nav-section-header">
+                        <span class="d-none d-xl-inline">Тема</span>
+                        <span class="d-xl-none">🎨</span>
+                    </div>
+                    <div class="theme-switcher-sidebar">
+                        <button id="themeToggleBtn" class="nav-link theme-btn" onclick="toggleTheme()" title="Перемикач теми">
+                            <i id="themeIcon" class="fas fa-moon"></i>
+                            <span class="d-none d-xl-inline ms-1" id="themeText">Темна</span>
+                        </button>
+                    </div>
+                    
+                    <hr class="my-2" style="border-color: var(--dark-border);">
                     
                     <!-- Перегляд сайту -->
-                    <a class="nav-link" href="/" target="_blank">
+                    <a class="nav-link" href="/" target="_blank" title="Переглянути сайт">
                         <i class="fas fa-external-link-alt"></i>
-                        <span class="d-none d-lg-inline">Переглянути сайт</span>
-                        <span class="d-lg-none">Сайт</span>
+                        <span class="d-none d-xl-inline ms-1">Сайт</span>
                     </a>
                 </nav>
             </div>
             
             <!-- Main Content -->
-            <div class="col-lg-10 col-md-9 main-content">
+                <div class="main-content">
                 <!-- Page Header -->
                 <div class="page-header compact-header">
                     <div class="d-flex justify-content-between align-items-center">
@@ -567,15 +1111,17 @@
                                 <i class="fas fa-circle me-1" style="font-size: 0.5rem;"></i>
                                 Онлайн
                             </span>
+                            
+                            
                             <button class="btn btn-outline-light btn-sm d-md-none" onclick="toggleSidebar()">
                                 <i class="fas fa-bars"></i>
                             </button>
-                        </div>
                         </div>
                     </div>
                     
                 <!-- Content Area -->
                 <div class="content-area">
+                    <div class="container-fluid">
                     {% if messages %}
                         {% for message in messages %}
                             <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -587,6 +1133,7 @@
                     
                     {% block content %}
                     {% endblock %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -597,39 +1144,265 @@
     
     <script>
         // Theme switching
-        function switchTheme(theme) {
+        function toggleTheme() {
             const body = document.body;
-            const darkBtn = document.getElementById('darkThemeBtn');
-            const lightBtn = document.getElementById('lightThemeBtn');
+            const themeBtn = document.getElementById('themeToggleBtn');
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
             
-            if (theme === 'dark') {
+            if (body.classList.contains('light-theme')) {
+                // Перемикаємо на темну тему
                 body.classList.remove('light-theme');
-                darkBtn.classList.add('active');
-                lightBtn.classList.remove('active');
+                themeIcon.className = 'fas fa-moon';
+                if (themeText) themeText.textContent = 'Темна';
+                themeBtn.title = 'Перемикач теми: Темна';
                 localStorage.setItem('theme', 'dark');
             } else {
+                // Перемикаємо на світлу тему
                 body.classList.add('light-theme');
-                lightBtn.classList.add('active');
-                darkBtn.classList.remove('active');
+                themeIcon.className = 'fas fa-sun';
+                if (themeText) themeText.textContent = 'Світла';
+                themeBtn.title = 'Перемикач теми: Світла';
                 localStorage.setItem('theme', 'light');
             }
         }
         
+        // Застаріла функція для сумісності
+        function switchTheme(theme) {
+            if (theme === 'light') {
+                if (!document.body.classList.contains('light-theme')) {
+                    toggleTheme();
+                }
+            } else {
+                if (document.body.classList.contains('light-theme')) {
+                    toggleTheme();
+                }
+            }
+        }
+        
+        // Обробка runtime помилок
+        window.addEventListener('error', function(e) {
+            const errorPatterns = [
+                'runtime.lastError', 
+                'message port closed', 
+                'Extension context invalidated',
+                'chrome-extension://'
+            ];
+            
+            if (e.message && errorPatterns.some(pattern => e.message.includes(pattern))) {
+                console.warn('Browser extension error ignored:', e.message);
+                e.preventDefault();
+                e.stopPropagation();
+                return true;
+            }
+        });
+
+        // Додатковий обробник для unhandled promise rejection
+        window.addEventListener('unhandledrejection', function(e) {
+            const errorPatterns = [
+                'runtime.lastError', 
+                'message port closed',
+                'Extension context invalidated'
+            ];
+            
+            if (e.reason && e.reason.message && errorPatterns.some(pattern => e.reason.message.includes(pattern))) {
+                console.warn('Browser extension promise rejection ignored:', e.reason.message);
+                e.preventDefault();
+                return true;
+            }
+        });
+
+        // Глобальний обробник консольних помилок
+        const originalError = console.error;
+        console.error = function(...args) {
+            const message = args.join(' ');
+            if (message.includes('runtime.lastError') || message.includes('message port closed')) {
+                console.warn('Extension error suppressed:', message);
+                return;
+            }
+            originalError.apply(console, args);
+        };
+
         // Load saved theme
         document.addEventListener('DOMContentLoaded', function() {
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            switchTheme(savedTheme);
+            try {
+                const savedTheme = localStorage.getItem('theme') || 'dark';
+                switchTheme(savedTheme);
+
+                // Ініціалізація модальних вікон з затримкою
+                setTimeout(() => {
+                    initializeModals();
+                }, 100);
+                
+                // Встановлення активного навігаційного посилання
+                setActiveNavLink();
+            } catch (error) {
+                console.error('Помилка ініціалізації:', error);
+            }
+        });
+
+        // Ініціалізація всіх модальних вікон
+        function initializeModals() {
+            // Знаходимо всі модальні вікна
+            const modals = document.querySelectorAll('.modal');
             
-            // Set active nav link
+            modals.forEach(modal => {
+                // Очищуємо попередні обробники, якщо є
+                const existingModal = bootstrap.Modal.getInstance(modal);
+                if (existingModal) {
+                    existingModal.dispose();
+                }
+                
+                // Очищуємо всі існуючі event listeners
+                modal.removeEventListener('show.bs.modal', null);
+                modal.removeEventListener('shown.bs.modal', null);
+                modal.removeEventListener('hide.bs.modal', null);
+                modal.removeEventListener('hidden.bs.modal', null);
+                
+                // Додаємо обробники подій з namespace
+                modal.addEventListener('show.bs.modal', function modalShowHandler() {
+                    console.log('Модальне вікно відкривається:', modal.id);
+                    document.body.style.overflow = 'hidden';
+                });
+
+                modal.addEventListener('hide.bs.modal', function modalHideHandler() {
+                    console.log('Модальне вікно закривається:', modal.id);
+                    document.body.style.overflow = '';
+                });
+                
+                modal.addEventListener('hidden.bs.modal', function modalHiddenHandler() {
+                    console.log('Модальне вікно повністю закрито:', modal.id);
+                    cleanupModals();
+                });
+            });
+
+            console.log(`Ініціалізовано ${modals.length} модальних вікон`);
+        }
+
+        // Функція для безпечного відкриття модального вікна
+        function openModal(modalId) {
+            return new Promise((resolve, reject) => {
+                try {
+                    const modalElement = document.getElementById(modalId);
+                    if (!modalElement) {
+                        console.error('Модальне вікно не знайдено:', modalId);
+                        reject(new Error('Modal not found'));
+                        return;
+                    }
+
+                    // Очищуємо попередні стани
+                    cleanupModals();
+
+                    // Створюємо або отримуємо існуючий екземпляр модального вікна
+                    const modal = bootstrap.Modal.getOrCreateInstance(modalElement, {
+                        backdrop: true,
+                        keyboard: true,
+                        focus: true
+                    });
+
+                    // Додаємо timeout для запобігання зависанню
+                    const timeout = setTimeout(() => {
+                        modalElement.removeEventListener('shown.bs.modal', onShown);
+                        modalElement.removeEventListener('hide.bs.modal', onError);
+                        reject(new Error('Modal opening timeout'));
+                    }, 5000);
+
+                    // Додаємо одноразовий обробник для успішного відкриття
+                    const onShown = () => {
+                        clearTimeout(timeout);
+                        modalElement.removeEventListener('shown.bs.modal', onShown);
+                        modalElement.removeEventListener('hide.bs.modal', onError);
+                        console.log('Модальне вікно успішно відкрито:', modalId);
+                        resolve(true);
+                    };
+
+                    // Додаємо одноразовий обробник для помилки (якщо модал закривається перед відкриттям)
+                    const onError = () => {
+                        clearTimeout(timeout);
+                        modalElement.removeEventListener('shown.bs.modal', onShown);
+                        modalElement.removeEventListener('hide.bs.modal', onError);
+                        reject(new Error('Modal was closed before opening'));
+                    };
+
+                    modalElement.addEventListener('shown.bs.modal', onShown);
+                    modalElement.addEventListener('hide.bs.modal', onError);
+                    
+                    // Відкриваємо модальне вікно
+                    modal.show();
+                    
+                } catch (error) {
+                    console.error('Помилка при відкритті модального вікна:', error);
+                    reject(error);
+                }
+            });
+        }
+
+        // Функція для очищення всіх модальних станів
+        function cleanupModals() {
+            // Прибираємо всі backdrop'и
+            const existingBackdrops = document.querySelectorAll('.modal-backdrop');
+            existingBackdrops.forEach(backdrop => {
+                backdrop.remove();
+            });
+            
+            // Прибираємо класи та стилі з body
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+        }
+
+        // Альтернативна функція для простого відкриття (зворотна сумісність)
+        function showModal(modalId) {
+            try {
+                const modalElement = document.getElementById(modalId);
+                if (!modalElement) {
+                    console.error('Модальне вікно не знайдено:', modalId);
+                    return false;
+                }
+
+                cleanupModals();
+                
+                const modal = bootstrap.Modal.getOrCreateInstance(modalElement, {
+                    backdrop: true,
+                    keyboard: true,
+                    focus: true
+                });
+                
+                modal.show();
+                console.log('Модальне вікно відкрито (showModal):', modalId);
+                return true;
+            } catch (error) {
+                console.error('Помилка showModal:', error);
+                return false;
+            }
+        }
+
+        // Функція для безпечного закриття модального вікна
+        function closeModal(modalId) {
+            const modalElement = document.getElementById(modalId);
+            if (modalElement) {
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                if (modal) {
+                    modal.hide();
+                }
+                return true;
+            }
+            return false;
+        }
+
+        // Set active nav link
+        function setActiveNavLink() {
             const currentPath = window.location.pathname;
             const navLinks = document.querySelectorAll('.sidebar .nav-link');
             
             navLinks.forEach(link => {
                 if (link.getAttribute('href') === currentPath) {
                     link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
                 }
             });
-        });
+        }
         
         // Sidebar functions
         function toggleSidebar() {
@@ -650,4 +1423,5 @@
         });
     </script>
 </body>
+</html>
 </html>

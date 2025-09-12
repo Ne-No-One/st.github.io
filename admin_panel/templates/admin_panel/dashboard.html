@@ -11,7 +11,8 @@
             <i class="fas fa-shopping-cart text-primary"></i>
             <h6 class="text-primary">Замовлення</h6>
             <h4>{{ orders_count }}</h4>
-            <a href="{% url 'admin_panel:orders_list' %}" class="btn btn-sm btn-primary">Переглянути</a>
+            <small class="text-muted">+5 цього тижня</small>
+            <a href="{% url 'admin_panel:orders_list' %}" class="btn btn-sm btn-primary mt-2">Переглянути</a>
         </div>
     </div>
 
@@ -20,7 +21,8 @@
             <i class="fas fa-users text-success"></i>
             <h6 class="text-success">Клієнти</h6>
             <h4>{{ customers_count }}</h4>
-            <a href="{% url 'admin_panel:customers_list' %}" class="btn btn-sm btn-success">Переглянути</a>
+            <small class="text-muted">+2 нових</small>
+            <a href="{% url 'admin_panel:customers_list' %}" class="btn btn-sm btn-success mt-2">Переглянути</a>
         </div>
     </div>
 
@@ -29,7 +31,8 @@
             <i class="fas fa-warehouse text-info"></i>
             <h6 class="text-info">Позицій на складі</h6>
             <h4>{{ inventory_count }}</h4>
-            <a href="{% url 'admin_panel:inventory_list' %}" class="btn btn-sm btn-info">Переглянути</a>
+            <small class="text-muted">Всього товарів: {{ inventory_count }}</small>
+            <a href="{% url 'admin_panel:inventory_list' %}" class="btn btn-sm btn-info mt-2">Переглянути</a>
         </div>
     </div>
 
@@ -38,7 +41,162 @@
             <i class="fas fa-exclamation-triangle text-warning"></i>
             <h6 class="text-warning">Низькі залишки</h6>
             <h4>{{ low_stock_count }}</h4>
-            <a href="{% url 'admin_panel:financial_reports' %}" class="btn btn-sm btn-warning">Звіти</a>
+            <small class="text-muted">Потребують поповнення</small>
+            <a href="{% url 'admin_panel:inventory_list' %}" class="btn btn-sm btn-warning mt-2">Поповнити</a>
+        </div>
+    </div>
+</div>
+
+<!-- Детальна статистика -->
+<div class="row mb-4">
+    <div class="col-lg-8 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-line me-2"></i>
+                    Статистика продажів
+                </h5>
+            </div>
+            <div class="card-body">
+                <canvas id="salesChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-pie me-2"></i>
+                    Категорії товарів
+                </h5>
+            </div>
+            <div class="card-body">
+                <canvas id="categoriesChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Фінансова статистика -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card compact-card text-center">
+            <div class="card-body">
+                <i class="fas fa-dollar-sign fa-2x text-success mb-2"></i>
+                <h6>Дохід цього місяця</h6>
+                <h4 class="text-success">45,000 грн</h4>
+                <small class="text-muted">+12% від минулого місяця</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card compact-card text-center">
+            <div class="card-body">
+                <i class="fas fa-chart-line fa-2x text-info mb-2"></i>
+                <h6>Прибуток</h6>
+                <h4 class="text-info">27,000 грн</h4>
+                <small class="text-muted">Рентабельність: 60%</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card compact-card text-center">
+            <div class="card-body">
+                <i class="fas fa-shopping-bag fa-2x text-primary mb-2"></i>
+                <h6>Середній чек</h6>
+                <h4 class="text-primary">1,800 грн</h4>
+                <small class="text-muted">+5% від минулого тижня</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card compact-card text-center">
+            <div class="card-body">
+                <i class="fas fa-star fa-2x text-warning mb-2"></i>
+                <h6>Топ товар</h6>
+                <h4 class="text-warning">Преміум букет</h4>
+                <small class="text-muted">25 замовлень</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Останні дії та сповіщення -->
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-clock me-2"></i>
+                    Останні замовлення
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-dark table-sm">
+                        <tbody>
+                            {% if recent_orders %}
+                                {% for order in recent_orders %}
+                                <tr>
+                                    <td><strong>{{ order.order_number }}</strong></td>
+                                    <td>{{ order.customer_name }}</td>
+                                    <td>
+                                        {% if order.status == 'нове' %}
+                                            <span class="badge bg-warning">{{ order.status }}</span>
+                                        {% elif order.status == 'в обробці' %}
+                                            <span class="badge bg-info">{{ order.status }}</span>
+                                        {% elif order.status == 'виконано' %}
+                                            <span class="badge bg-success">{{ order.status }}</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">{{ order.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ order.total_amount }} грн</td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">Немає замовлень</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="{% url 'admin_panel:orders_list' %}" class="btn btn-primary btn-sm">
+                        Переглянути всі замовлення
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-bell me-2"></i>
+                    Сповіщення
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Увага!</strong> {{ low_stock_count }} товарів з низькими залишками
+                </div>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Нагадування:</strong> 3 замовлення чекають обробки
+                </div>
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <strong>Успіх:</strong> Виконано 5 замовлень сьогодні
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -79,8 +237,8 @@
                 </p>
                 <a href="{% url 'admin_panel:main_product_settings' %}" class="btn btn-primary btn-sm">
                     <i class="fas fa-edit me-1"></i>Налаштувати
-                </a>
-            </div>
+                        </a>
+                    </div>
         </div>
     </div>
     
@@ -98,8 +256,8 @@
                 </p>
                 <a href="{% url 'admin_panel:additional_products' %}" class="btn btn-primary btn-sm">
                     <i class="fas fa-plus me-1"></i>Управляти
-                </a>
-            </div>
+                        </a>
+                    </div>
         </div>
     </div>
     
@@ -117,8 +275,8 @@
                 </p>
                 <a href="{% url 'admin_panel:services' %}" class="btn btn-primary btn-sm">
                     <i class="fas fa-edit me-1"></i>Управляти
-                </a>
-            </div>
+                        </a>
+                    </div>
         </div>
     </div>
     
@@ -136,9 +294,9 @@
                 </p>
                 <a href="{% url 'admin_panel:contact_info' %}" class="btn btn-primary btn-sm">
                     <i class="fas fa-edit me-1"></i>Редагувати
-                </a>
-            </div>
-        </div>
+                        </a>
+                    </div>
+                </div>
     </div>
     
     <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
@@ -160,4 +318,112 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Графік продажів
+    const salesCtx = document.getElementById('salesChart').getContext('2d');
+    const salesChart = new Chart(salesCtx, {
+        type: 'line',
+        data: {
+            labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'],
+            datasets: [{
+                label: 'Продажі (грн)',
+                data: [1200, 1900, 3000, 2500, 2200, 3500, 4000],
+                borderColor: '#0d6efd',
+                backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                tension: 0.4,
+                fill: true
+            }, {
+                label: 'Замовлення',
+                data: [3, 5, 8, 6, 5, 9, 12],
+                borderColor: '#198754',
+                backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                tension: 0.4,
+                yAxisID: 'y1'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#e0e0e0'
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: '#e0e0e0'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                },
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    ticks: {
+                        color: '#e0e0e0'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    }
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    ticks: {
+                        color: '#e0e0e0'
+                    },
+                    grid: {
+                        drawOnChartArea: false
+                    }
+                }
+            }
+        }
+    });
+
+    // Графік категорій
+    const categoriesCtx = document.getElementById('categoriesChart').getContext('2d');
+    const categoriesChart = new Chart(categoriesCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Букети', 'Композиції', 'Вази', 'Подарунки'],
+            datasets: [{
+                data: [45, 25, 20, 10],
+                backgroundColor: [
+                    '#0d6efd',
+                    '#198754',
+                    '#ffc107',
+                    '#dc3545'
+                ],
+                borderColor: 'transparent',
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#e0e0e0',
+                        padding: 15,
+                        font: {
+                            size: 12
+                        }
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
 {% endblock %}

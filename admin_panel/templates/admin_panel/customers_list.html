@@ -6,39 +6,36 @@
 {% block content %}
 <!-- Статистика -->
 <div class="row mb-4">
-    <div class="col-md-3">
-        <div class="card text-center">
-            <div class="card-body py-3">
-                <h6 class="card-title">Всього клієнтів</h6>
-                <h4 class="text-primary">{{ stats.total }}</h4>
-            </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card border-primary text-center">
+            <i class="fas fa-users text-primary"></i>
+            <h6 class="text-primary">Всього клієнтів</h6>
+            <h4>{{ stats.total }}</h4>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card text-center">
-            <div class="card-body py-3">
-                <h6 class="card-title">VIP клієнти</h6>
-                <h4 class="text-warning">{{ stats.vip }}</h4>
-                <small class="text-muted">Купили > 5000 грн</small>
-            </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card border-warning text-center">
+            <i class="fas fa-crown text-warning"></i>
+            <h6 class="text-warning">VIP клієнти</h6>
+            <h4>{{ stats.vip }}</h4>
+            <small class="text-muted">Купили > 5000 грн</small>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card text-center">
-            <div class="card-body py-3">
-                <h6 class="card-title">Нові цього місяця</h6>
-                <h4 class="text-success">{{ stats.new_this_month }}</h4>
-            </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card border-success text-center">
+            <i class="fas fa-user-plus text-success"></i>
+            <h6 class="text-success">Нові цього місяця</h6>
+            <h4>{{ stats.new_this_month }}</h4>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card text-center">
-            <div class="card-body py-3">
-                <a href="{% url 'admin_panel:add_customer' %}" class="btn btn-primary">
-                    <i class="fas fa-plus me-1"></i>
-                    Додати клієнта
-                </a>
-            </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="stat-card border-info text-center">
+            <i class="fas fa-plus text-info"></i>
+            <h6 class="text-info">Дії</h6>
+            <a href="{% url 'admin_panel:add_customer' %}" class="btn btn-primary btn-sm mt-2">
+                <i class="fas fa-plus me-1"></i>
+                Додати клієнта
+            </a>
         </div>
     </div>
 </div>

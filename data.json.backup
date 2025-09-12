@@ -2,16 +2,9 @@
   "site_settings": {
     "site_title": "Квітковий магазин",
     "site_description": "Красиві квіти для всіх подій - найкращий вибір для ваших особливих моментів",
-    "cart_button_text": "В кошикк",
+    "cart_button_text": "В кошик",
     "premium_label_text": "Преміум",
-    "header_subtitle": "Красиві квіти для всіх подій",
-    "color_selector_title": "колір пакуванняя",
-    "quantity_selector_title": "кількість квітів",
-    "b2b_button_text": "B2B",
-    "cart_count_label": "шт",
-    "currency_symbol": "грн",
-    "loading_text": "Сайт завантажується...",
-    "error_text": "Помилка завантаження сайту"
+    "header_subtitle": "Красиві квіти для всіх подій"
   },
   "main_product": {
     "id": 1,
@@ -82,7 +75,7 @@
     {
       "id": 1,
       "title": "Романтичний букет",
-      "description": "Ніжний букет",
+      "description": "Ніжний букет троянд для романтичних моментів",
       "price": 1500.0,
       "currency": "грн",
       "image_url": "https://i.pinimg.com/736x/9d/a8/8c/9da88ca8b4b9ebe243954c132907b2b9.jpg",
@@ -93,7 +86,7 @@
     {
       "id": 2,
       "title": "Весняний букет",
-      "description": "Свіжі весняні",
+      "description": "Свіжі весняні квіти для піднесення настрою",
       "price": 1200.0,
       "currency": "грн",
       "image_url": "https://i.pinimg.com/736x/4f/d7/23/4fd72339d6ff791898f84164ed48bc76.jpg",
@@ -104,7 +97,7 @@
     {
       "id": 3,
       "title": "Елегантна ваза",
-      "description": "Красива",
+      "description": "Красива керамічна ваза для ваших квітів",
       "price": 800.0,
       "currency": "грн",
       "image_url": "https://picsum.photos/300/200?random=5",
@@ -115,7 +108,7 @@
     {
       "id": 4,
       "title": "Подарункова упаковка",
-      "description": "Розкішна",
+      "description": "Розкішна подарункова упаковка для букета",
       "price": 200.0,
       "currency": "грн",
       "image_url": "https://picsum.photos/300/200?random=6",
@@ -175,6 +168,168 @@
   "about_section": {
     "title": "Про наш квітковий магазин",
     "description": "Ми працюємо вже більше 15 років і є одним з провідних квіткових магазинів Києва. Наша команда професійних флористів створює неперевершені композиції з найсвіжіших квітів. Кожен букет - це маленький витвір мистецтва, створений з любов'ю та увагою до деталей. Ми пишаємося тим, що робимо ваші особливі моменти ще більш яскравими та незабутніми!",
-    "show_section": false
+    "show_section": true
+  },
+  "orders": [
+    {
+      "id": 1,
+      "order_number": "ORD-001",
+      "customer_name": "Анна Іваненко",
+      "customer_phone": "+380 50 123 45 67",
+      "customer_email": "anna@example.com",
+      "status": "нове",
+      "total_amount": 3400.0,
+      "currency": "грн",
+      "order_date": "2025-09-12T10:30:00",
+      "delivery_date": "2025-09-13T15:00:00",
+      "delivery_address": "Київ, вул. Хрещатик, 10, кв. 25",
+      "notes": "Доставити до 15:00, дзвонити за годину",
+      "items": [
+        {
+          "type": "main_product",
+          "product_id": 1,
+          "title": "Преміум букет квітів",
+          "quantity": 51,
+          "price_per_unit": 0.45,
+          "total_price": 2295.0,
+          "color": "рожевий"
+        },
+        {
+          "type": "additional_product",
+          "product_id": 1,
+          "title": "Романтичний букет",
+          "quantity": 1,
+          "price": 1500.0,
+          "total_price": 1500.0
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "order_number": "ORD-002",
+      "customer_name": "Петро Коваленко",
+      "customer_phone": "+380 67 987 65 43",
+      "customer_email": "petro@example.com",
+      "status": "в обробці",
+      "total_amount": 2000.0,
+      "currency": "грн",
+      "order_date": "2025-09-12T14:15:00",
+      "delivery_date": "2025-09-14T12:00:00",
+      "delivery_address": "Київ, просп. Перемоги, 25",
+      "notes": "",
+      "items": [
+        {
+          "type": "additional_product",
+          "product_id": 2,
+          "title": "Весняний букет",
+          "quantity": 1,
+          "price": 1200.0,
+          "total_price": 1200.0
+        },
+        {
+          "type": "additional_product",
+          "product_id": 3,
+          "title": "Елегантна ваза",
+          "quantity": 1,
+          "price": 800.0,
+          "total_price": 800.0
+        }
+      ]
+    }
+  ],
+  "customers": [
+    {
+      "id": 1,
+      "name": "Анна Іваненко",
+      "phone": "+380 50 123 45 67",
+      "email": "anna@example.com",
+      "address": "Київ, вул. Хрещатик, 10, кв. 25",
+      "birthday": "1990-05-15",
+      "registration_date": "2025-01-15",
+      "total_orders": 3,
+      "total_spent": 8400.0,
+      "last_order_date": "2025-09-12",
+      "loyalty_points": 84,
+      "notes": "VIP клієнт, любить троянди"
+    },
+    {
+      "id": 2,
+      "name": "Петро Коваленко",
+      "phone": "+380 67 987 65 43",
+      "email": "petro@example.com",
+      "address": "Київ, просп. Перемоги, 25",
+      "birthday": "1985-03-22",
+      "registration_date": "2025-03-10",
+      "total_orders": 1,
+      "total_spent": 2000.0,
+      "last_order_date": "2025-09-12",
+      "loyalty_points": 20,
+      "notes": ""
+    }
+  ],
+  "inventory": [
+    {
+      "id": 1,
+      "name": "Троянди червоні",
+      "category": "квіти",
+      "current_stock": 150,
+      "min_stock": 20,
+      "unit": "шт",
+      "supplier_price": 15.0,
+      "selling_price": 25.0,
+      "last_restock_date": "2025-09-10",
+      "expiry_days": 7
+    },
+    {
+      "id": 2,
+      "name": "Троянди білі",
+      "category": "квіти",
+      "current_stock": 80,
+      "min_stock": 20,
+      "unit": "шт",
+      "supplier_price": 15.0,
+      "selling_price": 25.0,
+      "last_restock_date": "2025-09-10",
+      "expiry_days": 7
+    },
+    {
+      "id": 3,
+      "name": "Хризантеми",
+      "category": "квіти",
+      "current_stock": 45,
+      "min_stock": 15,
+      "unit": "шт",
+      "supplier_price": 12.0,
+      "selling_price": 20.0,
+      "last_restock_date": "2025-09-08",
+      "expiry_days": 10
+    }
+  ],
+  "financial_reports": {
+    "daily_sales": [
+      {
+        "date": "2025-09-12",
+        "orders_count": 2,
+        "total_revenue": 5400.0,
+        "total_costs": 2160.0,
+        "profit": 3240.0
+      },
+      {
+        "date": "2025-09-11",
+        "orders_count": 3,
+        "total_revenue": 4200.0,
+        "total_costs": 1680.0,
+        "profit": 2520.0
+      }
+    ],
+    "monthly_summary": {
+      "month": "2025-09",
+      "total_orders": 15,
+      "total_revenue": 45000.0,
+      "total_costs": 18000.0,
+      "profit": 27000.0,
+      "best_selling_product": "Преміум букет квітів",
+      "new_customers": 5
+    }
   }
 }

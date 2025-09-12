@@ -6,44 +6,39 @@
 {% block content %}
 <!-- Статистика -->
 <div class="row mb-4">
-    <div class="col-md-2">
-        <div class="card text-center">
-            <div class="card-body py-3">
-                <h6 class="card-title">Всього</h6>
-                <h4 class="text-primary">{{ stats.total }}</h4>
-            </div>
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stat-card border-primary text-center">
+            <i class="fas fa-shopping-cart text-primary"></i>
+            <h6 class="text-primary">Всього</h6>
+            <h4>{{ stats.total }}</h4>
         </div>
     </div>
-    <div class="col-md-2">
-        <div class="card text-center">
-            <div class="card-body py-3">
-                <h6 class="card-title">Нові</h6>
-                <h4 class="text-warning">{{ stats.new }}</h4>
-            </div>
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stat-card border-warning text-center">
+            <i class="fas fa-plus-circle text-warning"></i>
+            <h6 class="text-warning">Нові</h6>
+            <h4>{{ stats.new }}</h4>
         </div>
     </div>
-    <div class="col-md-2">
-        <div class="card text-center">
-            <div class="card-body py-3">
-                <h6 class="card-title">В обробці</h6>
-                <h4 class="text-info">{{ stats.processing }}</h4>
-            </div>
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stat-card border-info text-center">
+            <i class="fas fa-clock text-info"></i>
+            <h6 class="text-info">В обробці</h6>
+            <h4>{{ stats.processing }}</h4>
         </div>
     </div>
-    <div class="col-md-2">
-        <div class="card text-center">
-            <div class="card-body py-3">
-                <h6 class="card-title">Виконано</h6>
-                <h4 class="text-success">{{ stats.completed }}</h4>
-            </div>
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stat-card border-success text-center">
+            <i class="fas fa-check-circle text-success"></i>
+            <h6 class="text-success">Виконано</h6>
+            <h4>{{ stats.completed }}</h4>
         </div>
     </div>
-    <div class="col-md-2">
-        <div class="card text-center">
-            <div class="card-body py-3">
-                <h6 class="card-title">Скасовано</h6>
-                <h4 class="text-danger">{{ stats.cancelled }}</h4>
-            </div>
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stat-card border-danger text-center">
+            <i class="fas fa-times-circle text-danger"></i>
+            <h6 class="text-danger">Скасовано</h6>
+            <h4>{{ stats.cancelled }}</h4>
         </div>
     </div>
 </div>
@@ -134,9 +129,14 @@
                                 {% endif %}
                             </td>
                             <td>
-                                <a href="{% url 'admin_panel:order_detail' order.id %}" class="btn btn-sm btn-primary">
-                                    <i class="fas fa-eye"></i> Деталі
-                                </a>
+                                <div class="btn-group">
+                                    <a href="{% url 'admin_panel:order_detail' order.id %}" class="btn btn-sm btn-primary" title="Переглянути деталі">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <button class="btn btn-sm btn-warning" onclick="changeOrderStatus('{{ order.id }}', '{{ order.status }}', '{{ order.order_number }}')" title="Змінити статус">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                         {% endfor %}
@@ -152,4 +152,76 @@
         {% endif %}
     </div>
 </div>
+
+<!-- Модальне вікно для зміни статусу замовлення -->
+<div class="modal fade" id="changeStatusModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-edit me-2"></i>
+                    Змінити статус замовлення
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="" id="changeStatusForm">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Замовлення:</label>
+                        <input type="text" class="form-control" id="orderNumber" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Поточний статус:</label>
+                        <input type="text" class="form-control" id="currentStatus" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newStatus" class="form-label">Новий статус:</label>
+                        <select class="form-select" name="status" id="newStatus" required>
+                            <option value="нове">🆕 Нове</option>
+                            <option value="в обробці">⏳ В обробці</option>
+                            <option value="виконано">✅ Виконано</option>
+                            <option value="скасовано">❌ Скасовано</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="statusComment" class="form-label">Коментар (необов'язково):</label>
+                        <textarea class="form-control" name="comment" id="statusComment" rows="3" placeholder="Причина зміни статусу..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-save me-1"></i>
+                        Змінити статус
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function changeOrderStatus(orderId, currentStatus, orderNumber) {
+    try {
+        document.getElementById('orderNumber').value = orderNumber;
+        document.getElementById('currentStatus').value = currentStatus;
+        document.getElementById('newStatus').value = currentStatus;
+        document.getElementById('changeStatusForm').action = `/admin-panel/orders/${orderId}/status/`;
+        
+        // Використовуємо безпечний метод відкриття модального вікна
+        openModal('changeStatusModal')
+            .then(() => {
+                console.log('Модальне вікно зміни статусу відкрито успішно');
+            })
+            .catch((error) => {
+                console.error('Помилка відкриття модального вікна зміни статусу:', error);
+                alert('Помилка відкриття форми зміни статусу');
+            });
+    } catch (error) {
+        console.error('Помилка підготовки модального вікна:', error);
+        alert('Помилка підготовки форми зміни статусу');
+    }
+}
+</script>
 {% endblock %}

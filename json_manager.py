@@ -561,6 +561,48 @@ class JSONManager:
         logger.error(f"❌ Товар з ID {item_id} не знайдений")
         return False
     
+    def add_inventory_item(self, item_data):
+        """Додавання нового товару на склад"""
+        logger.info(f"➕ Додавання нового товару: {item_data.get('name')}")
+        data = self.load_data()
+        if 'inventory' not in data:
+            data['inventory'] = []
+        
+        # Генеруємо новий ID
+        existing_ids = [item.get('id', 0) for item in data['inventory']]
+        new_id = max(existing_ids) + 1 if existing_ids else 1
+        item_data['id'] = new_id
+        
+        data['inventory'].append(item_data)
+        
+        if self.save_data(data):
+            logger.info(f"✅ Товар '{item_data.get('name')}' додано з ID: {new_id}")
+            return True
+        else:
+            logger.error(f"❌ Помилка додавання товару '{item_data.get('name')}'")
+            return False
+    
+    def update_inventory_item(self, item_id, update_data):
+        """Оновлення існуючого товару на складі"""
+        logger.info(f"✏️ Оновлення товару ID: {item_id}")
+        data = self.load_data()
+        inventory = data.get('inventory', [])
+        
+        for item in inventory:
+            if item.get('id') == int(item_id):
+                item.update(update_data)
+                data['inventory'] = inventory
+                
+                if self.save_data(data):
+                    logger.info(f"✅ Товар ID: {item_id} оновлено")
+                    return True
+                else:
+                    logger.error(f"❌ Помилка збереження для товару ID: {item_id}")
+                    return False
+        
+        logger.error(f"❌ Товар з ID {item_id} не знайдено")
+        return False
+    
     # ===== FINANCIAL REPORTS =====
     
     def get_financial_reports(self):

@@ -6,32 +6,49 @@
 {% block content %}
 <!-- Статистика -->
 <div class="row mb-4">
-    <div class="col-md-3">
-        <div class="stat-card border-info">
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stat-card border-info text-center">
             <i class="fas fa-warehouse text-info"></i>
             <h6 class="text-info">Всього позицій</h6>
             <h4>{{ stats.total_items }}</h4>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="stat-card border-warning">
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stat-card border-warning text-center">
             <i class="fas fa-exclamation-triangle text-warning"></i>
             <h6 class="text-warning">Низькі залишки</h6>
             <h4>{{ stats.low_stock_count }}</h4>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="stat-card border-success">
-            <i class="fas fa-dollar-sign text-success"></i>
-            <h6 class="text-success">Загальна вартість</h6>
-            <h4>{{ stats.total_value|floatformat:0 }} грн</h4>
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stat-card border-danger text-center">
+            <i class="fas fa-shopping-cart text-danger"></i>
+            <h6 class="text-danger">Закупівля</h6>
+            <h4>{{ stats.total_purchase_cost|floatformat:0 }} грн</h4>
+            <small class="text-muted">Собівартість товарів</small>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="stat-card border-primary">
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stat-card border-success text-center">
+            <i class="fas fa-dollar-sign text-success"></i>
+            <h6 class="text-success">Виручка</h6>
+            <h4>{{ stats.total_selling_value|floatformat:0 }} грн</h4>
+            <small class="text-muted">При повному продажі</small>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stat-card border-info text-center">
+            <i class="fas fa-chart-line text-info"></i>
+            <h6 class="text-info">Прибуток</h6>
+            <h4>{{ stats.potential_profit|floatformat:0 }} грн</h4>
+            <small class="text-muted">{{ stats.profit_margin|floatformat:1 }}% рентабельність</small>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stat-card border-primary text-center">
             <i class="fas fa-plus text-primary"></i>
             <h6 class="text-primary">Дії</h6>
-            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addItemModal">
+            <button class="btn btn-primary btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#addItemModal">
                 <i class="fas fa-plus me-1"></i>Додати товар
             </button>
         </div>
@@ -49,10 +66,16 @@
 <!-- Список інвентарю -->
 <div class="card">
     <div class="card-header">
-        <h5 class="mb-0">
-            <i class="fas fa-warehouse me-2"></i>
-            Список інвентарю
-        </h5>
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="fas fa-warehouse me-2"></i>
+                Список інвентарю
+            </h5>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">
+                <i class="fas fa-plus me-1"></i>
+                Додати товар
+            </button>
+        </div>
     </div>
     <div class="card-body">
         {% if inventory %}
@@ -99,10 +122,13 @@
                             </td>
                             <td>
                                 <div class="btn-group">
-                                    <button class="btn btn-sm btn-primary" onclick="updateStock({{ item.id }}, '{{ item.name }}', {{ item.current_stock }})">
+                                    <button class="btn btn-sm btn-primary" onclick="updateStock({{ item.id }}, '{{ item.name }}', {{ item.current_stock }})" title="Оновити залишки">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-info" onclick="viewHistory({{ item.id }})">
+                                    <button class="btn btn-sm btn-warning" onclick="editItem({{ item.id }}, '{{ item.name }}', '{{ item.category }}', {{ item.min_stock }}, {{ item.supplier_price }}, {{ item.selling_price }})" title="Редагувати товар">
+                                        <i class="fas fa-cog"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-info" onclick="viewHistory({{ item.id }})" title="Історія">
                                         <i class="fas fa-history"></i>
                                     </button>
                                 </div>
@@ -129,10 +155,13 @@
 <!-- Модальне вікно для оновлення залишків -->
 <div class="modal fade" id="updateStockModal" tabindex="-1">
     <div class="modal-dialog">
-        <div class="modal-content" style="background-color: var(--dark-card); border: 1px solid var(--dark-border);">
-            <div class="modal-header" style="border-bottom: 1px solid var(--dark-border);">
-                <h5 class="modal-title">Оновити залишки</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-edit me-2"></i>
+                    Оновити залишки
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form method="post" action="" id="updateStockForm">
                 {% csrf_token %}
@@ -142,13 +171,162 @@
                         <input type="text" class="form-control" id="itemName" readonly>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Нова кількість:</label>
+                        <label for="newStock" class="form-label">Нова кількість:</label>
                         <input type="number" class="form-control" name="new_stock" id="newStock" min="0" required>
                     </div>
                 </div>
-                <div class="modal-footer" style="border-top: 1px solid var(--dark-border);">
+                <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
-                    <button type="submit" class="btn btn-primary">Оновити</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>
+                        Оновити
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Модальне вікно для додавання товару -->
+<div class="modal fade" id="addItemModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus me-2"></i>
+                    Додати новий товар
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'admin_panel:inventory_list' %}" id="addItemForm">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="add_item">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="itemName" class="form-label">Назва товару</label>
+                            <input type="text" class="form-control" name="name" id="itemName" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="itemCategory" class="form-label">Категорія</label>
+                            <select class="form-control" name="category" id="itemCategory" required>
+                                <option value="">Оберіть категорію</option>
+                                <option value="Квіти">Квіти</option>
+                                <option value="Вази">Вази</option>
+                                <option value="Упаковка">Упаковка</option>
+                                <option value="Аксесуари">Аксесуари</option>
+                                <option value="Інше">Інше</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="currentStock" class="form-label">Поточна кількість</label>
+                            <input type="number" class="form-control" name="current_stock" id="currentStock" min="0" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="minStock" class="form-label">Мінімальний залишок</label>
+                            <input type="number" class="form-control" name="min_stock" id="minStock" min="1" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="itemUnit" class="form-label">Одиниця виміру</label>
+                            <select class="form-control" name="unit" id="itemUnit" required>
+                                <option value="шт">шт</option>
+                                <option value="кг">кг</option>
+                                <option value="л">л</option>
+                                <option value="м">м</option>
+                                <option value="упак">упак</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="supplierPrice" class="form-label">Ціна постачальника (грн)</label>
+                            <input type="number" class="form-control" name="supplier_price" id="supplierPrice" step="0.01" min="0" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="sellingPrice" class="form-label">Ціна продажу (грн)</label>
+                            <input type="number" class="form-control" name="selling_price" id="sellingPrice" step="0.01" min="0" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>
+                        Додати товар
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Модальне вікно для редагування товару -->
+<div class="modal fade" id="editItemModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-edit me-2"></i>
+                    Редагувати товар
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'admin_panel:inventory_list' %}" id="editItemForm">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="edit_item">
+                <input type="hidden" name="item_id" id="editItemId">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editItemName" class="form-label">Назва товару</label>
+                            <input type="text" class="form-control" name="name" id="editItemName" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="editItemCategory" class="form-label">Категорія</label>
+                            <select class="form-control" name="category" id="editItemCategory" required>
+                                <option value="Квіти">Квіти</option>
+                                <option value="Вази">Вази</option>
+                                <option value="Упаковка">Упаковка</option>
+                                <option value="Аксесуари">Аксесуари</option>
+                                <option value="Інше">Інше</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editMinStock" class="form-label">Мінімальний залишок</label>
+                            <input type="number" class="form-control" name="min_stock" id="editMinStock" min="1" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="editItemUnit" class="form-label">Одиниця виміру</label>
+                            <select class="form-control" name="unit" id="editItemUnit" required>
+                                <option value="шт">шт</option>
+                                <option value="кг">кг</option>
+                                <option value="л">л</option>
+                                <option value="м">м</option>
+                                <option value="упак">упак</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editSupplierPrice" class="form-label">Ціна постачальника (грн)</label>
+                            <input type="number" class="form-control" name="supplier_price" id="editSupplierPrice" step="0.01" min="0" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="editSellingPrice" class="form-label">Ціна продажу (грн)</label>
+                            <input type="number" class="form-control" name="selling_price" id="editSellingPrice" step="0.01" min="0" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-save me-1"></i>
+                        Зберегти зміни
+                    </button>
                 </div>
             </form>
         </div>
@@ -157,12 +335,48 @@
 
 <script>
 function updateStock(itemId, itemName, currentStock) {
-    document.getElementById('itemName').value = itemName;
-    document.getElementById('newStock').value = currentStock;
-    document.getElementById('updateStockForm').action = `/admin-panel/inventory/${itemId}/update-stock/`;
-    
-    const modal = new bootstrap.Modal(document.getElementById('updateStockModal'));
-    modal.show();
+    try {
+        document.getElementById('itemName').value = itemName;
+        document.getElementById('newStock').value = currentStock;
+        document.getElementById('updateStockForm').action = `/admin-panel/inventory/${itemId}/update-stock/`;
+        
+        // Використовуємо безпечний метод відкриття модального вікна
+        openModal('updateStockModal')
+            .then(() => {
+                console.log('Модальне вікно оновлення залишків відкрито успішно');
+            })
+            .catch((error) => {
+                console.error('Помилка відкриття модального вікна оновлення залишків:', error);
+                alert('Помилка відкриття форми оновлення залишків');
+            });
+    } catch (error) {
+        console.error('Помилка підготовки модального вікна:', error);
+        alert('Помилка підготовки форми оновлення залишків');
+    }
+}
+
+function editItem(itemId, itemName, category, minStock, supplierPrice, sellingPrice) {
+    try {
+        document.getElementById('editItemId').value = itemId;
+        document.getElementById('editItemName').value = itemName;
+        document.getElementById('editItemCategory').value = category;
+        document.getElementById('editMinStock').value = minStock;
+        document.getElementById('editSupplierPrice').value = supplierPrice;
+        document.getElementById('editSellingPrice').value = sellingPrice;
+        
+        // Використовуємо безпечний метод відкриття модального вікна
+        openModal('editItemModal')
+            .then(() => {
+                console.log('Модальне вікно редагування товару відкрито успішно');
+            })
+            .catch((error) => {
+                console.error('Помилка відкриття модального вікна редагування товару:', error);
+                alert('Помилка відкриття форми редагування товару');
+            });
+    } catch (error) {
+        console.error('Помилка підготовки модального вікна:', error);
+        alert('Помилка підготовки форми редагування товару');
+    }
 }
 
 function viewHistory(itemId) {

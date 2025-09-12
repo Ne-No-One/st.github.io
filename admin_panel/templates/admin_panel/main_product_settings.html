@@ -21,7 +21,7 @@
             
             <!-- Форма додавання кольору -->
             <div class="card-body border-bottom" id="addColorForm" style="display: none;">
-                <form method="post" class="bg-light p-3 rounded">
+                <form method="post" class="p-3 rounded" style="background: var(--bg-tertiary); border: 1px solid var(--border-primary);">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="add_variant">
                     <h6 class="mb-3">
@@ -66,49 +66,44 @@
                 {% if variants %}
                     <div class="row">
                         {% for variant in variants %}
-                        <div class="col-md-6 mb-3">
-                            <div class="card h-100 border">
-                                <div class="position-relative">
-                                    {% if variant.image_url %}
-                                        <img src="{{ variant.image_url }}" alt="{{ variant.name }}" 
-                                             class="card-img-top" style="height: 200px; width: 150px; object-fit: cover; margin: 0 auto; display: block;">
-                                    {% else %}
-                                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" 
-                                             style="height: 200px; width: 150px; margin: 0 auto;">
-                                            <i class="fas fa-image fa-2x text-muted"></i>
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                {% if variant.image_url %}
+                                    <img src="{{ variant.image_url }}" class="card-img-top" 
+                                         style="height: 150px; object-fit: cover;" alt="{{ variant.name }}">
+                                {% else %}
+                                    <div class="card-img-top d-flex align-items-center justify-content-center" 
+                                         style="height: 150px; background: var(--bg-tertiary); border: 1px solid var(--border-primary);">
+                                        <i class="fas fa-image fa-2x text-muted"></i>
+                                    </div>
+                                {% endif %}
+                                
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ variant.name }}</h6>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <span class="color-preview me-2" style="background-color: {{ variant.hex_code }}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border-primary);"></span>
+                                        <small class="text-muted">{{ variant.hex_code }}</small>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div class="d-flex gap-1">
+                                            <span class="badge bg-info">ID: {{ variant.id }}</span>
+                                            <span class="badge bg-secondary">Порядок: {{ variant.order|default:"1" }}</span>
                                         </div>
-                                    {% endif %}
-                                    
-                                    <div class="position-absolute top-0 start-0 m-2">
-                                        <span class="badge" style="background-color: {{ variant.hex_code }}; color: white; text-shadow: 1px 1px 1px rgba(0,0,0,0.5);">
-                                            {{ variant.hex_code }}
-                                        </span>
+                                    </div>
+                                    <div class="d-flex justify-content-end">
+                                        <div class="btn-group">
+                                            <a href="{% url 'admin_panel:edit_color_variant' variant.id %}" 
+                                               class="btn btn-sm btn-primary" title="Редагувати">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'admin_panel:delete_color_from_main' variant.id %}" 
+                                               class="btn btn-sm btn-danger" title="Видалити"
+                                               onclick="return confirm('Видалити {{ variant.name }}?')">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
-                                
-                                <div class="card-body p-2">
-                                    <h6 class="card-title mb-1">{{ variant.name }}</h6>
-                                    <div class="d-flex align-items-center mb-2">
-                                        <span class="color-preview me-1" style="background-color: {{ variant.hex_code }}; width: 15px; height: 15px; border-radius: 50%; border: 1px solid #ccc;"></span>
-                                        <code class="small">{{ variant.hex_code }}</code>
-                                    </div>
-                                    <div class="d-flex gap-1 mb-2">
-                                        <span class="badge bg-info">ID: {{ variant.id }}</span>
-                                        <span class="badge bg-secondary">Порядок: {{ variant.order|default:"1" }}</span>
-                                    </div>
-                                    
-                                    <div class="btn-group w-100">
-                                        <a href="{% url 'admin_panel:edit_color_variant' variant.id %}" 
-                                           class="btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="{% url 'admin_panel:delete_color_from_main' variant.id %}" 
-                                           class="btn btn-sm btn-outline-danger" 
-                                           onclick="return confirm('Видалити {{ variant.name }}?')">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                            </div>
-                        </div>
                             </div>
                         </div>
                         {% endfor %}
@@ -145,7 +140,7 @@
             
             <!-- Форма додавання кількості -->
             <div class="card-body border-bottom" id="addQuantityForm" style="display: none;">
-                <form method="post" class="bg-light p-3 rounded">
+                <form method="post" class="p-3 rounded" style="background: var(--bg-tertiary); border: 1px solid var(--border-primary);">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="add_quantity">
                     <h6 class="mb-3">
@@ -153,7 +148,7 @@
                         Додати варіант кількості
                     </h6>
                     <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             <label for="quantity" class="form-label">Кількість</label>
                             <input type="number" class="form-control" id="quantity" name="quantity" 
                                    placeholder="21" min="1" required>
@@ -225,11 +220,11 @@
                                     <td>
                                         <div class="btn-group">
                                             <a href="{% url 'admin_panel:edit_quantity_variant' qty.id %}" 
-                                               class="btn btn-sm btn-outline-primary">
+                                               class="btn btn-sm btn-primary">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <a href="{% url 'admin_panel:delete_quantity_option' qty.id %}" 
-                                               class="btn btn-sm btn-outline-danger" 
+                                               class="btn btn-sm btn-danger" 
                                                onclick="return confirm('Видалити варіант {{ qty.quantity }} шт?')">
                                                 <i class="fas fa-trash"></i>
                                             </a>

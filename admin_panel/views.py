@@ -8,6 +8,10 @@ def admin_dashboard(request):
         from json_manager import JSONManager
         json_manager = JSONManager()
         
+        # Отримуємо останні замовлення (максимум 5)
+        all_orders = json_manager.get_orders()
+        recent_orders = sorted(all_orders, key=lambda x: x.get('date', ''), reverse=True)[:5]
+        
         context = {
             'site_settings': json_manager.get_site_settings(),
             'main_product': json_manager.get_main_product(),
@@ -18,10 +22,11 @@ def admin_dashboard(request):
             'contact_info': json_manager.get_contact_info(),
             'about_section': json_manager.get_about_section(),
             # Нові дані
-            'orders_count': len(json_manager.get_orders()),
+            'orders_count': len(all_orders),
             'customers_count': len(json_manager.get_customers()),
             'inventory_count': len(json_manager.get_inventory()),
             'low_stock_count': len(json_manager.get_low_stock_items()),
+            'recent_orders': recent_orders,
         }
         return render(request, 'admin_panel/dashboard.html', context)
     except Exception as e:
@@ -725,18 +730,43 @@ def update_order_status(request, order_id):
     """Оновлення статусу замовлення"""
     try:
         from json_manager import JSONManager
+        from datetime import datetime
         json_manager = JSONManager()
         
         if request.method == 'POST':
             new_status = request.POST.get('status')
+            comment = request.POST.get('comment', '').strip()
+            
+            # Отримуємо поточне замовлення
+            order = json_manager.get_order_by_id(order_id)
+            if not order:
+                messages.error(request, 'Замовлення не знайдено!')
+                return redirect('admin_panel:orders_list')
+            
+            # Оновлюємо статус
             if json_manager.update_order_status(order_id, new_status):
-                messages.success(request, f"Статус замовлення оновлено на '{new_status}'")
+                status_emoji = {
+                    'нове': '🆕',
+                    'в обробці': '⏳', 
+                    'виконано': '✅',
+                    'скасовано': '❌'
+                }
+                
+                emoji = status_emoji.get(new_status, '')
+                messages.success(request, f'Статус замовлення {order.get("order_number")} оновлено на "{emoji} {new_status}"')
+                
+                # Логування зміни статусу
+                if comment:
+                    print(f"📝 Статус замовлення {order.get('order_number')} змінено на '{new_status}'. Коментар: {comment}")
+                else:
+                    print(f"📝 Статус замовлення {order.get('order_number')} змінено на '{new_status}'")
             else:
-                messages.error(request, "Помилка при оновленні статусу")
+                messages.error(request, 'Помилка оновлення статусу замовлення!')
         
-        return redirect('admin_panel:order_detail', order_id=order_id)
+        return redirect('admin_panel:orders_list')
     except Exception as e:
-        return HttpResponse(f"Помилка: {e}")
+        messages.error(request, f"Помилка: {e}")
+        return redirect('admin_panel:orders_list')
 
 # ===== CUSTOMERS MANAGEMENT =====
 
@@ -858,16 +888,75 @@ def inventory_list(request):
     """Список інвентарю"""
     try:
         from json_manager import JSONManager
+        from datetime import datetime
         json_manager = JSONManager()
+        
+        # Обробка POST запитів
+        if request.method == 'POST':
+            action = request.POST.get('action')
+            
+            if action == 'add_item':
+                name = request.POST.get('name', '').strip()
+                category = request.POST.get('category', '').strip()
+                current_stock = int(request.POST.get('current_stock', 0))
+                min_stock = int(request.POST.get('min_stock', 1))
+                unit = request.POST.get('unit', 'шт').strip()
+                supplier_price = float(request.POST.get('supplier_price', 0))
+                selling_price = float(request.POST.get('selling_price', 0))
+                
+                new_item = {
+                    'id': len(json_manager.get_inventory()) + 1,
+                    'name': name,
+                    'category': category,
+                    'current_stock': current_stock,
+                    'min_stock': min_stock,
+                    'unit': unit,
+                    'supplier_price': supplier_price,
+                    'selling_price': selling_price,
+                    'last_restock_date': datetime.now().strftime('%Y-%m-%d'),
+                    'created_date': datetime.now().strftime('%Y-%m-%d')
+                }
+                
+                if json_manager.add_inventory_item(new_item):
+                    messages.success(request, f'Товар "{name}" успішно додано!')
+                else:
+                    messages.error(request, 'Помилка додавання товару!')
+                    
+            elif action == 'edit_item':
+                item_id = int(request.POST.get('item_id'))
+                name = request.POST.get('name', '').strip()
+                category = request.POST.get('category', '').strip()
+                min_stock = int(request.POST.get('min_stock', 1))
+                unit = request.POST.get('unit', 'шт').strip()
+                supplier_price = float(request.POST.get('supplier_price', 0))
+                selling_price = float(request.POST.get('selling_price', 0))
+                
+                update_data = {
+                    'name': name,
+                    'category': category,
+                    'min_stock': min_stock,
+                    'unit': unit,
+                    'supplier_price': supplier_price,
+                    'selling_price': selling_price
+                }
+                
+                if json_manager.update_inventory_item(item_id, update_data):
+                    messages.success(request, f'Товар "{name}" успішно оновлено!')
+                else:
+                    messages.error(request, 'Помилка оновлення товару!')
         
         inventory = json_manager.get_inventory()
         low_stock_items = json_manager.get_low_stock_items()
         
-        # Статистика
+        # Розширена статистика з фінансовими розрахунками
         total_items = len(inventory)
         low_stock_count = len(low_stock_items)
-        total_value = sum([item.get('current_stock', 0) * item.get('supplier_price', 0) 
-                          for item in inventory])
+        
+        # Фінансові розрахунки
+        total_purchase_cost = sum([item.get('current_stock', 0) * item.get('supplier_price', 0) for item in inventory])
+        total_selling_value = sum([item.get('current_stock', 0) * item.get('selling_price', 0) for item in inventory])
+        potential_profit = total_selling_value - total_purchase_cost
+        profit_margin = (potential_profit / total_selling_value * 100) if total_selling_value > 0 else 0
         
         context = {
             'inventory': inventory,
@@ -875,7 +964,10 @@ def inventory_list(request):
             'stats': {
                 'total_items': total_items,
                 'low_stock_count': low_stock_count,
-                'total_value': total_value
+                'total_purchase_cost': total_purchase_cost,
+                'total_selling_value': total_selling_value,
+                'potential_profit': potential_profit,
+                'profit_margin': profit_margin
             }
         }
         return render(request, 'admin_panel/inventory_list.html', context)
