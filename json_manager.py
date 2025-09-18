@@ -316,13 +316,17 @@ class JSONManager:
         """Видаляємо фото для конкретної кількості кольору"""
         data = self.load_data()
         colors = data.get('color_options', [])
+        
         for color in colors:
             if color.get('id') == color_id:
                 if 'quantity_images' in color and str(quantity) in color['quantity_images']:
                     del color['quantity_images'][str(quantity)]
-                break
-        data['color_options'] = colors
-        return self.save_data(data)
+                    data['color_options'] = colors
+                    return self.save_data(data)
+                else:
+                    return False
+        
+        return False
     
     def get_quantity_image_for_color(self, color_id, quantity):
         """Отримуємо фото для конкретної кількості кольору"""

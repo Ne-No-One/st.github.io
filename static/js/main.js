@@ -506,12 +506,19 @@ function updateCartDisplay() {
             const cartItem = document.createElement('div');
             cartItem.className = 'cart-item';
             cartItem.innerHTML = `
-                <img src="${item.image}" alt="${item.title}">
+                <div class="cart-item-image">
+                    <img src="${item.image}" alt="${item.title}">
+                </div>
                 <div class="cart-item-info">
                     <h4>${item.title}</h4>
-                    <div class="price">${item.price.toFixed(2)} ${item.currency}</div>
+                    <div class="cart-item-details">
+                        <span class="quantity">Кількість: ${item.quantity}</span>
+                        <span class="price">${item.price.toFixed(2)} грн</span>
+                    </div>
                 </div>
-                <button class="remove-item-btn" data-item-id="${item.id}">×</button>
+                <button class="remove-item-btn" data-item-id="${item.id}">
+                    <i class="fas fa-trash"></i>
+                </button>
             `;
             
             // Додаємо обробник події для кнопки видалення
@@ -525,7 +532,13 @@ function updateCartDisplay() {
     
     // Оновлюємо загальну суму та кількість
     cartTotalPrice.textContent = `${cart.total.toFixed(2)} грн`;
-    cartItemsCount.textContent = `${cart.count} товар${cart.count === 1 ? '' : cart.count < 5 ? 'и' : 'ів'}`;
+    cartItemsCount.textContent = `${cart.items.length}`;
+    
+    // Оновлюємо доставку
+    const cartDelivery = document.getElementById('cart-delivery');
+    if (cartDelivery) {
+        cartDelivery.textContent = cart.total >= 1000 ? 'Безкоштовно' : '50 грн';
+    }
     
     // Оновлюємо прогрес бари
     updateProgressBars();
@@ -624,6 +637,42 @@ function checkout() {
     
     // Закриваємо кошик
     closeCart();
+}
+
+// Функція для очищення кошика
+function clearCart() {
+    if (cart.items.length === 0) {
+        return;
+    }
+    
+    if (confirm('Ви впевнені, що хочете очистити кошик?')) {
+        // Очищаємо кошик
+        cart.items = [];
+        updateCartCount();
+        updateCartDisplay();
+        updateAddAllButton();
+        
+        // Оновлюємо всі кнопки
+        const mainButton = document.getElementById('cart-button');
+        if (mainButton) {
+            mainButton.textContent = 'В кошик';
+            mainButton.classList.remove('in-cart');
+        }
+        
+        const additionalButtons = document.querySelectorAll('.additional-add-to-cart-btn');
+        additionalButtons.forEach(button => {
+            button.textContent = 'Додати в кошик';
+            button.classList.remove('in-cart');
+        });
+        
+        const productCards = document.querySelectorAll('.additional-product-card');
+        productCards.forEach(card => {
+            card.classList.remove('in-cart');
+        });
+        
+        // Показуємо повідомлення
+        showNotification('Кошик очищено', 'success');
+    }
 }
 
 // ===== СИСТЕМА ШАРІВ ДЛЯ ТОВАРІВ =====
@@ -1085,10 +1134,10 @@ function updatePrice() {
     if (activeQuantity && priceElement) {
         const pricePerUnit = parseFloat(activeQuantity.dataset.pricePerUnit) || 0;
         const quantity = parseInt(activeQuantity.dataset.quantity) || 1;
-        const currency = activeQuantity.dataset.currency || 'грн';
         
         const totalPrice = pricePerUnit * quantity;
-        priceElement.textContent = `${totalPrice.toFixed(2)} ${currency}`;
+        // Оновлюємо тільки ціну, без валюти (валюта вже є в HTML)
+        priceElement.textContent = totalPrice.toFixed(2);
     }
 }
 

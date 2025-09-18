@@ -29,6 +29,7 @@ input, textarea {
         width: 80% !important;
         margin: 0 auto !important;
         padding: 40px 20px !important;
+        z-index: 1 !important;
     }
     
     /* Примусове правило для additional-products на ПК */
@@ -47,6 +48,7 @@ input, textarea {
         margin-left: calc(-50vw + 50%) !important;
         max-width: none !important;
         padding: 0 !important;
+        z-index: 1 !important;
     }
     
     /* Примусове правило для additional-products на мобільних */
@@ -67,21 +69,21 @@ body {
     min-height: 100vh;
 }
 
-/* Стилі для секцій */
+/* Стилі для секцій - ОСНОВНІ ЕЛЕМЕНТИ */
 .section {
     margin: 0;
     padding: 40px 20px;
     position: relative;
-    z-index: 10;
+    z-index: 3;
 }
 
-/* Стилі для шапки */
+/* Стилі для шапки - ВАЖЛИВИЙ ЕЛЕМЕНТ */
 .header {
     position: relative;
-    z-index: 10;
+    z-index: 100;
 }
 
-/* Плаваючі білі шари */
+/* Плаваючі білі шари - ФОНОВИЙ ЕЛЕМЕНТ */
 .floating-shapes {
     position: fixed;
     top: 0;
@@ -89,7 +91,7 @@ body {
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 1;
+    z-index: -100;
 }
 
 .shape {
@@ -405,6 +407,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 0;
 }
 
 /* Прибираємо напис "Преміум товар" на ПК версії */
@@ -454,7 +457,7 @@ body {
     font-size: 1rem;
     font-weight: bold;
     backdrop-filter: blur(10px);
-    z-index: 5;
+    z-index: 10;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
     pointer-events: none;
     width: 90%;
@@ -503,6 +506,8 @@ body {
     pointer-events: auto !important;
     transition: all 0.3s ease !important;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+    z-index: 50 !important;
+    position: relative !important;
 }
 
 .nav-btn:hover {
@@ -545,7 +550,7 @@ body {
         inset 0 1px 0 rgba(255, 255, 255, 0.2);
     
     /* Backup для старих браузерів */
-    z-index: 10;
+    z-index: 3;
     pointer-events: auto;
 }
 
@@ -893,7 +898,7 @@ body {
     font-size: 0.7rem;
     font-weight: bold;
     display: none;
-    z-index: 2;
+    z-index: 3;
 }
 
 .additional-product-card.in-cart .product-status {
@@ -1233,6 +1238,7 @@ body {
         margin-left: calc(-50vw + 50%) !important;
         min-height: 100vh !important;
         position: relative !important;
+        z-index: 1 !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -1248,6 +1254,7 @@ body {
         margin-left: calc(-50vw + 50%) !important;
         min-height: 100vh !important;
         position: relative !important;
+        z-index: 1 !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -1279,47 +1286,13 @@ body {
         top: 0 !important;
         left: 0 !important;
         width: 100% !important;
-        z-index: 1000 !important;
+        z-index: 200 !important;
         background: rgba(255, 255, 255, 0.1) !important;
         backdrop-filter: blur(10px) !important;
         margin: 0 !important;
         border-radius: 0 !important;
     }
     
-    /* Стилі для прогрес бару - МОБІЛЬНА ВЕРСІЯ */
-    .progress-bar {
-        position: fixed !important;
-        top: 80px !important;
-        left: 0 !important;
-        width: 100% !important;
-        height: 6px !important;
-        background: rgba(255, 255, 255, 0.15) !important;
-        z-index: 999 !important;
-        border-radius: 3px !important;
-        backdrop-filter: blur(10px) !important;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
-    }
-    
-    .progress-fill {
-        height: 100% !important;
-        background: linear-gradient(90deg, #4CAF50, #45a049, #66BB6A) !important;
-        width: 0% !important;
-        transition: width 0.3s ease !important;
-        border-radius: 3px !important;
-        box-shadow: 0 0 15px rgba(76, 175, 80, 0.5) !important;
-        position: relative !important;
-    }
-    
-    .progress-fill::after {
-        content: '' !important;
-        position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        bottom: 0 !important;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent) !important;
-        animation: shimmer 2s infinite !important;
-    }
     
     @keyframes shimmer {
         0% { transform: translateX(-100%); }
@@ -1374,7 +1347,7 @@ body {
     /* Налаштування product-container для центрування з прокруткою */
     .product-container {
         position: relative !important;
-        z-index: 10 !important;
+        z-index: 1 !important;
         justify-content: space-between !important;
         width: 100% !important;
         min-height: 100vh !important;
@@ -1417,7 +1390,7 @@ body {
         left: 0 !important;
         width: 100vw !important;
         height: 100vh !important;
-        z-index: -1 !important;
+        z-index: -50 !important;
         pointer-events: none !important;
         transform: translate3d(0, 0, 0) !important;
         will-change: transform !important;
@@ -1434,7 +1407,7 @@ body {
         position: fixed !important;
         top: 0 !important;
         left: 0 !important;
-        z-index: -1 !important;
+        z-index: -50 !important;
         aspect-ratio: 9/16 !important;
         pointer-events: none !important;
         transform: translate3d(0, 0, 0) !important;
@@ -1459,7 +1432,7 @@ body {
         display: flex !important;
         justify-content: space-between !important;
         padding: 0 20px !important;
-        z-index: 10 !important;
+        z-index: 1 !important;
         pointer-events: none !important;
         transform: translateY(-50%) !important;
     }
@@ -1859,40 +1832,6 @@ body {
 
 /* ===== ФІШКИ ДЛЯ ПК ВЕРСІЇ ===== */
 
-/* ПРОГРЕС БАР - ТОЧНА КОПІЯ З МОБІЛЬНОЇ ВЕРСІЇ */
-.progress-bar {
-    position: fixed !important;
-    top: 80px !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 6px !important;
-    background: rgba(255, 255, 255, 0.15) !important;
-    z-index: 999 !important;
-    border-radius: 3px !important;
-    backdrop-filter: blur(10px) !important;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
-}
-
-.progress-fill {
-    height: 100% !important;
-    background: linear-gradient(90deg, #4CAF50, #45a049, #66BB6A) !important;
-    width: 0% !important;
-    transition: width 0.3s ease !important;
-    border-radius: 3px !important;
-    box-shadow: 0 0 15px rgba(76, 175, 80, 0.5) !important;
-    position: relative !important;
-}
-
-.progress-fill::after {
-    content: '' !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent) !important;
-    animation: shimmer 2s infinite !important;
-}
 
 @keyframes shimmer {
     0% { transform: translateX(-100%); }
@@ -1908,7 +1847,7 @@ body {
     display: flex;
     justify-content: space-between;
     padding: 0 20px;
-    z-index: 10;
+    z-index: 0;
     pointer-events: none;
     transform: translateY(-50%);
 }
@@ -1929,6 +1868,8 @@ body {
     pointer-events: auto !important;
     transition: all 0.3s ease !important;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+    z-index: 50 !important;
+    position: relative !important;
 }
 
 .nav-btn:hover {
@@ -2027,40 +1968,6 @@ body {
     
     /* ===== ПОВНЕ КОПІЮВАННЯ СТИЛІВ З МОБІЛЬНОЇ ВЕРСІЇ ===== */
     
-    /* Стилі для прогрес бару - КОПІЯ З МОБІЛЬНОЇ */
-    .progress-bar {
-        position: fixed !important;
-        top: 80px !important;
-        left: 0 !important;
-        width: 100% !important;
-        height: 6px !important;
-        background: rgba(255, 255, 255, 0.15) !important;
-        z-index: 999 !important;
-        border-radius: 3px !important;
-        backdrop-filter: blur(10px) !important;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
-    }
-    
-    .progress-fill {
-        height: 100% !important;
-        background: linear-gradient(90deg, #4CAF50, #45a049, #66BB6A) !important;
-        width: 0% !important;
-        transition: width 0.3s ease !important;
-        border-radius: 3px !important;
-        box-shadow: 0 0 15px rgba(76, 175, 80, 0.5) !important;
-        position: relative !important;
-    }
-    
-    .progress-fill::after {
-        content: '' !important;
-        position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        bottom: 0 !important;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent) !important;
-        animation: shimmer 2s infinite !important;
-    }
     
     @keyframes shimmer {
         0% { transform: translateX(-100%); }
@@ -2255,40 +2162,6 @@ body {
     }
 }
 
-/* Стилі для прогрес бару - ПК ВЕРСІЯ */
-.progress-bar {
-    position: fixed;
-    top: 80px;
-    left: 0;
-    width: 100%;
-    height: 6px;
-    background: rgba(255, 255, 255, 0.15);
-    z-index: 999;
-    border-radius: 3px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #4CAF50, #45a049, #66BB6A);
-    width: 0%;
-    transition: width 0.3s ease;
-    border-radius: 3px;
-    box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
-    position: relative;
-}
-
-.progress-fill::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    animation: shimmer 2s infinite;
-}
 
 @keyframes shimmer {
     0% { transform: translateX(-100%); }
@@ -2338,7 +2211,7 @@ img {
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.3) !important;
     pointer-events: auto !important;
     user-select: none !important;
-    z-index: 10 !important;
+    z-index: 1 !important;
     position: relative !important;
 }
 
@@ -2851,7 +2724,7 @@ img {
 /* Основне зображення товару */
 .product-image {
     position: relative;
-    z-index: 1;
+    z-index: 0;
     width: 100%;
     height: auto;
     display: block;
@@ -2902,7 +2775,7 @@ img {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 2;
+    z-index: 3;
     opacity: 0;
     transition: all 0.4s ease;
     mix-blend-mode: multiply;
@@ -2970,45 +2843,6 @@ img {
 
 /* ===== ПРОГРЕС БАРИ ===== */
 
-/* Прогрес бар під шапкою */
-.progress-bar-container {
-    position: fixed;
-    top: 80px;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.1);
-    z-index: 999;
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
-}
-
-.progress-bar {
-    flex: 1;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 2px;
-    overflow: hidden;
-    margin-right: 10px;
-}
-
-.progress-fill {
-    height: 100%;
-    background: linear-gradient(45deg, #4CAF50, #45a049);
-    border-radius: 2px;
-    transition: width 0.3s ease;
-    width: 0%;
-}
-
-.progress-text {
-    color: #4CAF50;
-    font-size: 12px;
-    font-weight: 600;
-    min-width: 40px;
-    text-align: right;
-}
-
 /* Прогрес бар в кошику */
 .cart-progress-container {
     margin-bottom: 16px;
@@ -3038,43 +2872,124 @@ img {
     text-align: center;
 }
 
+/* ===== Z-INDEX ІЄРАРХІЯ ===== */
+/*
+Z-INDEX СТРУКТУРА:
+-100 до -1: Фонові елементи (floating-shapes, product-image-container)
+1-9: Основні елементи (sections, containers, images)
+10-49: Навігація та кнопки
+50-99: Важливі елементи (кнопки навігації)
+100-199: Хедер та важливі елементи
+200-299: Фіксований хедер
+10000+: Кошик та критично важливі елементи
+*/
+
+/* ===== ПРАВИЛА ДЛЯ УНИКНЕННЯ ПРОБЛЕМ З ПОЗИЦІОНУВАННЯМ ===== */
+/* 
+1. Ніколи не використовуйте z-index > 10000 для звичайних елементів
+2. Елементи з position: fixed завжди мають вищий z-index ніж position: relative
+3. Елементи з position: absolute всередині position: relative створюють новий контекст накладання
+4. Використовуйте !important тільки для критично важливих елементів (кошик, хедер)
+5. Групуйте елементи за функціональністю та призначенням
+*/
+
+/* Заборона на створення нових контекстів накладання для звичайних елементів */
+.section:not(.hero-section):not(.additional-products-section) {
+    isolation: auto !important;
+}
+
+/* Забезпечення правильного позиціонування для кошика */
+.cart-overlay,
+.cart-backdrop {
+    isolation: isolate !important;
+    contain: layout style !important;
+}
+
 /* ===== СТИЛІ КОШИКА ===== */
+
+/* Оверлей для розмиття заднього фону */
+.cart-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(15px);
+    z-index: 10000 !important;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.cart-backdrop.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* Розмиття всього сайту коли кошик відкрито */
+body.cart-open {
+    filter: blur(5px);
+    transition: filter 0.3s ease;
+}
+
+/* Виключаємо розмиття з усіх елементів кошика */
+body.cart-open .cart-overlay,
+body.cart-open .cart-backdrop,
+body.cart-open .cart-container,
+body.cart-open .cart-header,
+body.cart-open .cart-body,
+body.cart-open .cart-footer,
+body.cart-open .cart-items,
+body.cart-open .cart-empty,
+body.cart-open .cart-summary,
+body.cart-open .cart-actions,
+body.cart-open .cart-item,
+body.cart-open .cart-progress-container {
+    filter: none !important;
+}
 
 /* Кошик під кнопкою */
 .cart-overlay {
     position: fixed;
-    top: 100px;
-    right: 20px;
-    width: 400px;
+    top: 120px;
+    right: 10px;
+    width: 420px;
     max-width: 90vw;
-    max-height: 80vh;
-    background: rgba(0, 0, 0, 0.95);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(20px);
-    z-index: 9999;
+    max-height: 85vh;
+    background: rgba(0, 0, 0, 0.58);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    z-index: 10001 !important;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-10px);
-    transition: all 0.3s ease;
+    transform: translateY(-20px) scale(0.95);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .cart-overlay.show {
     opacity: 1;
     visibility: visible;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
 }
 
 /* Контейнер кошика */
 .cart-container {
     width: 100%;
-    max-height: 70vh;
+    max-height: 80vh;
     overflow: hidden;
     position: relative;
     display: flex;
     flex-direction: column;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-radius: 20px;
 }
 
 /* Заголовок кошика */
@@ -3082,61 +2997,73 @@ img {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px;
+    padding: 20px 24px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.95);
+    position: relative;
 }
 
 .cart-header::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+    bottom: 0;
+    left: 24px;
+    right: 24px;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.1), transparent);
+}
+
+.cart-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.cart-title i {
+    color: #4CAF50;
+    font-size: 1.5rem;
 }
 
 .cart-header h3 {
     color: #ffffff;
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     font-weight: 700;
     margin: 0;
-    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.4);
-    background: linear-gradient(135deg, #ffffff, #e0e0e0);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
 }
 
 .close-cart-btn {
     background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     color: #ffffff;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
+    border-radius: 12px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 18px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .close-cart-btn:hover {
-    background: rgba(244, 67, 54, 0.8);
-    border-color: #f44336;
-    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* Тіло кошика */
 .cart-body {
-    padding: 16px;
+    padding: 0;
     max-height: 50vh;
     overflow-y: auto;
     flex: 1;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-radius: 0 0 20px 20px;
 }
 
 .cart-body::-webkit-scrollbar {
@@ -3265,50 +3192,278 @@ img {
 /* Порожній кошик */
 .cart-empty {
     text-align: center;
-    padding: 32px;
-    color: #cccccc;
+    padding: 48px 24px;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
 }
 
 .empty-icon {
-    font-size: 4rem;
-    margin-bottom: 20px;
-    opacity: 0.5;
+    font-size: 3.5rem;
+    margin-bottom: 24px;
+    color: rgba(255, 255, 255, 0.6);
 }
 
-.cart-empty p {
-    font-size: 1.2rem;
+.cart-empty h4 {
+    font-size: 1.25rem;
     font-weight: 600;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     color: #ffffff;
 }
 
-.cart-empty span {
-    font-size: 0.9rem;
-    opacity: 0.8;
+.cart-empty p {
+    font-size: 0.95rem;
+    margin-bottom: 24px;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.5;
 }
+
 
 /* Підвал кошика */
 .cart-footer {
-    padding: 16px;
+    padding: 24px;
     border-top: 1px solid rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    position: relative;
 }
 
-.cart-summary {
+/* Прогрес бар в кошику */
+.cart-progress-container {
+    margin-bottom: 20px;
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+}
+
+.progress-info {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: 8px;
+}
+
+.progress-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.progress-amount {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #4CAF50;
+}
+
+.cart-progress-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.cart-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #45a049);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+/* Підсумок кошика */
+.cart-summary {
+    margin-bottom: 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.summary-row:not(:last-child) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.total-row {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #ffffff;
+    padding-top: 12px;
+    margin-top: 8px;
+    border-top: 2px solid rgba(255, 255, 255, 0.2) !important;
 }
 
 .cart-total {
     font-size: 18px;
     font-weight: 600;
-    color: #ffffff;
+    color: #1f2937;
 }
 
 .cart-total.updating {
     animation: priceUpdate 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Кнопки дій кошика */
+.cart-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+}
+
+.checkout-btn {
+    background: #f44336;
+    color: white;
+    border: 2px solid #f44336;
+    border-radius: 25px;
+    padding: 16px 24px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.checkout-btn:hover {
+    background: #d32f2f;
+    border-color: #d32f2f;
+    transform: translateY(-2px);
+}
+
+.checkout-btn:active {
+    transform: translateY(0);
+}
+
+.clear-cart-btn {
+    background: #f44336;
+    color: #ffffff;
+    border: 1px solid #f44336;
+    border-radius: 25px;
+    padding: 12px 24px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.clear-cart-btn:hover {
+    background: #d32f2f;
+    border-color: #d32f2f;
+    transform: translateY(-1px);
+}
+
+/* Товари в кошику */
+.cart-item {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.cart-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.cart-item-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.cart-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cart-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.cart-item-info h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0 0 4px 0;
+    line-height: 1.3;
+}
+
+.cart-item-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.cart-item-details .quantity {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.cart-item-details .price {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #4CAF50;
+}
+
+.remove-item-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.remove-item-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
 }
 
 @keyframes priceUpdate {
@@ -3395,20 +3550,24 @@ img {
 
 /* Адаптивність для мобільних */
 @media (max-width: 768px) {
-    .progress-bar-container {
-        top: 70px;
-        padding: 0 15px;
-    }
     
     .cart-overlay {
-        width: 95vw;
-        right: 10px;
-        top: 90px;
-        max-height: 75vh;
+        width: 90vw;
+        right: 5vw;
+        left: 5vw;
+        top: 10vh;
+        height: 80vh;
+        max-height: 80vh;
+        border-radius: 20px;
     }
     
     .cart-container {
-        max-height: 60vh;
+        height: 80vh;
+        max-height: 80vh;
+        background: rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border-radius: 20px;
     }
     
     .cart-header {
@@ -3421,7 +3580,9 @@ img {
     
     .cart-body {
         padding: 20px 25px;
-        max-height: 40vh;
+        height: calc(80vh - 200px);
+        max-height: calc(80vh - 200px);
+        flex: 1;
     }
     
     .cart-footer {
@@ -3453,17 +3614,15 @@ img {
 }
 
 @media (max-width: 480px) {
-    .progress-bar-container {
-        top: 60px;
-        padding: 0 10px;
-    }
     
     .cart-overlay {
-        width: 100vw;
-        right: 0;
-        top: 80px;
-        border-radius: 8px;
-        max-height: 70vh;
+        width: 90vw;
+        right: 5vw;
+        left: 5vw;
+        top: 10vh;
+        height: 80vh;
+        border-radius: 15px;
+        max-height: 80vh;
     }
 }
 

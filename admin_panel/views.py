@@ -630,7 +630,18 @@ def create_color_with_quantities(request):
                 if is_edit_mode:
                     # Редагуємо існуючий колір
                     if json_manager.update_color_option_with_layers(int(edit_color_id), name, hex_code, '', True):
-                        # Оновлюємо фото по кількостях
+                        # Спочатку видаляємо всі існуючі фото для цього кольору
+                        colors = json_manager.get_color_options()
+                        for color in colors:
+                            if color['id'] == int(edit_color_id):
+                                if 'quantity_images' in color:
+                                    for qty in quantities:
+                                        quantity = qty['quantity']
+                                        if str(quantity) in color['quantity_images']:
+                                            json_manager.delete_quantity_image_for_color(int(edit_color_id), quantity)
+                                break
+                        
+                        # Потім додаємо нові фото
                         for qty_data in quantities_data:
                             json_manager.update_quantity_image_for_color(int(edit_color_id), qty_data['quantity'], qty_data['image_url'])
                         

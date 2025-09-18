@@ -42,41 +42,71 @@
             <!-- Кошик під кнопкою -->
             <div id="cart-overlay" class="cart-overlay">
                 <div class="cart-container">
+                    <!-- Заголовок кошика -->
                     <div class="cart-header">
-                        <h3>Кошик покупок</h3>
-                        <button class="close-cart-btn" onclick="closeCart()">×</button>
+                        <div class="cart-title">
+                            <i class="fas fa-shopping-cart"></i>
+                            <h3>Кошик покупок</h3>
+                        </div>
+                        <button class="close-cart-btn" onclick="closeCart()">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
+                    
+                    <!-- Тіло кошика -->
                     <div class="cart-body">
                         <div id="cart-items" class="cart-items">
                             <!-- Товари будуть додаватись тут -->
                         </div>
                         <div class="cart-empty" id="cart-empty">
-                            <div class="empty-icon">🛒</div>
-                            <p>Ваш кошик порожній</p>
-                            <span>Додайте товари, щоб почати покупки</span>
+                            <div class="empty-icon">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+                            <h4>Ваш кошик порожній</h4>
+                            <p>Додайте товари, щоб почати покупки</p>
                         </div>
                     </div>
+                    
+                    <!-- Підсумок кошика -->
                     <div class="cart-footer">
                         <!-- Прогрес бар в кошику -->
                         <div class="cart-progress-container">
+                            <div class="progress-info">
+                                <span class="progress-label">Прогрес до безкоштовної доставки</span>
+                                <span class="progress-amount" id="cart-progress-text">0₴ / 1000₴</span>
+                            </div>
                             <div class="cart-progress-bar">
                                 <div class="cart-progress-fill" id="cart-progress-fill"></div>
                             </div>
-                            <div class="cart-progress-text" id="cart-progress-text">0₴</div>
                         </div>
                         
+                        <!-- Підсумок -->
                         <div class="cart-summary">
-                            <div class="cart-total">
+                            <div class="summary-row">
+                                <span>Товарів:</span>
+                                <span id="cart-items-count">0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Доставка:</span>
+                                <span id="cart-delivery">Безкоштовно</span>
+                            </div>
+                            <div class="summary-row total-row">
                                 <span>Всього:</span>
                                 <span id="cart-total-price">0 грн</span>
                             </div>
-                            <div class="cart-count">
-                                <span id="cart-items-count">0 товарів</span>
-                            </div>
                         </div>
-                        <button class="checkout-btn" id="checkout-btn" onclick="checkout()">
-                            Оформити замовлення
-                        </button>
+                        
+                        <!-- Кнопки дій -->
+                        <div class="cart-actions">
+                            <button class="checkout-btn" id="checkout-btn" onclick="checkout()">
+                                <i class="fas fa-credit-card"></i>
+                                Оформити замовлення
+                            </button>
+                            <button class="clear-cart-btn" id="clear-cart-btn" onclick="clearCart()">
+                                <i class="fas fa-trash"></i>
+                                Очистити кошик
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -84,13 +114,6 @@
     </nav>
 </header>
 
-<!-- Прогрес бар під шапкою -->
-<div class="progress-bar-container">
-    <div class="progress-bar">
-        <div class="progress-fill" id="progress-fill"></div>
-    </div>
-    <div class="progress-text" id="progress-text">0₴</div>
-</div>
 
 
 <!-- Головна секція з товаром -->

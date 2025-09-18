@@ -24,8 +24,6 @@
       "is_active": true,
       "order": 2,
       "quantity_images": {
-        "21": "https://i.pinimg.com/736x/59/90/e2/5990e21db093d2f34ce3cff0c69dad94.jpg",
-        "51": "https://i.pinimg.com/736x/a4/55/68/a455680fd12e177ce4b4ea99d86fb4a3.jpg",
         "101": "https://i.pinimg.com/1200x/a9/a1/f9/a9a1f939c85afa68c29e123ab8e48460.jpg"
       }
     },
@@ -42,6 +40,15 @@
         "101": "https://i.pinimg.com/736x/59/90/e2/5990e21db093d2f34ce3cff0c69dad94.jpg",
         "201": "https://i.pinimg.com/736x/4b/a9/1f/4ba91f3631a709e59676b44efc9fe71f.jpg"
       }
+    },
+    {
+      "id": 4,
+      "name": "колір",
+      "hex_code": "#ff0000",
+      "image_url": "",
+      "is_active": true,
+      "order": 1,
+      "quantity_images": {}
     }
   ],
   "quantity_options": [
