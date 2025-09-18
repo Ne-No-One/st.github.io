@@ -21,9 +21,15 @@ def home(request):
         additional_products_sorted = sorted(additional_products, key=lambda x: x.get('order', 999))
         services_sorted = sorted(services, key=lambda x: x.get('order', 999))
         
-        # Додаємо фото за замовчуванням для кожного кольору
+        # Додаємо фото за замовчуванням та quantity_images для кожного кольору
+        import json
         for color in color_options_sorted:
             color['default_image'] = json_manager.get_default_image_for_color(color['id'])
+            # Переконуємося що quantity_images існує
+            if 'quantity_images' not in color:
+                color['quantity_images'] = {}
+            # Конвертуємо quantity_images в JSON строку для JavaScript
+            color['quantity_images_json'] = json.dumps(color['quantity_images'])
         
         # Створюємо контекст з відсортованими даними
         context = {

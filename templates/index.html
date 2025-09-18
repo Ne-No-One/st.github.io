@@ -129,10 +129,11 @@
                 <h3>{{ site_settings.color_selector_title|default:"колір пакування" }}</h3>
                 <div class="color-dots">
                     {% for color in color_options %}
-                        {% if color.is_active and color.quantity_images %}
+                        {% if color.is_active %}
                         <div class="color-dot {% if forloop.first %}active{% endif %}" 
                              data-color="{{ color.name|lower }}" 
                              data-default-image="{{ color.default_image|default:'' }}"
+                             data-quantity-images="{{ color.quantity_images_json }}"
                              data-flowers-image="{{ color.flowers_image_url|default:'' }}"
                              data-mask-image="{{ color.mask_image_url|default:'' }}"
                              data-packaging-texture="{{ color.packaging_texture_url|default:'' }}"
@@ -163,13 +164,6 @@
             </div>
             {% endif %}
             
-            <!-- Контейнер для відображення фото кількості -->
-            <div id="quantitiesContainer" class="quantities-container mt-3" style="display: none;">
-                <h4>Фото для кількості</h4>
-                <div class="quantity-images-grid" id="quantityImagesGrid">
-                    <!-- Тут будуть відображатися фото для кожної кількості -->
-                </div>
-            </div>
             
             {% if main_product %}
             <div class="product-price-container">

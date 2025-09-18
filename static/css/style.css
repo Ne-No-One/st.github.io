@@ -561,6 +561,19 @@ body {
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
 }
 
+/* Приховані кнопки кількостей */
+.quantity-btn.hidden {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    position: absolute !important;
+    left: -9999px !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+}
+
 /* ===== КОНТЕЙНЕР ДЛЯ НОВИХ КНОПОК ===== */
 .quantity-buttons {
     display: flex;
@@ -2954,7 +2967,6 @@ img {
     #home > div > div.product-info > * {
         text-align: center !important;
     }
-}
 
 /* ===== ПРОГРЕС БАРИ ===== */
 
