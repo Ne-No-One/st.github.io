@@ -1,0 +1,203 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Фото по кількостях - {{ color.name }} - Адмін Панель{% endblock %}
+{% block page_title %}Фото по кількостях - {{ color.name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-images me-2"></i>
+                    Управління фото для кольору "{{ color.name }}"
+                </h5>
+                <div class="d-flex gap-2">
+                    <span class="color-preview me-2" style="background-color: {{ color.hex_code }}; width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--border-primary);"></span>
+                    <a href="{% url 'admin_panel:main_product_settings' %}" class="btn btn-sm btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>
+                        Назад до товарів
+                    </a>
+                </div>
+            </div>
+            
+            <div class="card-body">
+                <!-- Форма додавання/оновлення фото -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-plus me-2"></i>
+                                    Додати/Оновити фото для кількості
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <form method="post" id="imageForm">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="add_image">
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3">
+                                            <label for="quantity" class="form-label">Кількість</label>
+                                            <select class="form-select" id="quantity" name="quantity" required>
+                                                <option value="">Оберіть кількість</option>
+                                                {% for qty in quantities %}
+                                                <option value="{{ qty.quantity }}">{{ qty.quantity }} шт</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="image_url" class="form-label">URL зображення</label>
+                                            <input type="url" class="form-control" id="image_url" name="image_url" 
+                                                   placeholder="https://example.com/image.jpg" required>
+                                        </div>
+                                        <div class="col-md-2 mb-3">
+                                            <label class="form-label">&nbsp;</label>
+                                            <div class="d-grid">
+                                                <button type="submit" class="btn btn-success">
+                                                    <i class="fas fa-save me-1"></i>
+                                                    Зберегти
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Список фото по кількостях -->
+                <div class="row">
+                    <div class="col-12">
+                        <h6 class="mb-3">
+                            <i class="fas fa-list me-2"></i>
+                            Поточні фото по кількостях
+                        </h6>
+                        
+                        {% if quantity_images %}
+                            <div class="row">
+                                {% for quantity_str, image_url in quantity_images.items %}
+                                <div class="col-md-4 col-lg-3 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-img-top" style="height: 200px; overflow: hidden;">
+                                            <img src="{{ image_url }}" class="w-100 h-100" 
+                                                 style="object-fit: cover;" alt="{{ color.name }} - {{ quantity_str }} шт"
+                                                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='">
+                                        </div>
+                                        <div class="card-body">
+                                            <h6 class="card-title">{{ quantity_str }} шт</h6>
+                                            <p class="card-text small text-muted">
+                                                <i class="fas fa-link me-1"></i>
+                                                <a href="{{ image_url }}" target="_blank" class="text-decoration-none">
+                                                    Переглянути оригінал
+                                                </a>
+                                            </p>
+                                            <div class="d-flex gap-1">
+                                                <button class="btn btn-sm btn-primary" 
+                                                        onclick="editImage('{{ quantity_str }}', '{{ image_url }}')">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <form method="post" class="d-inline" 
+                                                      onsubmit="return confirm('Видалити фото для {{ quantity_str }} шт?')">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="delete_image">
+                                                    <input type="hidden" name="quantity" value="{{ quantity_str }}">
+                                                    <button type="submit" class="btn btn-sm btn-danger">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-images fa-3x text-muted mb-3"></i>
+                                <h6 class="text-muted">Фото для кількостей не додані</h6>
+                                <p class="text-muted small">Додайте фото для різних кількостей квітів</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Додаткова інформація про колір -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Інформація про колір
+                                </h6>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <strong>Назва:</strong> {{ color.name }}
+                                    </div>
+                                    <div class="col-md-3">
+                                        <strong>Hex код:</strong> {{ color.hex_code }}
+                                    </div>
+                                    <div class="col-md-3">
+                                        <strong>Основне фото:</strong> 
+                                        <a href="{{ color.image_url }}" target="_blank" class="text-decoration-none">
+                                            Переглянути
+                                        </a>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <strong>Статус:</strong> 
+                                        {% if color.is_active %}
+                                            <span class="badge bg-success">Активний</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Неактивний</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function editImage(quantity, currentUrl) {
+    // Заповнюємо форму для редагування
+    document.getElementById('quantity').value = quantity;
+    document.getElementById('image_url').value = currentUrl;
+    
+    // Змінюємо дію форми на оновлення
+    document.querySelector('input[name="action"]').value = 'update_image';
+    
+    // Змінюємо текст кнопки
+    const submitBtn = document.querySelector('button[type="submit"]');
+    submitBtn.innerHTML = '<i class="fas fa-save me-1"></i> Оновити';
+    
+    // Скрол до форми
+    document.getElementById('imageForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// Скидаємо форму при зміні кількості
+document.getElementById('quantity').addEventListener('change', function() {
+    const submitBtn = document.querySelector('button[type="submit"]');
+    const actionInput = document.querySelector('input[name="action"]');
+    
+    // Перевіряємо чи є вже фото для цієї кількості
+    const quantity = this.value;
+    const existingImage = document.querySelector(`[data-quantity="${quantity}"]`);
+    
+    if (existingImage) {
+        actionInput.value = 'update_image';
+        submitBtn.innerHTML = '<i class="fas fa-save me-1"></i> Оновити';
+    } else {
+        actionInput.value = 'add_image';
+        submitBtn.innerHTML = '<i class="fas fa-save me-1"></i> Додати';
+    }
+});
+</script>
+{% endblock %}

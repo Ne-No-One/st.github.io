@@ -17,20 +17,15 @@
   },
   "color_options": [
     {
-      "id": 1,
-      "name": "синій",
-      "hex_code": "#4ecdc4",
-      "image_url": "https://i.pinimg.com/736x/2f/14/a4/2f14a47d68278ac126e3ccae843169c2.jpg",
-      "is_active": true,
-      "order": 1
-    },
-    {
       "id": 2,
       "name": "білий",
       "hex_code": "#fafafa",
       "image_url": "https://i.pinimg.com/736x/7d/39/b6/7d39b6db33fece15f42e768e2fb3cb52.jpg",
       "is_active": true,
-      "order": 2
+      "order": 2,
+      "quantity_images": {
+        "21": "https://i.pinimg.com/736x/59/90/e2/5990e21db093d2f34ce3cff0c69dad94.jpg"
+      }
     },
     {
       "id": 3,
@@ -38,7 +33,10 @@
       "hex_code": "#ff6b9d",
       "image_url": "https://i.pinimg.com/736x/9d/a8/8c/9da88ca8b4b9ebe243954c132907b2b9.jpg",
       "is_active": true,
-      "order": 3
+      "order": 3,
+      "quantity_images": {
+        "21": "https://i.pinimg.com/736x/59/90/e2/5990e21db093d2f34ce3cff0c69dad94.jpg"
+      }
     }
   ],
   "quantity_options": [

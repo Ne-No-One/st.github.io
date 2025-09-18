@@ -571,7 +571,7 @@
             box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.1) !important;
         }
 
-        /* Додаткові покращення для світлої теми */
+        /* Додаткові покращенняа для світлої теми */
         body.light-theme .nav-link {
             color: #374151 !important;
         }
@@ -600,36 +600,206 @@
             color: #111827 !important;
         }
 
-        /* Модальні вікна */
+         /* Система Overlay вікон як кошик */
+         .admin-overlay {
+             position: fixed;
+             top: 50%;
+             left: 50%;
+             transform: translate(-50%, -50%);
+             width: 90%;
+             max-width: 800px;
+             max-height: 85vh;
+             background: var(--bg-primary);
+             border: 2px solid var(--border-primary);
+             border-radius: 12px;
+             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+             z-index: 9999;
+             opacity: 0;
+             visibility: hidden;
+             transform: translate(-50%, -50%) scale(0.8);
+             transition: all 0.3s ease;
+             overflow: hidden;
+         }
+         
+         .admin-overlay.show {
+             opacity: 1;
+             visibility: visible;
+             transform: translate(-50%, -50%) scale(1);
+         }
+         
+         .admin-overlay-backdrop {
+             position: fixed;
+             top: 0;
+             left: 0;
+             width: 100%;
+             height: 100%;
+             background: rgba(0, 0, 0, 0.6);
+             z-index: 9998;
+             opacity: 0;
+             visibility: hidden;
+             transition: all 0.3s ease;
+         }
+         
+         .admin-overlay-backdrop.show {
+             opacity: 1;
+             visibility: visible;
+         }
+         
+         .admin-overlay-container {
+             width: 100%;
+             max-height: 85vh;
+             overflow: hidden;
+             position: relative;
+             display: flex;
+             flex-direction: column;
+         }
+         
+         .admin-overlay-header {
+             display: flex;
+             justify-content: space-between;
+             align-items: center;
+             padding: 20px;
+             border-bottom: 1px solid var(--border-primary);
+             background: var(--bg-secondary);
+         }
+         
+         .admin-overlay-header h5 {
+             color: var(--text-primary);
+             font-size: 1.5rem;
+             font-weight: 600;
+             margin: 0;
+         }
+         
+         .admin-overlay-close {
+             background: transparent;
+             border: 1px solid var(--border-primary);
+             color: var(--text-primary);
+             border-radius: 50%;
+             width: 36px;
+             height: 36px;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             cursor: pointer;
+             transition: all 0.3s ease;
+             font-size: 20px;
+         }
+         
+         .admin-overlay-close:hover {
+             background: var(--danger);
+             border-color: var(--danger);
+             color: white;
+         }
+         
+         .admin-overlay-body {
+             padding: 20px;
+             overflow-y: auto;
+             flex: 1;
+         }
+         
+         .admin-overlay-footer {
+             padding: 20px;
+             border-top: 1px solid var(--border-primary);
+             background: var(--bg-secondary);
+             display: flex;
+             gap: 10px;
+             justify-content: flex-end;
+         }
+        
+        .modal-dialog.modal-lg {
+            max-width: 800px !important;
+        }
+        
+        .modal-dialog.modal-sm {
+            max-width: 400px !important;
+        }
+        
+        .modal-dialog-centered {
+            min-height: calc(100% - 3.5rem) !important;
+        }
+        
         .modal-content {
             background-color: var(--bg-tertiary) !important;
             border: 1px solid var(--border-primary) !important;
-            border-radius: 8px;
+            border-radius: 8px !important;
+            pointer-events: auto !important;
+            position: relative !important;
+            width: 100% !important;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
         }
 
         .modal-header {
-            background: var(--gradient-primary);
+            background: var(--gradient-primary) !important;
             border-bottom: 1px solid var(--border-primary) !important;
-            border-radius: 8px 8px 0 0;
+            border-radius: 8px 8px 0 0 !important;
+            padding: 1rem !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
         }
 
         .modal-header .modal-title {
             color: white !important;
+            margin: 0 !important;
+            line-height: 1.5 !important;
         }
 
         .modal-footer {
             border-top: 1px solid var(--border-primary) !important;
-            background-color: var(--bg-secondary);
-            border-radius: 0 0 8px 8px;
+            background-color: var(--bg-secondary) !important;
+            border-radius: 0 0 8px 8px !important;
+            padding: 1rem !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: flex-end !important;
+            gap: 0.5rem !important;
         }
 
         .modal-body {
-            background-color: var(--bg-primary);
+            background-color: var(--bg-primary) !important;
+            padding: 1rem !important;
+            color: var(--text-primary) !important;
         }
 
         /* Кнопка закриття модального вікна */
         .btn-close {
-            filter: invert(1);
+            filter: invert(1) !important;
+            background: none !important;
+            border: none !important;
+            font-size: 1.25rem !important;
+            font-weight: 700 !important;
+            line-height: 1 !important;
+            color: white !important;
+            text-shadow: none !important;
+            opacity: 0.75 !important;
+            padding: 0.25rem !important;
+            margin: 0 !important;
+        }
+        
+        .btn-close:hover {
+            opacity: 1 !important;
+        }
+        
+        /* Адаптивність модальних вікон */
+        @media (max-width: 576px) {
+            .modal-dialog {
+                max-width: calc(100vw - 1rem) !important;
+                margin: 0.5rem !important;
+            }
+            
+            .modal-dialog.modal-lg {
+                max-width: calc(100vw - 1rem) !important;
+            }
+            
+            .modal-dialog-centered {
+                min-height: calc(100vh - 1rem) !important;
+            }
+            
+            .modal-header,
+            .modal-body,
+            .modal-footer {
+                padding: 0.75rem !important;
+            }
         }
 
         /* Модальні вікна для світлої теми */
@@ -1229,9 +1399,9 @@
                 const savedTheme = localStorage.getItem('theme') || 'dark';
                 switchTheme(savedTheme);
 
-                // Ініціалізація модальних вікон з затримкою
+                // Ініціалізація адмін панелі з затримкою
                 setTimeout(() => {
-                    initializeModals();
+                    initializeAdminPanel();
                 }, 100);
                 
                 // Встановлення активного навігаційного посилання
@@ -1241,154 +1411,136 @@
             }
         });
 
-        // Ініціалізація всіх модальних вікон
-        function initializeModals() {
-            // Знаходимо всі модальні вікна
-            const modals = document.querySelectorAll('.modal');
-            
-            modals.forEach(modal => {
-                // Очищуємо попередні обробники, якщо є
-                const existingModal = bootstrap.Modal.getInstance(modal);
-                if (existingModal) {
-                    existingModal.dispose();
-                }
-                
-                // Очищуємо всі існуючі event listeners
-                modal.removeEventListener('show.bs.modal', null);
-                modal.removeEventListener('shown.bs.modal', null);
-                modal.removeEventListener('hide.bs.modal', null);
-                modal.removeEventListener('hidden.bs.modal', null);
-                
-                // Додаємо обробники подій з namespace
-                modal.addEventListener('show.bs.modal', function modalShowHandler() {
-                    console.log('Модальне вікно відкривається:', modal.id);
-                    document.body.style.overflow = 'hidden';
-                });
+         // Система Overlay вікон як кошик
+         function initializeOverlays() {
+             console.log('Ініціалізація overlay системи...');
+             
+             // Додаємо обробники для закриття по ESC та backdrop
+             document.addEventListener('keydown', function(e) {
+                 if (e.key === 'Escape') {
+                     const openOverlay = document.querySelector('.admin-overlay.show');
+                     if (openOverlay) {
+                         closeOverlay(openOverlay.id);
+                     }
+                 }
+             });
+             
+             // Обробник для backdrop
+             document.addEventListener('click', function(e) {
+                 if (e.target.classList.contains('admin-overlay-backdrop')) {
+                     const openOverlay = document.querySelector('.admin-overlay.show');
+                     if (openOverlay) {
+                         closeOverlay(openOverlay.id);
+                     }
+                 }
+             });
+             
+             console.log('Overlay система ініціалізована');
+         }
 
-                modal.addEventListener('hide.bs.modal', function modalHideHandler() {
-                    console.log('Модальне вікно закривається:', modal.id);
-                    document.body.style.overflow = '';
-                });
-                
-                modal.addEventListener('hidden.bs.modal', function modalHiddenHandler() {
-                    console.log('Модальне вікно повністю закрито:', modal.id);
-                    cleanupModals();
-                });
-            });
+         // Функція відкриття overlay вікна
+         function openOverlay(overlayId) {
+             try {
+                 console.log('Відкриття overlay:', overlayId);
+                 
+                 // Закриваємо всі інші overlay
+                 closeAllOverlays();
+                 
+                 const overlay = document.getElementById(overlayId);
+                 const backdrop = document.getElementById(overlayId + '-backdrop');
+                 
+                 if (!overlay) {
+                     console.error('Overlay не знайдено:', overlayId);
+                     return false;
+                 }
+                 
+                 // Показуємо backdrop
+                 if (backdrop) {
+                     backdrop.classList.add('show');
+                 }
+                 
+                 // Показуємо overlay з невеликою затримкою для анімації
+                 setTimeout(() => {
+                     overlay.classList.add('show');
+                     document.body.style.overflow = 'hidden';
+                 }, 10);
+                 
+                 console.log('Overlay відкрито:', overlayId);
+                 return true;
+                 
+             } catch (error) {
+                 console.error('Помилка відкриття overlay:', error);
+                 return false;
+             }
+         }
 
-            console.log(`Ініціалізовано ${modals.length} модальних вікон`);
-        }
+         // Функція закриття overlay вікна
+         function closeOverlay(overlayId) {
+             try {
+                 const overlay = document.getElementById(overlayId);
+                 const backdrop = document.getElementById(overlayId + '-backdrop');
+                 
+                 if (overlay) {
+                     overlay.classList.remove('show');
+                 }
+                 
+                 if (backdrop) {
+                     backdrop.classList.remove('show');
+                 }
+                 
+                 // Відновлюємо прокрутку через невелику затримку
+                 setTimeout(() => {
+                     document.body.style.overflow = '';
+                 }, 300);
+                 
+                 console.log('Overlay закрито:', overlayId);
+                 return true;
+                 
+             } catch (error) {
+                 console.error('Помилка закриття overlay:', error);
+                 return false;
+             }
+         }
+         
+         // Функція закриття всіх overlay
+         function closeAllOverlays() {
+             document.querySelectorAll('.admin-overlay.show').forEach(overlay => {
+                 overlay.classList.remove('show');
+             });
+             
+             document.querySelectorAll('.admin-overlay-backdrop.show').forEach(backdrop => {
+                 backdrop.classList.remove('show');
+             });
+             
+             document.body.style.overflow = '';
+         }
 
-        // Функція для безпечного відкриття модального вікна
-        function openModal(modalId) {
-            return new Promise((resolve, reject) => {
-                try {
-                    const modalElement = document.getElementById(modalId);
-                    if (!modalElement) {
-                        console.error('Модальне вікно не знайдено:', modalId);
-                        reject(new Error('Modal not found'));
-                        return;
-                    }
-
-                    // Очищуємо попередні стани
-                    cleanupModals();
-
-                    // Створюємо або отримуємо існуючий екземпляр модального вікна
-                    const modal = bootstrap.Modal.getOrCreateInstance(modalElement, {
-                        backdrop: true,
-                        keyboard: true,
-                        focus: true
-                    });
-
-                    // Додаємо timeout для запобігання зависанню
-                    const timeout = setTimeout(() => {
-                        modalElement.removeEventListener('shown.bs.modal', onShown);
-                        modalElement.removeEventListener('hide.bs.modal', onError);
-                        reject(new Error('Modal opening timeout'));
-                    }, 5000);
-
-                    // Додаємо одноразовий обробник для успішного відкриття
-                    const onShown = () => {
-                        clearTimeout(timeout);
-                        modalElement.removeEventListener('shown.bs.modal', onShown);
-                        modalElement.removeEventListener('hide.bs.modal', onError);
-                        console.log('Модальне вікно успішно відкрито:', modalId);
-                        resolve(true);
-                    };
-
-                    // Додаємо одноразовий обробник для помилки (якщо модал закривається перед відкриттям)
-                    const onError = () => {
-                        clearTimeout(timeout);
-                        modalElement.removeEventListener('shown.bs.modal', onShown);
-                        modalElement.removeEventListener('hide.bs.modal', onError);
-                        reject(new Error('Modal was closed before opening'));
-                    };
-
-                    modalElement.addEventListener('shown.bs.modal', onShown);
-                    modalElement.addEventListener('hide.bs.modal', onError);
-                    
-                    // Відкриваємо модальне вікно
-                    modal.show();
-                    
-                } catch (error) {
-                    console.error('Помилка при відкритті модального вікна:', error);
-                    reject(error);
-                }
-            });
-        }
-
-        // Функція для очищення всіх модальних станів
-        function cleanupModals() {
-            // Прибираємо всі backdrop'и
-            const existingBackdrops = document.querySelectorAll('.modal-backdrop');
-            existingBackdrops.forEach(backdrop => {
-                backdrop.remove();
-            });
-            
-            // Прибираємо класи та стилі з body
-            document.body.classList.remove('modal-open');
-            document.body.style.overflow = '';
-            document.body.style.paddingRight = '';
-        }
-
-        // Альтернативна функція для простого відкриття (зворотна сумісність)
-        function showModal(modalId) {
-            try {
-                const modalElement = document.getElementById(modalId);
-                if (!modalElement) {
-                    console.error('Модальне вікно не знайдено:', modalId);
-                    return false;
-                }
-
-                cleanupModals();
-                
-                const modal = bootstrap.Modal.getOrCreateInstance(modalElement, {
-                    backdrop: true,
-                    keyboard: true,
-                    focus: true
-                });
-                
-                modal.show();
-                console.log('Модальне вікно відкрито (showModal):', modalId);
-                return true;
-            } catch (error) {
-                console.error('Помилка showModal:', error);
-                return false;
-            }
-        }
-
-        // Функція для безпечного закриття модального вікна
-        function closeModal(modalId) {
-            const modalElement = document.getElementById(modalId);
-            if (modalElement) {
-                const modal = bootstrap.Modal.getInstance(modalElement);
-                if (modal) {
-                    modal.hide();
-                }
-                return true;
-            }
-            return false;
-        }
+         // Функції для зворотної сумісності (адаптери)
+         function showModal(modalId) {
+             return openOverlay(modalId);
+         }
+         
+         function openModal(modalId) {
+             return openOverlay(modalId);
+         }
+         
+         function openModalSafe(modalId) {
+             return openOverlay(modalId);
+         }
+ 
+         function closeModal(modalId) {
+             return closeOverlay(modalId);
+         }
+         
+         // Ініціалізація при завантаженні
+         function initializeAdminPanel() {
+             try {
+                 initializeOverlays();
+                 console.log('✅ Адмін панель ініціалізовано');
+             } catch (error) {
+                 console.error('❌ Помилка ініціалізації адмін панелі:', error);
+             }
+         }
 
         // Set active nav link
         function setActiveNavLink() {

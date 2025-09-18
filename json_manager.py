@@ -203,7 +203,7 @@ class JSONManager:
         return data.get('color_options', [])
     
     def add_color_option(self, name, hex_code, image_url="", order=None):
-        """Додаємо новий колір"""
+        """Додаємо новий колір (старий метод для зворотної сумісності)"""
         data = self.load_data()
         colors = data.get('color_options', [])
         new_id = max([c.get('id', 0) for c in colors], default=0) + 1
@@ -221,8 +221,29 @@ class JSONManager:
         data['color_options'] = colors
         return self.save_data(data)
     
+    def add_color_option_with_layers(self, name, hex_code, image_url, order=None, packaging_texture_url=None, mask_image_url=None, flowers_image_url=None):
+        """Додаємо новий колір (спрощена версія без шарів)"""
+        data = self.load_data()
+        colors = data.get('color_options', [])
+        new_id = max([c.get('id', 0) for c in colors], default=0) + 1
+        if order is None:
+            order = len(colors) + 1
+        
+        new_color = {
+            'id': new_id,
+            'name': name,
+            'hex_code': hex_code,
+            'image_url': image_url,
+            'is_active': True,
+            'order': order,
+            'quantity_images': {}  # Структура для фото по кількостях
+        }
+        colors.append(new_color)
+        data['color_options'] = colors
+        return self.save_data(data)
+    
     def update_color_option(self, color_id, name, hex_code, image_url=""):
-        """Оновлюємо колір/варіант товару"""
+        """Оновлюємо колір/варіант товару (старий метод для зворотної сумісності)"""
         data = self.load_data()
         colors = data.get('color_options', [])
         for color in colors:
@@ -236,11 +257,111 @@ class JSONManager:
         data['color_options'] = colors
         return self.save_data(data)
     
+    def update_color_option_with_layers(self, color_id, name, hex_code, image_url, is_active=True, packaging_texture_url=None, mask_image_url=None, flowers_image_url=None):
+        """Оновлюємо колір (спрощена версія без шарів)"""
+        data = self.load_data()
+        colors = data.get('color_options', [])
+        for color in colors:
+            if color.get('id') == color_id:
+                # Оновлюємо основні поля
+                color.update({
+                    'name': name,
+                    'hex_code': hex_code,
+                    'image_url': image_url,
+                    'is_active': is_active
+                })
+                # Додаємо quantity_images якщо його немає
+                if 'quantity_images' not in color:
+                    color['quantity_images'] = {}
+                break
+        data['color_options'] = colors
+        return self.save_data(data)
+    
     def delete_color_option(self, color_id):
         """Видаляємо колір/варіант товару"""
         data = self.load_data()
         colors = data.get('color_options', [])
         data['color_options'] = [c for c in colors if c.get('id') != color_id]
+        return self.save_data(data)
+    
+    def add_quantity_image_for_color(self, color_id, quantity, image_url):
+        """Додаємо фото для конкретної кількості кольору"""
+        print(f"🖼️ add_quantity_image_for_color: color_id={color_id}, quantity={quantity}, image_url={image_url}")
+        data = self.load_data()
+        colors = data.get('color_options', [])
+        found = False
+        for color in colors:
+            if color.get('id') == color_id:
+                if 'quantity_images' not in color:
+                    color['quantity_images'] = {}
+                color['quantity_images'][str(quantity)] = image_url
+                print(f"✅ Додано фото для кольору {color_id}, кількість {quantity}")
+                found = True
+                break
+        
+        if not found:
+            print(f"❌ Колір з ID {color_id} не знайдено!")
+            return False
+            
+        data['color_options'] = colors
+        result = self.save_data(data)
+        print(f"💾 Результат збереження фото: {result}")
+        return result
+    
+    def update_quantity_image_for_color(self, color_id, quantity, image_url):
+        """Оновлюємо фото для конкретної кількості кольору"""
+        return self.add_quantity_image_for_color(color_id, quantity, image_url)
+    
+    def delete_quantity_image_for_color(self, color_id, quantity):
+        """Видаляємо фото для конкретної кількості кольору"""
+        data = self.load_data()
+        colors = data.get('color_options', [])
+        for color in colors:
+            if color.get('id') == color_id:
+                if 'quantity_images' in color and str(quantity) in color['quantity_images']:
+                    del color['quantity_images'][str(quantity)]
+                break
+        data['color_options'] = colors
+        return self.save_data(data)
+    
+    def get_quantity_image_for_color(self, color_id, quantity):
+        """Отримуємо фото для конкретної кількості кольору"""
+        colors = self.get_color_options()
+        for color in colors:
+            if color.get('id') == color_id:
+                quantity_images = color.get('quantity_images', {})
+                return quantity_images.get(str(quantity), color.get('image_url', ''))
+        return ''
+    
+    def add_color_with_quantities(self, name, hex_code, image_url, order=None, quantities_data=None):
+        """Додаємо новий колір з кількостями та фото"""
+        data = self.load_data()
+        colors = data.get('color_options', [])
+        new_id = max([c.get('id', 0) for c in colors], default=0) + 1
+        if order is None:
+            order = len(colors) + 1
+        
+        # Створюємо колір
+        new_color = {
+            'id': new_id,
+            'name': name,
+            'hex_code': hex_code,
+            'image_url': image_url,
+            'is_active': True,
+            'order': order,
+            'quantity_images': {}
+        }
+        
+        # Додаємо фото для кількостей
+        if quantities_data:
+            for qty_data in quantities_data:
+                quantity = qty_data.get('quantity')
+                image_url = qty_data.get('image_url')
+                if quantity and image_url:
+                    new_color['quantity_images'][str(quantity)] = image_url
+        
+        colors.append(new_color)
+        data['color_options'] = colors
         return self.save_data(data)
     
     def get_quantity_options(self):
@@ -265,11 +386,15 @@ class JSONManager:
     
     def add_quantity_option_with_price(self, quantity, price_per_unit, order=None):
         """Додаємо новий варіант кількості з ціною за одиницю"""
+        print(f"🔧 add_quantity_option_with_price: quantity={quantity}, price_per_unit={price_per_unit}, order={order}")
         data = self.load_data()
         quantities = data.get('quantity_options', [])
+        print(f"📊 Поточні кількості: {len(quantities)}")
+        
         new_id = max([q.get('id', 0) for q in quantities], default=0) + 1
         if order is None:
             order = len(quantities) + 1
+        
         new_quantity = {
             'id': new_id,
             'quantity': quantity,
@@ -277,9 +402,13 @@ class JSONManager:
             'is_active': True,
             'order': order
         }
+        print(f"📦 Новий варіант: {new_quantity}")
+        
         quantities.append(new_quantity)
         data['quantity_options'] = quantities
-        return self.save_data(data)
+        result = self.save_data(data)
+        print(f"💾 Результат збереження: {result}")
+        return result
     
     def update_quantity_option(self, quantity_id, quantity, price_per_unit, is_active):
         """Оновлюємо варіант кількості"""

@@ -8,7 +8,7 @@ from main import views
 from main.health_check import health_check
 
 urlpatterns = [
-    # path('admin-panel/', include('admin_panel.urls')),  # Адмін-панель виключена для основного сайту
+    path('admin-panel/', include('admin_panel.urls')),  # Адмін-панель
     path('health/', health_check, name='health_check'),
     path('', views.home, name='home'),
 ]

@@ -202,11 +202,11 @@ def main_product_settings(request):
                     image_url = request.POST.get('image_url', '').strip()
                     order = request.POST.get('variant_order', '1').strip()
                     
-                    print(f"🔍 Додавання варіанту: name='{name}', hex='{hex_code}', url='{image_url}', order='{order}'")
+                    print(f"🔍 Додавання варіанту: name='{name}', hex='{hex_code}', url='{image_url}'")
                     
                     if not name or not hex_code or not image_url:
-                        messages.error(request, 'Всі поля варіанту є обов\'язковими!')
-                        print("❌ Не всі поля заповнені")
+                        messages.error(request, 'Основні поля (назва, hex-код, зображення) є обов\'язковими!')
+                        print("❌ Не всі обов'язкові поля заповнені")
                     elif not hex_code.startswith('#') or len(hex_code) != 7:
                         messages.error(request, 'Hex-код повинен мати формат #rrggbb!')
                         print(f"❌ Неправильний hex-код: {hex_code}")
@@ -215,8 +215,17 @@ def main_product_settings(request):
                             order_int = int(order) if order else 1
                         except ValueError:
                             order_int = 1
+                        
+                        # Створюємо простий об'єкт кольору
+                        color_data = {
+                            'name': name,
+                            'hex_code': hex_code,
+                            'image_url': image_url,
+                            'order': order_int
+                        }
+                        
                         print("✅ Всі дані валідні, додаємо варіант...")
-                        result = json_manager.add_color_option(name, hex_code, image_url, order_int)
+                        result = json_manager.add_color_option_with_layers(**color_data)
                         print(f"📊 Результат додавання: {result}")
                         
                         if result:
@@ -247,10 +256,14 @@ def main_product_settings(request):
                         messages.error(request, 'Помилка оновлення варіанту!')
                         
             elif action == 'add_quantity':
+                print(f"DEBUG: add_quantity action received")
+                print(f"DEBUG: POST data: {request.POST}")
                 try:
                     quantity = int(request.POST.get('quantity', 0))
                     price_per_unit = float(request.POST.get('price_per_unit', 0))
                     order = request.POST.get('quantity_order', '1').strip()
+                    
+                    print(f"DEBUG: quantity={quantity}, price_per_unit={price_per_unit}, order={order}")
                     
                     if quantity <= 0:
                         messages.error(request, 'Кількість повинна бути більше 0!')
@@ -261,12 +274,16 @@ def main_product_settings(request):
                             order_int = int(order) if order else 1
                         except ValueError:
                             order_int = 1
+                        print(f"DEBUG: Calling add_quantity_option_with_price with quantity={quantity}, price_per_unit={price_per_unit}, order={order_int}")
                         if json_manager.add_quantity_option_with_price(quantity, price_per_unit, order_int):
                             messages.success(request, f'Варіант {quantity} шт по {price_per_unit} грн/шт додано!')
+                            print(f"DEBUG: Successfully added quantity option")
                         else:
                             messages.error(request, 'Помилка додавання варіанту кількості!')
-                except (ValueError, TypeError):
+                            print(f"DEBUG: Failed to add quantity option")
+                except (ValueError, TypeError) as e:
                     messages.error(request, 'Неправильний формат числових даних!')
+                    print(f"DEBUG: Error in add_quantity: {e}")
                     
             elif action == 'update_quantity':
                 try:
@@ -322,7 +339,7 @@ def edit_color_variant(request, color_id):
             is_active = request.POST.get('is_active') == 'on'
             
             if not name or not hex_code or not image_url:
-                messages.error(request, 'Всі поля є обов\'язковими!')
+                messages.error(request, 'Основні поля (назва, hex-код, зображення) є обов\'язковими!')
             elif not hex_code.startswith('#') or len(hex_code) != 7:
                 messages.error(request, 'Hex-код повинен мати формат #rrggbb!')
             else:
@@ -332,7 +349,7 @@ def edit_color_variant(request, color_id):
                     'image_url': image_url,
                     'is_active': is_active
                 }
-                if json_manager.update_color_option(color_id, **updated_color):
+                if json_manager.update_color_option_with_layers(color_id, **updated_color):
                     messages.success(request, f'Колір "{name}" успішно оновлено!')
                     return redirect('admin_panel:main_product_settings')
                 else:
@@ -478,6 +495,160 @@ def delete_quantity_option(request, quantity_id):
         else:
             messages.error(request, 'Помилка видалення кількості!')
         return redirect('admin_panel:quantity_options')
+    except Exception as e:
+        return HttpResponse(f"Помилка: {e}")
+
+def manage_color_quantity_images(request, color_id):
+    """Управління фото для кольору по кількостях"""
+    try:
+        from json_manager import JSONManager
+        json_manager = JSONManager()
+        
+        # Знаходимо колір
+        colors = json_manager.get_color_options()
+        color = None
+        for c in colors:
+            if c['id'] == color_id:
+                color = c
+                break
+        
+        if not color:
+            messages.error(request, 'Колір не знайдено!')
+            return redirect('admin_panel:main_product_settings')
+        
+        # Отримуємо всі варіанти кількості
+        quantities = json_manager.get_quantity_options()
+        
+        if request.method == 'POST':
+            action = request.POST.get('action')
+            
+            if action == 'add_image':
+                quantity = int(request.POST.get('quantity'))
+                image_url = request.POST.get('image_url', '').strip()
+                
+                if not image_url:
+                    messages.error(request, 'URL зображення не може бути порожнім!')
+                else:
+                    if json_manager.add_quantity_image_for_color(color_id, quantity, image_url):
+                        messages.success(request, f'Фото для {quantity} шт успішно додано!')
+                    else:
+                        messages.error(request, 'Помилка додавання фото!')
+            
+            elif action == 'update_image':
+                quantity = int(request.POST.get('quantity'))
+                image_url = request.POST.get('image_url', '').strip()
+                
+                if not image_url:
+                    messages.error(request, 'URL зображення не може бути порожнім!')
+                else:
+                    if json_manager.update_quantity_image_for_color(color_id, quantity, image_url):
+                        messages.success(request, f'Фото для {quantity} шт успішно оновлено!')
+                    else:
+                        messages.error(request, 'Помилка оновлення фото!')
+            
+            elif action == 'delete_image':
+                quantity = int(request.POST.get('quantity'))
+                if json_manager.delete_quantity_image_for_color(color_id, quantity):
+                    messages.success(request, f'Фото для {quantity} шт успішно видалено!')
+                else:
+                    messages.error(request, 'Помилка видалення фото!')
+            
+            return redirect('admin_panel:manage_color_quantity_images', color_id=color_id)
+        
+        # Отримуємо поточні фото для кольору
+        quantity_images = color.get('quantity_images', {})
+        
+        context = {
+            'color': color,
+            'quantities': quantities,
+            'quantity_images': quantity_images
+        }
+        return render(request, 'admin_panel/manage_color_quantity_images.html', context)
+    except Exception as e:
+        return HttpResponse(f"Помилка: {e}")
+
+def create_color_with_quantities(request):
+    """Створення або редагування кольору з кількостями та фото в одному інтерфейсі"""
+    try:
+        from json_manager import JSONManager
+        json_manager = JSONManager()
+        
+        # Перевіряємо чи це редагування
+        edit_color_id = request.GET.get('edit')
+        is_edit_mode = bool(edit_color_id)
+        
+        # Отримуємо всі варіанти кількості
+        quantities = json_manager.get_quantity_options()
+        
+        # Якщо це редагування, отримуємо дані кольору
+        color_data = None
+        if is_edit_mode:
+            colors = json_manager.get_color_options()
+            for color in colors:
+                if color['id'] == int(edit_color_id):
+                    color_data = color
+                    break
+            
+            if not color_data:
+                messages.error(request, 'Колір не знайдено!')
+                return redirect('admin_panel:main_product_settings')
+        
+        if request.method == 'POST':
+            # Основні дані кольору
+            name = request.POST.get('color_name', '').strip()
+            hex_code = request.POST.get('hex_code', '').strip()
+            image_url = request.POST.get('image_url', '').strip()
+            order = request.POST.get('order', '1').strip()
+            
+            # Перевіряємо основні поля
+            if not name or not hex_code or not image_url:
+                messages.error(request, 'Основні поля кольору (назва, hex-код, зображення) є обов\'язковими!')
+            elif not hex_code.startswith('#') or len(hex_code) != 7:
+                messages.error(request, 'Hex-код повинен мати формат #rrggbb!')
+            else:
+                try:
+                    order_int = int(order) if order else 1
+                except ValueError:
+                    order_int = 1
+                
+                # Збираємо дані про кількості та фото
+                quantities_data = []
+                for qty in quantities:
+                    quantity = qty['quantity']
+                    image_url_key = f'quantity_{quantity}_image'
+                    quantity_image_url = request.POST.get(image_url_key, '').strip()
+                    
+                    if quantity_image_url:  # Додаємо тільки якщо є фото
+                        quantities_data.append({
+                            'quantity': quantity,
+                            'image_url': quantity_image_url
+                        })
+                
+                if is_edit_mode:
+                    # Редагуємо існуючий колір
+                    if json_manager.update_color_option_with_layers(int(edit_color_id), name, hex_code, image_url, True):
+                        # Оновлюємо фото по кількостях
+                        for qty_data in quantities_data:
+                            json_manager.update_quantity_image_for_color(int(edit_color_id), qty_data['quantity'], qty_data['image_url'])
+                        
+                        messages.success(request, f'Колір "{name}" з {len(quantities_data)} фото по кількостях успішно оновлено!')
+                        return redirect('admin_panel:main_product_settings')
+                    else:
+                        messages.error(request, 'Помилка оновлення кольору!')
+                else:
+                    # Створюємо новий колір
+                    if json_manager.add_color_with_quantities(name, hex_code, image_url, order_int, quantities_data):
+                        messages.success(request, f'Колір "{name}" з {len(quantities_data)} фото по кількостях успішно створено!')
+                        return redirect('admin_panel:main_product_settings')
+                    else:
+                        messages.error(request, 'Помилка створення кольору!')
+        
+        context = {
+            'quantities': quantities,
+            'is_edit_mode': is_edit_mode,
+            'color_data': color_data
+        }
+        return render(request, 'admin_panel/create_color_with_quantities.html', context)
     except Exception as e:
         return HttpResponse(f"Помилка: {e}")
 

@@ -13,54 +13,12 @@
                     <i class="fas fa-palette me-2"></i>
                     Варіанти кольорів ({{ variants|length }})
                 </h5>
-                <button class="btn btn-sm btn-success" onclick="toggleAddColorForm()">
-                    <i class="fas fa-plus me-1"></i>
-                    Додати колір
-                </button>
+                <a href="{% url 'admin_panel:create_color_with_quantities' %}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus-circle me-1"></i>
+                    Створити колір з кількостями
+                </a>
             </div>
             
-            <!-- Форма додавання кольору -->
-            <div class="card-body border-bottom" id="addColorForm" style="display: none;">
-                <form method="post" class="p-3 rounded" style="background: var(--bg-tertiary); border: 1px solid var(--border-primary);">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="add_variant">
-                    <h6 class="mb-3">
-                        <i class="fas fa-plus me-2"></i>
-                        Додати новий колір
-                    </h6>
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label for="variant_name" class="form-label">Назва кольору</label>
-                            <input type="text" class="form-control" id="variant_name" name="variant_name" 
-                                   placeholder="Наприклад: Червоний" required>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="hex_code" class="form-label">Hex код</label>
-                            <input type="text" class="form-control" id="hex_code" name="hex_code" 
-                                   placeholder="#ff0000" pattern="^#[0-9A-Fa-f]{6}$" required>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label for="image_url" class="form-label">URL зображення</label>
-                            <input type="url" class="form-control" id="image_url" name="image_url" 
-                                   placeholder="https://example.com/image.jpg" required>
-                        </div>
-                        <div class="col-md-1 mb-3">
-                            <label for="variant_order" class="form-label">Порядок</label>
-                            <input type="number" class="form-control" id="variant_order" name="variant_order" 
-                                   placeholder="1" min="1" max="100" value="1">
-                        </div>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-success">
-                            <i class="fas fa-save me-1"></i>
-                            Зберегти колір
-                        </button>
-                        <button type="button" class="btn btn-secondary" onclick="toggleAddColorForm()">
-                            Скасувати
-                        </button>
-                    </div>
-                </form>
-                    </div>
                     
             <div class="card-body">
                 {% if variants %}
@@ -88,12 +46,23 @@
                                         <div class="d-flex gap-1">
                                             <span class="badge bg-info">ID: {{ variant.id }}</span>
                                             <span class="badge bg-secondary">Порядок: {{ variant.order|default:"1" }}</span>
+                                            {% if variant.quantity_images %}
+                                                <span class="badge bg-success">
+                                                    <i class="fas fa-images me-1"></i>
+                                                    {{ variant.quantity_images|length }} фото
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-warning">
+                                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                                    Немає фото
+                                                </span>
+                                            {% endif %}
                                         </div>
                                     </div>
                                     <div class="d-flex justify-content-end">
                                         <div class="btn-group">
-                                            <a href="{% url 'admin_panel:edit_color_variant' variant.id %}" 
-                                               class="btn btn-sm btn-primary" title="Редагувати">
+                                            <a href="{% url 'admin_panel:create_color_with_quantities' %}?edit={{ variant.id }}" 
+                                               class="btn btn-sm btn-primary" title="Редагувати колір з кількостями">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <a href="{% url 'admin_panel:delete_color_from_main' variant.id %}" 
@@ -132,7 +101,7 @@
                     <i class="fas fa-calculator me-2"></i>
                     Варіанти кількості та ціни ({{ quantities|length }})
                 </h5>
-                <button class="btn btn-sm btn-success" onclick="toggleAddQuantityForm()">
+                <button class="btn btn-sm btn-success" id="addQuantityButton" onclick="toggleAddQuantityForm()">
                     <i class="fas fa-plus me-1"></i>
                     Додати варіант
                 </button>
@@ -140,7 +109,7 @@
             
             <!-- Форма додавання кількості -->
             <div class="card-body border-bottom" id="addQuantityForm" style="display: none;">
-                <form method="post" class="p-3 rounded" style="background: var(--bg-tertiary); border: 1px solid var(--border-primary);">
+                <form method="post" action="{% url 'admin_panel:main_product_settings' %}" class="p-3 rounded" style="background: var(--bg-tertiary); border: 1px solid var(--border-primary);" onsubmit="return submitQuantityForm(event)">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="add_quantity">
                     <h6 class="mb-3">
@@ -255,33 +224,73 @@
 
 {% block extra_js %}
 <script>
-// Функції для роботи з формами
-function toggleAddColorForm() {
-    const form = document.getElementById('addColorForm');
-    if (form.style.display === 'none') {
-        form.style.display = 'block';
-        // Скрол до форми
-        form.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    } else {
-        form.style.display = 'none';
-        // Очищуємо форму
-        const inputs = form.querySelectorAll('input[type="text"], input[type="url"]');
-        inputs.forEach(input => input.value = '');
+// Функція для відправки форми кількості
+function submitQuantityForm(event) {
+    console.log('submitQuantityForm викликана');
+    const form = event.target;
+    
+    // Перевіряємо чи всі поля заповнені
+    const quantity = form.querySelector('input[name="quantity"]').value;
+    const pricePerUnit = form.querySelector('input[name="price_per_unit"]').value;
+    
+    console.log('Quantity:', quantity, 'Price:', pricePerUnit);
+    
+    if (!quantity || !pricePerUnit) {
+        alert('Будь ласка, заповніть всі поля!');
+        return false;
     }
+    
+    console.log('Форма відправляється...');
+    return true; // Дозволяємо відправку форми
 }
 
+// Функція для роботи з формою кількості
 function toggleAddQuantityForm() {
+    console.log('toggleAddQuantityForm викликана');
     const form = document.getElementById('addQuantityForm');
-    if (form.style.display === 'none') {
+    console.log('Форма знайдена:', form);
+    
+    if (!form) {
+        console.error('Форма addQuantityForm не знайдена!');
+        alert('Помилка: форма не знайдена. Перевірте консоль браузера для деталей.');
+        return;
+    }
+    
+    console.log('Поточний display:', form.style.display);
+    console.log('Computed display:', window.getComputedStyle(form).display);
+    
+    if (form.style.display === 'none' || form.style.display === '' || window.getComputedStyle(form).display === 'none') {
         form.style.display = 'block';
+        console.log('Форма показана');
         // Скрол до форми
         form.scrollIntoView({ behavior: 'smooth', block: 'center' });
     } else {
         form.style.display = 'none';
+        console.log('Форма прихована');
         // Очищуємо форму
         const inputs = form.querySelectorAll('input[type="number"]');
         inputs.forEach(input => input.value = '');
     }
 }
+
+// Перевіряємо чи кнопка існує при завантаженні сторінки
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM завантажено');
+    const button = document.getElementById('addQuantityButton');
+    console.log('Кнопка знайдена:', button);
+    
+    if (button) {
+        console.log('Кнопка правильно пов\'язана з функцією');
+        
+        // Додаємо альтернативний обробник подій
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Кнопка натиснута через addEventListener');
+            toggleAddQuantityForm();
+        });
+    } else {
+        console.error('Кнопка не знайдена!');
+    }
+});
 </script>
 {% endblock %}

@@ -1,0 +1,248 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}{% if is_edit_mode %}Редагування{% else %}Створення{% endif %} кольору з кількостями - Адмін Панель{% endblock %}
+{% block page_title %}{% if is_edit_mode %}Редагування{% else %}Створення{% endif %} кольору з кількостями та фото{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-palette me-2"></i>
+                    {% if is_edit_mode %}Редагування{% else %}Створення{% endif %} кольору з кількостями та фото
+                </h5>
+                <a href="{% url 'admin_panel:main_product_settings' %}" class="btn btn-sm btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>
+                    Назад до товарів
+                </a>
+            </div>
+            
+            <div class="card-body">
+                <form method="post" id="colorForm">
+                    {% csrf_token %}
+                    
+                    <!-- Основні дані кольору -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="text-primary border-bottom pb-2 mb-3">
+                                <i class="fas fa-palette me-2"></i>
+                                Основні дані кольору
+                            </h6>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="color_name" class="form-label">Назва кольору</label>
+                            <input type="text" class="form-control" id="color_name" name="color_name" 
+                                   placeholder="Наприклад: Червоний" 
+                                   value="{% if is_edit_mode and color_data %}{{ color_data.name }}{% endif %}" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="hex_code" class="form-label">Hex код кольору</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="hex_code" name="hex_code" 
+                                       placeholder="#ff0000" pattern="^#[0-9A-Fa-f]{6}$" 
+                                       value="{% if is_edit_mode and color_data %}{{ color_data.hex_code }}{% endif %}" required>
+                                <span class="input-group-text" id="color-preview" 
+                                      style="background-color: {% if is_edit_mode and color_data %}{{ color_data.hex_code }}{% else %}#f0f0f0{% endif %}; width: 40px;"></span>
+                            </div>
+                            <div class="form-text">Формат: #rrggbb (наприклад, #ff0000)</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="order" class="form-label">Порядок відображення</label>
+                            <input type="number" class="form-control" id="order" name="order" 
+                                   placeholder="1" min="1" max="100" 
+                                   value="{% if is_edit_mode and color_data %}{{ color_data.order }}{% else %}1{% endif %}">
+                        </div>
+                    </div>
+                    
+                    <!-- Основне фото кольору -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <label for="image_url" class="form-label">Основне фото кольору</label>
+                            <input type="url" class="form-control" id="image_url" name="image_url" 
+                                   placeholder="https://example.com/color_image.jpg" 
+                                   value="{% if is_edit_mode and color_data %}{{ color_data.image_url }}{% endif %}" required>
+                            <div class="form-text">Це фото буде використовуватися як за замовчуванням для всіх кількостей</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Кількості та фото -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="text-success border-bottom pb-2 mb-3">
+                                <i class="fas fa-images me-2"></i>
+                                Фото для кожної кількості
+                            </h6>
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Порада:</strong> Додайте фото для кожної кількості квітів. Якщо фото для певної кількості не вказано, буде використовуватися основне фото кольору.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Динамічні поля для кількостей -->
+                    <div class="row" id="quantitiesContainer">
+                        {% for qty in quantities %}
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-hashtag me-2"></i>
+                                        {{ qty.quantity }} шт
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <label for="quantity_{{ qty.quantity }}_image" class="form-label">URL зображення</label>
+                                    <input type="url" class="form-control quantity-image-input" 
+                                           id="quantity_{{ qty.quantity }}_image" 
+                                           name="quantity_{{ qty.quantity }}_image" 
+                                           placeholder="https://example.com/{{ qty.quantity }}_flowers.jpg"
+                                           data-quantity="{{ qty.quantity }}">
+                                    <div class="form-text">Фото для {{ qty.quantity }} квітів</div>
+                                    
+                                    <!-- Превью зображення -->
+                                    <div class="mt-2" id="preview_{{ qty.quantity }}" style="display: none;">
+                                        <img src="" alt="Превью" class="img-fluid rounded" style="max-height: 100px;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Кнопки -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="fas fa-save me-2"></i>
+                                    {% if is_edit_mode %}Оновити колір з кількостями{% else %}Створити колір з кількостями{% endif %}
+                                </button>
+                                <a href="{% url 'admin_panel:main_product_settings' %}" class="btn btn-secondary btn-lg">
+                                    <i class="fas fa-times me-2"></i>
+                                    Скасувати
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Оновлення превью кольору при зміні hex коду
+document.getElementById('hex_code').addEventListener('input', function() {
+    const colorPreview = document.getElementById('color-preview');
+    const hexValue = this.value;
+    
+    // Перевіряємо формат hex коду
+    if (/^#[0-9A-Fa-f]{6}$/.test(hexValue)) {
+        colorPreview.style.backgroundColor = hexValue;
+    } else {
+        colorPreview.style.backgroundColor = '#f0f0f0';
+    }
+});
+
+// Превью зображень для кількостей
+document.querySelectorAll('.quantity-image-input').forEach(input => {
+    input.addEventListener('input', function() {
+        const quantity = this.name.split('_')[1];
+        const previewDiv = document.getElementById(`preview_${quantity}`);
+        const img = previewDiv.querySelector('img');
+        
+        if (this.value) {
+            img.src = this.value;
+            previewDiv.style.display = 'block';
+        } else {
+            previewDiv.style.display = 'none';
+        }
+    });
+});
+
+// Валідація форми
+document.getElementById('colorForm').addEventListener('submit', function(e) {
+    const colorName = document.getElementById('color_name').value.trim();
+    const hexCode = document.getElementById('hex_code').value.trim();
+    const imageUrl = document.getElementById('image_url').value.trim();
+    
+    if (!colorName || !hexCode || !imageUrl) {
+        e.preventDefault();
+        alert('Будь ласка, заповніть всі обов\'язкові поля кольору!');
+        return;
+    }
+    
+    if (!/^#[0-9A-Fa-f]{6}$/.test(hexCode)) {
+        e.preventDefault();
+        alert('Hex код повинен мати формат #rrggbb!');
+        return;
+    }
+    
+    // Перевіряємо чи є хоча б одне фото для кількості
+    const quantityInputs = document.querySelectorAll('.quantity-image-input');
+    let hasAtLeastOneQuantityImage = false;
+    
+    quantityInputs.forEach(input => {
+        if (input.value.trim()) {
+            hasAtLeastOneQuantityImage = true;
+        }
+    });
+    
+    if (!hasAtLeastOneQuantityImage) {
+        if (!confirm('Ви не додали фото для жодної кількості. Продовжити з тільки основним фото?')) {
+            e.preventDefault();
+            return;
+        }
+    }
+});
+
+// Автозаповнення hex коду при введенні назви
+document.getElementById('color_name').addEventListener('input', function() {
+    const name = this.value.toLowerCase();
+    const hexCodeInput = document.getElementById('hex_code');
+    
+    const colorMap = {
+        'червоний': '#ff0000',
+        'синій': '#0000ff',
+        'зелений': '#00ff00',
+        'жовтий': '#ffff00',
+        'рожевий': '#ff69b4',
+        'фіолетовий': '#800080',
+        'білий': '#ffffff',
+        'чорний': '#000000',
+        'оранжевий': '#ffa500',
+        'коричневий': '#a52a2a'
+    };
+    
+    if (colorMap[name]) {
+        hexCodeInput.value = colorMap[name];
+        // Оновлюємо превью
+        const colorPreview = document.getElementById('color-preview');
+        colorPreview.style.backgroundColor = colorMap[name];
+    }
+});
+
+// Заповнення полів при редагуванні
+{% if is_edit_mode and color_data %}
+document.addEventListener('DOMContentLoaded', function() {
+    // Заповнюємо поля кількостей з існуючими даними
+    {% if color_data.quantity_images %}
+        {% for qty, img_url in color_data.quantity_images.items %}
+        const input_{{ qty }} = document.getElementById('quantity_{{ qty }}_image');
+        if (input_{{ qty }}) {
+            input_{{ qty }}.value = '{{ img_url }}';
+            // Показуємо превью
+            const previewDiv = document.getElementById('preview_{{ qty }}');
+            const img = previewDiv.querySelector('img');
+            img.src = '{{ img_url }}';
+            previewDiv.style.display = 'block';
+        }
+        {% endfor %}
+    {% endif %}
+});
+{% endif %}
+</script>
+{% endblock %}

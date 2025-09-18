@@ -38,19 +38,39 @@
                     </div>
                     
                     <div class="mb-3">
-                        <label for="image_url" class="form-label">URL зображення</label>
+                        <label for="image_url" class="form-label">URL основного зображення</label>
                         <input type="url" class="form-control" id="image_url" name="image_url" 
                                value="{{ color.image_url }}" required>
                         <div class="form-text">Посилання на зображення товару цього кольору</div>
                     </div>
                     
-                    <!-- Превьюжображення -->
+                    <!-- Простий інтерфейс -->
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <h6 class="alert-heading mb-2">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Управління фото по кількостях
+                                </h6>
+                                <small class="mb-2 d-block">
+                                    Після збереження цього кольору ви зможете додати окремі фото для кожної кількості квітів
+                                </small>
+                                <a href="{% url 'admin_panel:manage_color_quantity_images' color.id %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-images me-1"></i>
+                                    Управління фото по кількостях
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Превью основного зображення -->
                     {% if color.image_url %}
                     <div class="mb-3">
-                        <label class="form-label">Поточне зображення</label>
-                        <div class="border rounded p-2" style="max-width: 200px;">
+                        <label class="form-label">Превью основного зображення</label>
+                        <div class="border rounded p-3 text-center">
                             <img src="{{ color.image_url }}" alt="{{ color.name }}" 
-                                 class="img-fluid rounded" style="max-height: 150px;">
+                                 class="img-fluid rounded" style="max-height: 200px;">
+                            <div class="small text-muted mt-2">{{ color.name }}</div>
                         </div>
                     </div>
                     {% endif %}

@@ -34,18 +34,64 @@
             <button class="b2b-button">{{ site_settings.b2b_button_text|default:"B2B" }}</button>
         </div>
         <div class="nav-actions">
-            <div class="cart-icon">
+            <div class="cart-icon" onclick="toggleCart()">
                 <span class="cart-icon-symbol">🛒</span>
                 <span class="cart-count">0</span>
+            </div>
+            
+            <!-- Кошик під кнопкою -->
+            <div id="cart-overlay" class="cart-overlay">
+                <div class="cart-container">
+                    <div class="cart-header">
+                        <h3>Кошик покупок</h3>
+                        <button class="close-cart-btn" onclick="closeCart()">×</button>
+                    </div>
+                    <div class="cart-body">
+                        <div id="cart-items" class="cart-items">
+                            <!-- Товари будуть додаватись тут -->
+                        </div>
+                        <div class="cart-empty" id="cart-empty">
+                            <div class="empty-icon">🛒</div>
+                            <p>Ваш кошик порожній</p>
+                            <span>Додайте товари, щоб почати покупки</span>
+                        </div>
+                    </div>
+                    <div class="cart-footer">
+                        <!-- Прогрес бар в кошику -->
+                        <div class="cart-progress-container">
+                            <div class="cart-progress-bar">
+                                <div class="cart-progress-fill" id="cart-progress-fill"></div>
+                            </div>
+                            <div class="cart-progress-text" id="cart-progress-text">0₴</div>
+                        </div>
+                        
+                        <div class="cart-summary">
+                            <div class="cart-total">
+                                <span>Всього:</span>
+                                <span id="cart-total-price">0 грн</span>
+                            </div>
+                            <div class="cart-count">
+                                <span id="cart-items-count">0 товарів</span>
+                            </div>
+                        </div>
+                        <button class="checkout-btn" id="checkout-btn" onclick="checkout()">
+                            Оформити замовлення
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
 </header>
 
-<!-- Прогрес бар -->
-<div class="progress-bar">
-    <div class="progress-fill"></div>
+<!-- Прогрес бар під шапкою -->
+<div class="progress-bar-container">
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    <div class="progress-text" id="progress-text">0₴</div>
 </div>
+
 
 <!-- Головна секція з товаром -->
 <section id="home" class="section hero-section">
@@ -56,21 +102,34 @@
                 <div class="product-label">{{ main_product.premium_label_text|default:"⭐ Преміум якість" }}</div>
                 {% endif %}
                 <div class="image-gallery">
-                    {% if color_options %}
-                        {% for color in color_options %}
-                            {% if color.is_active and color.image_url and forloop.first %}
-                                <img id="product-image" src="{{ color.image_url }}" alt="Товар" class="product-image" loading="lazy">
-                            {% endif %}
-                        {% empty %}
+                    <div class="product-layers">
+                        <!-- Шар пакувального паперу (найнижчий) -->
+                        <div class="packaging-layer"></div>
+                        
+                        <!-- Основне зображення товару -->
+                        {% if color_options %}
+                            {% for color in color_options %}
+                                {% if color.is_active and color.image_url and forloop.first %}
+                                    <img id="product-image" src="{{ color.image_url }}" alt="Товар" class="product-image" loading="lazy">
+                                {% endif %}
+                            {% empty %}
+                                <img id="product-image" src="{% static 'images/IMG_1243.PNG' %}" alt="Товар" class="product-image" loading="lazy">
+                            {% endfor %}
+                        {% else %}
                             <img id="product-image" src="{% static 'images/IMG_1243.PNG' %}" alt="Товар" class="product-image" loading="lazy">
-                        {% endfor %}
-                    {% else %}
-                        <img id="product-image" src="{% static 'images/IMG_1243.PNG' %}" alt="Товар" class="product-image" loading="lazy">
-                    {% endif %}
+                        {% endif %}
+                        
+                        <!-- Маска для кольору -->
+                        <div class="color-mask"></div>
+                        
+                        <!-- Шар квітів (найвищий) -->
+                        <div class="flowers-layer"></div>
+                    </div>
                     <div class="image-nav">
                         <button class="nav-btn prev-btn" onclick="changeImage(-1)">‹</button>
                         <button class="nav-btn next-btn" onclick="changeImage(1)">›</button>
                     </div>
+                    
                 </div>
             </div>
         </div>
@@ -85,8 +144,12 @@
                         <div class="color-dot {% if forloop.first %}active{% endif %}" 
                              data-color="{{ color.name|lower }}" 
                              data-image="{{ color.image_url }}"
+                             data-flowers-image="{{ color.flowers_image_url|default:'' }}"
+                             data-mask-image="{{ color.mask_image_url|default:'' }}"
+                             data-packaging-texture="{{ color.packaging_texture_url|default:'' }}"
                              style="background-color: {{ color.hex_code }};"
-                             title="{{ color.name }}">
+                             title="{{ color.name }}"
+                             onclick="selectColor(this, '{{ color.hex_code }}', '{{ color.image_url }}', '{{ color.flowers_image_url|default:'' }}', '{{ color.mask_image_url|default:'' }}', '{{ color.packaging_texture_url|default:'' }}')">
                         </div>
                         {% endif %}
                     {% endfor %}
@@ -96,12 +159,12 @@
             {% if quantity_options %}
             <div class="quantity-selector">
                 <h3>{{ site_settings.quantity_selector_title|default:"кількість квітів" }}</h3>
-                <div class="quantity-buttons">
+                <div class="quantity-buttons-container">
                     {% for qty in quantity_options %}
                         {% if qty.is_active %}
-                        <button class="quantity-btn {% if forloop.first %}active{% endif %}" 
-                                data-quantity="{{ qty.quantity }}" 
-                                data-price-per-unit="{{ qty.price_per_unit }}" 
+                        <button class="quantity-btn {% if forloop.first %}active{% endif %}"
+                                data-quantity="{{ qty.quantity }}"
+                                data-price-per-unit="{{ qty.price_per_unit }}"
                                 data-currency="грн">
                             {{ qty.quantity }}
                         </button>
@@ -116,17 +179,25 @@
                     {% if quantity_options %}
                         {% with first_qty=quantity_options.0 %}
                             {% if first_qty.price_per_unit and first_qty.quantity %}
-                                <span class="final-price">0</span> {{ main_product.currency }}
+                                <span class="final-price">{{ first_qty.price_per_unit|floatformat:2 }}</span> {{ main_product.currency }}
                             {% else %}
-                                0 {{ main_product.currency }}
+                                {% if main_product.price %}
+                                    {{ main_product.price }} {{ main_product.currency }}
+                                {% else %}
+                                    0 {{ main_product.currency }}
+                                {% endif %}
                             {% endif %}
                         {% endwith %}
                     {% else %}
-                        0 {{ main_product.currency }}
+                        {% if main_product.price %}
+                            {{ main_product.price }} {{ main_product.currency }}
+                        {% else %}
+                            0 {{ main_product.currency }}
+                        {% endif %}
                     {% endif %}
                 </div>
-                <button class="add-to-cart-btn" id="cart-button" onclick="toggleCart()">
-                    {{ main_product.add_to_cart_text|default:"В кошик" }}
+                <button class="add-to-cart-btn" id="cart-button" onclick="toggleMainProduct()">
+                    В кошик
                 </button>
             </div>
             {% endif %}
@@ -150,7 +221,9 @@
     <div class="additional-products-content">
         <div class="additional-products-header">
             <h2 class="section-title">{{ additional_settings.section_title|default:"Додаткові товари" }}</h2>
-            <button class="add-all-btn" onclick="toggleAllAdditionalProducts()">{{ additional_settings.add_all_text|default:"Додати всі" }}</button>
+            <button class="add-all-btn" onclick="toggleAllAdditionalProducts()">
+                Додати всі
+            </button>
         </div>
         <div class="additional-products-grid">
             {% if additional_products %}
@@ -167,12 +240,11 @@
                         </div>
                         <div class="additional-product-info">
                             <h3>{{ product.title }}</h3>
-                            {% if product.description %}
-                            <p class="product-description">{{ product.description|truncatechars:100 }}</p>
-                            {% endif %}
                             <div class="additional-product-price-container">
                                 <div class="additional-product-price">{{ product.price }} {{ product.currency }}</div>
-                                <button class="additional-add-to-cart-btn" onclick="toggleAdditionalProduct({{ product.id }})">{{ product.add_to_cart_text }}</button>
+                                <button class="additional-add-to-cart-btn" onclick="toggleAdditionalProduct({{ product.id }})">
+                                    Додати в кошик
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -184,24 +256,6 @@
 </section>
 {% endif %}
 
-<!-- Вспливаюче вікно кошика -->
-<div id="cart-popup" class="cart-popup">
-    <div class="cart-popup-content">
-        <div class="cart-popup-header">
-            <h3>Кошик</h3>
-            <button class="close-cart-btn" onclick="closeCart()">×</button>
-        </div>
-        <div class="cart-popup-body">
-            <div id="cart-items" class="cart-items">
-                <!-- Товари будуть додаватись тут -->
-            </div>
-            <div class="cart-total">
-                <div class="total-price">Загальна сума: <span id="total-amount">0</span> грн</div>
-                <button class="checkout-btn">Оформити замовлення</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Секція послуг -->
 {% if services %}
@@ -271,6 +325,7 @@
     </div>
 </section>
 {% endif %}
+
 
     <script src="{% static 'js/main.js' %}"></script>
 </body>
