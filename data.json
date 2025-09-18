@@ -31,11 +31,14 @@
       "id": 3,
       "name": "рожевий",
       "hex_code": "#ff6b9d",
-      "image_url": "https://i.pinimg.com/736x/9d/a8/8c/9da88ca8b4b9ebe243954c132907b2b9.jpg",
+      "image_url": "",
       "is_active": true,
       "order": 3,
       "quantity_images": {
-        "21": "https://i.pinimg.com/736x/59/90/e2/5990e21db093d2f34ce3cff0c69dad94.jpg"
+        "21": "https://i.pinimg.com/736x/59/90/e2/5990e21db093d2f34ce3cff0c69dad94.jpg",
+        "51": "https://i.pinimg.com/736x/59/90/e2/5990e21db093d2f34ce3cff0c69dad94.jpg",
+        "101": "https://i.pinimg.com/736x/59/90/e2/5990e21db093d2f34ce3cff0c69dad94.jpg",
+        "201": "https://i.pinimg.com/736x/4b/a9/1f/4ba91f3631a709e59676b44efc9fe71f.jpg"
       }
     }
   ],
@@ -67,6 +70,13 @@
       "price_per_unit": 0.35,
       "is_active": true,
       "order": 4
+    },
+    {
+      "id": 5,
+      "quantity": 1,
+      "price_per_unit": 22.0,
+      "is_active": true,
+      "order": 1
     }
   ],
   "additional_products": [

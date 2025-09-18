@@ -26,8 +26,8 @@
                         {% for variant in variants %}
                         <div class="col-md-4 mb-3">
                             <div class="card h-100">
-                                {% if variant.image_url %}
-                                    <img src="{{ variant.image_url }}" class="card-img-top" 
+                                {% if variant.default_image %}
+                                    <img src="{{ variant.default_image }}" class="card-img-top" 
                                          style="height: 150px; object-fit: cover;" alt="{{ variant.name }}">
                                 {% else %}
                                     <div class="card-img-top d-flex align-items-center justify-content-center" 
@@ -101,7 +101,7 @@
                     <i class="fas fa-calculator me-2"></i>
                     Варіанти кількості та ціни ({{ quantities|length }})
                 </h5>
-                <button class="btn btn-sm btn-success" id="addQuantityButton" onclick="toggleAddQuantityForm()">
+                <button class="btn btn-sm btn-success" id="addQuantityButton">
                     <i class="fas fa-plus me-1"></i>
                     Додати варіант
                 </button>
@@ -109,7 +109,7 @@
             
             <!-- Форма додавання кількості -->
             <div class="card-body border-bottom" id="addQuantityForm" style="display: none;">
-                <form method="post" action="{% url 'admin_panel:main_product_settings' %}" class="p-3 rounded" style="background: var(--bg-tertiary); border: 1px solid var(--border-primary);" onsubmit="return submitQuantityForm(event)">
+                <form method="post" action="{% url 'admin_panel:main_product_settings' %}" class="p-3 rounded" style="background: var(--bg-tertiary); border: 1px solid var(--border-primary);" onsubmit="return submitQuantityForm(event)" id="quantityForm">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="add_quantity">
                     <h6 class="mb-3">
@@ -138,7 +138,7 @@
                             <i class="fas fa-save me-1"></i>
                             Зберегти варіант
                         </button>
-                        <button type="button" class="btn btn-secondary" onclick="toggleAddQuantityForm()">
+                        <button type="button" class="btn btn-secondary" id="cancelQuantityButton">
                             Скасувати
                         </button>
                     </div>
@@ -222,75 +222,244 @@
 
 {% endblock %}
 
+{% block extra_css %}
+<style>
+/* Стилі для форми додавання кількості */
+#addQuantityForm {
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+#addQuantityForm.show {
+    animation: slideDown 0.3s ease;
+}
+
+#addQuantityForm.hide {
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
+
+#addQuantityButton {
+    transition: all 0.2s ease;
+}
+
+#addQuantityButton:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+#quantityForm input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+#quantityForm button:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}
+</style>
+{% endblock %}
+
 {% block extra_js %}
 <script>
-// Функція для відправки форми кількості
-function submitQuantityForm(event) {
-    console.log('submitQuantityForm викликана');
-    const form = event.target;
+// Модуль для управління формою додавання кількості
+const QuantityFormManager = {
+    // Елементи
+    addButton: null,
+    cancelButton: null,
+    form: null,
+    formContainer: null,
     
-    // Перевіряємо чи всі поля заповнені
-    const quantity = form.querySelector('input[name="quantity"]').value;
-    const pricePerUnit = form.querySelector('input[name="price_per_unit"]').value;
-    
-    console.log('Quantity:', quantity, 'Price:', pricePerUnit);
-    
-    if (!quantity || !pricePerUnit) {
-        alert('Будь ласка, заповніть всі поля!');
-        return false;
-    }
-    
-    console.log('Форма відправляється...');
-    return true; // Дозволяємо відправку форми
-}
-
-// Функція для роботи з формою кількості
-function toggleAddQuantityForm() {
-    console.log('toggleAddQuantityForm викликана');
-    const form = document.getElementById('addQuantityForm');
-    console.log('Форма знайдена:', form);
-    
-    if (!form) {
-        console.error('Форма addQuantityForm не знайдена!');
-        alert('Помилка: форма не знайдена. Перевірте консоль браузера для деталей.');
-        return;
-    }
-    
-    console.log('Поточний display:', form.style.display);
-    console.log('Computed display:', window.getComputedStyle(form).display);
-    
-    if (form.style.display === 'none' || form.style.display === '' || window.getComputedStyle(form).display === 'none') {
-        form.style.display = 'block';
-        console.log('Форма показана');
-        // Скрол до форми
-        form.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    } else {
-        form.style.display = 'none';
-        console.log('Форма прихована');
-        // Очищуємо форму
-        const inputs = form.querySelectorAll('input[type="number"]');
-        inputs.forEach(input => input.value = '');
-    }
-}
-
-// Перевіряємо чи кнопка існує при завантаженні сторінки
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM завантажено');
-    const button = document.getElementById('addQuantityButton');
-    console.log('Кнопка знайдена:', button);
-    
-    if (button) {
-        console.log('Кнопка правильно пов\'язана з функцією');
+    // Ініціалізація
+    init: function() {
+        console.log('🔧 Ініціалізація QuantityFormManager');
         
-        // Додаємо альтернативний обробник подій
-        button.addEventListener('click', function(e) {
+        // Знаходимо елементи
+        this.addButton = document.getElementById('addQuantityButton');
+        this.cancelButton = document.getElementById('cancelQuantityButton');
+        this.form = document.getElementById('quantityForm');
+        this.formContainer = document.getElementById('addQuantityForm');
+        
+        // Перевіряємо чи всі елементи знайдені
+        if (!this.addButton) {
+            console.error('❌ Кнопка додавання не знайдена!');
+            return false;
+        }
+        
+        if (!this.formContainer) {
+            console.error('❌ Контейнер форми не знайдений!');
+            return false;
+        }
+        
+        if (!this.form) {
+            console.error('❌ Форма не знайдена!');
+            return false;
+        }
+        
+        console.log('✅ Всі елементи знайдені');
+        
+        // Додаємо обробники подій
+        this.bindEvents();
+        
+        console.log('✅ QuantityFormManager ініціалізовано');
+        return true;
+    },
+    
+    // Прив'язування обробників подій
+    bindEvents: function() {
+        // Кнопка додавання
+        this.addButton.addEventListener('click', (e) => {
             e.preventDefault();
-            console.log('Кнопка натиснута через addEventListener');
-            toggleAddQuantityForm();
+            console.log('🖱️ Клік по кнопці додавання');
+            this.toggleForm();
         });
+        
+        // Кнопка скасування
+        if (this.cancelButton) {
+            this.cancelButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('🖱️ Клік по кнопці скасування');
+                this.hideForm();
+            });
+        }
+        
+        // Відправка форми
+        this.form.addEventListener('submit', (e) => {
+            console.log('📤 Відправка форми');
+            return this.handleFormSubmit(e);
+        });
+        
+        console.log('✅ Обробники подій прив\'язано');
+    },
+    
+    // Показати/приховати форму
+    toggleForm: function() {
+        console.log('🔄 Перемикання форми');
+        
+        if (this.isFormVisible()) {
+            this.hideForm();
+        } else {
+            this.showForm();
+        }
+    },
+    
+    // Показати форму
+    showForm: function() {
+        console.log('👁️ Показуємо форму');
+        this.formContainer.style.display = 'block';
+        
+        // Скрол до форми
+        this.formContainer.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+        });
+        
+        // Фокус на першому полі
+        const firstInput = this.form.querySelector('input[type="number"]');
+        if (firstInput) {
+            firstInput.focus();
+        }
+    },
+    
+    // Приховати форму
+    hideForm: function() {
+        console.log('🙈 Приховуємо форму');
+        this.formContainer.style.display = 'none';
+        
+        // Очищуємо форму
+        this.clearForm();
+    },
+    
+    // Перевірити чи форма видима
+    isFormVisible: function() {
+        const style = window.getComputedStyle(this.formContainer);
+        return style.display !== 'none';
+    },
+    
+    // Очистити форму
+    clearForm: function() {
+        console.log('🧹 Очищуємо форму');
+        const inputs = this.form.querySelectorAll('input[type="number"]');
+        inputs.forEach(input => {
+            input.value = '';
+        });
+    },
+    
+    // Обробка відправки форми
+    handleFormSubmit: function(event) {
+        console.log('📝 Обробка відправки форми');
+        
+        // Отримуємо дані форми
+        const formData = new FormData(this.form);
+        const quantity = formData.get('quantity');
+        const pricePerUnit = formData.get('price_per_unit');
+        
+        console.log('📊 Дані форми:', { quantity, pricePerUnit });
+        
+        // Валідація
+        if (!quantity || !pricePerUnit) {
+            alert('Будь ласка, заповніть всі обов\'язкові поля!');
+            event.preventDefault();
+            return false;
+        }
+        
+        if (parseInt(quantity) <= 0) {
+            alert('Кількість повинна бути більше 0!');
+            event.preventDefault();
+            return false;
+        }
+        
+        if (parseFloat(pricePerUnit) <= 0) {
+            alert('Ціна за одиницю повинна бути більше 0!');
+            event.preventDefault();
+            return false;
+        }
+        
+        console.log('✅ Валідація пройшла успішно');
+        console.log('📤 Форма відправляється...');
+        
+        return true;
+    }
+};
+
+// Ініціалізація при завантаженні DOM
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 DOM завантажено, ініціалізуємо QuantityFormManager');
+    
+    if (QuantityFormManager.init()) {
+        console.log('✅ QuantityFormManager успішно ініціалізовано');
     } else {
-        console.error('Кнопка не знайдена!');
+        console.error('❌ Помилка ініціалізації QuantityFormManager');
     }
 });
+
+// Додаємо в глобальну область для зворотної сумісності
+window.toggleAddQuantityForm = function() {
+    console.log('🔄 Виклик через глобальну функцію');
+    if (QuantityFormManager) {
+        QuantityFormManager.toggleForm();
+    }
+};
 </script>
 {% endblock %}

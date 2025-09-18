@@ -55,16 +55,6 @@
                         </div>
                     </div>
                     
-                    <!-- Основне фото кольору -->
-                    <div class="row mb-4">
-                        <div class="col-12">
-                            <label for="image_url" class="form-label">Основне фото кольору</label>
-                            <input type="url" class="form-control" id="image_url" name="image_url" 
-                                   placeholder="https://example.com/color_image.jpg" 
-                                   value="{% if is_edit_mode and color_data %}{{ color_data.image_url }}{% endif %}" required>
-                            <div class="form-text">Це фото буде використовуватися як за замовчуванням для всіх кількостей</div>
-                        </div>
-                    </div>
                     
                     <!-- Кількості та фото -->
                     <div class="row mb-4">

@@ -671,16 +671,7 @@ function changeColorWithMask(colorData) {
         }
     }
     
-    // 4. Основне зображення (середній z-index)
-    if (productImage && colorData.image_url) {
-        // Плавна зміна зображення
-        productImage.style.opacity = '0.7';
-        setTimeout(() => {
-            productImage.src = colorData.image_url;
-            productImage.style.opacity = '1';
-        }, 200);
-        console.log('✅ Оновлено основне зображення');
-    }
+    // 4. Основне зображення видалено - використовуємо тільки фото для кількості
     
     console.log('🎯 Зміна кольору завершена');
 }
@@ -716,6 +707,138 @@ function adjustBrightness(hex, amount) {
     g = g > 255 ? 255 : g < 0 ? 0 : g;
     b = b > 255 ? 255 : b < 0 ? 0 : b;
     return (usePound ? '#' : '') + (r << 16 | g << 8 | b).toString(16).padStart(6, '0');
+}
+
+// Функція для оновлення фото для кількості
+function updateQuantityImage(quantity) {
+    console.log('🖼️ Оновлення фото для кількості:', quantity);
+    
+    // Отримуємо поточний колір
+    const activeColor = document.querySelector('.color-dot.active');
+    if (!activeColor) {
+        console.log('❌ Немає активного кольору');
+        return;
+    }
+    
+    const colorName = activeColor.dataset.color;
+    console.log('🎨 Поточний колір:', colorName);
+    
+    // Отримуємо фото для цієї кількості та кольору
+    const quantityImage = getQuantityImageForColor(colorName, quantity);
+    if (quantityImage) {
+        console.log('✅ Знайдено фото для кількості:', quantityImage);
+        
+        // Створюємо або оновлюємо зображення
+        let productImage = document.getElementById('product-image');
+        if (!productImage) {
+            // Створюємо нове зображення
+            productImage = document.createElement('img');
+            productImage.id = 'product-image';
+            productImage.className = 'product-image';
+            productImage.alt = 'Товар';
+            productImage.loading = 'lazy';
+            
+            // Додаємо до контейнера
+            const imageGallery = document.querySelector('.image-gallery');
+            if (imageGallery) {
+                imageGallery.appendChild(productImage);
+            }
+        }
+        
+        // Оновлюємо зображення
+        productImage.style.opacity = '0.7';
+        setTimeout(() => {
+            productImage.src = quantityImage;
+            productImage.style.opacity = '1';
+        }, 200);
+    } else {
+        console.log('❌ Фото для кількості не знайдено');
+    }
+}
+
+// Функція для отримання фото для кількості та кольору
+function getQuantityImageForColor(colorName, quantity) {
+    // Отримуємо активний колір
+    const activeColor = document.querySelector('.color-dot.active');
+    if (!activeColor) return null;
+    
+    // Отримуємо дані кольору з data-атрибутів
+    const colorData = {
+        name: colorName,
+        quantity_images: getColorQuantityImages(colorName)
+    };
+    
+    // Повертаємо фото для конкретної кількості або фото за замовчуванням
+    if (colorData.quantity_images && colorData.quantity_images[quantity]) {
+        return colorData.quantity_images[quantity];
+    }
+    
+    // Якщо немає фото для цієї кількості, повертаємо фото за замовчуванням
+    return getDefaultImageForColor(colorName);
+}
+
+// Функція для отримання фото за замовчуванням для кольору
+function getDefaultImageForColor(colorName) {
+    // Отримуємо дані кольору з HTML
+    const colorDot = document.querySelector(`[data-color="${colorName}"]`);
+    if (colorDot && colorDot.dataset.defaultImage) {
+        return colorDot.dataset.defaultImage;
+    }
+    return null;
+}
+
+// Функція для отримання фото кількості для кольору
+function getColorQuantityImages(colorName) {
+    // Це буде заповнено даними з сервера
+    // Поки що повертаємо порожній об'єкт
+    return {};
+}
+
+// Функція для відображення фото всіх кількостей для кольору
+function showQuantityImages(colorName) {
+    console.log('🖼️ Показуємо фото для кольору:', colorName);
+    
+    const container = document.getElementById('quantitiesContainer');
+    const grid = document.getElementById('quantityImagesGrid');
+    
+    if (!container || !grid) {
+        console.log('❌ Контейнер не знайдено');
+        return;
+    }
+    
+    // Очищуємо попередні фото
+    grid.innerHTML = '';
+    
+    // Отримуємо всі кнопки кількості
+    const quantityButtons = document.querySelectorAll('.quantity-btn');
+    
+    if (quantityButtons.length === 0) {
+        container.style.display = 'none';
+        return;
+    }
+    
+    // Показуємо контейнер
+    container.style.display = 'block';
+    
+    // Додаємо фото для кожної кількості
+    quantityButtons.forEach(btn => {
+        const quantity = btn.dataset.quantity;
+        const imageUrl = getQuantityImageForColor(colorName, quantity);
+        
+        if (imageUrl) {
+            const imageDiv = document.createElement('div');
+            imageDiv.className = 'quantity-image-item';
+            imageDiv.innerHTML = `
+                <div class="quantity-image-wrapper">
+                    <img src="${imageUrl}" alt="Кількість ${quantity}" class="quantity-image">
+                    <div class="quantity-label">${quantity} шт</div>
+                </div>
+            `;
+            grid.appendChild(imageDiv);
+        }
+    });
+    
+    console.log('✅ Фото кількостей відображено');
 }
 
 // Функція для зміни кількості з збереженням кольору
@@ -758,8 +881,8 @@ function changeQuantityWithLayers(quantityData) {
 }
 
 // Функція для вибору кольору (викликається з HTML)
-function selectColor(element, hexCode, imageUrl, flowersImage, maskImage, packagingTexture) {
-    console.log('🎨 Вибір кольору:', { hexCode, imageUrl, flowersImage, maskImage, packagingTexture });
+function selectColor(element, hexCode, flowersImage, maskImage, packagingTexture) {
+    console.log('🎨 Вибір кольору:', { hexCode, flowersImage, maskImage, packagingTexture });
     
     // Видаляємо активний клас з усіх кольорових кружечків
     document.querySelectorAll('.color-dot').forEach(dot => {
@@ -772,7 +895,6 @@ function selectColor(element, hexCode, imageUrl, flowersImage, maskImage, packag
     // Створюємо об'єкт з повними даними кольору
     const colorData = {
         hex_code: hexCode,
-        image_url: imageUrl,
         flowers_image: flowersImage,
         mask_image: maskImage,
         packaging_texture: packagingTexture || null
@@ -783,6 +905,15 @@ function selectColor(element, hexCode, imageUrl, flowersImage, maskImage, packag
     
     // Оновлюємо ціну якщо потрібно
     updatePrice();
+    
+            // Оновлюємо фото для поточної кількості
+            const activeQuantity = document.querySelector('.quantity-btn.active');
+            if (activeQuantity) {
+                updateQuantityImage(activeQuantity.dataset.quantity);
+            }
+            
+            // Показуємо фото для всіх кількостей цього кольору
+            showQuantityImages(colorName);
     
     console.log('✅ Колір вибрано та застосовано');
 }
@@ -1003,6 +1134,9 @@ function initializePriceCalculation() {
             
             // Оновлюємо ціну
             updatePrice(this);
+            
+            // Оновлюємо фото для кількості
+            updateQuantityImage(this.dataset.quantity);
         }
         
         // Додаємо слухачі різними способами для надійності

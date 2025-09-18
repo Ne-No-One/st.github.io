@@ -333,7 +333,21 @@ class JSONManager:
                 return quantity_images.get(str(quantity), color.get('image_url', ''))
         return ''
     
-    def add_color_with_quantities(self, name, hex_code, image_url, order=None, quantities_data=None):
+    def get_default_image_for_color(self, color_id):
+        """Отримуємо фото за замовчуванням для кольору (з найбільшою кількістю)"""
+        colors = self.get_color_options()
+        for color in colors:
+            if color.get('id') == color_id:
+                quantity_images = color.get('quantity_images', {})
+                if quantity_images:
+                    # Знаходимо кількість з найбільшим значенням
+                    max_quantity = max(quantity_images.keys(), key=lambda x: int(x))
+                    return quantity_images[max_quantity]
+                else:
+                    return color.get('image_url', '')
+        return ''
+    
+    def add_color_with_quantities(self, name, hex_code, image_url="", order=None, quantities_data=None):
         """Додаємо новий колір з кількостями та фото"""
         data = self.load_data()
         colors = data.get('color_options', [])

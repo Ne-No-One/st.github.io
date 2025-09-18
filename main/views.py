@@ -21,6 +21,10 @@ def home(request):
         additional_products_sorted = sorted(additional_products, key=lambda x: x.get('order', 999))
         services_sorted = sorted(services, key=lambda x: x.get('order', 999))
         
+        # Додаємо фото за замовчуванням для кожного кольору
+        for color in color_options_sorted:
+            color['default_image'] = json_manager.get_default_image_for_color(color['id'])
+        
         # Створюємо контекст з відсортованими даними
         context = {
             'is_django': True,

@@ -306,6 +306,10 @@ def main_product_settings(request):
         
         quantities = json_manager.get_quantity_options()
         
+        # Додаємо фото за замовчуванням для кожного кольору
+        for color in colors:
+            color['default_image'] = json_manager.get_default_image_for_color(color['id'])
+        
         context = {
             'product': main_product,
             'variants': colors,  # Кольори
@@ -597,12 +601,11 @@ def create_color_with_quantities(request):
             # Основні дані кольору
             name = request.POST.get('color_name', '').strip()
             hex_code = request.POST.get('hex_code', '').strip()
-            image_url = request.POST.get('image_url', '').strip()
             order = request.POST.get('order', '1').strip()
             
             # Перевіряємо основні поля
-            if not name or not hex_code or not image_url:
-                messages.error(request, 'Основні поля кольору (назва, hex-код, зображення) є обов\'язковими!')
+            if not name or not hex_code:
+                messages.error(request, 'Основні поля кольору (назва, hex-код) є обов\'язковими!')
             elif not hex_code.startswith('#') or len(hex_code) != 7:
                 messages.error(request, 'Hex-код повинен мати формат #rrggbb!')
             else:
@@ -626,7 +629,7 @@ def create_color_with_quantities(request):
                 
                 if is_edit_mode:
                     # Редагуємо існуючий колір
-                    if json_manager.update_color_option_with_layers(int(edit_color_id), name, hex_code, image_url, True):
+                    if json_manager.update_color_option_with_layers(int(edit_color_id), name, hex_code, '', True):
                         # Оновлюємо фото по кількостях
                         for qty_data in quantities_data:
                             json_manager.update_quantity_image_for_color(int(edit_color_id), qty_data['quantity'], qty_data['image_url'])
@@ -637,7 +640,7 @@ def create_color_with_quantities(request):
                         messages.error(request, 'Помилка оновлення кольору!')
                 else:
                     # Створюємо новий колір
-                    if json_manager.add_color_with_quantities(name, hex_code, image_url, order_int, quantities_data):
+                    if json_manager.add_color_with_quantities(name, hex_code, '', order_int, quantities_data):
                         messages.success(request, f'Колір "{name}" з {len(quantities_data)} фото по кількостях успішно створено!')
                         return redirect('admin_panel:main_product_settings')
                     else:

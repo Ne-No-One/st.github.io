@@ -106,18 +106,7 @@
                         <!-- Шар пакувального паперу (найнижчий) -->
                         <div class="packaging-layer"></div>
                         
-                        <!-- Основне зображення товару -->
-                        {% if color_options %}
-                            {% for color in color_options %}
-                                {% if color.is_active and color.image_url and forloop.first %}
-                                    <img id="product-image" src="{{ color.image_url }}" alt="Товар" class="product-image" loading="lazy">
-                                {% endif %}
-                            {% empty %}
-                                <img id="product-image" src="{% static 'images/IMG_1243.PNG' %}" alt="Товар" class="product-image" loading="lazy">
-                            {% endfor %}
-                        {% else %}
-                            <img id="product-image" src="{% static 'images/IMG_1243.PNG' %}" alt="Товар" class="product-image" loading="lazy">
-                        {% endif %}
+                        <!-- Основне зображення товару (видалено - використовуємо тільки фото для кількості) -->
                         
                         <!-- Маска для кольору -->
                         <div class="color-mask"></div>
@@ -140,16 +129,16 @@
                 <h3>{{ site_settings.color_selector_title|default:"колір пакування" }}</h3>
                 <div class="color-dots">
                     {% for color in color_options %}
-                        {% if color.is_active and color.image_url %}
+                        {% if color.is_active and color.quantity_images %}
                         <div class="color-dot {% if forloop.first %}active{% endif %}" 
                              data-color="{{ color.name|lower }}" 
-                             data-image="{{ color.image_url }}"
+                             data-default-image="{{ color.default_image|default:'' }}"
                              data-flowers-image="{{ color.flowers_image_url|default:'' }}"
                              data-mask-image="{{ color.mask_image_url|default:'' }}"
                              data-packaging-texture="{{ color.packaging_texture_url|default:'' }}"
                              style="background-color: {{ color.hex_code }};"
                              title="{{ color.name }}"
-                             onclick="selectColor(this, '{{ color.hex_code }}', '{{ color.image_url }}', '{{ color.flowers_image_url|default:'' }}', '{{ color.mask_image_url|default:'' }}', '{{ color.packaging_texture_url|default:'' }}')">
+                             onclick="selectColor(this, '{{ color.hex_code }}', '{{ color.flowers_image_url|default:'' }}', '{{ color.mask_image_url|default:'' }}', '{{ color.packaging_texture_url|default:'' }}')">
                         </div>
                         {% endif %}
                     {% endfor %}
@@ -173,6 +162,15 @@
                 </div>
             </div>
             {% endif %}
+            
+            <!-- Контейнер для відображення фото кількості -->
+            <div id="quantitiesContainer" class="quantities-container mt-3" style="display: none;">
+                <h4>Фото для кількості</h4>
+                <div class="quantity-images-grid" id="quantityImagesGrid">
+                    <!-- Тут будуть відображатися фото для кожної кількості -->
+                </div>
+            </div>
+            
             {% if main_product %}
             <div class="product-price-container">
                 <div class="product-price current-price" data-base-price="0" data-currency="{{ main_product.currency }}">
