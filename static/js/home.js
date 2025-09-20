@@ -15,7 +15,8 @@ function loadCartFromStorage() {
             const parsedCart = JSON.parse(savedCart);
             cart.items = parsedCart.items || [];
             cart.total = parsedCart.total || 0;
-            cart.count = parsedCart.count || 0;
+            // Перераховуємо count з items
+            cart.count = cart.items.reduce((total, item) => total + (item.quantity || 1), 0);
             console.log('✅ Кошик завантажено з localStorage:', cart);
         }
     } catch (error) {
@@ -36,14 +37,32 @@ function saveCartToStorage() {
 
 // Функція для оновлення лічильника кошика в навігації
 function updateCartCount() {
+    // Перераховуємо кількість товарів
+    cart.count = cart.items.reduce((total, item) => total + (item.quantity || 1), 0);
+    
     const cartCount = document.getElementById('cart-count');
     if (cartCount) {
         cartCount.textContent = cart.count;
+        cartCount.setAttribute('data-count', cart.count);
+        
+        // Додаємо спеціальний клас для великих чисел
+        if (cart.count > 9) {
+            cartCount.classList.add('large-count');
+        } else {
+            cartCount.classList.remove('large-count');
+        }
+        
+        console.log('🛒 Оновлено лічильник кошика:', cart.count);
+        
         if (cart.count > 0) {
             cartCount.classList.remove('hidden');
+            cartCount.style.display = 'flex';
         } else {
             cartCount.classList.add('hidden');
+            cartCount.style.display = 'none';
         }
+    } else {
+        console.error('❌ Елемент cart-count не знайдено');
     }
 }
 
@@ -106,10 +125,6 @@ function toggleMainProduct() {
     updateCartCount();
     updateProgressBar();
     saveCartToStorage();
-    
-    // Показуємо повідомлення
-    const message = existingItem ? 'Товар видалено з кошика' : 'Товар додано в кошик';
-    showNotification(message, existingItem ? 'info' : 'success');
 }
 
 // Функція для додавання додаткового товару в кошик
