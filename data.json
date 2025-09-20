@@ -72,33 +72,33 @@
       "quantity": 21,
       "is_active": true,
       "order": 1,
-      "price_per_unit": 0.5
+      "price_per_unit": 1.0
     },
     {
       "id": 2,
       "quantity": 51,
-      "price_per_unit": 0.45,
+      "price_per_unit": 1.0,
       "is_active": true,
       "order": 2
     },
     {
       "id": 3,
       "quantity": 101,
-      "price_per_unit": 0.4,
+      "price_per_unit": 1.0,
       "is_active": true,
       "order": 3
     },
     {
       "id": 4,
       "quantity": 201,
-      "price_per_unit": 10.0,
+      "price_per_unit": 1.0,
       "is_active": true,
       "order": 4
     },
     {
       "id": 5,
       "quantity": 1,
-      "price_per_unit": 22.0,
+      "price_per_unit": 1.0,
       "is_active": true,
       "order": 1
     }

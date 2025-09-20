@@ -27,7 +27,7 @@
                     <div class="mb-3">
                         <label for="price_per_unit" class="form-label">Ціна за одиницю (грн)</label>
                         <input type="number" class="form-control" id="price_per_unit" name="price_per_unit" 
-                               value="{{ quantity.price_per_unit }}" step="0.01" min="0" required>
+                               value="{{ quantity.price_per_unit }}" step="1" min="0" required>
                         <div class="form-text">Ціна за одну штуку товару</div>
                     </div>
                     
@@ -75,7 +75,7 @@ function calculateTotalPrice() {
     const totalPriceField = document.getElementById('total_price');
     
     if (quantity && pricePerUnit) {
-        const total = (parseFloat(quantity) * parseFloat(pricePerUnit)).toFixed(2);
+        const total = Math.round(parseFloat(quantity) * parseFloat(pricePerUnit));
         totalPriceField.value = total;
     } else {
         totalPriceField.value = '';

@@ -604,7 +604,7 @@ body {
     flex-direction: row !important;
     justify-content: center !important;
     align-items: center !important;
-    gap: 20px !important;
+    gap: 5px !important;
     flex-wrap: nowrap !important;
     width: 100% !important;
     max-width: 100% !important;
@@ -613,10 +613,10 @@ body {
     box-sizing: border-box !important;
 }
 
-/* Стилі для ціни - тільки число, займає доступний простір */
+/* Стилі для ціни - тільки число, фіксований розмір */
 #home > div > div.product-info > div.product-price-container .product-price {
-    flex: 1 1 auto !important;
-    text-align: right !important;
+    flex: 0 0 auto !important;
+    text-align: center !important;
     font-size: 3rem !important;
     font-weight: bold !important;
     color: #ffffff !important;
@@ -717,8 +717,9 @@ body {
     
     /* Контейнер ціни на PC версії */
     #home > div > div.product-info > div.product-price-container {
-        gap: 25px !important;
+        gap: 8px !important;
         padding: 18px 0 !important;
+        justify-content: center !important;
     }
     
     /* Ціна на PC версії */
@@ -803,7 +804,7 @@ body {
     
     /* Контейнер ціни на мобільних */
     #home > div > div.product-info > div.product-price-container {
-        gap: 15px !important;
+        gap: 5px !important;
         padding: 12px 0 !important;
         justify-content: center !important;
     }
@@ -3386,7 +3387,7 @@ img {
     
     /* Контейнер ціни на маленьких екранах */
     #home > div > div.product-info > div.product-price-container {
-        gap: 10px !important;
+        gap: 4px !important;
         padding: 10px 0 !important;
         justify-content: center !important;
     }
@@ -3498,7 +3499,7 @@ img {
     
     /* Контейнер ціни на дуже маленьких екранах */
     #home > div > div.product-info > div.product-price-container {
-        gap: 8px !important;
+        gap: 3px !important;
         padding: 8px 0 !important;
         justify-content: center !important;
     }

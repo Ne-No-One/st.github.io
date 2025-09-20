@@ -60,7 +60,7 @@ function updateProgressBar() {
         progressFill.style.width = progressPercent + '%';
     }
     if (progressText) {
-        progressText.textContent = `${cartTotal.toFixed(2)}₴ / 1000₴`;
+        progressText.textContent = `${Math.round(cartTotal)}₴ / 1000₴`;
     }
 }
 
@@ -108,7 +108,7 @@ function updateCartDisplay() {
                     <h4>${item.title}</h4>
                     <div class="cart-item-details">
                         <span class="quantity">Кількість: ${item.quantity || 1}</span>
-                        <span class="price">${(item.price * (item.quantity || 1)).toFixed(2)} грн</span>
+                        <span class="price">${Math.round(item.price * (item.quantity || 1))} грн</span>
                     </div>
                 </div>
                 <div class="cart-item-actions">
@@ -129,7 +129,7 @@ function updateCartDisplay() {
     }
     
     // Оновлюємо загальну суму та кількість
-    cartTotalPrice.textContent = `${cart.total.toFixed(2)} грн`;
+    cartTotalPrice.textContent = `${Math.round(cart.total)} грн`;
     const itemsText = cart.count === 1 ? 'товар' : 
                      cart.count < 5 ? 'товари' : 'товарів';
     cartItemsCount.textContent = `${cart.count} ${itemsText}`;
@@ -140,7 +140,7 @@ function updateCartDisplay() {
             cartDelivery.textContent = 'Безкоштовно';
             cartDelivery.classList.add('free');
         } else {
-            const remaining = (1000 - cart.total).toFixed(2);
+            const remaining = Math.round(1000 - cart.total);
             cartDelivery.textContent = '50 грн';
             cartDelivery.classList.remove('free');
         }
@@ -152,7 +152,7 @@ function updateCartDisplay() {
             deliveryInfo.textContent = '🎉 Вітаємо! Ви отримали безкоштовну доставку!';
             deliveryInfo.classList.add('achieved');
         } else {
-            const remaining = (1000 - cart.total).toFixed(2);
+            const remaining = Math.round(1000 - cart.total);
             deliveryInfo.textContent = `Додайте товарів на ${remaining}₴ для безкоштовної доставки`;
             deliveryInfo.classList.remove('achieved');
         }
@@ -202,8 +202,7 @@ function removeFromCart(itemId) {
     updateCartDisplay();
     saveCartToStorage();
     
-    // Показуємо повідомлення
-    showNotification('Товар видалено з кошика', 'info');
+    // Повідомлення видалено - замість них показуємо лічильник на іконці кошику
 }
 
 // Функція для очищення кошика
@@ -218,15 +217,14 @@ function clearCart() {
         updateCartDisplay();
         saveCartToStorage();
         
-        // Показуємо повідомлення
-        showNotification('Кошик очищено', 'success');
+        // Повідомлення видалено - замість них показуємо лічильник на іконці кошику
     }
 }
 
 // Функція для оформлення замовлення
 function checkout() {
     if (cart.items.length === 0) {
-        showNotification('Кошик порожній!', 'error');
+        // Повідомлення видалено - замість них показуємо лічильник на іконці кошику
         return;
     }
     
@@ -296,7 +294,7 @@ function initializePaymentMethods() {
 // Функція для підтвердження замовлення
 function submitOrder() {
     if (cart.items.length === 0) {
-        showNotification('Кошик порожній!', 'error');
+        // Повідомлення видалено - замість них показуємо лічильник на іконці кошику
         return;
     }
     
@@ -346,7 +344,7 @@ function validateOrderForm() {
     }
     
     if (!isValid) {
-        showNotification(errors.join('\n'), 'error');
+        // Повідомлення видалено - замість них показуємо лічильник на іконці кошику
     }
     
     return isValid;
@@ -382,16 +380,15 @@ function collectOrderData() {
 // Функція для показу підтвердження замовлення
 function showOrderConfirmation(orderData) {
     const orderSummary = orderData.items.map(item => 
-        `${item.title} (${item.quantity || 1} шт.) - ${(item.price * (item.quantity || 1)).toFixed(2)} грн`
+        `${item.title} (${item.quantity || 1} шт.) - ${Math.round(item.price * (item.quantity || 1))} грн`
     ).join('\n');
     
     const deliveryInfo = `Доставка: ${orderData.delivery.city}, ${orderData.delivery.address}`;
     const paymentInfo = `Оплата: ${getPaymentMethodName(orderData.payment)}`;
     
-    const message = `🎉 Замовлення успішно оформлено!\n\n📋 Деталі замовлення:\n${orderSummary}\n\n💰 Всього: ${orderData.total.toFixed(2)} грн\n\n🚚 ${deliveryInfo}\n💳 ${paymentInfo}\n\n📞 Ми зв'яжемося з вами для підтвердження.\n\nДякуємо за покупку!`;
+    const message = `🎉 Замовлення успішно оформлено!\n\n📋 Деталі замовлення:\n${orderSummary}\n\n💰 Всього: ${Math.round(orderData.total)} грн\n\n🚚 ${deliveryInfo}\n💳 ${paymentInfo}\n\n📞 Ми зв'яжемося з вами для підтвердження.\n\nДякуємо за покупку!`;
     
-    // Показуємо повідомлення
-    showNotification('Замовлення оформлено!', 'success');
+    // Повідомлення видалено - замість них показуємо лічильник на іконці кошику
     
     // Очищаємо кошик після оформлення
     cart.items = [];
@@ -432,54 +429,7 @@ function saveOrderToStorage(orderData) {
     }
 }
 
-// Функція для показу повідомлень
-function showNotification(message, type = 'info') {
-    // Створюємо елемент повідомлення
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = `
-        <div class="notification-content">
-            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
-            <span>${message}</span>
-        </div>
-    `;
-    
-    // Додаємо стилі
-    notification.style.cssText = `
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'};
-        color: white;
-        padding: 15px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 1000;
-        opacity: 0;
-        transform: translateY(100%);
-        transition: all 0.3s ease;
-        max-width: 300px;
-        font-size: 14px;
-    `;
-    
-    // Додаємо до сторінки
-    document.body.appendChild(notification);
-    
-    // Показуємо повідомлення
-    setTimeout(() => {
-        notification.style.opacity = '1';
-        notification.style.transform = 'translateY(0)';
-    }, 100);
-    
-    // Приховуємо через 3 секунди
-    setTimeout(() => {
-        notification.style.opacity = '0';
-        notification.style.transform = 'translateY(100%)';
-        setTimeout(() => {
-            document.body.removeChild(notification);
-        }, 300);
-    }, 3000);
-}
+// Функція showNotification видалена - замість повідомлень використовуємо лічильник на іконці кошику
 
 // Ініціалізація сторінки кошика
 document.addEventListener('DOMContentLoaded', () => {

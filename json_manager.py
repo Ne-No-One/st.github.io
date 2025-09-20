@@ -42,7 +42,7 @@ class JSONManager:
                 "main_product": {
                     "title": "Преміум квіти",
                     "description": "Найкращі квіти для ваших особливих моментів",
-                    "base_price": 2800.00,
+                    "base_price": 2800,
                     "currency": "грн",
                     "add_to_cart_text": "В кошик",
                     "show_premium_label": True,
@@ -85,7 +85,7 @@ class JSONManager:
                         "id": 1,
                         "title": "Букет квітів",
                         "description": "Красивий букет свіжих квітів",
-                        "price": 1500.00,
+                        "price": 1500,
                         "currency": "грн",
                         "image_url": "",
                         "add_to_cart_text": "Додати в кошик",

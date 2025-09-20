@@ -157,9 +157,7 @@ function toggleAdditionalProduct(productId) {
     saveCartToStorage();
     updateAddAllButton();
     
-    // Показуємо повідомлення
-    const message = existingItem ? 'Товар видалено з кошика' : 'Товар додано в кошик';
-    showNotification(message, existingItem ? 'info' : 'success');
+    // Повідомлення видалено - замість них показуємо лічильник на іконці кошику
 }
 
 // Функція для перемикання всіх додаткових товарів
@@ -236,9 +234,7 @@ function toggleAllAdditionalProducts() {
     updateProgressBar();
     saveCartToStorage();
     
-    // Показуємо повідомлення
-    const message = allInCart ? 'Всі товари видалено з кошика' : 'Всі товари додано в кошик';
-    showNotification(message, allInCart ? 'info' : 'success');
+    // Повідомлення видалено - замість них показуємо лічильник на іконці кошику
 }
 
 // Функція для оновлення кнопки "Додати всі"
@@ -262,56 +258,7 @@ function updateAddAllButton() {
     }
 }
 
-// Функція для показу повідомлень
-function showNotification(message, type = 'info') {
-    // Створюємо елемент повідомлення
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = `
-        <div class="notification-content">
-            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
-            <span>${message}</span>
-        </div>
-    `;
-    
-    // Додаємо стилі
-    notification.style.cssText = `
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'};
-        color: white;
-        padding: 15px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 1000;
-        opacity: 0;
-        transform: translateY(100%);
-        transition: all 0.3s ease;
-        max-width: 300px;
-        font-size: 14px;
-    `;
-    
-    // Додаємо до сторінки
-    document.body.appendChild(notification);
-    
-    // Показуємо повідомлення
-    setTimeout(() => {
-        notification.style.opacity = '1';
-        notification.style.transform = 'translateY(0)';
-    }, 100);
-    
-    // Приховуємо через 3 секунди
-    setTimeout(() => {
-        notification.style.opacity = '0';
-        notification.style.transform = 'translateY(100%)';
-        setTimeout(() => {
-            if (document.body.contains(notification)) {
-                document.body.removeChild(notification);
-            }
-        }, 300);
-    }, 3000);
-}
+// Функція showNotification видалена - замість повідомлень використовуємо лічильник на іконці кошику
 
 // Функція для синхронізації стану кнопок з кошиком
 function syncButtonsWithCart() {

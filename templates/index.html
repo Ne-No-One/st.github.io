@@ -119,7 +119,7 @@
                     {% if quantity_options %}
                         {% with first_qty=quantity_options.0 %}
                             {% if first_qty.price_per_unit and first_qty.quantity %}
-                                <span class="final-price">{{ first_qty.price_per_unit|floatformat:2 }}</span> {{ main_product.currency }}
+                                <span class="final-price">{{ first_qty.price_per_unit|floatformat:0 }}</span> {{ main_product.currency }}
                             {% else %}
                                 {% if main_product.price %}
                                     {{ main_product.price }} {{ main_product.currency }}
@@ -182,7 +182,7 @@
                         <div class="additional-product-info">
                             <h3>{{ product.title }}</h3>
                             <div class="additional-product-price-container">
-                                <div class="additional-product-price">{{ product.price }} {{ product.currency }}</div>
+                                <div class="additional-product-price">{{ product.price|floatformat:0 }} {{ product.currency }}</div>
                                 <button class="additional-add-to-cart-btn" onclick="toggleAdditionalProduct({{ product.id }})">
                                     Додати в кошик
                                 </button>

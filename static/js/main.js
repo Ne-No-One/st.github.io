@@ -474,25 +474,28 @@ function updateQuantityButtonsVisibility(colorName) {
         console.log('⚠️ Немає доступних кількостей для цього кольору');
         // Можна додати повідомлення користувачу
     } else {
-        // Знаходимо кнопку з найбільшою кількістю
+        // Знаходимо кнопку з найбільшою ціною за одиницю
         const sortedButtons = visibleButtons.sort((a, b) => {
-            const quantityA = parseInt(a.dataset.quantity);
-            const quantityB = parseInt(b.dataset.quantity);
-            return quantityB - quantityA; // Сортуємо за спаданням
+            const priceA = parseFloat(a.dataset.pricePerUnit || 0);
+            const priceB = parseFloat(b.dataset.pricePerUnit || 0);
+            return priceB - priceA; // Сортуємо за спаданням ціни
         });
         
-        const largestQuantityButton = sortedButtons[0];
+        const mostExpensiveButton = sortedButtons[0];
         
         // Видаляємо активний клас з усіх кнопок
         quantityButtons.forEach(btn => btn.classList.remove('active'));
         
-        // Додаємо активний клас до кнопки з найбільшою кількістю
-        if (largestQuantityButton) {
-            largestQuantityButton.classList.add('active');
-            console.log('🔄 Активуємо кнопку з найбільшою кількістю:', largestQuantityButton.dataset.quantity);
+        // Додаємо активний клас до кнопки з найбільшою ціною
+        if (mostExpensiveButton) {
+            mostExpensiveButton.classList.add('active');
+            console.log('🔄 Активуємо кнопку з найбільшою ціною:', mostExpensiveButton.dataset.quantity, 'грн за одиницю');
             
             // Оновлюємо фото для цієї кількості
-            updateQuantityImage(largestQuantityButton.dataset.quantity);
+            updateQuantityImage(mostExpensiveButton.dataset.quantity);
+            
+            // Оновлюємо ціну для нової активної кнопки
+            updatePrice(mostExpensiveButton);
         }
     }
 }
@@ -612,17 +615,9 @@ function selectColor(element, hexCode, flowersImage, maskImage, packagingTexture
     // Застосовуємо зміну кольору з повною системою шарів
     changeColorWithMask(colorData);
     
-    // Оновлюємо ціну якщо потрібно
-    updatePrice();
-    
     // Оновлюємо видимість кнопок кількостей на основі наявності фото
+    // (це також оновить ціну для нової активної кнопки)
     updateQuantityButtonsVisibility(colorName);
-    
-            // Оновлюємо фото для поточної кількості
-            const activeQuantity = document.querySelector('.quantity-btn.active');
-            if (activeQuantity) {
-                updateQuantityImage(activeQuantity.dataset.quantity);
-            }
             
             // Показуємо фото для всіх кількостей цього кольору
             showQuantityImages(colorName);
@@ -665,8 +660,8 @@ function updatePrice() {
         const quantity = parseInt(activeQuantity.dataset.quantity) || 1;
         
         const totalPrice = pricePerUnit * quantity;
-        // Оновлюємо тільки ціну, без валюти (валюта вже є в HTML)
-        priceElement.textContent = totalPrice.toFixed(2);
+        // Оновлюємо тільки ціну, без валюти (валюта вже є в HTML) - тільки цілі числа
+        priceElement.textContent = Math.round(totalPrice);
     }
 }
 
@@ -776,7 +771,7 @@ function initializePriceCalculation() {
         console.log(`💰 Елементи: finalPriceDisplay=${!!finalPriceDisplay}, priceElement=${!!priceElement}`);
         
         if (quantity && pricePerUnit) {
-            const totalPrice = (quantity * pricePerUnit).toFixed(2);
+            const totalPrice = Math.round(quantity * pricePerUnit);
             
             // Оновлюємо фінальну ціну
             if (finalPriceDisplay) {
@@ -859,16 +854,22 @@ function initializePriceCalculation() {
     if (quantityButtons.length > 0) {
         console.log('✅ Знайдено кнопки кількості, ініціалізуємо...');
         
-        // Знаходимо перший активний варіант або просто перший
-        let firstActiveBtn = Array.from(quantityButtons).find(btn => btn.classList.contains('active')) || quantityButtons[0];
+        // Знаходимо найдорожчий варіант за замовчуванням
+        const sortedButtons = Array.from(quantityButtons).sort((a, b) => {
+            const priceA = parseFloat(a.dataset.pricePerUnit || 0);
+            const priceB = parseFloat(b.dataset.pricePerUnit || 0);
+            return priceB - priceA; // Сортуємо за спаданням ціни
+        });
         
-        // Видаляємо всі активні класи та встановлюємо активний тільки для першого
+        let defaultBtn = sortedButtons[0] || quantityButtons[0];
+        
+        // Видаляємо всі активні класи та встановлюємо активний тільки для найдорожчого
         quantityButtons.forEach(btn => btn.classList.remove('active'));
-        firstActiveBtn.classList.add('active');
+        defaultBtn.classList.add('active');
         
         // Оновлюємо ціну
-        updatePrice(firstActiveBtn);
-        console.log('💰 Встановлено початкову ціну для:', firstActiveBtn.dataset.quantity);
+        updatePrice(defaultBtn);
+        console.log('💰 Встановлено початкову ціну для:', defaultBtn.dataset.quantity);
         console.log('✅ Функціональність кнопок кількості ініціалізована!');
     } else {
         console.log('❌ Кнопки кількості не знайдені!');
@@ -958,7 +959,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const pricePerUnit = parseFloat(firstBtn.dataset.pricePerUnit);
             
             if (quantity && pricePerUnit) {
-                const totalPrice = (quantity * pricePerUnit).toFixed(2);
+                const totalPrice = Math.round(quantity * pricePerUnit);
                 finalPriceElement.textContent = totalPrice;
                 console.log('💰 Відновлено початкову ціну:', totalPrice);
             }
