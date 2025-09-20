@@ -43,6 +43,7 @@ def site_settings(request):
             site_title = request.POST.get('site_title', '').strip()
             site_description = request.POST.get('site_description', '').strip()
             cart_button_text = request.POST.get('cart_button_text', '').strip()
+            remove_from_cart_text = request.POST.get('remove_from_cart_text', '').strip()
             premium_label_text = request.POST.get('premium_label_text', '').strip()
             header_subtitle = request.POST.get('header_subtitle', '').strip()
 
@@ -64,21 +65,18 @@ def site_settings(request):
                 add_all_text = request.POST.get('add_all_text', '').strip()
                 main_product_premium_label = request.POST.get('main_product_premium_label', '').strip()
                 b2b_button_text = request.POST.get('b2b_button_text', '').strip()
-                contact_phone = request.POST.get('contact_phone', '').strip()
-                contact_email = request.POST.get('contact_email', '').strip()
-                contact_address = request.POST.get('contact_address', '').strip()
-                about_title = request.POST.get('about_title', '').strip()
-                about_description = request.POST.get('about_description', '').strip()
                 cart_count_label = request.POST.get('cart_count_label', '').strip()
                 currency_symbol = request.POST.get('currency_symbol', '').strip()
                 loading_text = request.POST.get('loading_text', '').strip()
                 error_text = request.POST.get('error_text', '').strip()
+                
                 
                 # Оновлюємо налаштування сайту
                 updated_settings = {
                     'site_title': site_title,
                     'site_description': site_description,
                     'cart_button_text': cart_button_text or 'В кошик',
+                    'remove_from_cart_text': remove_from_cart_text or 'Прибрати з кошика',
                     'premium_label_text': premium_label_text or 'Преміум',
                     'header_subtitle': header_subtitle or 'Красиві квіти для всіх подій',
                     'color_selector_title': color_selector_title or 'колір пакування',
@@ -110,29 +108,14 @@ def site_settings(request):
                     'add_all_text': add_all_text or 'Додати всі'
                 }
                 
-                # Оновлюємо контактну інформацію
-                updated_contact_info = {
-                    'phone': contact_phone or '+380 XX XXX XX XX',
-                    'email': contact_email or 'info@example.com',
-                    'address': contact_address or 'м. Київ, вул. Хрещатик, 1'
-                }
-                
-                # Оновлюємо секцію "Про нас"
-                updated_about_section = {
-                    'title': about_title or 'Про нас',
-                    'description': about_description or 'Ми - провідна компанія у сфері квітів з багаторічним досвідом.'
-                }
-                
                 # Зберігаємо всі зміни
                 site_updated = json_manager.update_site_settings(**updated_settings)
                 product_updated = json_manager.update_main_product(**updated_main_product)
                 additional_updated = json_manager.update_additional_settings(**updated_additional_settings)
-                contact_updated = json_manager.update_contact_info(**updated_contact_info)
-                about_updated = json_manager.update_about_section(**updated_about_section)
                 
                 # Перевіряємо результати збереження
-                success_count = sum([site_updated, product_updated, additional_updated, contact_updated, about_updated])
-                total_count = 5
+                success_count = sum([site_updated, product_updated, additional_updated])
+                total_count = 3
                 
                 if success_count == total_count:
                     messages.success(request, 'Всі налаштування успішно оновлено! 🎉')
@@ -145,15 +128,11 @@ def site_settings(request):
         # Отримуємо дані для відображення
         main_product = json_manager.get_main_product()
         additional_settings = json_manager.get_additional_settings()
-        contact_info = json_manager.get_contact_info()
-        about_section = json_manager.get_about_section()
         
         context = {
             'settings': settings_obj,
             'main_product': main_product,
             'additional_settings': additional_settings,
-            'contact_info': contact_info,
-            'about_section': about_section,
             'site_settings': settings_obj  # Додаткове посилання для консистентності
         }
         return render(request, 'admin_panel/site_settings.html', context)
@@ -756,6 +735,7 @@ def about_section(request):
         from json_manager import JSONManager
         json_manager = JSONManager()
         about = json_manager.get_about_section()
+        site_settings = json_manager.get_site_settings()
 
         if request.method == 'POST':
             title = request.POST.get('title', '').strip()
@@ -765,12 +745,19 @@ def about_section(request):
             if not title or not description:
                 messages.error(request, 'Заголовок та опис секції "Про нас" не можуть бути порожніми!')
             else:
-                if json_manager.update_about_section(title, description, show_section):
+                # Оновлюємо секцію "Про нас" та налаштування відображення
+                about_updated = json_manager.update_about_section(title, description, show_section)
+                settings_updated = json_manager.update_site_settings(show_about_section=show_section)
+                
+                if about_updated and settings_updated:
                     messages.success(request, 'Секція "Про нас" успішно оновлена!')
                 else:
                     messages.error(request, 'Помилка збереження секції "Про нас"!')
             return redirect('admin_panel:about_section')
-        return render(request, 'admin_panel/about_section.html', {'about': about})
+        return render(request, 'admin_panel/about_section.html', {
+            'about': about,
+            'site_settings': site_settings
+        })
     except Exception as e:
         return HttpResponse(f"Помилка: {e}")
 
@@ -782,19 +769,34 @@ def services(request):
         services_list = json_manager.get_services()
 
         if request.method == 'POST':
-            title = request.POST.get('title', '').strip()
-            description = request.POST.get('description', '').strip()
-            icon = request.POST.get('icon', '').strip()
-
-            if not title or not description or not icon:
-                messages.error(request, 'Всі поля послуги є обов\'язковими!')
-            else:
-                if json_manager.add_service(title, description, icon):
-                    messages.success(request, 'Послугу успішно додано!')
+            action = request.POST.get('action', '')
+            
+            if action == 'update_section_visibility':
+                show_section = request.POST.get('show_section') == 'on'
+                if json_manager.update_site_settings(show_services_section=show_section):
+                    messages.success(request, 'Налаштування секції успішно збережено!')
                 else:
-                    messages.error(request, 'Помилка додавання послуги!')
+                    messages.error(request, 'Помилка збереження налаштувань секції!')
+            else:
+                # Додавання нової послуги
+                title = request.POST.get('title', '').strip()
+                description = request.POST.get('description', '').strip()
+                icon = request.POST.get('icon', '').strip()
+
+                if not title or not description or not icon:
+                    messages.error(request, 'Всі поля послуги є обов\'язковими!')
+                else:
+                    if json_manager.add_service(title, description, icon):
+                        messages.success(request, 'Послугу успішно додано!')
+                    else:
+                        messages.error(request, 'Помилка додавання послуги!')
             return redirect('admin_panel:services')
-        return render(request, 'admin_panel/services.html', {'services': services_list})
+        
+        site_settings = json_manager.get_site_settings()
+        return render(request, 'admin_panel/services.html', {
+            'services': services_list,
+            'site_settings': site_settings
+        })
     except Exception as e:
         return HttpResponse(f"Помилка: {e}")
 
@@ -819,46 +821,38 @@ def contact_info(request):
         contact = json_manager.get_contact_info()
 
         if request.method == 'POST':
-            phone = request.POST.get('phone', '').strip()
-            email = request.POST.get('email', '').strip()
-            address = request.POST.get('address', '').strip()
-            working_hours = request.POST.get('working_hours', '').strip()
-
-            if not phone or not email or not address or not working_hours:
-                messages.error(request, 'Всі поля контактної інформації є обов\'язковими!')
-            else:
-                if json_manager.update_contact_info(phone, email, address, working_hours):
-                    messages.success(request, 'Контактну інформацію успішно оновлено!')
+            action = request.POST.get('action', '')
+            
+            if action == 'update_section_visibility':
+                show_section = request.POST.get('show_section') == 'on'
+                if json_manager.update_site_settings(show_contact_section=show_section):
+                    messages.success(request, 'Налаштування секції успішно збережено!')
                 else:
-                    messages.error(request, 'Помилка збереження контактної інформації!')
+                    messages.error(request, 'Помилка збереження налаштувань секції!')
+            else:
+                # Оновлення контактної інформації
+                phone = request.POST.get('phone', '').strip()
+                email = request.POST.get('email', '').strip()
+                address = request.POST.get('address', '').strip()
+                working_hours = request.POST.get('working_hours', '').strip()
+
+                if not phone or not email or not address or not working_hours:
+                    messages.error(request, 'Всі поля контактної інформації є обов\'язковими!')
+                else:
+                    if json_manager.update_contact_info(phone, email, address, working_hours):
+                        messages.success(request, 'Контактну інформацію успішно оновлено!')
+                    else:
+                        messages.error(request, 'Помилка збереження контактної інформації!')
             return redirect('admin_panel:contact_info')
-        return render(request, 'admin_panel/contact_info.html', {'contact': contact})
+        
+        site_settings = json_manager.get_site_settings()
+        return render(request, 'admin_panel/contact_info.html', {
+            'contact': contact,
+            'site_settings': site_settings
+        })
     except Exception as e:
         return HttpResponse(f"Помилка: {e}")
 
-def about_section(request):
-    """Управління секцією 'Про нас'"""
-    try:
-        from json_manager import JSONManager
-        json_manager = JSONManager()
-        about = json_manager.get_about_section()
-
-        if request.method == 'POST':
-            title = request.POST.get('title', '').strip()
-            description = request.POST.get('description', '').strip()
-            show_section = request.POST.get('show_section') == 'on'
-
-            if not title or not description:
-                messages.error(request, 'Заголовок та опис є обов\'язковими!')
-            else:
-                if json_manager.update_about_section(title, description, show_section):
-                    messages.success(request, 'Секцію "Про нас" успішно оновлено!')
-                else:
-                    messages.error(request, 'Помилка збереження секції "Про нас"!')
-            return redirect('admin_panel:about_section')
-        return render(request, 'admin_panel/about_section.html', {'about': about})
-    except Exception as e:
-        return HttpResponse(f"Помилка: {e}")
 
 # ===== ORDERS MANAGEMENT =====
 

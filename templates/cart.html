@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if site_settings %}{{ site_settings.site_title }} - Кошик{% else %}Кошик покупок{% endif %}</title>
+    <meta name="description" content="Кошик покупок - оформити замовлення">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+{% if error %}
+<!-- Показуємо помилку якщо є -->
+<div style="background: #ff4444; color: white; padding: 20px; text-align: center; font-size: 18px;">
+    <strong>Помилка завантаження сайту:</strong> {{ error }}
+    <br><small>Будь ласка, перезавантажте сторінку або зверніться до адміністратора.</small>
+</div>
+{% endif %}
+
+<!-- Плаваючі білі шари -->
+<div class="floating-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    <div class="shape shape-4"></div>
+    <div class="shape shape-5"></div>
+</div>
+
+<!-- Шапка сайту -->
+<header class="header">
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h1><a href="/" style="text-decoration: none; color: inherit;">{% if site_settings %}{{ site_settings.site_title }}{% else %}Квітковий магазин{% endif %}</a></h1>
+            <button class="b2b-button">{{ site_settings.b2b_button_text|default:"B2B" }}</button>
+        </div>
+        <div class="nav-actions">
+            <div class="cart-icon active">
+                <span class="cart-icon-symbol">🛒</span>
+                <span class="cart-count" id="cart-count">0</span>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<!-- Прогрес бар до безкоштовної доставки -->
+<div class="progress-container">
+    <div class="progress-info">
+        <span class="progress-label">Прогрес до безкоштовної доставки</span>
+        <span class="progress-amount" id="progress-text">0₴ / 1000₴</span>
+    </div>
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+    </div>
+</div>
+
+<!-- Основний контент сторінки кошика -->
+<main class="cart-page">
+    <div class="cart-page-container">
+        <!-- Заголовок сторінки -->
+        <div class="cart-page-header">
+            <h1 class="cart-page-title">
+                <i class="fas fa-shopping-cart"></i>
+                Кошик покупок
+            </h1>
+            <a href="/" class="back-to-shop-btn">
+                <i class="fas fa-arrow-left"></i>
+                Продовжити покупки
+            </a>
+        </div>
+
+        <!-- Тіло сторінки кошика -->
+        <div class="cart-page-body">
+            <!-- Ліва частина - товари в кошику -->
+            <div class="cart-items-section">
+                <div class="cart-items-container">
+                    <div id="cart-items" class="cart-items-list">
+                        <!-- Товари будуть додаватись тут -->
+                    </div>
+                    <div class="cart-empty" id="cart-empty">
+                        <div class="empty-cart-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <h3>Ваш кошик порожній</h3>
+                        <p>Додайте товари, щоб почати покупки</p>
+                        <a href="/" class="start-shopping-btn">
+                            <i class="fas fa-shopping-cart"></i>
+                            Почати покупки
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Права частина - підсумок замовлення -->
+            <div class="cart-summary-section">
+                <div class="cart-summary-card">
+                    <h3 class="summary-title">Підсумок замовлення</h3>
+                    
+                    <!-- Деталі замовлення -->
+                    <div class="summary-details">
+                        <div class="summary-row">
+                            <span>Товарів:</span>
+                            <span id="cart-items-count">0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Доставка:</span>
+                            <span id="cart-delivery">Безкоштовно</span>
+                        </div>
+                        <div class="summary-row delivery-info">
+                            <small id="delivery-threshold-info">Додайте товарів на 1000₴ для безкоштовної доставки</small>
+                        </div>
+                        <div class="summary-row total-row">
+                            <span>Всього:</span>
+                            <span id="cart-total-price">0 грн</span>
+                        </div>
+                    </div>
+
+                    <!-- Кнопки дій -->
+                    <div class="cart-actions">
+                        <button class="checkout-btn primary-btn" id="checkout-btn" onclick="checkout()">
+                            <i class="fas fa-credit-card"></i>
+                            Оформити замовлення
+                        </button>
+                        <button class="clear-cart-btn secondary-btn" id="clear-cart-btn" onclick="clearCart()">
+                            <i class="fas fa-trash"></i>
+                            Очистити кошик
+                        </button>
+                    </div>
+
+                    <!-- Додаткова інформація -->
+                    <div class="cart-info">
+                        <div class="info-item">
+                            <i class="fas fa-truck"></i>
+                            <span>Безкоштовна доставка від 1000₴</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Безпечна оплата</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-undo"></i>
+                            <span>Повернення протягом 14 днів</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Форма замовлення -->
+                <div class="order-form" id="order-form" style="display: none;">
+                    <div class="form-section">
+                        <h3><i class="fas fa-user"></i> Контактна інформація</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">Ім'я *</label>
+                                <input type="text" id="firstName" name="firstName" required placeholder="Введіть ваше ім'я">
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Прізвище *</label>
+                                <input type="text" id="lastName" name="lastName" required placeholder="Введіть ваше прізвище">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="phone">Телефон *</label>
+                                <input type="tel" id="phone" name="phone" required placeholder="+380 (__) ___-__-__">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" placeholder="your@email.com">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-map-marker-alt"></i> Адреса доставки</h3>
+                        <div class="form-group">
+                            <label for="city">Місто *</label>
+                            <input type="text" id="city" name="city" required placeholder="Введіть місто">
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Адреса *</label>
+                            <input type="text" id="address" name="address" required placeholder="Вулиця, будинок, квартира">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="postalCode">Поштовий індекс</label>
+                                <input type="text" id="postalCode" name="postalCode" placeholder="01001">
+                            </div>
+                            <div class="form-group">
+                                <label for="deliveryDate">Дата доставки</label>
+                                <input type="date" id="deliveryDate" name="deliveryDate">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="deliveryTime">Час доставки</label>
+                            <select id="deliveryTime" name="deliveryTime">
+                                <option value="">Оберіть час</option>
+                                <option value="09:00-12:00">09:00 - 12:00</option>
+                                <option value="12:00-15:00">12:00 - 15:00</option>
+                                <option value="15:00-18:00">15:00 - 18:00</option>
+                                <option value="18:00-21:00">18:00 - 21:00</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-credit-card"></i> Спосіб оплати</h3>
+                        <div class="payment-methods">
+                            <div class="payment-method">
+                                <input type="radio" id="payment-cash" name="payment" value="cash">
+                                <label for="payment-cash">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    <span>Готівка при отриманні</span>
+                                </label>
+                            </div>
+                            <div class="payment-method">
+                                <input type="radio" id="payment-card" name="payment" value="card">
+                                <label for="payment-card">
+                                    <i class="fas fa-credit-card"></i>
+                                    <span>Банківська карта</span>
+                                </label>
+                            </div>
+                            <div class="payment-method">
+                                <input type="radio" id="payment-online" name="payment" value="online">
+                                <label for="payment-online">
+                                    <i class="fas fa-mobile-alt"></i>
+                                    <span>Онлайн оплата</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-comment"></i> Додаткові побажання</h3>
+                        <div class="form-group">
+                            <label for="notes">Коментар до замовлення</label>
+                            <textarea id="notes" name="notes" rows="3" placeholder="Будь-які особливі побажання або коментарі..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" id="agreeTerms" name="agreeTerms" required style="width: auto;">
+                                <span>Я погоджуюся з <a href="#" style="color: #4CAF50;">умовами доставки</a> та <a href="#" style="color: #4CAF50;">політикою конфіденційності</a> *</span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" id="subscribeNews" name="subscribeNews" style="width: auto;">
+                                <span>Підписатися на новини та спеціальні пропозиції</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="cart-actions">
+                        <button class="primary-btn" onclick="submitOrder()">
+                            <i class="fas fa-check"></i>
+                            Підтвердити замовлення
+                        </button>
+                        <button class="secondary-btn" onclick="toggleOrderForm()">
+                            <i class="fas fa-arrow-left"></i>
+                            Повернутися до кошика
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Секція контактів (якщо потрібно) -->
+{% if contact_info and site_settings.show_contact_section %}
+<section id="contact" class="section contact-section">
+    <div class="contact-content">
+        <h2 class="section-title">Контакти</h2>
+        <div class="contact-info">
+            <div class="contact-item">
+                <i class="fas fa-phone"></i>
+                <span>{{ contact_info.phone }}</span>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-envelope"></i>
+                <span>{{ contact_info.email }}</span>
+            </div>
+            {% if contact_info.address %}
+            <div class="contact-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>{{ contact_info.address }}</span>
+            </div>
+            {% endif %}
+            {% if contact_info.working_hours %}
+            <div class="contact-item">
+                <i class="fas fa-clock"></i>
+                <span>{{ contact_info.working_hours }}</span>
+            </div>
+            {% endif %}
+        </div>
+        
+        {% if contact_info.instagram or contact_info.facebook or contact_info.telegram %}
+        <div class="social-links">
+            {% if contact_info.instagram %}
+            <a href="{{ contact_info.instagram }}" target="_blank" class="social-link">
+                <i class="fab fa-instagram"></i>
+            </a>
+            {% endif %}
+            {% if contact_info.facebook %}
+            <a href="{{ contact_info.facebook }}" target="_blank" class="social-link">
+                <i class="fab fa-facebook"></i>
+            </a>
+            {% endif %}
+            {% if contact_info.telegram %}
+            <a href="{{ contact_info.telegram }}" target="_blank" class="social-link">
+                <i class="fab fa-telegram"></i>
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endif %}
+
+<script src="{% static 'js/main.js' %}"></script>
+<script src="{% static 'js/cart.js' %}"></script>
+</body>
+</html>
+

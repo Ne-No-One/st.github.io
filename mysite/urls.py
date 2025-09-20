@@ -10,6 +10,7 @@ from main.health_check import health_check
 urlpatterns = [
     path('admin-panel/', include('admin_panel.urls')),  # Адмін-панель
     path('health/', health_check, name='health_check'),
+    path('cart/', views.cart, name='cart'),
     path('', views.home, name='home'),
 ]
 

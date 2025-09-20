@@ -103,6 +103,36 @@
             </div>
         </div>
         
+        <!-- Налаштування відображення секції -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-eye me-2"></i>
+                    Відображення секції
+                </h6>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="update_section_visibility">
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="show_section" name="show_section" 
+                                   {% if site_settings.show_contact_section %}checked{% endif %}>
+                            <label class="form-check-label" for="show_section">
+                                Показувати секцію контактів на сайті
+                            </label>
+                        </div>
+                        <div class="form-text">Відображати секцію з контактною інформацією на головній сторінці</div>
+                    </div>
+                    <button type="submit" class="btn btn-outline-primary w-100">
+                        <i class="fas fa-save me-2"></i>
+                        Зберегти налаштування
+                    </button>
+                </form>
+            </div>
+        </div>
+        
         <!-- Підказки -->
         <div class="card mt-3">
             <div class="card-header">

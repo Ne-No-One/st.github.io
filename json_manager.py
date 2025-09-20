@@ -32,7 +32,12 @@ class JSONManager:
             default_data = {
                 "site_settings": {
                     "site_title": "Квітковий магазин",
-                    "site_description": "Красиві квіти для всіх подій"
+                    "site_description": "Красиві квіти для всіх подій",
+                    "cart_button_text": "В кошик",
+                    "remove_from_cart_text": "Прибрати з кошика",
+                    "show_services_section": True,
+                    "show_contact_section": True,
+                    "show_about_section": True
                 },
                 "main_product": {
                     "title": "Преміум квіти",
@@ -170,6 +175,18 @@ class JSONManager:
         try:
             data = self.load_data()
             settings = data.get('site_settings', {})
+            
+            # Забезпечуємо дефолтні значення для секцій тільки якщо вони відсутні
+            if 'show_services_section' not in settings:
+                settings['show_services_section'] = True
+                logger.info("🔧 Встановлено дефолтне значення show_services_section = True")
+            if 'show_contact_section' not in settings:
+                settings['show_contact_section'] = True
+                logger.info("🔧 Встановлено дефолтне значення show_contact_section = True")
+            if 'show_about_section' not in settings:
+                settings['show_about_section'] = True
+                logger.info("🔧 Встановлено дефолтне значення show_about_section = True")
+            
             logger.info(f"✅ Налаштування сайту отримано: {settings}")
             return settings
         except Exception as e:
@@ -181,6 +198,15 @@ class JSONManager:
         data = self.load_data()
         if 'site_settings' not in data:
             data['site_settings'] = {}
+        
+        # Забезпечуємо наявність дефолтних значень для секцій
+        if 'show_services_section' not in data['site_settings']:
+            data['site_settings']['show_services_section'] = True
+        if 'show_contact_section' not in data['site_settings']:
+            data['site_settings']['show_contact_section'] = True
+        if 'show_about_section' not in data['site_settings']:
+            data['site_settings']['show_about_section'] = True
+        
         data['site_settings'].update(kwargs)
         return self.save_data(data)
     

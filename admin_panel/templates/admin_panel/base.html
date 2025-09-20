@@ -1575,6 +1575,26 @@
         });
     </script>
     
+    <!-- Обробка помилок з message port (розширення браузера) -->
+    <script>
+        // Обробка помилок з message port (розширення браузера)
+        window.addEventListener('error', function(e) {
+            if (e.message && e.message.includes('message port')) {
+                console.log('🔧 Ігноруємо помилку message port (розширення браузера)');
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // Обробка необроблених помилок
+        window.addEventListener('unhandledrejection', function(e) {
+            if (e.reason && e.reason.message && e.reason.message.includes('message port')) {
+                console.log('🔧 Ігноруємо помилку message port (розширення браузера)');
+                e.preventDefault();
+            }
+        });
+    </script>
+    
     {% block extra_js %}{% endblock %}
 </body>
 </html>

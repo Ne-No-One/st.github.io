@@ -60,3 +60,36 @@ def home(request):
         </body>
         </html>
         """)
+
+
+def cart(request):
+    """Сторінка кошика"""
+    
+    try:
+        # Імпортуємо JSONManager
+        from json_manager import JSONManager
+        json_manager = JSONManager()
+        
+        # Створюємо контекст для сторінки кошика
+        context = {
+            'is_django': True,
+            'site_settings': json_manager.get_site_settings(),
+            'contact_info': json_manager.get_contact_info(),
+            'page_title': 'Кошик покупок',
+        }
+        
+        return render(request, 'cart.html', context)
+        
+    except Exception as e:
+        # Якщо є помилка, показуємо простий текст
+        return HttpResponse(f"""
+        <html>
+        <head><title>Кошик - Квітковий магазин</title></head>
+        <body>
+        <h1>🛒 Кошик покупок</h1>
+        <p>Сторінка завантажується...</p>
+        <p>Помилка: {e}</p>
+        <p><a href="/">Повернутися на головну</a></p>
+        </body>
+        </html>
+        """)

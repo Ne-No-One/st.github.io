@@ -34,82 +34,10 @@
             <button class="b2b-button">{{ site_settings.b2b_button_text|default:"B2B" }}</button>
         </div>
         <div class="nav-actions">
-            <div class="cart-icon" onclick="toggleCart()">
+            <a href="/cart/" class="cart-icon" id="cart-link">
                 <span class="cart-icon-symbol">🛒</span>
-                <span class="cart-count">0</span>
-            </div>
-            
-            <!-- Кошик під кнопкою -->
-            <div id="cart-overlay" class="cart-overlay">
-                <div class="cart-container">
-                    <!-- Заголовок кошика -->
-                    <div class="cart-header">
-                        <div class="cart-title">
-                            <i class="fas fa-shopping-cart"></i>
-                            <h3>Кошик покупок</h3>
-                        </div>
-                        <button class="close-cart-btn" onclick="closeCart()">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    
-                    <!-- Тіло кошика -->
-                    <div class="cart-body">
-                        <div id="cart-items" class="cart-items">
-                            <!-- Товари будуть додаватись тут -->
-                        </div>
-                        <div class="cart-empty" id="cart-empty">
-                            <div class="empty-icon">
-                                <i class="fas fa-shopping-bag"></i>
-                            </div>
-                            <h4>Ваш кошик порожній</h4>
-                            <p>Додайте товари, щоб почати покупки</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Підсумок кошика -->
-                    <div class="cart-footer">
-                        <!-- Прогрес бар в кошику -->
-                        <div class="cart-progress-container">
-                            <div class="progress-info">
-                                <span class="progress-label">Прогрес до безкоштовної доставки</span>
-                                <span class="progress-amount" id="cart-progress-text">0₴ / 1000₴</span>
-                            </div>
-                            <div class="cart-progress-bar">
-                                <div class="cart-progress-fill" id="cart-progress-fill"></div>
-                            </div>
-                        </div>
-                        
-                        <!-- Підсумок -->
-                        <div class="cart-summary">
-                            <div class="summary-row">
-                                <span>Товарів:</span>
-                                <span id="cart-items-count">0</span>
-                            </div>
-                            <div class="summary-row">
-                                <span>Доставка:</span>
-                                <span id="cart-delivery">Безкоштовно</span>
-                            </div>
-                            <div class="summary-row total-row">
-                                <span>Всього:</span>
-                                <span id="cart-total-price">0 грн</span>
-                            </div>
-                        </div>
-                        
-                        <!-- Кнопки дій -->
-                        <div class="cart-actions">
-                            <button class="checkout-btn" id="checkout-btn" onclick="checkout()">
-                                <i class="fas fa-credit-card"></i>
-                                Оформити замовлення
-                            </button>
-                            <button class="clear-cart-btn" id="clear-cart-btn" onclick="clearCart()">
-                                <i class="fas fa-trash"></i>
-                                Очистити кошик
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                <span class="cart-count" id="cart-count">0</span>
+            </a>
         </div>
     </nav>
 </header>
@@ -212,7 +140,7 @@
                     {% endif %}
                 </div>
                 <button class="add-to-cart-btn" id="cart-button" onclick="toggleMainProduct()">
-                    В кошик
+                    {{ site_settings.cart_button_text|default:"В кошик" }}
                 </button>
             </div>
             {% endif %}
@@ -221,7 +149,8 @@
 </section>
 
 <!-- Секція "Про нас" -->
-{% if about_section and about_section.show_section %}
+<!-- DEBUG: about_section={{ about_section }}, show_about_section={{ site_settings.show_about_section }} -->
+{% if about_section and site_settings.show_about_section %}
 <section id="about" class="section about-section">
     <div class="about-content">
         <h2 class="section-title">{{ about_section.title }}</h2>
@@ -273,7 +202,8 @@
 
 
 <!-- Секція послуг -->
-{% if services %}
+<!-- DEBUG: services={{ services|length }}, show_services_section={{ site_settings.show_services_section }} -->
+{% if services and site_settings.show_services_section %}
 <section id="services" class="section services-section">
     <div class="services-content">
         <h2 class="section-title">Наші послуги</h2>
@@ -291,7 +221,8 @@
 {% endif %}
 
 <!-- Секція контактів -->
-{% if contact_info %}
+<!-- DEBUG: contact_info={{ contact_info }}, show_contact_section={{ site_settings.show_contact_section }} -->
+{% if contact_info and site_settings.show_contact_section %}
 <section id="contact" class="section contact-section">
     <div class="contact-content">
         <h2 class="section-title">Контакти</h2>
@@ -342,6 +273,15 @@
 {% endif %}
 
 
-    <script src="{% static 'js/main.js' %}"></script>
-</body>
-</html>
+        <script src="{% static 'js/main.js' %}"></script>
+        <script src="{% static 'js/home.js' %}"></script>
+        
+        <!-- Передаємо тексти кнопок в JavaScript -->
+        <script>
+            window.cartTexts = {
+                addToCart: "{{ site_settings.cart_button_text|default:'В кошик' }}",
+                removeFromCart: "{{ site_settings.remove_from_cart_text|default:'Прибрати з кошика' }}"
+            };
+        </script>
+    </body>
+    </html>

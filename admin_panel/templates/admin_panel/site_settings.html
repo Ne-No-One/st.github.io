@@ -64,6 +64,15 @@
                         
                         <div class="col-md-6">
                             <div class="mb-3">
+                                <label for="remove_from_cart_text" class="form-label">Текст кнопки "Прибрати з кошика"</label>
+                                <input type="text" class="form-control" id="remove_from_cart_text" name="remove_from_cart_text" 
+                                       value="{{ settings.remove_from_cart_text }}" placeholder="Прибрати з кошика">
+                                <div class="form-text">Текст на кнопках видалення товарів з кошика</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
                                 <label for="premium_label_text" class="form-label">Текст преміум лейбла</label>
                                 <input type="text" class="form-control" id="premium_label_text" name="premium_label_text" 
                                        value="{{ settings.premium_label_text }}" placeholder="Преміум">
@@ -193,60 +202,6 @@
                         </div>
                     </div>
                     
-                    <hr class="my-4">
-                    
-                    <h6 class="mb-3">
-                        <i class="fas fa-building me-2"></i>
-                        Контактна інформація
-                    </h6>
-                    
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="contact_phone" class="form-label">Номер телефону</label>
-                                <input type="text" class="form-control" id="contact_phone" name="contact_phone" 
-                                       value="{{ contact_info.phone|default:'+380 XX XXX XX XX' }}" placeholder="+380 XX XXX XX XX">
-                                <div class="form-text">Основний номер телефону</div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="contact_email" class="form-label">Email адреса</label>
-                                <input type="email" class="form-control" id="contact_email" name="contact_email" 
-                                       value="{{ contact_info.email|default:'info@example.com' }}" placeholder="info@example.com">
-                                <div class="form-text">Основна email адреса</div>
-            </div>
-        </div>
-    </div>
-    
-                    <div class="mb-3">
-                        <label for="contact_address" class="form-label">Адреса</label>
-                        <input type="text" class="form-control" id="contact_address" name="contact_address" 
-                               value="{{ contact_info.address|default:'м. Київ, вул. Хрещатик, 1' }}" placeholder="м. Київ, вул. Хрещатик, 1">
-                        <div class="form-text">Фізична адреса компанії</div>
-                    </div>
-                    
-                    <hr class="my-4">
-                    
-                    <h6 class="mb-3">
-                        <i class="fas fa-file-alt me-2"></i>
-                        Про компанію
-                    </h6>
-                    
-                    <div class="mb-3">
-                        <label for="about_title" class="form-label">Заголовок секції "Про нас"</label>
-                        <input type="text" class="form-control" id="about_title" name="about_title" 
-                               value="{{ about_section.title|default:'Про нас' }}" placeholder="Про нас">
-                        <div class="form-text">Заголовок секції про компанію</div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="about_description" class="form-label">Опис компанії</label>
-                        <textarea class="form-control" id="about_description" name="about_description" 
-                                  rows="4" placeholder="Розкажіть про вашу компанію...">{{ about_section.description|default:'Ми - провідна компанія у сфері квітів з багаторічним досвідом.' }}</textarea>
-                        <div class="form-text">Детальний опис діяльності компанії</div>
-            </div>
                     
                     <hr class="my-4">
                     

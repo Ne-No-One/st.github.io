@@ -32,11 +32,12 @@
                     <div class="mb-3">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="show_section" name="show_section" 
-                                   {% if about.show_section %}checked{% endif %}>
+                                   {% if site_settings.show_about_section %}checked{% endif %}>
                             <label class="form-check-label" for="show_section">
                                 Показувати секцію "Про нас" на сайті
                             </label>
                         </div>
+                        <div class="form-text">Відображати секцію про компанію на головній сторінці</div>
                     </div>
                     
                     <button type="submit" class="btn btn-primary">

@@ -1,14 +1,25 @@
 {
   "site_settings": {
-    "site_title": "Квітковий магазин",
+    "site_title": "Квітковий",
     "site_description": "Красиві квіти для всіх подій - найкращий вибір для ваших особливих моментів",
     "cart_button_text": "В кошик",
     "premium_label_text": "Преміум",
-    "header_subtitle": "Красиві квіти для всіх подій"
+    "header_subtitle": "Красиві квіти для всіх подій",
+    "color_selector_title": "колір пакування",
+    "quantity_selector_title": "кількість квітів",
+    "b2b_button_text": "B2B",
+    "cart_count_label": "шт",
+    "currency_symbol": "грн",
+    "loading_text": "Сайт завантажується...",
+    "error_text": "Помилка завантаження сайту",
+    "remove_from_cart_text": "Видалити",
+    "show_contact_section": false,
+    "show_services_section": false,
+    "show_about_section": false
   },
   "main_product": {
     "id": 1,
-    "title": "Преміум букет квітів",
+    "title": "Букет квітів",
     "currency": "грн",
     "add_to_cart_text": "Додати в кошик",
     "show_premium_label": true,
@@ -147,7 +158,7 @@
     "phone": "+380 50 123 45 67",
     "email": "info@flowers.kiev.ua",
     "address": "Київ, вул. Квіткова 25, офіс 12",
-    "working_hours": "Пн-Пт: 9:00-19:00, Сб-Нд: 10:00-17:00",
+    "working_hours": "Пн-Пт: 9:00-18:00, Сб-Нд: 10:00-16:00",
     "is_active": true
   },
   "services": [
@@ -187,7 +198,7 @@
   "about_section": {
     "title": "Про наш квітковий магазин",
     "description": "Ми працюємо вже більше 15 років і є одним з провідних квіткових магазинів Києва. Наша команда професійних флористів створює неперевершені композиції з найсвіжіших квітів. Кожен букет - це маленький витвір мистецтва, створений з любов'ю та увагою до деталей. Ми пишаємося тим, що робимо ваші особливі моменти ще більш яскравими та незабутніми!",
-    "show_section": true
+    "show_section": false
   },
   "orders": [
     {
