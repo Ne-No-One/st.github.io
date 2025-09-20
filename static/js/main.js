@@ -195,26 +195,7 @@ function initializeProductCarousel() {
         colorDots[0].classList.add('active');
     }
     
-    // Функція для зміни зображення (кнопки навігації)
-    window.changeImage = function(direction) {
-        const activeDot = document.querySelector('.color-dot.active');
-        const allDots = Array.from(colorDots);
-        const currentIndex = allDots.indexOf(activeDot);
-        
-        let newIndex = currentIndex + direction;
-        
-        // Зациклюємо навігацію
-        if (newIndex >= allDots.length) {
-            newIndex = 0;
-        } else if (newIndex < 0) {
-            newIndex = allDots.length - 1;
-        }
-        
-        // Клікаємо на нову точку
-        if (allDots[newIndex]) {
-            allDots[newIndex].click();
-        }
-    };
+    // Функція для зміни зображення видалена
 }
 
 

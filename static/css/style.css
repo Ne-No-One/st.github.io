@@ -502,6 +502,159 @@ body {
     height: auto;
 }
 
+/* Зменшуємо product-gallery до розміру product-image-container */
+#home > div > div.product-gallery {
+    width: fit-content;
+    height: fit-content;
+}
+
+/* Піднімаємо контейнер кнопок кількості */
+#home > div > div.product-info > div.quantity-selector > div {
+    margin-top: -8px;
+}
+
+/* Уніфікуємо розміри та відступи для обох селекторів */
+#home > div > div.product-info > div.color-selector,
+#home > div > div.product-info > div.quantity-selector {
+    width: 280px !important;
+    min-height: 80px !important;
+    padding: 15px 8px !important;
+    margin: 0 auto 10px auto !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 15px !important;
+    backdrop-filter: blur(15px) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+}
+
+/* Уніфікуємо заголовки обох селекторів */
+#home > div > div.product-info > div.color-selector h3,
+#home > div > div.product-info > div.quantity-selector h3 {
+    display: block !important;
+    color: white !important;
+    font-size: 1.1rem !important;
+    margin: 0 0 12px 0 !important;
+    text-align: center !important;
+    width: 100% !important;
+    font-weight: 600 !important;
+}
+
+/* Уніфікуємо кнопки кількості з правильним вирівнюванням тексту */
+#home > div > div.product-info > div.quantity-selector .quantity-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 10px 16px !important;
+    border-radius: 25px !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+    font-size: 0.9rem !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    backdrop-filter: blur(10px) !important;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3) !important;
+    min-width: 50px !important;
+    height: 40px !important;
+    flex: 0 0 auto !important;
+    box-sizing: border-box !important;
+    white-space: nowrap !important;
+}
+
+/* Уніфікуємо контейнер кнопок з центруванням на всіх пристроях */
+.quantity-buttons-container {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* Специфічний стиль для #home */
+#home > div > div.product-info > div.quantity-selector .quantity-buttons-container {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* Новий дизайн контейнера ціни з фіксованою кнопкою та валютою */
+#home > div > div.product-info > div.product-price-container {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 20px !important;
+    flex-wrap: nowrap !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 15px 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* Стилі для ціни - тільки число, займає доступний простір */
+#home > div > div.product-info > div.product-price-container .product-price {
+    flex: 1 1 auto !important;
+    text-align: right !important;
+    font-size: 3rem !important;
+    font-weight: bold !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.4) !important;
+    white-space: nowrap !important;
+    line-height: 1.1 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+/* Стилі для валюти - фіксована позиція біля кнопки */
+#home > div > div.product-info > div.product-price-container .currency {
+    flex: 0 0 auto !important;
+    font-size: 1.8rem !important;
+    font-weight: bold !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3) !important;
+    white-space: nowrap !important;
+    margin-right: 15px !important;
+}
+
+/* Стилі для кнопки - фіксована, не рухома */
+#home > div > div.product-info > div.product-price-container .add-to-cart-btn {
+    flex: 0 0 auto !important;
+    width: 180px !important;
+    height: 60px !important;
+    padding: 18px 32px !important;
+    font-size: 1.3rem !important;
+    font-weight: bold !important;
+    border-radius: 35px !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+    white-space: nowrap !important;
+    position: relative !important;
+}
+
 /* ФІКСОВАНІ РОЗМІРИ ДЛЯ ПК ВЕРСІЇ - ПЕРЕВИЗНАЧУЄМО ЗАГАЛЬНІ ПРАВИЛА */
 @media (min-width: 769px) {
     #home .product-image-container {
@@ -512,6 +665,79 @@ body {
         max-height: 625px !important;
         min-width: 500px !important;
         min-height: 625px !important;
+    }
+    
+    /* Зменшуємо product-gallery до розміру product-image-container на PC */
+    #home > div > div.product-gallery {
+        width: 500px !important;
+        height: 625px !important;
+        max-width: 500px !important;
+        max-height: 625px !important;
+    }
+    
+    /* Зменшуємо ширину product-info на PC */
+    #home > div > div.product-info {
+        width: 400px !important;
+        max-width: 400px !important;
+    }
+    
+    /* Піднімаємо контейнер кнопок кількості на PC */
+    #home > div > div.product-info > div.quantity-selector > div {
+        margin-top: -8px !important;
+    }
+    
+    /* Уніфікуємо селектори на PC версії */
+    #home > div > div.product-info > div.color-selector,
+    #home > div > div.product-info > div.quantity-selector {
+        width: 280px !important;
+        min-height: 80px !important;
+        padding: 15px 8px !important;
+        margin: 0 auto 10px auto !important;
+    }
+    
+    /* Кнопки кількості на PC версії */
+    #home > div > div.product-info > div.quantity-selector .quantity-btn {
+        padding: 12px 18px !important;
+        font-size: 1rem !important;
+        min-width: 55px !important;
+        height: 42px !important;
+    }
+    
+    /* Контейнер кнопок на PC версії */
+    #home > div > div.product-info > div.quantity-selector .quantity-buttons-container {
+        gap: 10px !important;
+        justify-content: center !important;
+    }
+    
+    /* Загальний контейнер кнопок на PC версії */
+    .quantity-buttons-container {
+        gap: 10px !important;
+        justify-content: center !important;
+    }
+    
+    /* Контейнер ціни на PC версії */
+    #home > div > div.product-info > div.product-price-container {
+        gap: 25px !important;
+        padding: 18px 0 !important;
+    }
+    
+    /* Ціна на PC версії */
+    #home > div > div.product-info > div.product-price-container .product-price {
+        font-size: 3.5rem !important;
+    }
+    
+    /* Валюта на PC версії */
+    #home > div > div.product-info > div.product-price-container .currency {
+        font-size: 2rem !important;
+        margin-right: 18px !important;
+    }
+    
+    /* Кнопка на PC версії - фіксована */
+    #home > div > div.product-info > div.product-price-container .add-to-cart-btn {
+        width: 200px !important;
+        height: 65px !important;
+        font-size: 1.4rem !important;
+        padding: 20px 35px !important;
     }
     
     #home .product-image {
@@ -529,6 +755,76 @@ body {
     #home .product-image-container {
         max-width: none !important;
         width: 100% !important;
+    }
+    
+    /* Зменшуємо product-gallery до розміру product-image-container на мобільних */
+    #home > div > div.product-gallery {
+        width: fit-content !important;
+        height: fit-content !important;
+        max-width: none !important;
+    }
+    
+    /* Піднімаємо контейнер кнопок кількості на мобільних */
+    #home > div > div.product-info > div.quantity-selector > div {
+        margin-top: -6px !important;
+    }
+    
+    /* Уніфікуємо селектори на мобільних */
+    #home > div > div.product-info > div.color-selector,
+    #home > div > div.product-info > div.quantity-selector {
+        width: 100% !important;
+        max-width: 280px !important;
+        min-height: 80px !important;
+        padding: 15px 8px !important;
+        margin: 0 auto 10px auto !important;
+    }
+    
+    /* Кнопки кількості на мобільних */
+    #home > div > div.product-info > div.quantity-selector .quantity-btn {
+        padding: 10px 14px !important;
+        font-size: 0.9rem !important;
+        min-width: 48px !important;
+        height: 38px !important;
+    }
+    
+    /* Контейнер кнопок на мобільних */
+    #home > div > div.product-info > div.quantity-selector .quantity-buttons-container {
+        gap: 6px !important;
+        justify-content: center !important;
+        padding: 0 5px !important;
+    }
+    
+    /* Загальний контейнер кнопок на мобільних */
+    .quantity-buttons-container {
+        gap: 6px !important;
+        justify-content: center !important;
+        padding: 0 5px !important;
+    }
+    
+    /* Контейнер ціни на мобільних */
+    #home > div > div.product-info > div.product-price-container {
+        gap: 15px !important;
+        padding: 12px 0 !important;
+        justify-content: center !important;
+    }
+    
+    /* Ціна на мобільних */
+    #home > div > div.product-info > div.product-price-container .product-price {
+        font-size: 2.5rem !important;
+    }
+    
+    /* Валюта на мобільних */
+    #home > div > div.product-info > div.product-price-container .currency {
+        font-size: 1.5rem !important;
+        margin-right: 12px !important;
+    }
+    
+    /* Кнопка на мобільних - фіксована */
+    #home > div > div.product-info > div.product-price-container .add-to-cart-btn {
+        width: 160px !important;
+        height: 55px !important;
+        font-size: 1.2rem !important;
+        padding: 15px 25px !important;
     }
 }
 
@@ -548,7 +844,7 @@ body {
 .product-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 60px;
+    gap: 0;
     align-items: center;
     justify-items: center;
     max-width: 1200px;
@@ -560,7 +856,7 @@ body {
 .product-gallery {
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 0;
 }
 
 .product-image-container {
@@ -602,52 +898,7 @@ body {
     transition: all 0.3s ease;
 }
 
-.image-nav {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: space-between;
-    padding: 0 20px;
-    transform: translateY(-50%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.product-image-container:hover .image-nav {
-    opacity: 1;
-}
-
-/* КНОПКИ НАВІГАЦІЇ - ТОЧНА КОПІЯ З МОБІЛЬНОЇ ВЕРСІЇ */
-.nav-btn {
-    background: rgba(255, 255, 255, 0.2) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    border-radius: 50% !important;
-    width: 40px !important;
-    height: 40px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: white !important;
-    font-size: 18px !important;
-    cursor: pointer !important;
-    backdrop-filter: blur(10px) !important;
-    pointer-events: auto !important;
-    transition: all 0.3s ease !important;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
-    z-index: 50 !important;
-    position: relative !important;
-}
-
-.nav-btn:hover {
-    background: rgba(255, 255, 255, 0.3) !important;
-    transform: scale(1.1) !important;
-}
-
-.nav-btn:active {
-    transform: scale(0.95) !important;
-}
+/* Навігація по зображеннях видалена */
 
 
 /* ===== НОВІ КНОПКИ ВИБОРУ КІЛЬКОСТІ ===== */
@@ -662,6 +913,7 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
     text-align: center;
+    margin-top: -5px;
     display: inline-block;
     text-decoration: none;
     user-select: none;
@@ -780,7 +1032,7 @@ body {
     width: 280px !important;
     max-width: 280px !important;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
-    margin-bottom: 5px !important;
+    margin-bottom: 10px !important;
 }
 
 .quantity-selector {
@@ -792,16 +1044,13 @@ body {
     width: 280px !important;
     max-width: 280px !important;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
-    margin-bottom: 5px !important;
+    margin-bottom: 10px !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
     text-align: center !important;
 }
 
-.quantity-selector {
-    margin-bottom: 0px !important;
-}
 
 .color-selector h3, .quantity-selector h3 {
     display: block !important;
@@ -844,7 +1093,7 @@ body {
 .product-info {
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 0;
     align-items: center;
     text-align: center;
     justify-content: center;
@@ -873,7 +1122,7 @@ body {
 }
 
 .product-price {
-    font-size: 2rem;
+    font-size: 2.4rem;
     font-weight: bold;
     color: #ffffff;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
@@ -886,10 +1135,10 @@ body {
     border: 2px solid #4CAF50 !important;
     color: #ffffff !important;
     box-shadow: 0 0 20px rgba(76, 175, 80, 0.4) !important;
-    padding: 12px 20px !important;
-    font-size: 0.9rem !important;
+    padding: 16px 28px !important;
+    font-size: 1.1rem !important;
     flex-shrink: 0 !important;
-    border-radius: 25px !important;
+    border-radius: 30px !important;
     cursor: pointer !important;
     transition: all 0.3s ease !important;
     font-weight: bold !important;
@@ -1499,7 +1748,7 @@ body {
     }
     
     .product-price {
-        font-size: 1.5rem;
+        font-size: 2rem;
         padding: 12px 25px;
     }
     
@@ -1513,7 +1762,7 @@ body {
     /* Налаштування product-gallery для центрування елементів */
     .product-gallery {
         justify-content: flex-end !important;
-        gap: 5px !important;
+        gap: 0 !important;
         width: 100% !important;
         max-width: none !important;
         flex: 1 !important;
@@ -1560,19 +1809,7 @@ body {
         position: relative !important;
     }
     
-    /* Стилізація кнопок навігації по боках картинки - МОБІЛЬНА ВЕРСІЯ */
-    .image-nav {
-        position: absolute !important;
-        top: 50% !important;
-        left: 0 !important;
-        right: 0 !important;
-        display: flex !important;
-        justify-content: space-between !important;
-        padding: 0 20px !important;
-        z-index: 1 !important;
-        pointer-events: none !important;
-        transform: translateY(-50%) !important;
-    }
+    /* Навігація по зображеннях видалена */
     
     /* Повертаємо кольори на кольорових кружечках на мобільній версії */
     .color-dot {
@@ -1602,32 +1839,7 @@ body {
         box-shadow: 0 0 20px currentColor !important;
     }
     
-    .nav-btn {
-        background: rgba(255, 255, 255, 0.2) !important;
-        border: 1px solid rgba(255, 255, 255, 0.3) !important;
-        border-radius: 50% !important;
-        width: 40px !important;
-        height: 40px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        color: white !important;
-        font-size: 18px !important;
-        cursor: pointer !important;
-        backdrop-filter: blur(10px) !important;
-        pointer-events: auto !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
-    }
-    
-    .nav-btn:hover {
-        background: rgba(255, 255, 255, 0.3) !important;
-        transform: scale(1.1) !important;
-    }
-    
-    .nav-btn:active {
-        transform: scale(0.95) !important;
-    }
+    /* Навігація по зображеннях видалена */
     
     /* Спеціальний фон для IMG_1243.png (перше фото в каруселі) - ПОВНІСТЮ ПРОЗОРИЙ */
     .product-image[src*="IMG_1243"] {
@@ -1815,7 +2027,7 @@ body {
         width: 280px !important;
         max-width: 280px !important;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
-        margin: 0 auto 5px auto !important;
+        margin: 0 auto 10px auto !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
@@ -1842,7 +2054,7 @@ body {
         width: 280px !important;
         max-width: 280px !important;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
-        margin: 0 auto 0px auto !important;
+        margin: 0 auto 10px auto !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
@@ -1867,6 +2079,7 @@ body {
         gap: 10px !important;
         flex-wrap: wrap !important;
         width: 100% !important;
+        margin-top: -8px !important;
     }
     
     /* Видаляємо дублікат стилів */
@@ -1910,8 +2123,8 @@ body {
         border: 2px solid #4CAF50 !important;
         color: #ffffff !important;
         box-shadow: 0 0 20px rgba(76, 175, 80, 0.4) !important;
-        padding: 12px 20px !important;
-        font-size: 0.9rem !important;
+        padding: 16px 28px !important;
+        font-size: 1.1rem !important;
         flex-shrink: 0 !important;
     }
     
@@ -1975,48 +2188,7 @@ body {
     100% { transform: translateX(100%); }
 }
 
-/* Кнопки навігації по боках картинки для ПК - УНІФІКОВАНІ */
-.image-nav {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: space-between;
-    padding: 0 20px;
-    z-index: 0;
-    pointer-events: none;
-    transform: translateY(-50%);
-}
-
-.nav-btn {
-    background: rgba(255, 255, 255, 0.2) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    border-radius: 50% !important;
-    width: 40px !important;
-    height: 40px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: white !important;
-    font-size: 18px !important;
-    cursor: pointer !important;
-    backdrop-filter: blur(10px) !important;
-    pointer-events: auto !important;
-    transition: all 0.3s ease !important;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
-    z-index: 50 !important;
-    position: relative !important;
-}
-
-.nav-btn:hover {
-    background: rgba(255, 255, 255, 0.3) !important;
-    transform: scale(1.1) !important;
-}
-
-.nav-btn:active {
-    transform: scale(0.95) !important;
-}
+/* Навігація по зображеннях видалена */
 
 /* ===== ПОВНЕ КОПІЮВАННЯ ВСІХ СТИЛІВ З МОБІЛЬНОЇ ВЕРСІЇ НА ПК ===== */
 @media (min-width: 769px) {
@@ -2071,7 +2243,7 @@ body {
     /* НОВИЙ LAYOUT ДЛЯ ПК - СЕЛЕКТОРИ ОБТІКАЮТЬ ФОТО З ПРАВОГО БОКУ */
     .product-container {
         display: flex !important;
-        gap: 40px !important;
+        gap: 0 !important;
         align-items: flex-start !important;
         max-width: 1200px !important;
         width: 100% !important;
@@ -2083,7 +2255,7 @@ body {
     .product-gallery {
         display: flex !important;
         flex-direction: column !important;
-        gap: 20px !important;
+        gap: 0 !important;
         align-items: center !important;
         flex: 0 0 auto !important;
     }
@@ -2091,10 +2263,12 @@ body {
     .product-info {
         display: flex !important;
         flex-direction: column !important;
-        gap: 20px !important;
+        gap: 0 !important;
         align-items: center !important;
-        flex: 1 !important;
+        flex: 0 0 auto !important;
         justify-content: center !important;
+        width: 400px !important;
+        max-width: 400px !important;
     }
     
     /* ФІКСОВАНІ РОЗМІРИ ФОТО НА ПК - ОДНАКОВИЙ ФОРМАТ ЗАВЖДИ */
@@ -2144,32 +2318,7 @@ body {
     }
     
     /* Кнопки навігації - КОПІЯ З МОБІЛЬНОЇ */
-    .nav-btn {
-        background: rgba(255, 255, 255, 0.2) !important;
-        border: 1px solid rgba(255, 255, 255, 0.3) !important;
-        border-radius: 50% !important;
-        width: 40px !important;
-        height: 40px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        color: white !important;
-        font-size: 18px !important;
-        cursor: pointer !important;
-        backdrop-filter: blur(10px) !important;
-        pointer-events: auto !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
-    }
-    
-    .nav-btn:hover {
-        background: rgba(255, 255, 255, 0.3) !important;
-        transform: scale(1.1) !important;
-    }
-    
-    .nav-btn:active {
-        transform: scale(0.95) !important;
-    }
+    /* Навігація по зображеннях видалена */
     
     /* Селектори кольору та кількості - КОПІЯ З МОБІЛЬНОЇ */
     .color-selector {
@@ -2181,7 +2330,7 @@ body {
         width: 280px !important;
         max-width: 280px !important;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
-        margin-bottom: 5px !important;
+        margin-bottom: 10px !important;
     }
     
     .quantity-selector {
@@ -2193,7 +2342,7 @@ body {
         width: 280px !important;
         max-width: 280px !important;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
-        margin-bottom: 0px !important;
+        margin-bottom: 10px !important;
     }
     
     .color-selector h3, .quantity-selector h3 {
@@ -2254,10 +2403,10 @@ body {
         border: 2px solid #4CAF50 !important;
         color: #ffffff !important;
         box-shadow: 0 0 20px rgba(76, 175, 80, 0.4) !important;
-        padding: 12px 20px !important;
-        font-size: 0.9rem !important;
+        padding: 16px 28px !important;
+        font-size: 1.1rem !important;
         flex-shrink: 0 !important;
-        border-radius: 25px !important;
+        border-radius: 30px !important;
         cursor: pointer !important;
         transition: all 0.3s ease !important;
         font-weight: bold !important;
@@ -2394,10 +2543,10 @@ img {
     border: 2px solid #4CAF50 !important;
     color: #ffffff !important;
     box-shadow: 0 0 20px rgba(76, 175, 80, 0.4) !important;
-    padding: 12px 20px !important;
-    font-size: 0.9rem !important;
+    padding: 16px 28px !important;
+    font-size: 1.1rem !important;
     flex-shrink: 0 !important;
-    border-radius: 25px !important;
+    border-radius: 30px !important;
     cursor: pointer !important;
     transition: all 0.3s ease !important;
     font-weight: bold !important;
@@ -2447,7 +2596,7 @@ img {
 }
 
 /* Оптимізація для GPU */
-.floating-shapes, .shape, .product-image, .nav-btn {
+.floating-shapes, .shape, .product-image {
     transform: translateZ(0);
     backface-visibility: hidden;
     perspective: 1000px;
@@ -2467,7 +2616,7 @@ img {
     /* Стилізація ціни */
     .product-price {
         flex: 0 0 auto !important;
-        font-size: 1.2rem !important;
+        font-size: 1.8rem !important;
         white-space: nowrap !important;
     }
 }
@@ -2824,6 +2973,7 @@ img {
     align-items: center !important;
     flex-wrap: wrap !important;
     width: 100% !important;
+    margin-top: -8px !important;
 }
 
 #home .quantity-selector .quantity-btn {
@@ -3009,8 +3159,7 @@ img {
         }
         
         .color-selector,
-        .quantity-selector,
-        .product-price-container {
+        .quantity-selector {
             display: flex !important;
             flex-direction: column !important;
             align-items: center !important;
@@ -3018,6 +3167,30 @@ img {
             max-width: none !important;
             padding: 0 10px !important;
             box-sizing: border-box !important;
+        }
+        
+        /* Горизонтальне вирівнювання для контейнера ціни */
+        .product-price-container {
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            width: 100% !important;
+            max-width: none !important;
+            padding: 0 10px !important;
+            box-sizing: border-box !important;
+        }
+        
+        /* Стилі для елементів всередині контейнера ціни */
+        .product-price {
+            flex: 1 !important;
+            text-align: left !important;
+        }
+        
+        .add-to-cart-btn {
+            flex: 1 !important;
+            max-width: 200px !important;
+            margin-left: 15px !important;
         }
         
         /* Заголовки також на всю ширину */
@@ -3080,6 +3253,7 @@ img {
             padding: 10px 5px !important;
             width: 100% !important;
             box-sizing: border-box !important;
+            margin-top: -6px !important;
         }
         
         
@@ -3101,6 +3275,7 @@ img {
             align-items: center !important;
             justify-content: center !important;
             text-align: center !important;
+            margin-top: -3px !important;
         }
         
         .quantity-btn:hover {
@@ -3136,6 +3311,7 @@ img {
         height: 35px !important;
         border-radius: 50% !important;
         font-size: 13px !important;
+        margin-top: -2px !important;
     }
     
     /* Зменшуємо відступи для компактності */
@@ -3143,6 +3319,7 @@ img {
     .quantity-buttons-container {
         gap: 6px !important;
         padding: 8px 3px !important;
+        margin-top: -4px !important;
     }
 }
     
@@ -3154,11 +3331,98 @@ img {
     }
     
     .color-selector,
-    .quantity-selector,
+    .quantity-selector {
+        padding: 0 5px !important;
+        width: 100% !important;
+        max-width: none !important;
+    }
+    
+    /* Горизонтальне вирівнювання для контейнера ціни на маленьких екранах */
     .product-price-container {
         padding: 0 5px !important;
         width: 100% !important;
         max-width: none !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+    
+    /* Піднімаємо контейнер кнопок кількості на маленьких екранах */
+    #home > div > div.product-info > div.quantity-selector > div {
+        margin-top: -4px !important;
+    }
+    
+    /* Уніфікуємо селектори на маленьких екранах */
+    #home > div > div.product-info > div.color-selector,
+    #home > div > div.product-info > div.quantity-selector {
+        width: 100% !important;
+        max-width: 280px !important;
+        min-height: 75px !important;
+        padding: 12px 6px !important;
+        margin: 0 auto 8px auto !important;
+    }
+    
+    /* Кнопки кількості на маленьких екранах */
+    #home > div > div.product-info > div.quantity-selector .quantity-btn {
+        padding: 8px 12px !important;
+        font-size: 0.85rem !important;
+        min-width: 42px !important;
+        height: 34px !important;
+    }
+    
+    /* Контейнер кнопок на маленьких екранах */
+    #home > div > div.product-info > div.quantity-selector .quantity-buttons-container {
+        gap: 4px !important;
+        justify-content: center !important;
+        padding: 0 3px !important;
+    }
+    
+    /* Загальний контейнер кнопок на маленьких екранах */
+    .quantity-buttons-container {
+        gap: 4px !important;
+        justify-content: center !important;
+        padding: 0 3px !important;
+    }
+    
+    /* Контейнер ціни на маленьких екранах */
+    #home > div > div.product-info > div.product-price-container {
+        gap: 10px !important;
+        padding: 10px 0 !important;
+        justify-content: center !important;
+    }
+    
+    /* Ціна на маленьких екранах */
+    #home > div > div.product-info > div.product-price-container .product-price {
+        font-size: 2rem !important;
+    }
+    
+    /* Валюта на маленьких екранах */
+    #home > div > div.product-info > div.product-price-container .currency {
+        font-size: 1.3rem !important;
+        margin-right: 10px !important;
+    }
+    
+    /* Кнопка на маленьких екранах - фіксована */
+    #home > div > div.product-info > div.product-price-container .add-to-cart-btn {
+        width: 140px !important;
+        height: 50px !important;
+        font-size: 1.1rem !important;
+        padding: 12px 20px !important;
+    }
+    
+    /* Стилі для елементів всередині контейнера ціни на маленьких екранах */
+    .product-price {
+        flex: 1 !important;
+        text-align: left !important;
+        font-size: 1.5rem !important;
+    }
+    
+    .add-to-cart-btn {
+        flex: 1 !important;
+        max-width: 150px !important;
+        margin-left: 10px !important;
+        font-size: 14px !important;
+        padding: 10px 16px !important;
     }
     
     /* Видаляємо всі обмеження для контейнерів */
@@ -3184,6 +3448,7 @@ img {
         height: 30px !important;
         border-radius: 50% !important;
         font-size: 12px !important;
+        margin-top: -2px !important;
     }
     
     /* Мінімальні відступи */
@@ -3191,6 +3456,70 @@ img {
     .quantity-buttons-container {
         gap: 4px !important;
         padding: 6px 2px !important;
+        margin-top: -3px !important;
+    }
+    
+    /* Піднімаємо контейнер кнопок кількості на дуже маленьких екранах */
+    #home > div > div.product-info > div.quantity-selector > div {
+        margin-top: -3px !important;
+    }
+    
+    /* Уніфікуємо селектори на дуже маленьких екранах */
+    #home > div > div.product-info > div.color-selector,
+    #home > div > div.product-info > div.quantity-selector {
+        width: 100% !important;
+        max-width: 260px !important;
+        min-height: 70px !important;
+        padding: 10px 4px !important;
+        margin: 0 auto 6px auto !important;
+    }
+    
+    /* Кнопки кількості на дуже маленьких екранах */
+    #home > div > div.product-info > div.quantity-selector .quantity-btn {
+        padding: 6px 10px !important;
+        font-size: 0.8rem !important;
+        min-width: 38px !important;
+        height: 30px !important;
+    }
+    
+    /* Контейнер кнопок на дуже маленьких екранах */
+    #home > div > div.product-info > div.quantity-selector .quantity-buttons-container {
+        gap: 3px !important;
+        justify-content: center !important;
+        padding: 0 2px !important;
+    }
+    
+    /* Загальний контейнер кнопок на дуже маленьких екранах */
+    .quantity-buttons-container {
+        gap: 3px !important;
+        justify-content: center !important;
+        padding: 0 2px !important;
+    }
+    
+    /* Контейнер ціни на дуже маленьких екранах */
+    #home > div > div.product-info > div.product-price-container {
+        gap: 8px !important;
+        padding: 8px 0 !important;
+        justify-content: center !important;
+    }
+    
+    /* Ціна на дуже маленьких екранах */
+    #home > div > div.product-info > div.product-price-container .product-price {
+        font-size: 1.8rem !important;
+    }
+    
+    /* Валюта на дуже маленьких екранах */
+    #home > div > div.product-info > div.product-price-container .currency {
+        font-size: 1.2rem !important;
+        margin-right: 8px !important;
+    }
+    
+    /* Кнопка на дуже маленьких екранах - фіксована */
+    #home > div > div.product-info > div.product-price-container .add-to-cart-btn {
+        width: 120px !important;
+        height: 45px !important;
+        font-size: 1rem !important;
+        padding: 10px 16px !important;
     }
 }
 
