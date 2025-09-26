@@ -1074,79 +1074,61 @@ def inventory_list(request):
         if request.method == 'POST':
             action = request.POST.get('action')
             
-            if action == 'add_item':
-                name = request.POST.get('name', '').strip()
-                category = request.POST.get('category', '').strip()
-                current_stock = int(request.POST.get('current_stock', 0))
-                min_stock = int(request.POST.get('min_stock', 1))
-                unit = request.POST.get('unit', 'шт').strip()
-                supplier_price = float(request.POST.get('supplier_price', 0))
-                selling_price = float(request.POST.get('selling_price', 0))
+            if action == 'update_main_stock':
+                # Оновлення кількості основного товару
+                color_id = int(request.POST.get('color_id'))
+                quantity_id = int(request.POST.get('quantity_id'))
+                new_stock = int(request.POST.get('new_stock', 0))
                 
-                new_item = {
-                    'id': len(json_manager.get_inventory()) + 1,
-                    'name': name,
-                    'category': category,
-                    'current_stock': current_stock,
-                    'min_stock': min_stock,
-                    'unit': unit,
-                    'supplier_price': supplier_price,
-                    'selling_price': selling_price,
-                    'last_restock_date': datetime.now().strftime('%Y-%m-%d'),
-                    'created_date': datetime.now().strftime('%Y-%m-%d')
-                }
-                
-                if json_manager.add_inventory_item(new_item):
-                    messages.success(request, f'Товар "{name}" успішно додано!')
+                if json_manager.update_main_product_stock(color_id, quantity_id, new_stock):
+                    messages.success(request, 'Кількість основного товару оновлено!')
                 else:
-                    messages.error(request, 'Помилка додавання товару!')
+                    messages.error(request, 'Помилка оновлення кількості основного товару!')
                     
-            elif action == 'edit_item':
-                item_id = int(request.POST.get('item_id'))
-                name = request.POST.get('name', '').strip()
-                category = request.POST.get('category', '').strip()
-                min_stock = int(request.POST.get('min_stock', 1))
-                unit = request.POST.get('unit', 'шт').strip()
-                supplier_price = float(request.POST.get('supplier_price', 0))
-                selling_price = float(request.POST.get('selling_price', 0))
+            elif action == 'update_additional_stock':
+                # Оновлення кількості додаткового товару
+                product_id = int(request.POST.get('product_id'))
+                new_stock = int(request.POST.get('new_stock', 0))
                 
-                update_data = {
-                    'name': name,
-                    'category': category,
-                    'min_stock': min_stock,
-                    'unit': unit,
-                    'supplier_price': supplier_price,
-                    'selling_price': selling_price
-                }
-                
-                if json_manager.update_inventory_item(item_id, update_data):
-                    messages.success(request, f'Товар "{name}" успішно оновлено!')
+                if json_manager.update_additional_product_stock(product_id, new_stock):
+                    messages.success(request, 'Кількість додаткового товару оновлено!')
                 else:
-                    messages.error(request, 'Помилка оновлення товару!')
+                    messages.error(request, 'Помилка оновлення кількості додаткового товару!')
         
-        inventory = json_manager.get_inventory()
-        low_stock_items = json_manager.get_low_stock_items()
+        # Отримуємо інтегрований склад
+        inventory = json_manager.get_integrated_inventory()
         
-        # Розширена статистика з фінансовими розрахунками
+        # Розділяємо на основні та додаткові товари
+        main_products = [item for item in inventory if item['type'] == 'main_product']
+        additional_products = [item for item in inventory if item['type'] == 'additional_product']
+        
+        # Знаходимо товари з низькими залишками
+        low_stock_items = [item for item in inventory if item['current_stock'] <= item['min_stock']]
+        
+        # Статистика
         total_items = len(inventory)
         low_stock_count = len(low_stock_items)
+        main_products_count = len(main_products)
+        additional_products_count = len(additional_products)
         
-        # Фінансові розрахунки
-        total_purchase_cost = sum([item.get('current_stock', 0) * item.get('supplier_price', 0) for item in inventory])
-        total_selling_value = sum([item.get('current_stock', 0) * item.get('selling_price', 0) for item in inventory])
-        potential_profit = total_selling_value - total_purchase_cost
-        profit_margin = (potential_profit / total_selling_value * 100) if total_selling_value > 0 else 0
+        # Фінансові розрахунки для основних товарів
+        main_products_value = sum([item['current_stock'] * item['total_price'] for item in main_products])
+        additional_products_value = sum([item['current_stock'] * item['price'] for item in additional_products])
+        total_value = main_products_value + additional_products_value
         
         context = {
             'inventory': inventory,
+            'main_products': main_products,
+            'additional_products': additional_products,
             'low_stock_items': low_stock_items,
             'stats': {
                 'total_items': total_items,
+                'main_products_count': main_products_count,
+                'additional_products_count': additional_products_count,
                 'low_stock_count': low_stock_count,
-                'total_purchase_cost': total_purchase_cost,
-                'total_selling_value': total_selling_value,
-                'potential_profit': potential_profit,
-                'profit_margin': profit_margin
+                'main_products_value': main_products_value,
+                'additional_products_value': additional_products_value,
+                'total_value': total_value
             }
         }
         return render(request, 'admin_panel/inventory_list.html', context)

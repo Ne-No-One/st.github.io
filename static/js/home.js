@@ -141,6 +141,15 @@ function toggleAdditionalProduct(productId) {
     const productPrice = productCard?.querySelector('.additional-product-price')?.textContent || '0 грн';
     const productImage = productCard?.querySelector('img')?.src || '/static/images/foto 1.jpg';
     
+    // Перевіряємо наявність на складі (тихо, без повідомлень)
+    const stockData = window.stockData?.additionalProducts?.[productId];
+    const stockAvailable = stockData?.stockAvailable || 0;
+    
+    if (stockAvailable <= 0) {
+        console.log('❌ Товар недоступний на складі:', productId);
+        return; // Просто не додаємо в кошик, без повідомлень
+    }
+    
     // Парсимо ціну
     const priceValue = parseFloat(productPrice.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
     const currency = productPrice.split(' ').pop() || 'грн';

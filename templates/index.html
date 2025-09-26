@@ -310,11 +310,29 @@
         <script src="{% static 'js/main.js' %}"></script>
         <script src="{% static 'js/home.js' %}"></script>
         
-        <!-- Передаємо тексти кнопок в JavaScript -->
+        <!-- Передаємо тексти кнопок та дані про склад в JavaScript -->
         <script>
             window.cartTexts = {
                 addToCart: "{{ site_settings.cart_button_text|default:'В кошик' }}",
                 removeFromCart: "{{ site_settings.remove_from_cart_text|default:'Прибрати з кошика' }}"
+            };
+            
+            // Передаємо дані про склад для кожного кольору
+            window.stockData = {
+                colors: {
+                    {% for color in color_options %}
+                    "{{ color.name|lower }}": {
+                        availableQuantities: {{ color.available_quantities|safe }}
+                    }{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                },
+                additionalProducts: {
+                    {% for product in additional_products %}
+                    {{ product.id }}: {
+                        stockAvailable: {{ product.stock_available|default:0 }}
+                    }{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                }
             };
         </script>
     </body>

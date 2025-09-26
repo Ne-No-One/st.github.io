@@ -776,6 +776,272 @@ class JSONManager:
         logger.error(f"❌ Товар з ID {item_id} не знайдено")
         return False
     
+    def get_integrated_inventory(self):
+        """Отримуємо інтегрований склад з основними та додатковими товарами"""
+        logger.info("📦 Отримання інтегрованого складу")
+        data = self.load_data()
+        
+        # Отримуємо основні дані
+        main_product = data.get('main_product', {})
+        color_options = data.get('color_options', [])
+        quantity_options = data.get('quantity_options', [])
+        additional_products = data.get('additional_products', [])
+        
+        integrated_inventory = []
+        
+        # Додаємо основні товари (всі комбінації кольорів та кількостей)
+        for color in color_options:
+            if not color.get('is_active', True):
+                continue
+                
+            for quantity in quantity_options:
+                if not quantity.get('is_active', True):
+                    continue
+                
+                # Створюємо унікальний ID для комбінації
+                item_id = f"main_{color['id']}_{quantity['id']}"
+                
+                # Розраховуємо ціну
+                price_per_unit = quantity.get('price_per_unit', 1.0)
+                total_price = quantity['quantity'] * price_per_unit
+                
+                # Отримуємо кількість на складі (за замовчуванням 0)
+                current_stock = self._get_main_product_stock(color['id'], quantity['id'])
+                
+                item = {
+                    'id': item_id,
+                    'type': 'main_product',
+                    'name': f"{main_product.get('title', 'Букет квітів')} - {color['name']} ({quantity['quantity']} шт)",
+                    'color_name': color['name'],
+                    'color_hex': color['hex_code'],
+                    'quantity': quantity['quantity'],
+                    'price_per_unit': price_per_unit,
+                    'total_price': total_price,
+                    'current_stock': current_stock,
+                    'min_stock': 5,  # Мінімальний залишок для основних товарів
+                    'unit': 'шт',
+                    'category': 'Основні товари',
+                    'is_active': color.get('is_active', True) and quantity.get('is_active', True)
+                }
+                integrated_inventory.append(item)
+        
+        # Додаємо додаткові товари
+        for product in additional_products:
+            if not product.get('is_active', True):
+                continue
+                
+            # Отримуємо кількість на складі (за замовчуванням 0)
+            current_stock = self._get_additional_product_stock(product['id'])
+            
+            item = {
+                'id': f"additional_{product['id']}",
+                'type': 'additional_product',
+                'name': product['title'],
+                'description': product.get('description', ''),
+                'price': product.get('price', 0),
+                'currency': product.get('currency', 'грн'),
+                'current_stock': current_stock,
+                'min_stock': 3,  # Мінімальний залишок для додаткових товарів
+                'unit': 'шт',
+                'category': 'Додаткові товари',
+                'is_active': product.get('is_active', True)
+            }
+            integrated_inventory.append(item)
+        
+        logger.info(f"✅ Інтегрований склад: {len(integrated_inventory)} позицій")
+        return integrated_inventory
+    
+    def _get_main_product_stock(self, color_id, quantity_id):
+        """Отримуємо кількість основного товару на складі"""
+        data = self.load_data()
+        inventory = data.get('inventory', [])
+        
+        # Шукаємо відповідний товар на складі
+        for item in inventory:
+            if (item.get('color_id') == color_id and 
+                item.get('quantity_id') == quantity_id and 
+                item.get('type') == 'main_product'):
+                return item.get('current_stock', 0)
+        
+        return 0  # За замовчуванням 0, якщо не знайдено
+    
+    def _get_additional_product_stock(self, product_id):
+        """Отримуємо кількість додаткового товару на складі"""
+        data = self.load_data()
+        inventory = data.get('inventory', [])
+        
+        # Шукаємо відповідний товар на складі
+        for item in inventory:
+            if (item.get('product_id') == product_id and 
+                item.get('type') == 'additional_product'):
+                return item.get('current_stock', 0)
+        
+        return 0  # За замовчуванням 0, якщо не знайдено
+    
+    def update_main_product_stock(self, color_id, quantity_id, new_stock):
+        """Оновлюємо кількість основного товару на складі"""
+        logger.info(f"📦 Оновлення складу основного товару: колір {color_id}, кількість {quantity_id}")
+        data = self.load_data()
+        inventory = data.get('inventory', [])
+        
+        # Шукаємо існуючий запис
+        for item in inventory:
+            if (item.get('color_id') == color_id and 
+                item.get('quantity_id') == quantity_id and 
+                item.get('type') == 'main_product'):
+                item['current_stock'] = new_stock
+                data['inventory'] = inventory
+                if self.save_data(data):
+                    logger.info(f"✅ Склад основного товару оновлено: {new_stock}")
+                    return True
+                break
+        else:
+            # Створюємо новий запис, якщо не знайдено
+            new_item = {
+                'id': len(inventory) + 1,
+                'type': 'main_product',
+                'color_id': color_id,
+                'quantity_id': quantity_id,
+                'current_stock': new_stock,
+                'created_date': self._get_current_date()
+            }
+            inventory.append(new_item)
+            data['inventory'] = inventory
+            if self.save_data(data):
+                logger.info(f"✅ Створено новий запис складу основного товару: {new_stock}")
+                return True
+        
+        logger.error(f"❌ Помилка оновлення складу основного товару")
+        return False
+    
+    def update_additional_product_stock(self, product_id, new_stock):
+        """Оновлюємо кількість додаткового товару на складі"""
+        logger.info(f"📦 Оновлення складу додаткового товару: {product_id}")
+        data = self.load_data()
+        inventory = data.get('inventory', [])
+        
+        # Шукаємо існуючий запис
+        for item in inventory:
+            if (item.get('product_id') == product_id and 
+                item.get('type') == 'additional_product'):
+                item['current_stock'] = new_stock
+                data['inventory'] = inventory
+                if self.save_data(data):
+                    logger.info(f"✅ Склад додаткового товару оновлено: {new_stock}")
+                    return True
+                break
+        else:
+            # Створюємо новий запис, якщо не знайдено
+            new_item = {
+                'id': len(inventory) + 1,
+                'type': 'additional_product',
+                'product_id': product_id,
+                'current_stock': new_stock,
+                'created_date': self._get_current_date()
+            }
+            inventory.append(new_item)
+            data['inventory'] = inventory
+            if self.save_data(data):
+                logger.info(f"✅ Створено новий запис складу додаткового товару: {new_stock}")
+                return True
+        
+        logger.error(f"❌ Помилка оновлення складу додаткового товару")
+        return False
+    
+    def _get_current_date(self):
+        """Отримуємо поточну дату у форматі YYYY-MM-DD"""
+        from datetime import datetime
+        return datetime.now().strftime('%Y-%m-%d')
+    
+    def get_color_options_with_stock(self):
+        """Отримуємо кольори з перевіркою наявності на складі"""
+        logger.info("🎨 Отримання кольорів з перевіркою складу")
+        data = self.load_data()
+        color_options = data.get('color_options', [])
+        quantity_options = data.get('quantity_options', [])
+        
+        available_colors = []
+        
+        for color in color_options:
+            if not color.get('is_active', True):
+                continue
+                
+            # Перевіряємо чи є хоча б одна кількість цього кольору на складі
+            has_stock = False
+            for quantity in quantity_options:
+                if not quantity.get('is_active', True):
+                    continue
+                    
+                stock = self._get_main_product_stock(color['id'], quantity['id'])
+                if stock > 0:
+                    has_stock = True
+                    break
+            
+            if has_stock:
+                # Додаємо фото за замовчуванням
+                color['default_image'] = self.get_default_image_for_color(color['id'])
+                # Переконуємося що quantity_images існує
+                if 'quantity_images' not in color:
+                    color['quantity_images'] = {}
+                available_colors.append(color)
+        
+        logger.info(f"✅ Доступно кольорів з наявністю: {len(available_colors)}")
+        return available_colors
+    
+    def get_quantity_options_with_stock(self, color_id):
+        """Отримуємо кількості для конкретного кольору з перевіркою наявності на складі"""
+        logger.info(f"📊 Отримання кількостей для кольору {color_id} з перевіркою складу")
+        data = self.load_data()
+        quantity_options = data.get('quantity_options', [])
+        
+        available_quantities = []
+        
+        for quantity in quantity_options:
+            if not quantity.get('is_active', True):
+                continue
+                
+            # Перевіряємо наявність на складі
+            stock = self._get_main_product_stock(color_id, quantity['id'])
+            if stock > 0:
+                # Додаємо інформацію про наявність
+                quantity['stock_available'] = stock
+                available_quantities.append(quantity)
+        
+        logger.info(f"✅ Доступно кількостей для кольору {color_id}: {len(available_quantities)}")
+        return available_quantities
+    
+    def get_additional_products_with_stock(self):
+        """Отримуємо додаткові товари з перевіркою наявності на складі"""
+        logger.info("🛍️ Отримання додаткових товарів з перевіркою складу")
+        data = self.load_data()
+        additional_products = data.get('additional_products', [])
+        
+        available_products = []
+        
+        for product in additional_products:
+            if not product.get('is_active', True):
+                continue
+                
+            # Перевіряємо наявність на складі
+            stock = self._get_additional_product_stock(product['id'])
+            if stock > 0:
+                # Додаємо інформацію про наявність
+                product['stock_available'] = stock
+                available_products.append(product)
+        
+        logger.info(f"✅ Доступно додаткових товарів: {len(available_products)}")
+        return available_products
+    
+    def check_main_product_availability(self, color_id, quantity_id):
+        """Перевіряємо доступність основного товару на складі"""
+        stock = self._get_main_product_stock(color_id, quantity_id)
+        return stock > 0, stock
+    
+    def check_additional_product_availability(self, product_id):
+        """Перевіряємо доступність додаткового товару на складі"""
+        stock = self._get_additional_product_stock(product_id)
+        return stock > 0, stock
+    
     # ===== FINANCIAL REPORTS =====
     
     def get_financial_reports(self):

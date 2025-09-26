@@ -14,6 +14,20 @@
         </div>
     </div>
     <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stat-card border-primary text-center">
+            <i class="fas fa-star text-primary"></i>
+            <h6 class="text-primary">Основні товари</h6>
+            <h4>{{ stats.main_products_count }}</h4>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+        <div class="stat-card border-secondary text-center">
+            <i class="fas fa-plus-circle text-secondary"></i>
+            <h6 class="text-secondary">Додаткові товари</h6>
+            <h4>{{ stats.additional_products_count }}</h4>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
         <div class="stat-card border-warning text-center">
             <i class="fas fa-exclamation-triangle text-warning"></i>
             <h6 class="text-warning">Низькі залишки</h6>
@@ -21,36 +35,19 @@
         </div>
     </div>
     <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-        <div class="stat-card border-danger text-center">
-            <i class="fas fa-shopping-cart text-danger"></i>
-            <h6 class="text-danger">Закупівля</h6>
-            <h4>{{ stats.total_purchase_cost|floatformat:0 }} грн</h4>
-            <small class="text-muted">Собівартість товарів</small>
-        </div>
-    </div>
-    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
         <div class="stat-card border-success text-center">
             <i class="fas fa-dollar-sign text-success"></i>
-            <h6 class="text-success">Виручка</h6>
-            <h4>{{ stats.total_selling_value|floatformat:0 }} грн</h4>
-            <small class="text-muted">При повному продажі</small>
+            <h6 class="text-success">Загальна вартість</h6>
+            <h4>{{ stats.total_value|floatformat:0 }} грн</h4>
+            <small class="text-muted">На складі</small>
         </div>
     </div>
     <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
         <div class="stat-card border-info text-center">
             <i class="fas fa-chart-line text-info"></i>
-            <h6 class="text-info">Прибуток</h6>
-            <h4>{{ stats.potential_profit|floatformat:0 }} грн</h4>
-            <small class="text-muted">{{ stats.profit_margin|floatformat:1 }}% рентабельність</small>
-        </div>
-    </div>
-    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-        <div class="stat-card border-primary text-center">
-            <i class="fas fa-plus text-primary"></i>
-            <h6 class="text-primary">Дії</h6>
-            <button class="btn btn-primary btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#addItemModal">
-                <i class="fas fa-plus me-1"></i>Додати товар
-            </button>
+            <h6 class="text-info">Основні товари</h6>
+            <h4>{{ stats.main_products_value|floatformat:0 }} грн</h4>
+            <small class="text-muted">Вартість</small>
         </div>
     </div>
 </div>
@@ -63,75 +60,65 @@
 </div>
 {% endif %}
 
-<!-- Список інвентарю -->
-<div class="card">
+<!-- Основні товари -->
+<div class="card mb-4">
     <div class="card-header">
-        <div class="d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">
-                <i class="fas fa-warehouse me-2"></i>
-                Список інвентарю
-            </h5>
-            <button class="btn btn-primary" onclick="showAddItemForm()">
-                <i class="fas fa-plus me-1"></i>
-                Додати товар
-            </button>
-        </div>
+        <h5 class="mb-0">
+            <i class="fas fa-star me-2 text-primary"></i>
+            Основні товари ({{ stats.main_products_count }} позицій)
+        </h5>
     </div>
     <div class="card-body">
-        {% if inventory %}
+        {% if main_products %}
             <div class="table-responsive">
                 <table class="table table-dark table-hover">
                     <thead>
                         <tr>
                             <th>Товар</th>
-                            <th>Категорія</th>
-                            <th>Поточний залишок</th>
+                            <th>Колір</th>
+                            <th>Кількість</th>
+                            <th>Ціна за шт</th>
+                            <th>Загальна ціна</th>
+                            <th>На складі</th>
                             <th>Мін. залишок</th>
-                            <th>Ціна постачальника</th>
-                            <th>Ціна продажу</th>
-                            <th>Останнє поповнення</th>
                             <th>Статус</th>
                             <th>Дії</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for item in inventory %}
+                        {% for item in main_products %}
                         <tr>
                             <td>
                                 <strong>{{ item.name }}</strong>
                                 <br><small class="text-muted">{{ item.unit }}</small>
                             </td>
                             <td>
-                                <span class="badge bg-secondary">{{ item.category }}</span>
+                                <span class="badge" style="background-color: {{ item.color_hex }}; color: white;">
+                                    {{ item.color_name }}
+                                </span>
                             </td>
+                            <td>{{ item.quantity }} шт</td>
+                            <td>{{ item.price_per_unit }} грн</td>
+                            <td><strong>{{ item.total_price }} грн</strong></td>
                             <td>
-                                <strong>{{ item.current_stock }}</strong>
+                                <strong class="{% if item.current_stock <= item.min_stock %}text-danger{% elif item.current_stock <= item.min_stock|add:2 %}text-warning{% else %}text-success{% endif %}">
+                                    {{ item.current_stock }}
+                                </strong>
                             </td>
                             <td>{{ item.min_stock }}</td>
-                            <td>{{ item.supplier_price }} грн</td>
-                            <td>{{ item.selling_price }} грн</td>
-                            <td>{{ item.last_restock_date }}</td>
                             <td>
                                 {% if item.current_stock <= item.min_stock %}
                                     <span class="badge bg-danger">Низький залишок</span>
-                                {% elif item.current_stock <= item.min_stock|add:10 %}
+                                {% elif item.current_stock <= item.min_stock|add:2 %}
                                     <span class="badge bg-warning">Увага</span>
                                 {% else %}
                                     <span class="badge bg-success">Норма</span>
                                 {% endif %}
                             </td>
                             <td>
-                                <div class="btn-group">
-                                    <button class="btn btn-sm btn-primary" onclick="updateStock({{ item.id }}, '{{ item.name }}', {{ item.current_stock }})" title="Оновити залишки">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-warning" onclick="editItem({{ item.id }}, '{{ item.name }}', '{{ item.category }}', {{ item.min_stock }}, {{ item.supplier_price }}, {{ item.selling_price }})" title="Редагувати товар">
-                                        <i class="fas fa-cog"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-info" onclick="viewHistory({{ item.id }})" title="Історія">
-                                        <i class="fas fa-history"></i>
-                                    </button>
-                                </div>
+                                <button class="btn btn-sm btn-primary" onclick="updateMainStock('{{ item.id }}', '{{ item.name }}', {{ item.current_stock }})" title="Оновити залишки">
+                                    <i class="fas fa-edit"></i>
+                                </button>
                             </td>
                         </tr>
                         {% endfor %}
@@ -139,14 +126,77 @@
                 </table>
             </div>
         {% else %}
-            <div class="text-center py-5">
-                <i class="fas fa-warehouse fa-3x text-muted mb-3"></i>
-                <h5 class="text-muted">Інвентар порожній</h5>
-                <p class="text-muted">Додайте перші товари для початку роботи зі складом</p>
-                <button class="btn btn-primary" onclick="showAddItemForm()">
-                    <i class="fas fa-plus me-1"></i>
-                    Додати товар
-                </button>
+            <div class="text-center py-3">
+                <i class="fas fa-star fa-2x text-muted mb-2"></i>
+                <p class="text-muted">Немає основних товарів</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Додаткові товари -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="fas fa-plus-circle me-2 text-secondary"></i>
+            Додаткові товари ({{ stats.additional_products_count }} позицій)
+        </h5>
+    </div>
+    <div class="card-body">
+        {% if additional_products %}
+            <div class="table-responsive">
+                <table class="table table-dark table-hover">
+                    <thead>
+                        <tr>
+                            <th>Товар</th>
+                            <th>Опис</th>
+                            <th>Ціна</th>
+                            <th>На складі</th>
+                            <th>Мін. залишок</th>
+                            <th>Статус</th>
+                            <th>Дії</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in additional_products %}
+                        <tr>
+                            <td>
+                                <strong>{{ item.name }}</strong>
+                                <br><small class="text-muted">{{ item.unit }}</small>
+                            </td>
+                            <td>
+                                <small class="text-muted">{{ item.description|truncatechars:50 }}</small>
+                            </td>
+                            <td><strong>{{ item.price }} {{ item.currency }}</strong></td>
+                            <td>
+                                <strong class="{% if item.current_stock <= item.min_stock %}text-danger{% elif item.current_stock <= item.min_stock|add:2 %}text-warning{% else %}text-success{% endif %}">
+                                    {{ item.current_stock }}
+                                </strong>
+                            </td>
+                            <td>{{ item.min_stock }}</td>
+                            <td>
+                                {% if item.current_stock <= item.min_stock %}
+                                    <span class="badge bg-danger">Низький залишок</span>
+                                {% elif item.current_stock <= item.min_stock|add:2 %}
+                                    <span class="badge bg-warning">Увага</span>
+                                {% else %}
+                                    <span class="badge bg-success">Норма</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="updateAdditionalStock('{{ item.id }}', '{{ item.name }}', {{ item.current_stock }})" title="Оновити залишки">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-3">
+                <i class="fas fa-plus-circle fa-2x text-muted mb-2"></i>
+                <p class="text-muted">Немає додаткових товарів</p>
             </div>
         {% endif %}
     </div>
@@ -189,207 +239,119 @@
     </div>
 </div>
 
-<!-- Backdrop та Overlay для додавання товару -->
-<div id="addItemOverlay-backdrop" class="admin-overlay-backdrop"></div>
-<div id="addItemOverlay" class="admin-overlay">
-    <div class="admin-overlay-container">
-        <div class="admin-overlay-header">
-            <h5>
-                <i class="fas fa-plus me-2"></i>
-                Додати новий товар
-            </h5>
-            <button class="admin-overlay-close" onclick="closeOverlay('addItemOverlay')">×</button>
-        </div>
-        <div class="admin-overlay-body">
-            <form method="post" action="{% url 'admin_panel:inventory_list' %}" id="addItemForm">
-                {% csrf_token %}
-                <input type="hidden" name="action" value="add_item">
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="addItemName" class="form-label">Назва товару</label>
-                        <input type="text" class="form-control" name="name" id="addItemName" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="addItemCategory" class="form-label">Категорія</label>
-                        <select class="form-control" name="category" id="addItemCategory" required>
-                            <option value="">Оберіть категорію</option>
-                            <option value="Квіти">Квіти</option>
-                            <option value="Вази">Вази</option>
-                            <option value="Упаковка">Упаковка</option>
-                            <option value="Аксесуари">Аксесуари</option>
-                            <option value="Інше">Інше</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <label for="addCurrentStock" class="form-label">Поточна кількість</label>
-                        <input type="number" class="form-control" name="current_stock" id="addCurrentStock" min="0" required>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="addMinStock" class="form-label">Мінімальний залишок</label>
-                        <input type="number" class="form-control" name="min_stock" id="addMinStock" min="1" required>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="addItemUnit" class="form-label">Одиниця виміру</label>
-                        <select class="form-control" name="unit" id="addItemUnit" required>
-                            <option value="шт">шт</option>
-                            <option value="кг">кг</option>
-                            <option value="л">л</option>
-                            <option value="м">м</option>
-                            <option value="упак">упак</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="addSupplierPrice" class="form-label">Ціна постачальника (грн)</label>
-                        <input type="number" class="form-control" name="supplier_price" id="addSupplierPrice" step="1" min="0" required>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="addSellingPrice" class="form-label">Ціна продажу (грн)</label>
-                        <input type="number" class="form-control" name="selling_price" id="addSellingPrice" step="1" min="0" required>
-                    </div>
-                </div>
-            </form>
-        </div>
-        <div class="admin-overlay-footer">
-            <button type="button" class="btn btn-secondary" onclick="closeOverlay('addItemOverlay')">
-                <i class="fas fa-times me-1"></i>
-                Скасувати
-            </button>
-            <button type="submit" form="addItemForm" class="btn btn-primary">
-                <i class="fas fa-save me-1"></i>
-                Додати товар
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- Форма редагування товару -->
-<div class="row mb-4" id="editItemSection" style="display: none;">
-    <div class="col-md-10 offset-md-1">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-edit me-2"></i>
-                    Редагувати товар
-                </h5>
-            </div>
-            <div class="card-body">
-                <form method="post" action="{% url 'admin_panel:inventory_list' %}" id="editItemForm">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="edit_item">
-                    <input type="hidden" name="item_id" id="editItemId">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="editItemName" class="form-label">Назва товару</label>
-                            <input type="text" class="form-control" name="name" id="editItemName" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="editItemCategory" class="form-label">Категорія</label>
-                            <select class="form-control" name="category" id="editItemCategory" required>
-                                <option value="Квіти">Квіти</option>
-                                <option value="Вази">Вази</option>
-                                <option value="Упаковка">Упаковка</option>
-                                <option value="Аксесуари">Аксесуари</option>
-                                <option value="Інше">Інше</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="editMinStock" class="form-label">Мінімальний залишок</label>
-                            <input type="number" class="form-control" name="min_stock" id="editMinStock" min="1" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="editItemUnit" class="form-label">Одиниця виміру</label>
-                            <select class="form-control" name="unit" id="editItemUnit" required>
-                                <option value="шт">шт</option>
-                                <option value="кг">кг</option>
-                                <option value="л">л</option>
-                                <option value="м">м</option>
-                                <option value="упак">упак</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="editSupplierPrice" class="form-label">Ціна постачальника (грн)</label>
-                            <input type="number" class="form-control" name="supplier_price" id="editSupplierPrice" step="1" min="0" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="editSellingPrice" class="form-label">Ціна продажу (грн)</label>
-                            <input type="number" class="form-control" name="selling_price" id="editSellingPrice" step="1" min="0" required>
-                        </div>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-secondary" onclick="hideEditItemForm()">
-                            <i class="fas fa-times me-1"></i>
-                            Скасувати
-                        </button>
-                        <button type="submit" class="btn btn-warning">
-                            <i class="fas fa-save me-1"></i>
-                            Зберегти зміни
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script>
-function updateStock(itemId, itemName, currentStock) {
+function updateMainStock(itemId, itemName, currentStock) {
     try {
+        // Розбираємо itemId для отримання color_id та quantity_id
+        const parts = itemId.split('_');
+        const colorId = parts[1];
+        const quantityId = parts[2];
+        
         document.getElementById('itemName').value = itemName;
         document.getElementById('newStock').value = currentStock;
-        document.getElementById('updateStockForm').action = `/admin-panel/inventory/${itemId}/update-stock/`;
+        document.getElementById('updateStockForm').action = '{% url "admin_panel:inventory_list" %}';
+        
+        // Додаємо приховані поля для color_id та quantity_id
+        let form = document.getElementById('updateStockForm');
+        
+        // Видаляємо старі приховані поля якщо є
+        const oldColorId = form.querySelector('input[name="color_id"]');
+        const oldQuantityId = form.querySelector('input[name="quantity_id"]');
+        const oldAction = form.querySelector('input[name="action"]');
+        
+        if (oldColorId) oldColorId.remove();
+        if (oldQuantityId) oldQuantityId.remove();
+        if (oldAction) oldAction.remove();
+        
+        // Додаємо нові поля
+        const colorIdInput = document.createElement('input');
+        colorIdInput.type = 'hidden';
+        colorIdInput.name = 'color_id';
+        colorIdInput.value = colorId;
+        form.appendChild(colorIdInput);
+        
+        const quantityIdInput = document.createElement('input');
+        quantityIdInput.type = 'hidden';
+        quantityIdInput.name = 'quantity_id';
+        quantityIdInput.value = quantityId;
+        form.appendChild(quantityIdInput);
+        
+        const actionInput = document.createElement('input');
+        actionInput.type = 'hidden';
+        actionInput.name = 'action';
+        actionInput.value = 'update_main_stock';
+        form.appendChild(actionInput);
         
         // Відкриваємо overlay
         openOverlay('updateStockOverlay');
         
-        console.log('Overlay оновлення залишків відкрито');
+        console.log('Overlay оновлення залишків основного товару відкрито');
     } catch (error) {
         console.error('Помилка відкриття overlay:', error);
         alert('Помилка відкриття форми оновлення залишків');
     }
 }
 
-function editItem(itemId, itemName, category, minStock, supplierPrice, sellingPrice) {
+function updateAdditionalStock(itemId, itemName, currentStock) {
     try {
-        document.getElementById('editItemId').value = itemId;
-        document.getElementById('editItemName').value = itemName;
-        document.getElementById('editItemCategory').value = category;
-        document.getElementById('editMinStock').value = minStock;
-        document.getElementById('editSupplierPrice').value = supplierPrice;
-        document.getElementById('editSellingPrice').value = sellingPrice;
+        // Розбираємо itemId для отримання product_id
+        const parts = itemId.split('_');
+        const productId = parts[1];
         
-        // Показуємо форму
-        document.getElementById('editItemSection').style.display = 'block';
+        document.getElementById('itemName').value = itemName;
+        document.getElementById('newStock').value = currentStock;
+        document.getElementById('updateStockForm').action = '{% url "admin_panel:inventory_list" %}';
         
-        // Прокручуємо до форми
-        document.getElementById('editItemSection').scrollIntoView({ behavior: 'smooth' });
+        // Додаємо приховані поля для product_id
+        let form = document.getElementById('updateStockForm');
         
-        console.log('Форма редагування товару відкрита');
+        // Видаляємо старі приховані поля якщо є
+        const oldProductId = form.querySelector('input[name="product_id"]');
+        const oldAction = form.querySelector('input[name="action"]');
+        
+        if (oldProductId) oldProductId.remove();
+        if (oldAction) oldAction.remove();
+        
+        // Додаємо нові поля
+        const productIdInput = document.createElement('input');
+        productIdInput.type = 'hidden';
+        productIdInput.name = 'product_id';
+        productIdInput.value = productId;
+        form.appendChild(productIdInput);
+        
+        const actionInput = document.createElement('input');
+        actionInput.type = 'hidden';
+        actionInput.name = 'action';
+        actionInput.value = 'update_additional_stock';
+        form.appendChild(actionInput);
+        
+        // Відкриваємо overlay
+        openOverlay('updateStockOverlay');
+        
+        console.log('Overlay оновлення залишків додаткового товару відкрито');
     } catch (error) {
-        console.error('Помилка відкриття форми:', error);
-        alert('Помилка відкриття форми редагування товару');
+        console.error('Помилка відкриття overlay:', error);
+        alert('Помилка відкриття форми оновлення залишків');
     }
 }
 
+// Функції для сумісності зі старим кодом
+function updateStock(itemId, itemName, currentStock) {
+    // Перенаправляємо на нову функцію
+    updateMainStock(itemId, itemName, currentStock);
+}
+
+function editItem(itemId, itemName, category, minStock, supplierPrice, sellingPrice) {
+    alert('Редагування товарів тепер відбувається через відповідні розділи адмін панелі');
+}
+
 function viewHistory(itemId) {
-    // Тут можна додати функціонал перегляду історії
     alert('Функція перегляду історії буде додана пізніше');
 }
 
 function showAddItemForm() {
-    // Відкриваємо overlay додавання
-    openOverlay('addItemOverlay');
-    
-    console.log('Overlay додавання товару відкрито');
+    alert('Товари додаються через відповідні розділи: основні товари через "Головний товар", додаткові через "Додаткові товари"');
 }
-
-// Функції hide більше не потрібні - використовуємо closeOverlay
 </script>
 {% endblock %}

@@ -420,7 +420,7 @@ function getColorQuantityImages(colorName) {
     return {};
 }
 
-// Функція для оновлення видимості кнопок кількостей на основі наявності фото
+// Функція для оновлення видимості кнопок кількостей на основі наявності фото та складу
 function updateQuantityButtonsVisibility(colorName) {
     console.log('🔍 Оновлюємо видимість кнопок кількостей для кольору:', colorName);
     
@@ -428,36 +428,56 @@ function updateQuantityButtonsVisibility(colorName) {
     const quantityImages = getColorQuantityImages(colorName);
     console.log('📸 Доступні фото для кольору:', quantityImages);
     
+    // Отримуємо дані про склад для цього кольору
+    const stockData = window.stockData?.colors?.[colorName.toLowerCase()];
+    const availableQuantities = stockData?.availableQuantities || [];
+    console.log('📦 Доступні кількості на складі:', availableQuantities);
+    
     // Отримуємо всі кнопки кількостей
     const quantityButtons = document.querySelectorAll('.quantity-btn');
     console.log('🔘 Знайдено кнопок кількостей:', quantityButtons.length);
     
     quantityButtons.forEach(button => {
-        const quantity = button.dataset.quantity;
+        const quantity = parseInt(button.dataset.quantity);
         const imageUrl = quantityImages && quantityImages[quantity] ? quantityImages[quantity] : '';
         const hasImage = imageUrl && imageUrl.trim() !== '' && imageUrl !== 'null' && imageUrl !== 'undefined';
         
+        // Перевіряємо наявність на складі
+        const stockInfo = availableQuantities.find(q => q.quantity === quantity);
+        const stockAvailable = stockInfo?.stock_available || 0;
+        const hasStock = stockAvailable > 0;
+        
         console.log(`🔍 Кількість ${quantity}:`, {
             hasImage,
+            hasStock,
+            stockAvailable,
             imageUrl: imageUrl,
             buttonElement: button,
-            rawQuantityImages: quantityImages
+            rawQuantityImages: quantityImages,
+            stockInfo: stockInfo
         });
         
-        if (hasImage) {
-            // Показуємо кнопку якщо є фото для цієї кількості
+        if (hasImage && hasStock) {
+            // Показуємо кнопку якщо є фото та наявність на складі
             button.style.display = 'inline-block';
             button.disabled = false;
-            button.classList.remove('hidden');
+            button.classList.remove('hidden', 'out-of-stock', 'low-stock');
             button.style.visibility = 'visible';
-            console.log('✅ Показуємо кнопку для кількості:', quantity, 'з фото:', imageUrl);
+            button.title = ''; // Прибираємо tooltip з інформацією про склад
+            
+            console.log('✅ Показуємо кнопку для кількості:', quantity, 'з фото:', imageUrl, 'та наявністю:', stockAvailable);
         } else {
-            // Приховуємо кнопку якщо немає фото
+            // Приховуємо кнопку якщо немає фото або наявності
             button.style.display = 'none';
             button.disabled = true;
             button.classList.add('hidden');
             button.style.visibility = 'hidden';
-            console.log('❌ Приховуємо кнопку для кількості:', quantity, '(немає фото або порожній URL)');
+            
+            if (!hasImage) {
+                console.log('❌ Приховуємо кнопку для кількості:', quantity, '(немає фото або порожній URL)');
+            } else if (!hasStock) {
+                console.log('❌ Приховуємо кнопку для кількості:', quantity, '(немає на складі)');
+            }
         }
     });
     

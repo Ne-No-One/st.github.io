@@ -967,15 +967,8 @@ body {
 /* Приховані кнопки кількостей */
 .quantity-btn.hidden {
     display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-    position: absolute !important;
-    left: -9999px !important;
-    width: 0 !important;
-    height: 0 !important;
-    overflow: hidden !important;
 }
+
 
 /* ===== КОНТЕЙНЕР ДЛЯ НОВИХ КНОПОК ===== */
 .quantity-buttons {
@@ -1299,6 +1292,7 @@ body {
 .additional-product-card.in-cart .product-status {
     display: block;
 }
+
 
 .additional-product-image img {
     width: 100%;
