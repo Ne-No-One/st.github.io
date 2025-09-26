@@ -7,6 +7,7 @@
     <meta name="description" content="{% if site_settings %}{{ site_settings.site_description }}{% else %}Красивий сайт з чорним фоном, плаваючими білими шарами та сучасним дизайном{% endif %}">
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
 {% if error %}
@@ -34,10 +35,10 @@
             <button class="b2b-button">{{ site_settings.b2b_button_text|default:"B2B" }}</button>
         </div>
         <div class="nav-actions">
-            <a href="/cart/" class="cart-icon" id="cart-link">
+            <button class="cart-icon" id="cart-link" onclick="openCart()">
                 <span class="cart-icon-symbol">🛒</span>
                 <span class="cart-count" id="cart-count">0</span>
-            </a>
+            </button>
         </div>
     </nav>
 </header>
@@ -269,6 +270,42 @@
 </section>
 {% endif %}
 
+<!-- Кошик overlay для перегляду та редагування -->
+<div id="cart-overlay" class="cart-overlay">
+    <div class="cart-overlay-content">
+        <div class="cart-overlay-header">
+            <h3><i class="fas fa-shopping-cart"></i> Кошик покупок</h3>
+            <button class="close-cart-btn" onclick="closeCart()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="cart-overlay-body">
+            <div id="cart-items-overlay" class="cart-items-overlay">
+                <!-- Товари будуть додані через JavaScript -->
+            </div>
+            
+            <div id="cart-empty-overlay" class="cart-empty-overlay" style="display: none;">
+                <div class="empty-cart-icon">
+                    <i class="fas fa-shopping-bag"></i>
+                </div>
+                <h4>Ваш кошик порожній</h4>
+                <p>Додайте товари, щоб почати покупки</p>
+            </div>
+        </div>
+        
+        <div class="cart-overlay-footer">
+            <div class="cart-total-overlay">
+                <span class="total-label">Всього:</span>
+                <span class="total-amount" id="cart-total-overlay">0 грн</span>
+            </div>
+            <div class="cart-actions-overlay">
+                <button class="btn-secondary" onclick="closeCart()">Продовжити покупки</button>
+                <button class="btn-primary" onclick="goToCheckout()">Оформити замовлення</button>
+            </div>
+        </div>
+    </div>
+</div>
 
         <script src="{% static 'js/main.js' %}"></script>
         <script src="{% static 'js/home.js' %}"></script>

@@ -48,15 +48,8 @@ function initializeScrollAnimations() {
 function initializeProgressBar() {
     const progressFill = document.querySelector('.progress-fill');
     
-    if (progressFill) {
-        window.addEventListener('scroll', () => {
-            const scrollTop = window.pageYOffset;
-            const docHeight = document.body.scrollHeight - window.innerHeight;
-            const scrollPercent = (scrollTop / docHeight) * 100;
-            
-            progressFill.style.width = scrollPercent + '%';
-        });
-    }
+    // Прогрес-бар тепер не реагує на прокрутку сторінки
+    // Він оновлюється тільки при зміні суми товарів в кошику
 }
 
 // Функція для оновлення прогрес барів кошика
@@ -723,25 +716,14 @@ function debounce(func, wait) {
     };
 }
 
-// Функція для оновлення прогрес-бару
+// Функція для оновлення прогрес-бару (тільки на основі суми товарів)
 function updateProgressBar() {
-    const progressBar = document.querySelector('.progress-bar');
-    if (progressBar) {
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-        const scrollPercent = (scrollTop / scrollHeight) * 100;
-        progressBar.style.width = scrollPercent + '%';
-    }
+    // Прогрес-бар тепер оновлюється тільки на основі суми товарів в кошику
+    // Викликається з updateProgressBars() при зміні кошика
 }
 
-// Оптимізований обробник скролу
-const optimizedScrollHandler = debounce(function() {
-    updateProgressBar();
-}, 16); // ~60fps
-
-// Замінюємо звичайний обробник скролу на оптимізований
-window.removeEventListener('scroll', updateProgressBar);
-window.addEventListener('scroll', optimizedScrollHandler, { passive: true });
+// Прогрес-бар більше не реагує на прокрутку сторінки
+// Він оновлюється тільки при зміні суми товарів в кошику
 
 
 // Функція розрахунку ціни залежно від кількості (нова логіка)

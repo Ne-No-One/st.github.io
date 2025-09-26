@@ -100,6 +100,24 @@ function updateCartDisplay() {
         cart.items.forEach(item => {
             const cartItem = document.createElement('div');
             cartItem.className = 'cart-item';
+            // Формуємо інформацію про колір та кількість
+            let colorInfo = '';
+            let quantityInfo = '';
+            
+            if (item.color) {
+                colorInfo = `<div class="item-color">
+                    <span class="color-label">Колір:</span>
+                    <div class="color-preview" style="background-color: ${item.color}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.3); display: inline-block; margin-left: 8px;"></div>
+                </div>`;
+            }
+            
+            if (item.flowerQuantity && item.flowerQuantity !== '1') {
+                quantityInfo = `<div class="item-quantity">
+                    <span class="quantity-label">Кількість квітів:</span>
+                    <span class="quantity-value">${item.flowerQuantity}</span>
+                </div>`;
+            }
+            
             cartItem.innerHTML = `
                 <div class="cart-item-image">
                     <img src="${item.image}" alt="${item.title}" loading="lazy">
@@ -107,18 +125,15 @@ function updateCartDisplay() {
                 <div class="cart-item-info">
                     <h4>${item.title}</h4>
                     <div class="cart-item-details">
-                        <span class="quantity">Кількість: ${item.quantity || 1}</span>
-                        <span class="price">${Math.round(item.price * (item.quantity || 1))} грн</span>
+                        ${colorInfo}
+                        ${quantityInfo}
+                        <div class="item-total">
+                            <span class="quantity">Кількість: ${item.quantity || 1}</span>
+                            <span class="price">${Math.round(item.price * (item.quantity || 1))} грн</span>
+                        </div>
                     </div>
                 </div>
                 <div class="cart-item-actions">
-                    <button class="quantity-btn decrease" onclick="changeQuantity('${item.id}', -1)">
-                        <i class="fas fa-minus"></i>
-                    </button>
-                    <span class="quantity-display">${item.quantity || 1}</span>
-                    <button class="quantity-btn increase" onclick="changeQuantity('${item.id}', 1)">
-                        <i class="fas fa-plus"></i>
-                    </button>
                     <button class="remove-item-btn" data-item-id="${item.id}" onclick="removeFromCart('${item.id}')">
                         <i class="fas fa-trash"></i>
                     </button>
@@ -165,30 +180,76 @@ function updateCartDisplay() {
     updateCartCount();
 }
 
-// Функція для зміни кількості товару
-function changeQuantity(itemId, change) {
-    const item = cart.items.find(item => item.id === itemId);
-    if (!item) return;
+// Функція changeQuantity видалена, оскільки кнопки зміни кількості прибрані
+
+// Функції для роботи з формою замовлення
+function showOrderForm() {
+    const orderForm = document.getElementById('order-form');
     
-    const newQuantity = (item.quantity || 1) + change;
+    if (orderForm) {
+        orderForm.style.display = 'block';
+        
+        // Плавна прокрутка до форми
+        orderForm.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+function backToCart() {
+    const orderForm = document.getElementById('order-form');
     
-    if (newQuantity <= 0) {
-        removeFromCart(itemId);
+    if (orderForm) {
+        orderForm.style.display = 'none';
+    }
+}
+
+function submitOrder() {
+    const form = document.getElementById('order-form');
+    if (!form) return;
+    
+    // Збираємо дані форми
+    const formData = new FormData(form);
+    const orderData = {
+        customer: {
+            name: formData.get('name') || formData.get('firstName'),
+            phone: formData.get('phone'),
+            email: formData.get('email'),
+            address: formData.get('address'),
+            city: formData.get('city'),
+            postalCode: formData.get('postalCode'),
+            deliveryDate: formData.get('deliveryDate') || formData.get('delivery_date'),
+            deliveryTime: formData.get('deliveryTime'),
+            comments: formData.get('comments') || formData.get('order-comments')
+        },
+        items: cart.items,
+        total: cart.total,
+        timestamp: new Date().toISOString()
+    };
+    
+    // Валідація
+    if (!orderData.customer.name || !orderData.customer.phone || !orderData.customer.address) {
+        alert('Будь ласка, заповніть всі обов\'язкові поля');
         return;
     }
     
-    item.quantity = newQuantity;
-    updateCartDisplay();
-    saveCartToStorage();
-    
-    // Показуємо анімацію
-    const cartItem = document.querySelector(`[data-item-id="${itemId}"]`).closest('.cart-item');
-    if (cartItem) {
-        cartItem.style.transform = 'scale(1.05)';
-        setTimeout(() => {
-            cartItem.style.transform = 'scale(1)';
-        }, 200);
+    if (!formData.get('agree_terms')) {
+        alert('Будь ласка, погодьтеся з умовами обробки персональних даних');
+        return;
     }
+    
+    // Відправляємо замовлення
+    console.log('📦 Відправка замовлення:', orderData);
+    
+    // Тут можна додати відправку на сервер
+    // fetch('/api/orders/', { method: 'POST', body: JSON.stringify(orderData) })
+    
+    // Показуємо повідомлення про успіх
+    alert('✅ Замовлення успішно оформлено! Ми зв\'яжемося з вами найближчим часом.');
+    
+    // Очищаємо кошик
+    clearCart();
+    
+    // Повертаємося на головну сторінку
+    window.location.href = '/';
 }
 
 // Функція для видалення товару з кошика

@@ -1,0 +1,393 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+
+{% block title %}Налаштування прогрес-бару{% endblock %}
+
+{% block extra_css %}
+<style>
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-label {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.toggle-label:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .toggle-label {
+    background-color: #4CAF50;
+}
+
+input:checked + .toggle-label:before {
+    transform: translateX(26px);
+}
+
+.form-help {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.85rem;
+    color: #666;
+    font-style: italic;
+}
+
+.settings-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    color: white;
+    padding: 20px;
+}
+
+.card-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.settings-form {
+    padding: 30px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #45a049, #4CAF50);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.btn-secondary {
+    background: #f8f9fa;
+    color: #6c757d;
+    border: 2px solid #dee2e6;
+}
+
+.btn-secondary:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-header">
+        <h1><i class="fas fa-chart-line"></i> Налаштування прогрес-бару</h1>
+        <p>Керуйте налаштуваннями безкоштовної доставки та бонусів</p>
+    </div>
+
+    <div class="admin-content">
+        <div class="settings-card">
+            <div class="card-header">
+                <h2><i class="fas fa-truck"></i> Налаштування безкоштовної доставки</h2>
+            </div>
+            
+            <form method="post" class="settings-form">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="free_delivery_threshold">
+                        <i class="fas fa-money-bill-wave"></i>
+                        Сума для безкоштовної доставки (₴)
+                    </label>
+                    <input type="number" 
+                           id="free_delivery_threshold" 
+                           name="free_delivery_threshold" 
+                           value="{{ settings.free_delivery_threshold|default:1000 }}"
+                           min="0" 
+                           step="50"
+                           required>
+                    <small class="form-help">Мінімальна сума замовлення для безкоштовної доставки</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="delivery_cost">
+                        <i class="fas fa-shipping-fast"></i>
+                        Вартість доставки (₴)
+                    </label>
+                    <input type="number" 
+                           id="delivery_cost" 
+                           name="delivery_cost" 
+                           value="{{ settings.delivery_cost|default:50 }}"
+                           min="0" 
+                           step="10"
+                           required>
+                    <small class="form-help">Вартість доставки, якщо сума замовлення менша за поріг</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="progress_bar_title">
+                        <i class="fas fa-heading"></i>
+                        Заголовок прогрес-бару
+                    </label>
+                    <input type="text" 
+                           id="progress_bar_title" 
+                           name="progress_bar_title" 
+                           value="{{ settings.progress_bar_title|default:'Безкоштовна доставка' }}"
+                           maxlength="100"
+                           required>
+                    <small class="form-help">Заголовок, який відображається в прогрес-барі</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="progress_bar_subtitle">
+                        <i class="fas fa-info-circle"></i>
+                        Підзаголовок прогрес-бару
+                    </label>
+                    <input type="text" 
+                           id="progress_bar_subtitle" 
+                           name="progress_bar_subtitle" 
+                           value="{{ settings.progress_bar_subtitle|default:'Додайте товарів на 1000₴ для безкоштовної доставки' }}"
+                           maxlength="200">
+                    <small class="form-help">Опис під заголовком прогрес-бару</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="progress_bar_enabled">
+                        <i class="fas fa-toggle-on"></i>
+                        Увімкнути прогрес-бар
+                    </label>
+                    <div class="toggle-switch">
+                        <input type="checkbox" 
+                               id="progress_bar_enabled" 
+                               name="progress_bar_enabled" 
+                               {% if settings.progress_bar_enabled|default:True %}checked{% endif %}>
+                        <label for="progress_bar_enabled" class="toggle-label">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <small class="form-help">Показувати прогрес-бар на сайті</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="progress_bar_position">
+                        <i class="fas fa-arrows-alt-v"></i>
+                        Позиція прогрес-бару
+                    </label>
+                    <select id="progress_bar_position" name="progress_bar_position">
+                        <option value="top" {% if settings.progress_bar_position|default:'top' == 'top' %}selected{% endif %}>Під шапкою</option>
+                        <option value="bottom" {% if settings.progress_bar_position == 'bottom' %}selected{% endif %}>Над футером</option>
+                    </select>
+                    <small class="form-help">Де відображати прогрес-бар на сторінці</small>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Зберегти налаштування
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="resetToDefaults()">
+                        <i class="fas fa-undo"></i>
+                        Скинути до за замовчуванням
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="settings-card">
+            <div class="card-header">
+                <h2><i class="fas fa-gift"></i> Бонусні налаштування</h2>
+            </div>
+            
+            <form method="post" class="settings-form">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="bonus_settings">
+                
+                <div class="form-group">
+                    <label for="bonus_enabled">
+                        <i class="fas fa-star"></i>
+                        Увімкнути бонусну систему
+                    </label>
+                    <div class="toggle-switch">
+                        <input type="checkbox" 
+                               id="bonus_enabled" 
+                               name="bonus_enabled" 
+                               {% if settings.bonus_enabled|default:False %}checked{% endif %}>
+                        <label for="bonus_enabled" class="toggle-label">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <small class="form-help">Додати бонусні налаштування до прогрес-бару</small>
+                </div>
+
+                <div class="form-group" id="bonus-threshold-group" style="display: none;">
+                    <label for="bonus_threshold">
+                        <i class="fas fa-trophy"></i>
+                        Сума для бонусу (₴)
+                    </label>
+                    <input type="number" 
+                           id="bonus_threshold" 
+                           name="bonus_threshold" 
+                           value="{{ settings.bonus_threshold|default:500 }}"
+                           min="0" 
+                           step="50">
+                    <small class="form-help">Сума замовлення, при якій нараховується бонус</small>
+                </div>
+
+                <div class="form-group" id="bonus-amount-group" style="display: none;">
+                    <label for="bonus_amount">
+                        <i class="fas fa-coins"></i>
+                        Розмір бонусу (₴)
+                    </label>
+                    <input type="number" 
+                           id="bonus_amount" 
+                           name="bonus_amount" 
+                           value="{{ settings.bonus_amount|default:50 }}"
+                           min="0" 
+                           step="10">
+                    <small class="form-help">Сума бонусу, яка нараховується клієнту</small>
+                </div>
+
+                <div class="form-group" id="bonus-description-group" style="display: none;">
+                    <label for="bonus_description">
+                        <i class="fas fa-comment"></i>
+                        Опис бонусу
+                    </label>
+                    <textarea id="bonus_description" 
+                              name="bonus_description" 
+                              rows="3"
+                              maxlength="300">{{ settings.bonus_description|default:'Отримайте бонус до наступного замовлення!' }}</textarea>
+                    <small class="form-help">Опис бонусу, який показується клієнту</small>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Зберегти бонусні налаштування
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Показуємо/ховаємо бонусні поля залежно від чекбоксу
+document.getElementById('bonus_enabled').addEventListener('change', function() {
+    const bonusFields = ['bonus-threshold-group', 'bonus-amount-group', 'bonus-description-group'];
+    const isEnabled = this.checked;
+    
+    bonusFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.style.display = isEnabled ? 'block' : 'none';
+        }
+    });
+});
+
+// Ініціалізуємо стан при завантаженні
+document.addEventListener('DOMContentLoaded', function() {
+    const bonusEnabled = document.getElementById('bonus_enabled');
+    if (bonusEnabled) {
+        bonusEnabled.dispatchEvent(new Event('change'));
+    }
+});
+
+function resetToDefaults() {
+    if (confirm('Ви впевнені, що хочете скинути всі налаштування до значень за замовчуванням?')) {
+        document.getElementById('free_delivery_threshold').value = 1000;
+        document.getElementById('delivery_cost').value = 50;
+        document.getElementById('progress_bar_title').value = 'Безкоштовна доставка';
+        document.getElementById('progress_bar_subtitle').value = 'Додайте товарів на 1000₴ для безкоштовної доставки';
+        document.getElementById('progress_bar_enabled').checked = true;
+        document.getElementById('progress_bar_position').value = 'top';
+        document.getElementById('bonus_enabled').checked = false;
+        document.getElementById('bonus_threshold').value = 500;
+        document.getElementById('bonus_amount').value = 50;
+        document.getElementById('bonus_description').value = 'Отримайте бонус до наступного замовлення!';
+    }
+}
+</script>
+{% endblock %}

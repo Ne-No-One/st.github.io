@@ -109,6 +109,10 @@ function toggleMainProduct() {
         button.textContent = 'В кошик';
         button.classList.remove('in-cart');
     } else {
+        // Збираємо інформацію про колір та кількість квітів
+        const selectedColor = document.querySelector('.color-dot.active')?.style.backgroundColor || '';
+        const selectedQuantity = document.querySelector('.quantity-btn.active')?.textContent || '1';
+        
         // Додаємо товар в кошик
         cart.items.push({
             id: 'main-product',
@@ -116,7 +120,9 @@ function toggleMainProduct() {
             price: parseFloat(currentPrice) || 0,
             currency: currency,
             image: productImage,
-            quantity: 1
+            quantity: 1,
+            color: selectedColor,
+            flowerQuantity: selectedQuantity
         });
         button.textContent = window.cartTexts?.removeFromCart || 'Прибрати з кошика';
         button.classList.add('in-cart');
@@ -151,6 +157,10 @@ function toggleAdditionalProduct(productId) {
         }
         productCard?.classList.remove('in-cart');
     } else {
+        // Збираємо інформацію про колір та кількість квітів для додаткового товару
+        const selectedColor = productCard.querySelector('.color-dot.active')?.style.backgroundColor || '';
+        const selectedQuantity = productCard.querySelector('.quantity-btn.active')?.textContent || '1';
+        
         // Додаємо товар в кошик
         cart.items.push({
             id: `product-${productId}`,
@@ -158,7 +168,9 @@ function toggleAdditionalProduct(productId) {
             price: priceValue,
             currency: currency,
             image: productImage,
-            quantity: 1
+            quantity: 1,
+            color: selectedColor,
+            flowerQuantity: selectedQuantity
         });
         if (button) {
             button.textContent = window.cartTexts?.removeFromCart || 'Прибрати з кошика';
@@ -222,13 +234,19 @@ function toggleAllAdditionalProducts() {
                 const priceValue = parseFloat(productPrice.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
                 const currency = productPrice.split(' ').pop() || 'грн';
                 
+                // Збираємо інформацію про колір та кількість квітів
+                const selectedColor = card.querySelector('.color-dot.active')?.style.backgroundColor || '';
+                const selectedQuantity = card.querySelector('.quantity-btn.active')?.textContent || '1';
+                
                 cart.items.push({
                     id: `product-${productId}`,
                     title: productTitle,
                     price: priceValue,
                     currency: currency,
                     image: productImage,
-                    quantity: 1
+                    quantity: 1,
+                    color: selectedColor,
+                    flowerQuantity: selectedQuantity
                 });
                 
                 if (button) {
@@ -339,6 +357,124 @@ window.addEventListener('error', function(e) {
         return false;
     }
 });
+
+// Функції для роботи з overlay кошика
+function openCart() {
+    const cartOverlay = document.getElementById('cart-overlay');
+    if (cartOverlay) {
+        cartOverlay.classList.add('show');
+        updateCartOverlay();
+    }
+}
+
+function closeCart() {
+    const cartOverlay = document.getElementById('cart-overlay');
+    if (cartOverlay) {
+        cartOverlay.classList.remove('show');
+    }
+}
+
+function goToCheckout() {
+    window.location.href = '/cart/';
+}
+
+function updateCartOverlay() {
+    const cartItemsOverlay = document.getElementById('cart-items-overlay');
+    const cartEmptyOverlay = document.getElementById('cart-empty-overlay');
+    const cartTotalOverlay = document.getElementById('cart-total-overlay');
+    
+    if (!cartItemsOverlay || !cartEmptyOverlay || !cartTotalOverlay) return;
+    
+    // Оновлюємо загальну суму
+    cartTotalOverlay.textContent = `${Math.round(cart.total)} грн`;
+    
+    if (cart.items.length === 0) {
+        cartItemsOverlay.style.display = 'none';
+        cartEmptyOverlay.style.display = 'block';
+    } else {
+        cartItemsOverlay.style.display = 'block';
+        cartEmptyOverlay.style.display = 'none';
+        
+        // Очищаємо попередні товари
+        cartItemsOverlay.innerHTML = '';
+        
+        // Додаємо товари
+        cart.items.forEach(item => {
+            const cartItem = document.createElement('div');
+            cartItem.className = 'cart-item-overlay';
+            
+            const colorInfo = item.color ? `
+                <div class="item-color">
+                    <span class="color-label">Колір:</span>
+                    <div class="color-preview" style="background-color: ${item.color}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.3); display: inline-block; margin-left: 8px;"></div>
+                </div>
+            ` : '';
+            
+            const quantityInfo = item.flowerQuantity && item.flowerQuantity !== '1' ? `
+                <div class="item-quantity">
+                    <span class="quantity-label">Кількість квітів:</span>
+                    <span class="quantity-value">${item.flowerQuantity}</span>
+                </div>
+            ` : '';
+            
+            cartItem.innerHTML = `
+                <div class="cart-item-image-overlay">
+                    <img src="${item.image}" alt="${item.title}">
+                </div>
+                <div class="cart-item-info-overlay">
+                    <h4>${item.title}</h4>
+                    <div class="cart-item-details-overlay">
+                        ${colorInfo}
+                        ${quantityInfo}
+                        <div class="item-total">
+                            <span class="quantity">Кількість: ${item.quantity || 1}</span>
+                            <span class="price">${Math.round(item.price * (item.quantity || 1))} грн</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="cart-item-actions-overlay">
+                    <div class="quantity-controls-overlay">
+                        <button class="quantity-btn-overlay" onclick="changeQuantityOverlay('${item.id}', -1)">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <span class="quantity-display-overlay">${item.quantity || 1}</span>
+                        <button class="quantity-btn-overlay" onclick="changeQuantityOverlay('${item.id}', 1)">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <button class="remove-item-btn-overlay" onclick="removeFromCartOverlay('${item.id}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `;
+            
+            cartItemsOverlay.appendChild(cartItem);
+        });
+    }
+}
+
+function changeQuantityOverlay(itemId, change) {
+    const item = cart.items.find(item => item.id === itemId);
+    if (item) {
+        item.quantity = Math.max(1, (item.quantity || 1) + change);
+        cart.total = cart.items.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
+        
+        updateCartCount();
+        updateProgressBar();
+        updateCartOverlay();
+        saveCartToStorage();
+    }
+}
+
+function removeFromCartOverlay(itemId) {
+    cart.items = cart.items.filter(item => item.id !== itemId);
+    cart.total = cart.items.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
+    
+    updateCartCount();
+    updateProgressBar();
+    updateCartOverlay();
+    saveCartToStorage();
+}
 
 // Обробка необроблених помилок
 window.addEventListener('unhandledrejection', function(e) {
