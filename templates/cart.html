@@ -71,81 +71,57 @@
 
         <!-- Тіло сторінки кошика -->
         <div class="cart-page-body">
-            <!-- Ліва частина - товари в кошику -->
-            <div class="cart-items-section">
-                <div class="cart-items-container">
-                    <div id="cart-items" class="cart-items-list">
-                        <!-- Товари будуть додаватись тут -->
-                    </div>
-                    <div class="cart-empty" id="cart-empty">
-                        <div class="empty-cart-icon">
-                            <i class="fas fa-shopping-bag"></i>
+            <!-- Ліва частина - товари та форма -->
+            <div class="cart-main-section">
+                <!-- Товари в кошику -->
+                <div class="cart-items-section">
+                    <div class="cart-items-container">
+                        <div id="cart-items" class="cart-items-list">
+                            <!-- Товари будуть додаватись тут -->
                         </div>
-                        <h3>Ваш кошик порожній</h3>
-                        <p>Додайте товари, щоб почати покупки</p>
-                        <a href="/" class="start-shopping-btn">
-                            <i class="fas fa-shopping-cart"></i>
-                            Почати покупки
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Права частина - підсумок замовлення -->
-            <div class="cart-summary-section">
-                <div class="cart-summary-card">
-                    <h3 class="summary-title">Підсумок замовлення</h3>
-                    
-                    <!-- Деталі замовлення -->
-                    <div class="summary-details">
-                        <div class="summary-row">
-                            <span>Товарів:</span>
-                            <span id="cart-items-count">0</span>
+                        <div class="cart-empty" id="cart-empty">
+                            <div class="empty-cart-icon">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+                            <h3>Ваш кошик порожній</h3>
+                            <p>Додайте товари, щоб почати покупки</p>
+                            <a href="/" class="start-shopping-btn">
+                                <i class="fas fa-shopping-cart"></i>
+                                Почати покупки
+                            </a>
                         </div>
-                        <div class="summary-row">
-                            <span>Доставка:</span>
-                            <span id="cart-delivery">Безкоштовно</span>
-                        </div>
-                        <div class="summary-row delivery-info">
-                            <small id="delivery-threshold-info">Додайте товарів на 1000₴ для безкоштовної доставки</small>
-                        </div>
-                        <div class="summary-row total-row">
-                            <span>Всього:</span>
-                            <span id="cart-total-price">0 грн</span>
-                        </div>
-                    </div>
-
-                    <!-- Кнопки дій -->
-                    <div class="cart-actions">
-                        <button class="checkout-btn primary-btn" id="checkout-btn" onclick="showOrderForm()">
-                            <i class="fas fa-credit-card"></i>
-                            Оформити замовлення
-                        </button>
-                        <button class="clear-cart-btn secondary-btn" id="clear-cart-btn" onclick="clearCart()">
-                            <i class="fas fa-trash"></i>
-                            Очистити кошик
-                        </button>
-                    </div>
-
-                    <!-- Додаткова інформація -->
-                    <div class="cart-info">
-                        <div class="info-item">
-                            <i class="fas fa-truck"></i>
-                            <span>Безкоштовна доставка від 1000₴</span>
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-shield-alt"></i>
-                            <span>Безпечна оплата</span>
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-undo"></i>
-                            <span>Повернення протягом 14 днів</span>
+                        
+                        <!-- Кнопка очистити кошик -->
+                        <div class="cart-clear-section" id="cart-clear-section" style="display: none;">
+                            <button class="clear-cart-btn secondary-btn" onclick="clearCart()">
+                                <i class="fas fa-trash"></i>
+                                Очистити кошик
+                            </button>
                         </div>
                     </div>
                 </div>
+                
+                <!-- Форма замовлення під товарами -->
+                <div class="order-form-section" id="order-form">
+                    <!-- Секція з інформацією про замовлення -->
+                    <div class="form-section order-summary-section">
+                        <h3><i class="fas fa-shopping-cart"></i> Деталі замовлення</h3>
+                        <div class="order-summary-info">
+                            <div class="summary-info-row">
+                                <span class="summary-label">Кількість квітів:</span>
+                                <span class="summary-value" id="total-flower-count">0</span>
+                            </div>
+                            <div class="summary-info-row">
+                                <span class="summary-label">Кількість товарів:</span>
+                                <span class="summary-value" id="total-items-count">0</span>
+                            </div>
+                            <div class="summary-info-row">
+                                <span class="summary-label">Загальна сума:</span>
+                                <span class="summary-value" id="total-order-price">0 грн</span>
+                            </div>
+                        </div>
+                    </div>
 
-                <!-- Форма замовлення -->
-                <div class="order-form" id="order-form" style="display: none;">
                     <div class="form-section">
                         <h3><i class="fas fa-user"></i> Контактна інформація</h3>
                         <div class="form-row">
@@ -237,34 +213,61 @@
                         </div>
                     </div>
 
-                    <div class="form-section">
-                        <div class="form-group">
-                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                                <input type="checkbox" id="agreeTerms" name="agreeTerms" required style="width: auto;">
-                                <span>Я погоджуюся з <a href="#" style="color: #4CAF50;">умовами доставки</a> та <a href="#" style="color: #4CAF50;">політикою конфіденційності</a> *</span>
-                            </label>
+
+                </div>
+            </div>
+
+            <!-- Права частина - підсумок замовлення -->
+            <div class="cart-summary-section">
+                <div class="cart-summary-card">
+                    <h3 class="summary-title">Підсумок замовлення</h3>
+                    
+                    <!-- Деталі замовлення -->
+                    <div class="summary-details">
+                        <div class="summary-row">
+                            <span>Товарів:</span>
+                            <span id="cart-items-count">0</span>
                         </div>
-                        <div class="form-group">
-                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                                <input type="checkbox" id="subscribeNews" name="subscribeNews" style="width: auto;">
-                                <span>Підписатися на новини та спеціальні пропозиції</span>
-                            </label>
+                        <div class="summary-row">
+                            <span>Доставка:</span>
+                            <span id="cart-delivery">Безкоштовно</span>
+                        </div>
+                        <div class="summary-row delivery-info">
+                            <small id="delivery-threshold-info">Додайте товарів на 1000₴ для безкоштовної доставки</small>
+                        </div>
+                        <div class="summary-row total-row">
+                            <span>Всього:</span>
+                            <span id="cart-total-price">0 грн</span>
                         </div>
                     </div>
 
+                    <!-- Кнопка підтвердження -->
                     <div class="cart-actions">
-                        <button class="primary-btn" onclick="submitOrder()">
+                        <button class="checkout-btn primary-btn" id="checkout-btn" onclick="submitOrder()">
                             <i class="fas fa-check"></i>
                             Підтвердити замовлення
                         </button>
-                        <button class="secondary-btn" onclick="toggleOrderForm()">
-                            <i class="fas fa-arrow-left"></i>
-                            Повернутися до кошика
-                        </button>
+                    </div>
+
+                    <!-- Додаткова інформація -->
+                    <div class="cart-info">
+                        <div class="info-item">
+                            <i class="fas fa-truck"></i>
+                            <span>Безкоштовна доставка від 1000₴</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Безпечна оплата</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-undo"></i>
+                            <span>Повернення протягом 14 днів</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 </main>
 

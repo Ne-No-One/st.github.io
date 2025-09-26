@@ -421,7 +421,6 @@ function updateCartOverlay() {
             
             const quantityInfo = item.flowerQuantity && item.flowerQuantity !== '1' ? `
                 <div class="item-quantity">
-                    <span class="quantity-label">Кількість квітів:</span>
                     <span class="quantity-value">${item.flowerQuantity}</span>
                 </div>
             ` : '';

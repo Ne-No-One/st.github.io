@@ -75,6 +75,12 @@ function updateCartDisplay() {
     const deliveryInfo = document.getElementById('delivery-threshold-info');
     const cartDelivery = document.getElementById('cart-delivery');
     
+    // Елементи для відображення інформації про замовлення
+    const totalFlowerCount = document.getElementById('total-flower-count');
+    const totalItemsCount = document.getElementById('total-items-count');
+    const totalOrderPrice = document.getElementById('total-order-price');
+    const cartClearSection = document.getElementById('cart-clear-section');
+    
     if (!cartItems || !cartEmpty || !cartTotalPrice || !cartItemsCount || !checkoutBtn) return;
     
     // Очищаємо кошик
@@ -88,13 +94,13 @@ function updateCartDisplay() {
         cartEmpty.style.display = 'flex';
         cartItems.style.display = 'none';
         checkoutBtn.disabled = true;
-        clearCartBtn.disabled = true;
+        if (cartClearSection) cartClearSection.style.display = 'none';
     } else {
         // Показуємо товари
         cartEmpty.style.display = 'none';
         cartItems.style.display = 'block';
         checkoutBtn.disabled = false;
-        clearCartBtn.disabled = false;
+        if (cartClearSection) cartClearSection.style.display = 'block';
         
         // Додаємо товари в кошик
         cart.items.forEach(item => {
@@ -113,7 +119,6 @@ function updateCartDisplay() {
             
             if (item.flowerQuantity && item.flowerQuantity !== '1') {
                 quantityInfo = `<div class="item-quantity">
-                    <span class="quantity-label">Кількість квітів:</span>
                     <span class="quantity-value">${item.flowerQuantity}</span>
                 </div>`;
             }
@@ -178,6 +183,30 @@ function updateCartDisplay() {
     
     // Оновлюємо лічильник
     updateCartCount();
+    
+    // Підраховуємо загальну кількість квітів
+    let totalFlowers = 0;
+    cart.items.forEach(item => {
+        if (item.flowerQuantity && item.flowerQuantity !== '1') {
+            const flowerCount = parseInt(item.flowerQuantity) || 0;
+            const itemQuantity = item.quantity || 1;
+            totalFlowers += flowerCount * itemQuantity;
+        } else {
+            // Якщо кількість квітів не вказана, вважаємо 1 квіт на товар
+            totalFlowers += (item.quantity || 1);
+        }
+    });
+    
+    // Оновлюємо відображення інформації про замовлення
+    if (totalFlowerCount) {
+        totalFlowerCount.textContent = totalFlowers;
+    }
+    if (totalItemsCount) {
+        totalItemsCount.textContent = cart.count;
+    }
+    if (totalOrderPrice) {
+        totalOrderPrice.textContent = `${Math.round(cart.total)} грн`;
+    }
 }
 
 // Функція changeQuantity видалена, оскільки кнопки зміни кількості прибрані
