@@ -34,6 +34,18 @@
             <h1>{% if site_settings %}{{ site_settings.site_title }}{% else %}Квітковий магазин{% endif %}</h1>
             <button class="b2b-button">{{ site_settings.b2b_button_text|default:"B2B" }}</button>
         </div>
+        
+        <!-- Прогрес бар в навбарі -->
+        <div class="navbar-progress-container">
+            <div class="progress-info">
+                <span class="progress-label">Прогрес до безкоштовної доставки</span>
+                <span class="progress-amount" id="progress-text">0₴ / 1000₴</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+        
         <div class="nav-actions">
             <button class="cart-icon" id="cart-link" onclick="openCart()">
                 <span class="cart-icon-symbol">🛒</span>
@@ -314,7 +326,7 @@
         <script>
             window.cartTexts = {
                 addToCart: "{{ site_settings.cart_button_text|default:'В кошик' }}",
-                removeFromCart: "{{ site_settings.remove_from_cart_text|default:'Прибрати з кошика' }}"
+                removeFromCart: "{{ site_settings.remove_from_cart_text|default:'З кошика' }}"
             };
             
             // Передаємо дані про склад для кожного кольору

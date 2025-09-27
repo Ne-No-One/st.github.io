@@ -35,10 +35,6 @@ urlpatterns = [
     path('customers/add/', views.add_customer, name='add_customer'),
     path('customers/<int:customer_id>/edit/', views.edit_customer, name='edit_customer'),
     
-    # Inventory management
-    path('inventory/', views.inventory_list, name='inventory_list'),
-    path('inventory/<int:item_id>/update-stock/', views.update_inventory_stock, name='update_inventory_stock'),
-    
     # Financial reports
     path('reports/', views.financial_reports, name='financial_reports'),
     path('reports/daily/', views.daily_sales_report, name='daily_sales_report'),

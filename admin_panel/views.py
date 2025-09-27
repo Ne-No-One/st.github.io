@@ -24,8 +24,6 @@ def admin_dashboard(request):
             # Нові дані
             'orders_count': len(all_orders),
             'customers_count': len(json_manager.get_customers()),
-            'inventory_count': len(json_manager.get_inventory()),
-            'low_stock_count': len(json_manager.get_low_stock_items()),
             'recent_orders': recent_orders,
         }
         return render(request, 'admin_panel/dashboard.html', context)
@@ -76,7 +74,7 @@ def site_settings(request):
                     'site_title': site_title,
                     'site_description': site_description,
                     'cart_button_text': cart_button_text or 'В кошик',
-                    'remove_from_cart_text': remove_from_cart_text or 'Прибрати з кошика',
+                    'remove_from_cart_text': remove_from_cart_text or 'З кошика',
                     'premium_label_text': premium_label_text or 'Преміум',
                     'header_subtitle': header_subtitle or 'Красиві квіти для всіх подій',
                     'color_selector_title': color_selector_title or 'колір пакування',
@@ -1061,96 +1059,6 @@ def edit_customer(request, customer_id):
     except Exception as e:
         return HttpResponse(f"Помилка: {e}")
 
-# ===== INVENTORY MANAGEMENT =====
-
-def inventory_list(request):
-    """Список інвентарю"""
-    try:
-        from json_manager import JSONManager
-        from datetime import datetime
-        json_manager = JSONManager()
-        
-        # Обробка POST запитів
-        if request.method == 'POST':
-            action = request.POST.get('action')
-            
-            if action == 'update_main_stock':
-                # Оновлення кількості основного товару
-                color_id = int(request.POST.get('color_id'))
-                quantity_id = int(request.POST.get('quantity_id'))
-                new_stock = int(request.POST.get('new_stock', 0))
-                
-                if json_manager.update_main_product_stock(color_id, quantity_id, new_stock):
-                    messages.success(request, 'Кількість основного товару оновлено!')
-                else:
-                    messages.error(request, 'Помилка оновлення кількості основного товару!')
-                    
-            elif action == 'update_additional_stock':
-                # Оновлення кількості додаткового товару
-                product_id = int(request.POST.get('product_id'))
-                new_stock = int(request.POST.get('new_stock', 0))
-                
-                if json_manager.update_additional_product_stock(product_id, new_stock):
-                    messages.success(request, 'Кількість додаткового товару оновлено!')
-                else:
-                    messages.error(request, 'Помилка оновлення кількості додаткового товару!')
-        
-        # Отримуємо інтегрований склад
-        inventory = json_manager.get_integrated_inventory()
-        
-        # Розділяємо на основні та додаткові товари
-        main_products = [item for item in inventory if item['type'] == 'main_product']
-        additional_products = [item for item in inventory if item['type'] == 'additional_product']
-        
-        # Знаходимо товари з низькими залишками
-        low_stock_items = [item for item in inventory if item['current_stock'] <= item['min_stock']]
-        
-        # Статистика
-        total_items = len(inventory)
-        low_stock_count = len(low_stock_items)
-        main_products_count = len(main_products)
-        additional_products_count = len(additional_products)
-        
-        # Фінансові розрахунки для основних товарів
-        main_products_value = sum([item['current_stock'] * item['total_price'] for item in main_products])
-        additional_products_value = sum([item['current_stock'] * item['price'] for item in additional_products])
-        total_value = main_products_value + additional_products_value
-        
-        context = {
-            'inventory': inventory,
-            'main_products': main_products,
-            'additional_products': additional_products,
-            'low_stock_items': low_stock_items,
-            'stats': {
-                'total_items': total_items,
-                'main_products_count': main_products_count,
-                'additional_products_count': additional_products_count,
-                'low_stock_count': low_stock_count,
-                'main_products_value': main_products_value,
-                'additional_products_value': additional_products_value,
-                'total_value': total_value
-            }
-        }
-        return render(request, 'admin_panel/inventory_list.html', context)
-    except Exception as e:
-        return HttpResponse(f"Помилка: {e}")
-
-def update_inventory_stock(request, item_id):
-    """Оновлення кількості на складі"""
-    try:
-        from json_manager import JSONManager
-        json_manager = JSONManager()
-        
-        if request.method == 'POST':
-            new_stock = int(request.POST.get('new_stock', 0))
-            if json_manager.update_stock(item_id, new_stock):
-                messages.success(request, "Кількість на складі оновлено")
-            else:
-                messages.error(request, "Помилка при оновленні складу")
-        
-        return redirect('admin_panel:inventory_list')
-    except Exception as e:
-        return HttpResponse(f"Помилка: {e}")
 
 # ===== FINANCIAL REPORTS =====
 

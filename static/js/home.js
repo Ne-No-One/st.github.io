@@ -72,14 +72,28 @@ function updateProgressBar() {
     const maxAmount = 1000; // Максимальна сума для 100% прогрес бару
     const progressPercent = Math.min((cartTotal / maxAmount) * 100, 100);
     
+    console.log('📊 Оновлення прогрес бару:', {
+        cartTotal,
+        progressPercent,
+        cartItems: cart.items.length
+    });
+    
     // Оновлюємо прогрес бар під шапкою (якщо є)
     const mainProgressFill = document.getElementById('progress-fill');
     const mainProgressText = document.getElementById('progress-text');
+    
+    console.log('📊 Елементи прогрес бару:', {
+        progressFill: !!mainProgressFill,
+        progressText: !!mainProgressText
+    });
+    
     if (mainProgressFill) {
         mainProgressFill.style.width = progressPercent + '%';
+        console.log('✅ Прогрес бар оновлено:', progressPercent + '%');
     }
     if (mainProgressText) {
         mainProgressText.textContent = formatPrice(cartTotal);
+        console.log('✅ Текст прогрес бару оновлено:', formatPrice(cartTotal));
     }
 }
 
@@ -124,9 +138,12 @@ function toggleMainProduct() {
             color: selectedColor,
             flowerQuantity: selectedQuantity
         });
-        button.textContent = window.cartTexts?.removeFromCart || 'Прибрати з кошика';
+        button.textContent = window.cartTexts?.removeFromCart || 'З кошика';
         button.classList.add('in-cart');
     }
+    
+    // Оновлюємо загальну суму кошика
+    cart.total = cart.items.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
     
     updateCartCount();
     updateProgressBar();
@@ -141,14 +158,7 @@ function toggleAdditionalProduct(productId) {
     const productPrice = productCard?.querySelector('.additional-product-price')?.textContent || '0 грн';
     const productImage = productCard?.querySelector('img')?.src || '/static/images/foto 1.jpg';
     
-    // Перевіряємо наявність на складі (тихо, без повідомлень)
-    const stockData = window.stockData?.additionalProducts?.[productId];
-    const stockAvailable = stockData?.stockAvailable || 0;
-    
-    if (stockAvailable <= 0) {
-        console.log('❌ Товар недоступний на складі:', productId);
-        return; // Просто не додаємо в кошик, без повідомлень
-    }
+    // Товар завжди доступний (склад видалено)
     
     // Парсимо ціну
     const priceValue = parseFloat(productPrice.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
@@ -182,11 +192,14 @@ function toggleAdditionalProduct(productId) {
             flowerQuantity: selectedQuantity
         });
         if (button) {
-            button.textContent = window.cartTexts?.removeFromCart || 'Прибрати з кошика';
+            button.textContent = window.cartTexts?.removeFromCart || 'З кошика';
             button.classList.add('in-cart');
         }
         productCard?.classList.add('in-cart');
     }
+    
+    // Оновлюємо загальну суму кошика
+    cart.total = cart.items.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
     
     updateCartCount();
     updateProgressBar();
@@ -259,7 +272,7 @@ function toggleAllAdditionalProducts() {
                 });
                 
                 if (button) {
-                    button.textContent = window.cartTexts?.removeFromCart || 'Прибрати з кошика';
+                    button.textContent = window.cartTexts?.removeFromCart || 'З кошика';
                     button.classList.add('in-cart');
                 }
                 card.classList.add('in-cart');
@@ -271,6 +284,9 @@ function toggleAllAdditionalProducts() {
             addAllBtn.classList.add('all-in-cart');
         }
     }
+    
+    // Оновлюємо загальну суму кошика
+    cart.total = cart.items.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
     
     updateCartCount();
     updateProgressBar();
@@ -302,6 +318,97 @@ function updateAddAllButton() {
 
 // Функція showNotification видалена - замість повідомлень використовуємо лічильник на іконці кошику
 
+// Функції для заборони прокрутки на мобільних пристроях
+let scrollPosition = 0;
+
+function preventScroll() {
+    if (window.innerWidth <= 768) {
+        // Запам'ятовуємо поточну позицію прокрутки
+        scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // Блокуємо прокрутку через touch events
+        document.addEventListener('touchmove', preventTouchScroll, { passive: false });
+        document.addEventListener('touchstart', preventTouchScroll, { passive: false });
+        document.addEventListener('touchend', preventTouchScroll, { passive: false });
+        
+        // Блокуємо прокрутку через wheel events
+        document.addEventListener('wheel', preventWheelScroll, { passive: false });
+        
+        // Блокуємо прокрутку через keyboard
+        document.addEventListener('keydown', preventKeyScroll, { passive: false });
+    }
+}
+
+function enableScroll() {
+    if (window.innerWidth <= 768) {
+        // Відновлюємо прокрутку
+        document.removeEventListener('touchmove', preventTouchScroll);
+        document.removeEventListener('touchstart', preventTouchScroll);
+        document.removeEventListener('touchend', preventTouchScroll);
+        document.removeEventListener('wheel', preventWheelScroll);
+        document.removeEventListener('keydown', preventKeyScroll);
+    }
+}
+
+function preventTouchScroll(e) {
+    // Дозволяємо прокрутку тільки всередині кошика
+    const cartOverlay = document.getElementById('cart-overlay');
+    if (cartOverlay && cartOverlay.classList.contains('show')) {
+        const target = e.target;
+        const isInsideCart = cartOverlay.contains(target);
+        
+        // Дозволяємо всі події всередині кошика
+        if (isInsideCart) {
+            return true;
+        }
+        
+        // Блокуємо події поза кошиком
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    }
+    return true;
+}
+
+function preventWheelScroll(e) {
+    // Дозволяємо прокрутку всередині кошика
+    const cartOverlay = document.getElementById('cart-overlay');
+    if (cartOverlay && cartOverlay.classList.contains('show')) {
+        const target = e.target;
+        const isInsideCart = cartOverlay.contains(target);
+        
+        if (isInsideCart) {
+            return true;
+        }
+    }
+    
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+}
+
+function preventKeyScroll(e) {
+    // Дозволяємо клавіші всередині кошика
+    const cartOverlay = document.getElementById('cart-overlay');
+    if (cartOverlay && cartOverlay.classList.contains('show')) {
+        const target = e.target;
+        const isInsideCart = cartOverlay.contains(target);
+        
+        if (isInsideCart) {
+            return true;
+        }
+    }
+    
+    // Блокуємо клавіші прокрутки (Page Up, Page Down, Home, End, Arrow keys)
+    const scrollKeys = [32, 33, 34, 35, 36, 37, 38, 39, 40];
+    if (scrollKeys.includes(e.keyCode)) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    }
+    return true;
+}
+
 // Функція для синхронізації стану кнопок з кошиком
 function syncButtonsWithCart() {
     // Синхронізуємо головний товар
@@ -309,7 +416,7 @@ function syncButtonsWithCart() {
     const mainButton = document.getElementById('cart-button');
     if (mainButton) {
         if (mainProduct) {
-            mainButton.textContent = window.cartTexts?.removeFromCart || 'Прибрати з кошика';
+            mainButton.textContent = window.cartTexts?.removeFromCart || 'З кошика';
             mainButton.classList.add('in-cart');
         } else {
             mainButton.textContent = window.cartTexts?.addToCart || 'В кошик';
@@ -326,7 +433,7 @@ function syncButtonsWithCart() {
         
         if (button) {
             if (isInCart) {
-                button.textContent = window.cartTexts?.removeFromCart || 'Прибрати з кошика';
+                button.textContent = window.cartTexts?.removeFromCart || 'З кошика';
                 button.classList.add('in-cart');
                 card.classList.add('in-cart');
             } else {
@@ -340,6 +447,28 @@ function syncButtonsWithCart() {
     // Синхронізуємо кнопку "Додати всі"
     updateAddAllButton();
 }
+
+// Обробка клавіші Escape для закриття кошика (тільки на мобільних)
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && window.innerWidth <= 768) {
+        const cartOverlay = document.getElementById('cart-overlay');
+        if (cartOverlay && cartOverlay.classList.contains('show')) {
+            closeCart();
+        }
+    }
+});
+
+// Обробка кліку на backdrop для закриття кошика (тільки на мобільних)
+document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 768) {
+        const cartOverlay = document.getElementById('cart-overlay');
+        if (cartOverlay && cartOverlay.classList.contains('show')) {
+            if (e.target === cartOverlay) {
+                closeCart();
+            }
+        }
+    }
+});
 
 // Ініціалізація головної сторінки
 document.addEventListener('DOMContentLoaded', () => {
@@ -371,6 +500,19 @@ window.addEventListener('error', function(e) {
 function openCart() {
     const cartOverlay = document.getElementById('cart-overlay');
     if (cartOverlay) {
+        // Перевіряємо, чи це мобільний пристрій
+        if (window.innerWidth <= 768) {
+            // Запам'ятовуємо поточну позицію прокрутки
+            const scrollY = window.scrollY;
+            document.body.style.top = `-${scrollY}px`;
+            
+            // Додаємо клас для заборони прокрутки
+            document.body.classList.add('cart-open');
+            
+            // Додаткові методи заборони прокрутки для мобільних
+            preventScroll();
+        }
+        
         cartOverlay.classList.add('show');
         updateCartOverlay();
     }
@@ -380,6 +522,20 @@ function closeCart() {
     const cartOverlay = document.getElementById('cart-overlay');
     if (cartOverlay) {
         cartOverlay.classList.remove('show');
+        
+        // Перевіряємо, чи це мобільний пристрій
+        if (window.innerWidth <= 768) {
+            // Відновлюємо прокрутку
+            document.body.classList.remove('cart-open');
+            
+            // Відновлюємо позицію прокрутки
+            const scrollY = document.body.style.top;
+            document.body.style.top = '';
+            window.scrollTo(0, parseInt(scrollY || '0') * -1);
+            
+            // Відновлюємо прокрутку
+            enableScroll();
+        }
     }
 }
 

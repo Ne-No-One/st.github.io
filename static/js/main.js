@@ -428,10 +428,9 @@ function updateQuantityButtonsVisibility(colorName) {
     const quantityImages = getColorQuantityImages(colorName);
     console.log('📸 Доступні фото для кольору:', quantityImages);
     
-    // Отримуємо дані про склад для цього кольору
-    const stockData = window.stockData?.colors?.[colorName.toLowerCase()];
-    const availableQuantities = stockData?.availableQuantities || [];
-    console.log('📦 Доступні кількості на складі:', availableQuantities);
+    // Всі кількості завжди доступні (склад видалено)
+    const availableQuantities = window.quantityOptions || [];
+    console.log('📦 Всі кількості доступні:', availableQuantities);
     
     // Отримуємо всі кнопки кількостей
     const quantityButtons = document.querySelectorAll('.quantity-btn');
@@ -442,19 +441,15 @@ function updateQuantityButtonsVisibility(colorName) {
         const imageUrl = quantityImages && quantityImages[quantity] ? quantityImages[quantity] : '';
         const hasImage = imageUrl && imageUrl.trim() !== '' && imageUrl !== 'null' && imageUrl !== 'undefined';
         
-        // Перевіряємо наявність на складі
-        const stockInfo = availableQuantities.find(q => q.quantity === quantity);
-        const stockAvailable = stockInfo?.stock_available || 0;
-        const hasStock = stockAvailable > 0;
+        // Кількість завжди доступна (склад видалено)
+        const hasStock = true;
         
         console.log(`🔍 Кількість ${quantity}:`, {
             hasImage,
             hasStock,
-            stockAvailable,
             imageUrl: imageUrl,
             buttonElement: button,
-            rawQuantityImages: quantityImages,
-            stockInfo: stockInfo
+            rawQuantityImages: quantityImages
         });
         
         if (hasImage) {

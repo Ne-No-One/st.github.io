@@ -329,6 +329,19 @@ function toggleOrderForm() {
     const checkoutBtn = document.getElementById('checkout-btn');
     
     if (orderForm.style.display === 'none') {
+        // Перевіряємо, чи це мобільний пристрій
+        if (window.innerWidth <= 768) {
+            // Запам'ятовуємо поточну позицію прокрутки
+            const scrollY = window.scrollY;
+            document.body.style.top = `-${scrollY}px`;
+            
+            // Додаємо клас для заборони прокрутки
+            document.body.classList.add('order-form-open');
+            
+            // Додаткові методи заборони прокрутки для мобільних
+            preventOrderFormScroll();
+        }
+        
         // Показуємо форму замовлення
         orderForm.style.display = 'block';
         cartSummary.style.display = 'none';
@@ -350,6 +363,20 @@ function toggleOrderForm() {
         // Прокручуємо до форми
         orderForm.scrollIntoView({ behavior: 'smooth' });
     } else {
+        // Перевіряємо, чи це мобільний пристрій
+        if (window.innerWidth <= 768) {
+            // Відновлюємо прокрутку
+            document.body.classList.remove('order-form-open');
+            
+            // Відновлюємо позицію прокрутки
+            const scrollY = document.body.style.top;
+            document.body.style.top = '';
+            window.scrollTo(0, parseInt(scrollY || '0') * -1);
+            
+            // Відновлюємо прокрутку
+            enableOrderFormScroll();
+        }
+        
         // Приховуємо форму замовлення
         orderForm.style.display = 'none';
         cartSummary.style.display = 'block';
@@ -520,6 +547,107 @@ function saveOrderToStorage(orderData) {
 }
 
 // Функція showNotification видалена - замість повідомлень використовуємо лічильник на іконці кошику
+
+// Функції для заборони прокрутки на мобільних пристроях (для форми замовлення)
+let orderFormScrollPosition = 0;
+
+function preventOrderFormScroll() {
+    if (window.innerWidth <= 768) {
+        // Запам'ятовуємо поточну позицію прокрутки
+        orderFormScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // Блокуємо прокрутку через touch events
+        document.addEventListener('touchmove', preventOrderFormTouchScroll, { passive: false });
+        document.addEventListener('touchstart', preventOrderFormTouchScroll, { passive: false });
+        document.addEventListener('touchend', preventOrderFormTouchScroll, { passive: false });
+        
+        // Блокуємо прокрутку через wheel events
+        document.addEventListener('wheel', preventOrderFormWheelScroll, { passive: false });
+        
+        // Блокуємо прокрутку через keyboard
+        document.addEventListener('keydown', preventOrderFormKeyScroll, { passive: false });
+    }
+}
+
+function enableOrderFormScroll() {
+    if (window.innerWidth <= 768) {
+        // Відновлюємо прокрутку
+        document.removeEventListener('touchmove', preventOrderFormTouchScroll);
+        document.removeEventListener('touchstart', preventOrderFormTouchScroll);
+        document.removeEventListener('touchend', preventOrderFormTouchScroll);
+        document.removeEventListener('wheel', preventOrderFormWheelScroll);
+        document.removeEventListener('keydown', preventOrderFormKeyScroll);
+    }
+}
+
+function preventOrderFormTouchScroll(e) {
+    // Дозволяємо прокрутку тільки всередині форми замовлення
+    const orderForm = document.getElementById('order-form');
+    if (orderForm && orderForm.style.display === 'block') {
+        const target = e.target;
+        const isInsideForm = orderForm.contains(target);
+        
+        // Дозволяємо всі події всередині форми
+        if (isInsideForm) {
+            return true;
+        }
+        
+        // Блокуємо події поза формою
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    }
+    return true;
+}
+
+function preventOrderFormWheelScroll(e) {
+    // Дозволяємо прокрутку всередині форми замовлення
+    const orderForm = document.getElementById('order-form');
+    if (orderForm && orderForm.style.display === 'block') {
+        const target = e.target;
+        const isInsideForm = orderForm.contains(target);
+        
+        if (isInsideForm) {
+            return true;
+        }
+    }
+    
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+}
+
+function preventOrderFormKeyScroll(e) {
+    // Дозволяємо клавіші всередині форми замовлення
+    const orderForm = document.getElementById('order-form');
+    if (orderForm && orderForm.style.display === 'block') {
+        const target = e.target;
+        const isInsideForm = orderForm.contains(target);
+        
+        if (isInsideForm) {
+            return true;
+        }
+    }
+    
+    // Блокуємо клавіші прокрутки (Page Up, Page Down, Home, End, Arrow keys)
+    const scrollKeys = [32, 33, 34, 35, 36, 37, 38, 39, 40];
+    if (scrollKeys.includes(e.keyCode)) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    }
+    return true;
+}
+
+// Обробка клавіші Escape для закриття форми замовлення (тільки на мобільних)
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && window.innerWidth <= 768) {
+        const orderForm = document.getElementById('order-form');
+        if (orderForm && orderForm.style.display === 'block') {
+            toggleOrderForm();
+        }
+    }
+});
 
 // Ініціалізація сторінки кошика
 document.addEventListener('DOMContentLoaded', () => {

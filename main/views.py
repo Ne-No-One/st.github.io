@@ -9,10 +9,10 @@ def home(request):
         from json_manager import JSONManager
         json_manager = JSONManager()
         
-        # Отримуємо дані з перевіркою наявності на складі
-        color_options = json_manager.get_color_options_with_stock()
+        # Отримуємо дані (без перевірки складу)
+        color_options = json_manager.get_color_options()
         quantity_options = json_manager.get_quantity_options()
-        additional_products = json_manager.get_additional_products_with_stock()
+        additional_products = json_manager.get_additional_products()
         services = json_manager.get_services()
         
         # Сортуємо за полем order
@@ -21,15 +21,11 @@ def home(request):
         additional_products_sorted = sorted(additional_products, key=lambda x: x.get('order', 999))
         services_sorted = sorted(services, key=lambda x: x.get('order', 999))
         
-        # Додаємо quantity_images та дані про склад для кожного кольору
+        # Додаємо quantity_images для кожного кольору
         import json
         for color in color_options_sorted:
             # Конвертуємо quantity_images в JSON строку для JavaScript
             color['quantity_images_json'] = json.dumps(color.get('quantity_images', {}))
-            
-            # Додаємо інформацію про наявність кількостей для цього кольору
-            available_quantities = json_manager.get_quantity_options_with_stock(color['id'])
-            color['available_quantities'] = available_quantities
         
         # Створюємо контекст з відсортованими даними
         context = {
