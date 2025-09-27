@@ -1733,6 +1733,44 @@ body {
         border-right: none;
     }
     
+    /* Приховуємо прогрес бар в навбарі на мобільних */
+    .navbar-progress-container {
+        display: none;
+    }
+    
+    /* Показуємо прогрес бар під шапкою на мобільних */
+    .progress-container {
+        display: block !important;
+        position: sticky;
+        top: 80px;
+        z-index: 100;
+        margin: 20px auto;
+        max-width: 1200px;
+        padding: 0 20px;
+        backdrop-filter: blur(10px);
+    }
+    
+    .progress-container .progress-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 12px 16px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 0.9rem;
+        color: #ffffff;
+    }
+    
+    .progress-container .progress-bar {
+        height: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
     /* Налаштування product-container для центрування з прокруткою */
     .product-container {
         position: relative !important;
@@ -3534,15 +3572,86 @@ img {
 
 /* ===== ПРОГРЕС БАРИ ===== */
 
-/* Прогрес бар в кошику - плаваючий */
-.progress-container {
-    position: sticky;
-    top: 80px;
-    z-index: 100;
-    margin: 20px auto;
-    max-width: 1200px;
-    padding: 0 20px;
+/* Прогрес бар в навбарі */
+.navbar-progress-container {
+    flex: 1;
+    margin: 0 20px;
+    padding: 8px 15px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
     backdrop-filter: blur(10px);
+    min-width: 200px;
+}
+
+/* Прибираємо рамки та фони на ПК */
+@media (min-width: 1024px) {
+    .navbar-progress-container {
+        border: none;
+        background: none;
+        backdrop-filter: none;
+        border-radius: 0;
+        padding: 0;
+        margin: 0 20px;
+    }
+    
+    .navbar-progress-container .progress-info {
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin-bottom: 6px;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+    }
+    
+    .navbar-progress-container .progress-bar {
+        border: none;
+        background: rgba(255, 255, 255, 0.1);
+        height: 8px;
+    }
+    
+    /* Приховуємо прогрес бар під шапкою на ПК */
+    .progress-container {
+        display: none;
+    }
+}
+
+/* Старий прогрес контейнер - прибираємо за замовчуванням */
+.progress-container {
+    display: none;
+}
+
+/* Стилі для прогрес бару в навбарі */
+.navbar-progress-container .progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 0.75rem;
+    color: #ffffff;
+    background: none !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+}
+
+.navbar-progress-container .progress-bar {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Товстіший прогрес бар на ПК */
+@media (min-width: 1024px) {
+    .navbar-progress-container .progress-bar {
+        height: 8px;
+        border-radius: 4px;
+        border: none;
+    }
 }
 
 /* Опускаємо прогрес-контейнер на ПК */
@@ -5088,9 +5197,9 @@ body.cart-open .cart-progress-container {
     }
     
     .cart-summary-section {
-        position: relative;
-        top: auto;
-        max-height: none;
+        position: sticky;
+        top: 160px; /* Висота шапки + прогрес бар на мобільних */
+        max-height: calc(100vh - 180px);
     }
     
     .order-form-section .form-row {
@@ -5101,6 +5210,17 @@ body.cart-open .cart-progress-container {
     .order-form-section .cart-actions {
         flex-direction: column;
         gap: 10px;
+    }
+    
+    .cart-action-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .cart-action-buttons .back-to-shop-btn,
+    .cart-action-buttons .clear-cart-btn {
+        width: 100%;
+        justify-content: center;
     }
 }
 
@@ -5185,35 +5305,29 @@ body.cart-open .cart-progress-container {
     padding: 20px;
 }
 
-/* Заголовок сторінки кошика */
+/* Заголовок сторінки кошика - мінімальний */
 .cart-page-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    margin-bottom: 40px;
-    padding: 30px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 20px;
-    padding: 30px;
-    backdrop-filter: blur(15px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    margin-bottom: 15px;
+    padding: 8px 0;
 }
 
 .cart-page-title {
     color: #ffffff;
-    font-size: 2.5rem;
-    font-weight: 700;
+    font-size: 1.2rem;
+    font-weight: 500;
     display: flex;
     align-items: center;
-    gap: 15px;
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    gap: 8px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
 .cart-page-title i {
     color: #4CAF50;
-    font-size: 2rem;
-    text-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
+    font-size: 1rem;
+    text-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
 }
 
 .back-to-shop-btn {
@@ -5467,16 +5581,16 @@ body.cart-open .cart-progress-container {
     text-decoration: none;
 }
 
-/* Секція підсумку - закріплена в своєму місці */
+/* Секція підсумку - прилипає до шапки */
 .cart-summary-section {
     position: sticky;
-    top: 100px;
+    top: 100px; /* Висота шапки */
     max-height: calc(100vh - 120px);
     overflow-y: auto;
     transition: all 0.3s ease;
 }
 
-/* Секція кнопки очистити кошик */
+/* Секція кнопок дій з кошиком */
 .cart-clear-section {
     margin-top: 20px;
     text-align: center;
@@ -5486,7 +5600,41 @@ body.cart-open .cart-progress-container {
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.cart-clear-section .clear-cart-btn {
+.cart-action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.cart-action-buttons .back-to-shop-btn {
+    padding: 12px 24px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.2));
+    color: white;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+}
+
+.cart-action-buttons .back-to-shop-btn:hover {
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.3));
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+    color: white;
+    text-decoration: none;
+}
+
+.cart-action-buttons .clear-cart-btn {
     padding: 12px 24px;
     font-size: 1rem;
     border-radius: 8px;
@@ -5500,7 +5648,7 @@ body.cart-open .cart-progress-container {
     color: white;
 }
 
-.cart-clear-section .clear-cart-btn:hover {
+.cart-action-buttons .clear-cart-btn:hover {
     background: #c82333;
     transform: translateY(-2px);
 }
@@ -5776,13 +5924,12 @@ body.cart-open .cart-progress-container {
     }
     
     .cart-page-header {
-        flex-direction: column;
-        gap: 20px;
-        text-align: center;
+        margin-bottom: 10px;
+        padding: 5px 0;
     }
     
     .cart-page-title {
-        font-size: 2rem;
+        font-size: 1rem;
     }
     
     /* Мобільні стилі для плаваючих кресочок на сторінці кошику */

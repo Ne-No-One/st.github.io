@@ -457,17 +457,17 @@ function updateQuantityButtonsVisibility(colorName) {
             stockInfo: stockInfo
         });
         
-        if (hasImage && hasStock) {
-            // Показуємо кнопку якщо є фото та наявність на складі
+        if (hasImage) {
+            // Показуємо кнопку якщо є фото
             button.style.display = 'inline-block';
             button.disabled = false;
             button.classList.remove('hidden', 'out-of-stock', 'low-stock');
             button.style.visibility = 'visible';
             button.title = ''; // Прибираємо tooltip з інформацією про склад
             
-            console.log('✅ Показуємо кнопку для кількості:', quantity, 'з фото:', imageUrl, 'та наявністю:', stockAvailable);
+            console.log('✅ Показуємо кнопку для кількості:', quantity, 'з фото:', imageUrl);
         } else {
-            // Приховуємо кнопку якщо немає фото або наявності
+            // Приховуємо кнопку якщо немає фото
             button.style.display = 'none';
             button.disabled = true;
             button.classList.add('hidden');
@@ -475,8 +475,6 @@ function updateQuantityButtonsVisibility(colorName) {
             
             if (!hasImage) {
                 console.log('❌ Приховуємо кнопку для кількості:', quantity, '(немає фото або порожній URL)');
-            } else if (!hasStock) {
-                console.log('❌ Приховуємо кнопку для кількості:', quantity, '(немає на складі)');
             }
         }
     });
