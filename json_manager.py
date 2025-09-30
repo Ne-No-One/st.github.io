@@ -5,6 +5,7 @@
 import json
 import os
 import logging
+from datetime import datetime
 from django.conf import settings
 
 # Налаштування логера
@@ -629,6 +630,22 @@ class JSONManager:
         logger.error(f"❌ Замовлення з ID {order_id} не знайдено")
         return False
     
+    def update_order_payment_status(self, order_id, payment_status):
+        """Оновлюємо статус платежу замовлення"""
+        logger.info(f"💳 Оновлення статусу платежу замовлення {order_id} на '{payment_status}'")
+        data = self.load_data()
+        orders = data.get('orders', [])
+        
+        for order in orders:
+            if order.get('id') == int(order_id):
+                order['payment_status'] = payment_status
+                order['updated_at'] = datetime.now().isoformat()
+                logger.info(f"✅ Статус платежу замовлення {order.get('order_number')} оновлено на '{payment_status}'")
+                return self.save_data(data)
+        
+        logger.error(f"❌ Замовлення з ID {order_id} не знайдено")
+        return False
+    
     def get_orders_by_status(self, status):
         """Отримуємо замовлення за статусом"""
         logger.info(f"📊 Отримання замовлень зі статусом: {status}")
@@ -636,6 +653,29 @@ class JSONManager:
         filtered_orders = [order for order in orders if order.get('status') == status]
         logger.info(f"✅ Знайдено {len(filtered_orders)} замовлень зі статусом '{status}'")
         return filtered_orders
+    
+    def save_order(self, order_data):
+        """Зберігаємо замовлення"""
+        logger.info(f"💾 Збереження замовлення: {order_data.get('order_number', 'Unknown')}")
+        try:
+            data = self.load_data()
+            
+            # Ініціалізуємо список замовлень якщо його немає
+            if 'orders' not in data:
+                data['orders'] = []
+            
+            # Додаємо замовлення
+            data['orders'].append(order_data)
+            
+            # Зберігаємо дані
+            self.save_data(data)
+            
+            logger.info(f"✅ Замовлення {order_data.get('order_number')} успішно збережено")
+            return True
+            
+        except Exception as e:
+            logger.error(f"❌ Помилка збереження замовлення: {e}")
+            return False
     
     # ===== CUSTOMERS MANAGEMENT =====
     

@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from . import payment_views
 
 app_name = 'admin_panel'
 
@@ -26,8 +27,8 @@ urlpatterns = [
     
     # Orders management
     path('orders/', views.orders_list, name='orders_list'),
-    path('orders/<int:order_id>/', views.order_detail, name='order_detail'),
-    path('orders/<int:order_id>/status/', views.update_order_status, name='update_order_status'),
+    path('orders/<str:order_id>/', views.order_detail, name='order_detail'),
+    path('orders/<str:order_id>/status/', views.update_order_status, name='update_order_status'),
     
     # Customers management
     path('customers/', views.customers_list, name='customers_list'),
@@ -38,4 +39,13 @@ urlpatterns = [
     # Financial reports
     path('reports/', views.financial_reports, name='financial_reports'),
     path('reports/daily/', views.daily_sales_report, name='daily_sales_report'),
+    
+    # Payment management
+    path('payments/', payment_views.payment_management, name='payment_management'),
+    path('payments/<str:order_id>/', payment_views.payment_detail, name='payment_detail'),
+    path('payments/<str:order_id>/cancel/', payment_views.cancel_payment, name='cancel_payment'),
+    path('payments/<str:order_id>/refund/', payment_views.refund_payment, name='refund_payment'),
+    path('payments/<str:order_id>/status/', payment_views.check_payment_status, name='check_payment_status'),
+    path('payments/<str:order_id>/receipt/', payment_views.download_payment_receipt, name='download_payment_receipt'),
+    path('payments/reports/', payment_views.payment_reports, name='payment_reports'),
 ]

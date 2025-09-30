@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if title %}{{ title }}{% else %}Оплата через iFrame{% endif %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Плаваючі білі шари -->
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+        <div class="shape shape-5"></div>
+    </div>
+
+    <!-- Шапка сайту -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <h1><a href="/" style="text-decoration: none; color: inherit;">Квітковий магазин</a></h1>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Основний контент -->
+    <main class="payment-page">
+        <div class="payment-container">
+            <div class="payment-card">
+                <div class="payment-icon">
+                    <i class="fas fa-window-maximize"></i>
+                </div>
+                <h1 class="payment-title">Оплата через iFrame</h1>
+                <p class="payment-message">
+                    Виконайте оплату безпосередньо на цій сторінці. 
+                    Всі дані обробляються безпечно через Monobank.
+                </p>
+                
+                <div class="payment-details">
+                    <h3><i class="fas fa-info-circle"></i> Деталі рахунку</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">ID рахунку:</span>
+                        <span class="detail-value">{{ invoice_id }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Статус:</span>
+                        <span class="detail-value status-pending">Очікує оплати</span>
+                    </div>
+                </div>
+                
+                <!-- iFrame контейнер -->
+                <div class="iframe-container">
+                    <iframe
+                        id="payFrame"
+                        title="monopay"
+                        width="600"
+                        height="600"
+                        src="{{ page_url }}"
+                        allow="payment *"
+                        style="border-radius: 24px; border: none; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);"
+                    ></iframe>
+                </div>
+                
+                <div class="iframe-instructions">
+                    <h3><i class="fas fa-info-circle"></i> Інструкції</h3>
+                    <ul>
+                        <li><i class="fas fa-mobile-alt"></i> На мобільних пристроях може відкритися додаток Monobank</li>
+                        <li><i class="fas fa-credit-card"></i> Використовуйте будь-який спосіб оплати Monobank</li>
+                        <li><i class="fas fa-shield-alt"></i> Всі дані обробляються безпечно</li>
+                        <li><i class="fas fa-clock"></i> Оплата обробляється миттєво</li>
+                    </ul>
+                </div>
+                
+                <div class="payment-actions">
+                    <button onclick="checkPaymentStatus()" class="btn btn-primary">
+                        <i class="fas fa-sync-alt"></i>
+                        Перевірити статус
+                    </button>
+                    <button onclick="closeIframe()" class="btn btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Закрити
+                    </button>
+                    <a href="{% url 'payment_status_detail' invoice_id=invoice_id %}" class="btn btn-secondary">
+                        <i class="fas fa-search"></i>
+                        Детальний статус
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Модальне вікно для статусу -->
+    <div id="statusModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Статус оплати</h3>
+                <button onclick="closeModal()" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="statusContent">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Перевірка статусу...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .payment-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+        }
+
+        .payment-container {
+            max-width: 700px;
+            width: 100%;
+        }
+
+        .payment-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .payment-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            color: #2196F3;
+        }
+
+        .payment-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .payment-message {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .payment-details {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .payment-details h3 {
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .payment-details h3 i {
+            margin-right: 10px;
+            color: #2196F3;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .detail-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            color: #FF9800;
+        }
+
+        .iframe-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            min-height: 600px;
+        }
+
+        .iframe-instructions {
+            background: #e3f2fd;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .iframe-instructions h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .iframe-instructions h3 i {
+            margin-right: 10px;
+        }
+
+        .iframe-instructions ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #1976d2;
+        }
+
+        .iframe-instructions li {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .iframe-instructions li i {
+            margin-right: 10px;
+            color: #2196f3;
+        }
+
+        .payment-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(33, 150, 243, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        /* Модальне вікно */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 0;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #333;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading i {
+            font-size: 24px;
+            color: #2196F3;
+            margin-bottom: 10px;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .payment-card {
+                padding: 30px 20px;
+            }
+
+            .payment-title {
+                font-size: 2rem;
+            }
+
+            .iframe-container {
+                min-height: 400px;
+            }
+
+            .iframe-container iframe {
+                width: 100%;
+                height: 400px;
+            }
+
+            .payment-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .detail-value {
+                text-align: left;
+            }
+        }
+    </style>
+
+    <script>
+        // Обробка подій iFrame
+        function listenFrame(event) {
+            const data = JSON.parse(event.data || "{}");
+           
+            // Обробка кліку по кнопці "назад" або "повернутись на сайт"
+            if (data.message === "close-button") {
+                closeIframe();
+            }
+           
+            // Обробка переходу на мобільному пристрої через діпклінк
+            if (data.message === "monopay-link") {
+                window.location.href = data.value;
+            }
+        }
+
+        // Перевірка статусу оплати
+        async function checkPaymentStatus() {
+            const modal = document.getElementById('statusModal');
+            const statusContent = document.getElementById('statusContent');
+            
+            modal.style.display = 'flex';
+            statusContent.innerHTML = `
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Перевірка статусу...</p>
+                </div>
+            `;
+            
+            try {
+                const response = await fetch(`/api/payment/status/{{ invoice_id }}/`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    let statusText = '';
+                    let statusClass = '';
+                    
+                    switch (result.status) {
+                        case 'success':
+                            statusText = 'Оплата успішна!';
+                            statusClass = 'success';
+                            break;
+                        case 'failure':
+                            statusText = 'Оплата не пройшла';
+                            statusClass = 'failure';
+                            break;
+                        case 'processing':
+                            statusText = 'Оплата обробляється';
+                            statusClass = 'processing';
+                            break;
+                        case 'expired':
+                            statusText = 'Час дії рахунку вичерпано';
+                            statusClass = 'expired';
+                            break;
+                        default:
+                            statusText = 'Очікує оплати';
+                            statusClass = 'pending';
+                    }
+                    
+                    statusContent.innerHTML = `
+                        <div class="status-result ${statusClass}">
+                            <i class="fas fa-${getStatusIcon(result.status)}"></i>
+                            <h4>${statusText}</h4>
+                            <p>ID рахунку: {{ invoice_id }}</p>
+                            ${result.amount ? `<p>Сума: ${(result.amount / 100).toFixed(2)} грн</p>` : ''}
+                            ${result.failureReason ? `<p>Причина: ${result.failureReason}</p>` : ''}
+                        </div>
+                    `;
+                    
+                    // Якщо оплата успішна або невдала, закриваємо iFrame
+                    if (result.status === 'success' || result.status === 'failure') {
+                        setTimeout(() => {
+                            closeIframe();
+                        }, 3000);
+                    }
+                } else {
+                    statusContent.innerHTML = `
+                        <div class="status-result error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h4>Помилка перевірки статусу</h4>
+                            <p>${result.error || 'Невідома помилка'}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Помилка:', error);
+                statusContent.innerHTML = `
+                    <div class="status-result error">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h4>Помилка з'єднання</h4>
+                        <p>Не вдалося перевірити статус оплати</p>
+                    </div>
+                `;
+            }
+        }
+
+        function getStatusIcon(status) {
+            switch (status) {
+                case 'success': return 'check-circle';
+                case 'failure': return 'times-circle';
+                case 'processing': return 'spinner fa-spin';
+                case 'expired': return 'clock';
+                default: return 'hourglass-half';
+            }
+        }
+
+        function closeIframe() {
+            if (confirm('Ви впевнені, що хочете закрити сторінку оплати?')) {
+                window.location.href = '/';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('statusModal').style.display = 'none';
+        }
+
+        // Додаємо слухач подій для iFrame
+        window.addEventListener("message", listenFrame, false);
+
+        // Автоматична перевірка статусу кожні 30 секунд
+        setInterval(checkPaymentStatus, 30000);
+    </script>
+</body>
+</html>

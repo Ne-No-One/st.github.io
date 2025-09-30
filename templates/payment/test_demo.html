@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Демо тестових платежів</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .demo-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        .demo-header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            padding: 2rem;
+        }
+        .test-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        .test-card:hover {
+            border-color: #4f46e5;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.1);
+        }
+        .test-button {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 24px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+            color: white;
+        }
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .status-success { background-color: #10b981; }
+        .status-error { background-color: #ef4444; }
+        .status-info { background-color: #3b82f6; }
+        .status-warning { background-color: #f59e0b; }
+        .log-container {
+            background: #1f2937;
+            color: #f9fafb;
+            border-radius: 10px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            font-weight: bold;
+            color: #6b7280;
+            transition: all 0.3s ease;
+        }
+        .step.active {
+            background: #4f46e5;
+            color: white;
+        }
+        .step.completed {
+            background: #10b981;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-4">
+    <div class="demo-container">
+        <!-- Заголовок -->
+        <div class="demo-header text-center">
+            <h1 class="mb-3">
+                <i class="fas fa-flask me-3"></i>
+                Демо тестових платежів
+            </h1>
+            <p class="mb-0">Повна симуляція всіх етапів платіжного процесу</p>
+        </div>
+
+        <!-- Індикатор етапів -->
+        <div class="step-indicator">
+            <div class="step active" id="step1">1</div>
+            <div class="step" id="step2">2</div>
+            <div class="step" id="step3">3</div>
+            <div class="step" id="step4">4</div>
+            <div class="step" id="step5">5</div>
+        </div>
+
+        <!-- Основний контент -->
+        <div class="p-4">
+            <div class="row">
+                <!-- Панель тестових даних -->
+                <div class="col-lg-4 mb-4">
+                    <div class="test-card p-4">
+                        <h5 class="mb-3">
+                            <i class="fas fa-database me-2"></i>
+                            Тестові дані
+                        </h5>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">ID рахунку:</label>
+                            <input type="text" class="form-control" id="invoiceId" value="{{ invoice_id }}" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Номер замовлення:</label>
+                            <input type="text" class="form-control" id="orderId" value="{{ order_id }}" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Сума (грн):</label>
+                            <input type="number" class="form-control" id="amount" value="{{ amount }}" min="1" step="0.01">
+                        </div>
+                        <button class="btn test-button w-100" onclick="generateNewData()">
+                            <i class="fas fa-refresh me-2"></i>
+                            Згенерувати нові дані
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Панель операцій -->
+                <div class="col-lg-8 mb-4">
+                    <div class="test-card p-4">
+                        <h5 class="mb-3">
+                            <i class="fas fa-cogs me-2"></i>
+                            Платіжні операції
+                        </h5>
+                        
+                        <!-- Кнопки операцій -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <button class="btn test-button w-100" onclick="startPaymentFlow()">
+                                    <i class="fas fa-play me-2"></i>
+                                    Запустити платіжний потік
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <button class="btn btn-outline-primary w-100" onclick="testIndividualOperations()">
+                                    <i class="fas fa-tools me-2"></i>
+                                    Тестувати окремі операції
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Статус операцій -->
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center p-3 border rounded">
+                                    <span class="status-indicator status-info" id="status1"></span>
+                                    <span id="statusText1">Створення рахунку</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center p-3 border rounded">
+                                    <span class="status-indicator status-info" id="status2"></span>
+                                    <span id="statusText2">Перевірка статусу</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center p-3 border rounded">
+                                    <span class="status-indicator status-info" id="status3"></span>
+                                    <span id="statusText3">Обробка платежу</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center p-3 border rounded">
+                                    <span class="status-indicator status-info" id="status4"></span>
+                                    <span id="statusText4">Завершення</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Логи операцій -->
+            <div class="test-card p-4">
+                <h5 class="mb-3">
+                    <i class="fas fa-terminal me-2"></i>
+                    Логи операцій
+                </h5>
+                <div id="testResults" class="log-container">
+                    <div class="text-success">🚀 Демо тестових платежів завантажено</div>
+                    <div class="text-info">ℹ️ Готово до тестування платіжних операцій</div>
+                </div>
+            </div>
+
+            <!-- Швидкі посилання -->
+            <div class="test-card p-4 mt-4">
+                <h5 class="mb-3">
+                    <i class="fas fa-external-link-alt me-2"></i>
+                    Швидкі посилання
+                </h5>
+                <div class="row g-2">
+                    <div class="col-md-3">
+                        <a href="/test-payment-success/?invoiceId={{ invoice_id }}&orderId={{ order_id }}&amount={{ amount }}" 
+                           class="btn btn-outline-success w-100" target="_blank">
+                            <i class="fas fa-check me-1"></i>
+                            Успіх
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/test-payment-failure/?invoiceId={{ invoice_id }}&orderId={{ order_id }}&amount={{ amount }}" 
+                           class="btn btn-outline-danger w-100" target="_blank">
+                            <i class="fas fa-times me-1"></i>
+                            Помилка
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/test-payment-cancel/?invoiceId={{ invoice_id }}&orderId={{ order_id }}&amount={{ amount }}" 
+                           class="btn btn-outline-warning w-100" target="_blank">
+                            <i class="fas fa-ban me-1"></i>
+                            Скасування
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/test-payment-receipt/?invoiceId={{ invoice_id }}&orderId={{ order_id }}&amount={{ amount }}" 
+                           class="btn btn-outline-info w-100" target="_blank">
+                            <i class="fas fa-receipt me-1"></i>
+                            Квитанція
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentStep = 1;
+let paymentFlowActive = false;
+
+function logResult(message, type = 'info') {
+    const resultsDiv = document.getElementById('testResults');
+    const timestamp = new Date().toLocaleTimeString();
+    
+    let colorClass = 'text-info';
+    if (type === 'success') colorClass = 'text-success';
+    else if (type === 'error') colorClass = 'text-danger';
+    else if (type === 'warning') colorClass = 'text-warning';
+    
+    const logEntry = document.createElement('div');
+    logEntry.className = colorClass;
+    logEntry.innerHTML = `[${timestamp}] ${message}`;
+    
+    resultsDiv.insertBefore(logEntry, resultsDiv.firstChild);
+    
+    // Прокручуємо до верху
+    resultsDiv.scrollTop = 0;
+}
+
+function updateStep(stepNumber, status = 'active') {
+    // Оновлюємо індикатор етапів
+    for (let i = 1; i <= 5; i++) {
+        const step = document.getElementById(`step${i}`);
+        step.className = 'step';
+        if (i < stepNumber) step.classList.add('completed');
+        else if (i === stepNumber) step.classList.add(status);
+    }
+    
+    // Оновлюємо статус операцій
+    const statusIndicators = ['status1', 'status2', 'status3', 'status4'];
+    const statusTexts = ['statusText1', 'statusText2', 'statusText3', 'statusText4'];
+    
+    statusIndicators.forEach((id, index) => {
+        const indicator = document.getElementById(id);
+        const text = document.getElementById(statusTexts[index]);
+        
+        indicator.className = 'status-indicator';
+        if (index < stepNumber - 1) {
+            indicator.classList.add('status-success');
+        } else if (index === stepNumber - 1) {
+            if (status === 'active') indicator.classList.add('status-warning');
+            else if (status === 'completed') indicator.classList.add('status-success');
+        }
+    });
+}
+
+function generateNewData() {
+    const invoiceId = 'INV-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+    const orderId = 'ORD-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+    const amount = (Math.random() * 1000 + 100).toFixed(2);
+    
+    document.getElementById('invoiceId').value = invoiceId;
+    document.getElementById('orderId').value = orderId;
+    document.getElementById('amount').value = amount;
+    
+    logResult(`🔄 Згенеровано нові тестові дані: ${invoiceId}`, 'info');
+}
+
+    async function startPaymentFlow() {
+        if (paymentFlowActive) return;
+        
+        paymentFlowActive = true;
+        currentStep = 1;
+        
+        logResult('🚀 Запуск повного платіжного потоку з реалістичною симуляцією...', 'info');
+        
+        try {
+            const invoiceId = document.getElementById('invoiceId').value;
+            const orderId = document.getElementById('orderId').value;
+            const amount = document.getElementById('amount').value;
+            
+            // Етап 1: Створення рахунку (з реальними перевірками)
+            updateStep(1, 'active');
+            logResult('📝 Етап 1: Створення рахунку через Monobank API...', 'info');
+            
+            const createResponse = await fetch('/test-create-invoice/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    invoiceId: invoiceId,
+                    orderId: orderId,
+                    amount: parseFloat(amount)
+                })
+            });
+            
+            const createResult = await createResponse.json();
+            
+            if (createResult.success) {
+                logResult(`✅ Рахунок створено: ${createResult.invoiceId}`, 'success');
+                if (createResult.simulation_steps) {
+                    createResult.simulation_steps.forEach(step => {
+                        logResult(`   • ${step}`, 'info');
+                    });
+                }
+                updateStep(1, 'completed');
+            } else {
+                logResult(`❌ Помилка створення рахунку: ${createResult.error}`, 'error');
+                updateStep(1, 'error');
+                return;
+            }
+            
+            // Етап 2: Перевірка статусу (з реальними перевірками)
+            currentStep = 2;
+            updateStep(2, 'active');
+            logResult('🔍 Етап 2: Перевірка статусу платежу...', 'info');
+            
+            const statusResponse = await fetch('/test-payment-status/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    invoiceId: createResult.invoiceId,
+                    amount: parseFloat(amount)
+                })
+            });
+            
+            const statusResult = await statusResponse.json();
+            
+            if (statusResult.success) {
+                logResult(`✅ Статус: ${statusResult.status}`, 'success');
+                if (statusResult.simulation_steps) {
+                    statusResult.simulation_steps.forEach(step => {
+                        logResult(`   • ${step}`, 'info');
+                    });
+                }
+                if (statusResult.paymentInfo) {
+                    logResult(`   💳 Картка: ${statusResult.paymentInfo.maskedPan}`, 'info');
+                    logResult(`   🔐 Код авторизації: ${statusResult.paymentInfo.approvalCode}`, 'info');
+                }
+                updateStep(2, 'completed');
+            } else {
+                logResult(`❌ Помилка перевірки статусу: ${statusResult.error}`, 'error');
+                updateStep(2, 'error');
+            }
+            
+            // Етап 3: Додаткові операції (скасування або повернення)
+            currentStep = 3;
+            updateStep(3, 'active');
+            logResult('🔧 Етап 3: Тестування додаткових операцій...', 'info');
+            
+            // Симулюємо скасування (якщо статус не success)
+            if (statusResult.status !== 'success') {
+                logResult('🔄 Спроба скасування платежу...', 'info');
+                
+                const cancelResponse = await fetch('/test-cancel-payment/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        invoiceId: createResult.invoiceId
+                    })
+                });
+                
+                const cancelResult = await cancelResponse.json();
+                
+                if (cancelResult.success) {
+                    logResult(`✅ Платіж скасовано: ${cancelResult.message}`, 'success');
+                } else {
+                    logResult(`❌ Помилка скасування: ${cancelResult.error}`, 'error');
+                }
+            } else {
+                // Якщо платіж успішний, симулюємо повернення
+                logResult('🔄 Спроба повернення коштів...', 'info');
+                
+                const refundResponse = await fetch('/test-refund-payment/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        invoiceId: createResult.invoiceId,
+                        amount: parseFloat(amount),
+                        reason: 'Тестове повернення коштів'
+                    })
+                });
+                
+                const refundResult = await refundResponse.json();
+                
+                if (refundResult.success) {
+                    logResult(`✅ Кошти повернено: ${refundResult.refundId}`, 'success');
+                } else {
+                    logResult(`❌ Помилка повернення: ${refundResult.error}`, 'error');
+                }
+            }
+            
+            updateStep(3, 'completed');
+            
+            // Етап 4: Завершення
+            currentStep = 4;
+            updateStep(4, 'active');
+            logResult('🏁 Етап 4: Завершення тестування...', 'info');
+            
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            logResult('✅ Повний платіжний потік протестовано!', 'success');
+            updateStep(4, 'completed');
+            
+            // Етап 5: Результат
+            currentStep = 5;
+            updateStep(5, 'active');
+            logResult('🎉 Всі етапи пройдено успішно!', 'success');
+            
+            // Показуємо посилання на результат
+            setTimeout(() => {
+                const successUrl = `/test-payment-success/?invoiceId=${createResult.invoiceId}&orderId=${orderId}&amount=${amount}`;
+                logResult(`🔗 <a href="${successUrl}" target="_blank" class="text-success">Переглянути результат</a>`, 'info');
+            }, 500);
+            
+        } catch (error) {
+            logResult(`❌ Помилка в платіжному потоці: ${error.message}`, 'error');
+        } finally {
+            paymentFlowActive = false;
+        }
+    }
+
+function testIndividualOperations() {
+    logResult('🔧 Режим тестування окремих операцій', 'info');
+    
+    // Показуємо кнопки для окремих операцій
+    const operationsHtml = `
+        <div class="mt-3">
+            <h6>Окремі операції:</h6>
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <button class="btn btn-outline-success w-100" onclick="testCreateInvoice()">
+                        <i class="fas fa-plus me-1"></i>
+                        Створити рахунок
+                    </button>
+                </div>
+                <div class="col-md-6">
+                    <button class="btn btn-outline-info w-100" onclick="testPaymentStatus()">
+                        <i class="fas fa-sync me-1"></i>
+                        Перевірити статус
+                    </button>
+                </div>
+                <div class="col-md-6">
+                    <button class="btn btn-outline-warning w-100" onclick="testCancelPayment()">
+                        <i class="fas fa-ban me-1"></i>
+                        Скасувати платіж
+                    </button>
+                </div>
+                <div class="col-md-6">
+                    <button class="btn btn-outline-danger w-100" onclick="testRefundPayment()">
+                        <i class="fas fa-undo me-1"></i>
+                        Повернути кошти
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    logResult(operationsHtml, 'info');
+}
+
+async function testCreateInvoice() {
+    const invoiceId = document.getElementById('invoiceId').value;
+    const orderId = document.getElementById('orderId').value;
+    const amount = document.getElementById('amount').value;
+    
+    logResult('🔄 Створення тестового рахунку...', 'info');
+    
+    try {
+        const response = await fetch('/test-create-invoice/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                invoiceId: invoiceId,
+                orderId: orderId,
+                amount: parseFloat(amount)
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            logResult(`✅ Рахунок створено: ${data.invoiceId}`, 'success');
+            if (data.pageUrl) {
+                logResult(`🔗 URL для оплати: ${data.pageUrl}`, 'info');
+            }
+        } else {
+            logResult(`❌ Помилка створення рахунку: ${data.error}`, 'error');
+        }
+    } catch (error) {
+        logResult(`❌ Помилка з'єднання: ${error.message}`, 'error');
+    }
+}
+
+async function testPaymentStatus() {
+    const invoiceId = document.getElementById('invoiceId').value;
+    const amount = document.getElementById('amount').value;
+    
+    logResult('🔄 Перевірка статусу платежу...', 'info');
+    
+    try {
+        const response = await fetch('/test-payment-status/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                invoiceId: invoiceId,
+                amount: parseFloat(amount)
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            logResult(`✅ Статус: ${data.status}`, 'success');
+            if (data.paymentInfo) {
+                logResult(`💳 Інформація про платіж: ${JSON.stringify(data.paymentInfo)}`, 'info');
+            }
+        } else {
+            logResult(`❌ Помилка перевірки статусу: ${data.error}`, 'error');
+        }
+    } catch (error) {
+        logResult(`❌ Помилка з'єднання: ${error.message}`, 'error');
+    }
+}
+
+async function testCancelPayment() {
+    const invoiceId = document.getElementById('invoiceId').value;
+    
+    logResult('🔄 Скасування платежу...', 'info');
+    
+    try {
+        const response = await fetch('/test-cancel-payment/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                invoiceId: invoiceId
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            logResult(`✅ Платіж скасовано: ${data.message}`, 'success');
+        } else {
+            logResult(`❌ Помилка скасування: ${data.error}`, 'error');
+        }
+    } catch (error) {
+        logResult(`❌ Помилка з'єднання: ${error.message}`, 'error');
+    }
+}
+
+async function testRefundPayment() {
+    const invoiceId = document.getElementById('invoiceId').value;
+    const amount = document.getElementById('amount').value;
+    
+    logResult('🔄 Повернення коштів...', 'info');
+    
+    try {
+        const response = await fetch('/test-refund-payment/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                invoiceId: invoiceId,
+                amount: parseFloat(amount),
+                reason: 'Тестове повернення коштів'
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            logResult(`✅ Кошти повернено: ${data.refundId}`, 'success');
+        } else {
+            logResult(`❌ Помилка повернення: ${data.error}`, 'error');
+        }
+    } catch (error) {
+        logResult(`❌ Помилка з'єднання: ${error.message}`, 'error');
+    }
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Ініціалізація при завантаженні
+document.addEventListener('DOMContentLoaded', function() {
+    logResult('🚀 Демо тестових платежів завантажено', 'success');
+    logResult('ℹ️ Готово до тестування платіжних операцій', 'info');
+    updateStep(1, 'active');
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

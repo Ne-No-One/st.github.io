@@ -267,6 +267,62 @@
           "total_price": 800.0
         }
       ]
+    },
+    {
+      "id": "77ab7818-f7a1-4692-92b1-3c67b22cee68",
+      "order_number": "ORD-20250929-77AB7818",
+      "order_date": "2025-09-29T18:46:54.884520",
+      "delivery_date": "2024-12-30",
+      "delivery_time": "14:00",
+      "customer_name": "Test User",
+      "customer_phone": "+380123456789",
+      "customer_email": "test@example.com",
+      "delivery_city": "Київ",
+      "delivery_address": "вул. Тестова, 1",
+      "delivery_postal_code": "",
+      "payment": "card",
+      "total_amount": 1000,
+      "currency": "UAH",
+      "items": [
+        {
+          "name": "Test Product",
+          "quantity": 1,
+          "price": 1000
+        }
+      ],
+      "notes": "Test order",
+      "subscribe_news": false,
+      "status": "нове",
+      "created_at": "2025-09-29T18:46:54.884535",
+      "updated_at": "2025-09-29T18:46:54.884537"
+    },
+    {
+      "id": "10647081-ba8b-4b9b-ae4b-a9ec593defb1",
+      "order_number": "ORD-20250930-10647081",
+      "order_date": "2025-09-30T14:30:20.168348",
+      "delivery_date": "2024-12-30",
+      "delivery_time": "14:00",
+      "customer_name": "Test User",
+      "customer_phone": "+380123456789",
+      "customer_email": "test@example.com",
+      "delivery_city": "Київ",
+      "delivery_address": "вул. Тестова, 1",
+      "delivery_postal_code": "",
+      "payment": "card",
+      "total_amount": 1000,
+      "currency": "UAH",
+      "items": [
+        {
+          "name": "Test Product",
+          "quantity": 1,
+          "price": 1000
+        }
+      ],
+      "notes": "Test order",
+      "subscribe_news": false,
+      "status": "нове",
+      "created_at": "2025-09-30T14:30:20.168364",
+      "updated_at": "2025-09-30T14:30:20.168366"
     }
   ],
   "customers": [

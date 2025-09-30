@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if title %}{{ title }}{% else %}Оплата обробляється{% endif %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Плаваючі білі шари -->
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+        <div class="shape shape-5"></div>
+    </div>
+
+    <!-- Шапка сайту -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <h1><a href="/" style="text-decoration: none; color: inherit;">Квітковий магазин</a></h1>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Основний контент -->
+    <main class="payment-page">
+        <div class="payment-container">
+            <div class="payment-card processing">
+                <div class="payment-icon">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+                <h1 class="payment-title">Оплата обробляється</h1>
+                <p class="payment-message">
+                    Ваш платіж успішно отримано та передано на обробку. 
+                            Будь ласка, зачекайте кілька хвилин для завершення операції.
+                </p>
+                
+                <div class="processing-details">
+                    <h3><i class="fas fa-info-circle"></i> Деталі операції</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">ID рахунку:</span>
+                        <span class="detail-value">{{ invoice_id }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Статус:</span>
+                        <span class="detail-value status-processing">Обробляється</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Сума:</span>
+                        <span class="detail-value">{{ payment_data.amount|floatformat:2 }} грн</span>
+                    </div>
+                    {% if payment_data.reference %}
+                    <div class="detail-row">
+                        <span class="detail-label">Номер замовлення:</span>
+                        <span class="detail-value">{{ payment_data.reference }}</span>
+                    </div>
+                    {% endif %}
+                    {% if payment_data.destination %}
+                    <div class="detail-row">
+                        <span class="detail-label">Призначення:</span>
+                        <span class="detail-value">{{ payment_data.destination }}</span>
+                    </div>
+                    {% endif %}
+                    {% if payment_data.createdDate %}
+                    <div class="detail-row">
+                        <span class="detail-label">Час створення:</span>
+                        <span class="detail-value">{{ payment_data.createdDate|date:"d.m.Y H:i" }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="processing-steps">
+                    <h3><i class="fas fa-list-ol"></i> Етапи обробки</h3>
+                    <div class="steps">
+                        <div class="step completed">
+                            <i class="fas fa-check"></i>
+                            <span>Платіж отримано</span>
+                        </div>
+                        <div class="step active">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <span>Обробка платежу</span>
+                        </div>
+                        <div class="step">
+                            <i class="fas fa-clock"></i>
+                            <span>Завершення операції</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="processing-info">
+                    <h3><i class="fas fa-info-circle"></i> Що відбувається?</h3>
+                    <ul>
+                        <li><i class="fas fa-shield-alt"></i> Перевірка безпеки платежу</li>
+                        <li><i class="fas fa-university"></i> Звернення до банку-емітента</li>
+                        <li><i class="fas fa-check-circle"></i> Підтвердження авторизації</li>
+                        <li><i class="fas fa-save"></i> Збереження результатів операції</li>
+                    </ul>
+                </div>
+                
+                <div class="auto-refresh">
+                    <p><i class="fas fa-sync-alt"></i> Сторінка автоматично оновлюється кожні 5 секунд</p>
+                    <div class="countdown">
+                        <span id="countdown">5</span> секунд до наступного оновлення
+                    </div>
+                </div>
+                
+                <div class="payment-actions">
+                    <button onclick="checkStatus()" class="btn btn-primary">
+                        <i class="fas fa-sync-alt"></i>
+                        Перевірити статус зараз
+                    </button>
+                    <a href="{% url 'payment_status_detail' invoice_id=invoice_id %}" class="btn btn-secondary">
+                        <i class="fas fa-search"></i>
+                        Детальний статус
+                    </a>
+                    <a href="{% url 'sync_payment' %}" class="btn btn-secondary">
+                        <i class="fas fa-credit-card"></i>
+                        Новий платіж
+                    </a>
+                    <a href="/" class="btn btn-secondary">
+                        <i class="fas fa-home"></i>
+                        На головну
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        .payment-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+        }
+
+        .payment-container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .payment-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .payment-card.processing {
+            border-top: 5px solid #FF9800;
+        }
+
+        .payment-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            color: #FF9800;
+        }
+
+        .payment-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .payment-message {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .processing-details {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .processing-details h3 {
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .processing-details h3 i {
+            margin-right: 10px;
+            color: #FF9800;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .detail-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .status-processing {
+            color: #FF9800;
+        }
+
+        .processing-steps {
+            background: #fff3e0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .processing-steps h3 {
+            color: #ef6c00;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .processing-steps h3 i {
+            margin-right: 10px;
+        }
+
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .step.completed {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .step.active {
+            background: #fff3e0;
+            color: #ef6c00;
+            font-weight: 600;
+        }
+
+        .step i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .processing-info {
+            background: #e3f2fd;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .processing-info h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .processing-info h3 i {
+            margin-right: 10px;
+        }
+
+        .processing-info ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #1976d2;
+        }
+
+        .processing-info li {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .processing-info li i {
+            margin-right: 10px;
+            color: #2196f3;
+        }
+
+        .auto-refresh {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .auto-refresh p {
+            margin: 0 0 10px 0;
+            color: #666;
+        }
+
+        .countdown {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #FF9800;
+        }
+
+        .payment-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 152, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .payment-card {
+                padding: 30px 20px;
+            }
+
+            .payment-title {
+                font-size: 2rem;
+            }
+
+            .payment-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .detail-value {
+                text-align: left;
+            }
+        }
+    </style>
+
+    <script>
+        let countdown = 5;
+        let intervalId;
+
+        function startCountdown() {
+            intervalId = setInterval(() => {
+                countdown--;
+                document.getElementById('countdown').textContent = countdown;
+                
+                if (countdown <= 0) {
+                    checkStatus();
+                    countdown = 5;
+                }
+            }, 1000);
+        }
+
+        function checkStatus() {
+            clearInterval(intervalId);
+            
+            // Показуємо індикатор завантаження
+            const btn = document.querySelector('.btn-primary');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Перевірка...';
+            btn.disabled = true;
+            
+            // Перевіряємо статус
+            fetch(`/api/payment/status/{{ invoice_id }}/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.status === 'success') {
+                            window.location.href = `/payment/sync/success/{{ invoice_id }}/`;
+                        } else if (data.status === 'failure') {
+                            window.location.href = `/payment/sync/failure/{{ invoice_id }}/?reason=${encodeURIComponent(data.failureReason || 'Невідома помилка')}`;
+                        } else {
+                            // Продовжуємо очікування
+                            countdown = 5;
+                            startCountdown();
+                        }
+                    } else {
+                        alert('Помилка перевірки статусу: ' + data.error);
+                        countdown = 5;
+                        startCountdown();
+                    }
+                })
+                .catch(error => {
+                    console.error('Помилка:', error);
+                    alert('Помилка з\'єднання з сервером');
+                    countdown = 5;
+                    startCountdown();
+                })
+                .finally(() => {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                });
+        }
+
+        // Запускаємо автоматичне оновлення
+        startCountdown();
+    </script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тестова невдала оплата</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .failure-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        .failure-header {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            padding: 2rem;
+        }
+        .test-badge {
+            background: #fbbf24;
+            color: #92400e;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="failure-container">
+                <div class="failure-header text-center">
+                    <div class="test-badge mb-3">ТЕСТОВИЙ РЕЖИМ</div>
+                    <h1 class="mb-3">
+                        <i class="fas fa-times-circle me-3"></i>
+                        Помилка оплати
+                    </h1>
+                    <p class="mb-0">Платіж не вдалося обробити в тестовому режимі</p>
+                </div>
+                
+                <div class="p-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="text-center mb-4">
+                                <i class="fas fa-exclamation-triangle fa-4x text-danger mb-3"></i>
+                                <h4>Платіж не вдалося обробити</h4>
+                                <p class="text-muted">Сталася помилка при обробці платежу</p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="bg-light p-4 rounded">
+                                <h5 class="mb-3">Деталі помилки</h5>
+                                <div class="row mb-2">
+                                    <div class="col-5"><strong>ID рахунку:</strong></div>
+                                    <div class="col-7"><code>{{ invoice_id }}</code></div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-5"><strong>Номер замовлення:</strong></div>
+                                    <div class="col-7">{{ order_id }}</div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-5"><strong>Сума:</strong></div>
+                                    <div class="col-7"><strong class="text-danger fs-5">{{ amount }} {{ currency }}</strong></div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-5"><strong>Код помилки:</strong></div>
+                                    <div class="col-7"><code class="text-danger">{{ error_code }}</code></div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-5"><strong>Опис помилки:</strong></div>
+                                    <div class="col-7"><span class="text-danger">{{ error_message }}</span></div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-5"><strong>Статус:</strong></div>
+                                    <div class="col-7"><span class="badge bg-danger">Помилка</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <a href="/test-payment-demo/" class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-flask me-2"></i>
+                                    Тест Демо
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="/test-payment-demo/" class="btn btn-outline-danger w-100">
+                                    <i class="fas fa-redo me-2"></i>
+                                    Спробувати ще раз
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a href="/admin-panel/payments/" class="btn btn-outline-info w-100">
+                                    <i class="fas fa-cog me-2"></i>
+                                    Адмін-панель
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Автоматично оновлюємо статус замовлення в адмін-панелі
+if ('{{ order_id }}') {
+    fetch('/admin-panel/payments/{{ order_id }}/status/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            invoiceId: '{{ invoice_id }}',
+            amount: {{ amount }},
+            status: 'failure'
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('❌ Статус замовлення оновлено:', data);
+    })
+    .catch(error => {
+        console.error('❌ Помилка оновлення статусу:', error);
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

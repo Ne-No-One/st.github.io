@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if title %}{{ title }}{% else %}Деактивація замовлення{% endif %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Плаваючі білі шари -->
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+        <div class="shape shape-5"></div>
+    </div>
+
+    <!-- Шапка сайту -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <h1><a href="/" style="text-decoration: none; color: inherit;">Квітковий магазин</a></h1>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Основний контент -->
+    <main class="payment-page">
+        <div class="payment-container">
+            <div class="payment-card">
+                <div class="payment-icon">
+                    <i class="fas fa-ban"></i>
+                </div>
+                <h1 class="payment-title">Деактивація замовлення</h1>
+                <p class="payment-message">
+                    Введіть ID рахунку для деактивації замовлення. Ця операція можлива тільки для рахунків, 
+                    які ще не були оплачені. Після деактивації клієнт не зможе оплатити цей рахунок.
+                </p>
+                
+                <div class="info-box">
+                    <h3><i class="fas fa-info-circle"></i> Важливо!</h3>
+                    <ul>
+                        <li>Деактивація можлива тільки для неоплачених рахунків</li>
+                        <li>Після деактивації рахунок стає недоступним для оплати</li>
+                        <li>Кошти не повертаються (рахунок не був оплачений)</li>
+                        <li>Ця операція незворотна</li>
+                    </ul>
+                </div>
+                
+                <form class="invalidate-form" onsubmit="submitInvalidateForm(event)">
+                    <div class="form-group">
+                        <label for="invoiceId">ID рахунку *</label>
+                        <input type="text" id="invoiceId" name="invoiceId" required 
+                               placeholder="Наприклад: p2_9ZgpZVsl3" 
+                               pattern="[a-zA-Z0-9_]+">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reason">Причина деактивації</label>
+                        <select id="reason" name="reason">
+                            <option value="">Оберіть причину</option>
+                            <option value="customer_request">Запит клієнта</option>
+                            <option value="order_cancelled">Замовлення скасовано</option>
+                            <option value="product_unavailable">Товар недоступний</option>
+                            <option value="duplicate_order">Дублювання замовлення</option>
+                            <option value="expired">Рахунок прострочений</option>
+                            <option value="other">Інша причина</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="comment">Коментар (опціонально)</label>
+                        <textarea id="comment" name="comment" rows="3" 
+                                  placeholder="Додаткові деталі про причину деактивації..."></textarea>
+                    </div>
+                    
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="confirmInvalidate" name="confirmInvalidate" required>
+                            <span class="checkmark"></span>
+                            Я підтверджую, що рахунок не оплачений та хочу його деактивувати
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-ban"></i>
+                        Деактивувати замовлення
+                    </button>
+                </form>
+                
+                <div class="payment-actions">
+                    <a href="/payment/status/" class="btn btn-secondary">
+                        <i class="fas fa-search"></i>
+                        Перевірити статус
+                    </a>
+                    <a href="/payment/cancel/" class="btn btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Скасувати замовлення
+                    </a>
+                    <a href="/" class="btn btn-secondary">
+                        <i class="fas fa-home"></i>
+                        На головну
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        .payment-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+        }
+
+        .payment-container {
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .payment-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .payment-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            color: #ff9800;
+        }
+
+        .payment-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .payment-message {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .info-box {
+            background: #fff3e0;
+            border: 1px solid #ffcc02;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .info-box h3 {
+            color: #ef6c00;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .info-box h3 i {
+            margin-right: 10px;
+        }
+
+        .info-box ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #ef6c00;
+        }
+
+        .info-box li {
+            margin-bottom: 8px;
+        }
+
+        .invalidate-form {
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #ff9800;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+            color: white;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 152, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .payment-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .payment-card {
+                padding: 30px 20px;
+            }
+
+            .payment-title {
+                font-size: 2rem;
+            }
+
+            .payment-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+
+    <script>
+        function submitInvalidateForm(event) {
+            event.preventDefault();
+            
+            const invoiceId = document.getElementById('invoiceId').value;
+            const reason = document.getElementById('reason').value;
+            const comment = document.getElementById('comment').value;
+            const confirmInvalidate = document.getElementById('confirmInvalidate').checked;
+            
+            if (!confirmInvalidate) {
+                alert('Будь ласка, підтвердіть деактивацію замовлення');
+                return;
+            }
+            
+            if (confirm('Ви впевнені, що хочете деактивувати це замовлення? Ця дія незворотна.')) {
+                window.location.href = `/payment/invalidate/${invoiceId}/?reason=${encodeURIComponent(reason)}&comment=${encodeURIComponent(comment)}`;
+            }
+        }
+    </script>
+</body>
+</html>

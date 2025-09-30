@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if title %}{{ title }}{% else %}Оплата успішна{% endif %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Плаваючі білі шари -->
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+        <div class="shape shape-5"></div>
+    </div>
+
+    <!-- Шапка сайту -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <h1><a href="/" style="text-decoration: none; color: inherit;">Квітковий магазин</a></h1>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Основний контент -->
+    <main class="payment-page">
+        <div class="payment-container">
+            <div class="payment-card success">
+                <div class="payment-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h1 class="payment-title">Оплата успішна!</h1>
+                <p class="payment-message">
+                    Ваше замовлення успішно оплачено. Дякуємо за покупку!
+                </p>
+                
+                <div class="payment-details">
+                    <h3><i class="fas fa-credit-card"></i> Деталі платежу</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">ID рахунку:</span>
+                        <span class="detail-value">{{ invoice_id }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Статус:</span>
+                        <span class="detail-value status-success">Успішно</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Сума:</span>
+                        <span class="detail-value">{{ payment_data.amount|floatformat:2 }} грн</span>
+                    </div>
+                    {% if payment_data.createdDate %}
+                    <div class="detail-row">
+                        <span class="detail-label">Дата оплати:</span>
+                        <span class="detail-value">{{ payment_data.createdDate|date:"d.m.Y H:i" }}</span>
+                    </div>
+                    {% endif %}
+                    {% if payment_data.modifiedDate %}
+                    <div class="detail-row">
+                        <span class="detail-label">Останнє оновлення:</span>
+                        <span class="detail-value">{{ payment_data.modifiedDate|date:"d.m.Y H:i" }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="success-info">
+                    <h3><i class="fas fa-info-circle"></i> Що далі?</h3>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> Ви отримаєте email з підтвердженням</li>
+                        <li><i class="fas fa-truck"></i> Замовлення буде оброблено найближчим часом</li>
+                        <li><i class="fas fa-phone"></i> З вами зв'яжеться менеджер для уточнення деталей</li>
+                        <li><i class="fas fa-clock"></i> Доставка здійснюється згідно з обраним терміном</li>
+                    </ul>
+                </div>
+                
+                <div class="payment-actions">
+                    <a href="/payment/status/{{ invoice_id }}/" class="btn btn-primary">
+                        <i class="fas fa-search"></i>
+                        Перевірити статус
+                    </a>
+                    <a href="/payment/merchant/" class="btn btn-secondary">
+                        <i class="fas fa-store"></i>
+                        Дані мерчанта
+                    </a>
+                    <a href="/payment/card/" class="btn btn-secondary">
+                        <i class="fas fa-credit-card"></i>
+                        Новий платіж
+                    </a>
+                    <a href="/" class="btn btn-secondary">
+                        <i class="fas fa-home"></i>
+                        На головну
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        .payment-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        }
+
+        .payment-container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .payment-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .payment-card.success {
+            border-top: 5px solid #4CAF50;
+        }
+
+        .payment-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+
+        .payment-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .payment-message {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .payment-details {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .payment-details h3 {
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .payment-details h3 i {
+            margin-right: 10px;
+            color: #4CAF50;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .detail-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .status-success {
+            color: #4CAF50;
+        }
+
+        .success-info {
+            background: #e8f5e8;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .success-info h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .success-info h3 i {
+            margin-right: 10px;
+        }
+
+        .success-info ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #2e7d32;
+        }
+
+        .success-info li {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .success-info li i {
+            margin-right: 10px;
+            color: #4CAF50;
+        }
+
+        .payment-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .payment-card {
+                padding: 30px 20px;
+            }
+
+            .payment-title {
+                font-size: 2rem;
+            }
+
+            .payment-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .detail-value {
+                text-align: left;
+            }
+        }
+    </style>
+</body>
+</html>

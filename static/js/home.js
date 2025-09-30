@@ -446,6 +446,9 @@ function syncButtonsWithCart() {
     
     // Синхронізуємо кнопку "Додати всі"
     updateAddAllButton();
+    
+    // Центруємо кнопки кількості після синхронізації
+    centerQuantityButtons();
 }
 
 // Обробка клавіші Escape для закриття кошика (тільки на мобільних)
@@ -470,6 +473,32 @@ document.addEventListener('click', (e) => {
     }
 });
 
+// Функція для центрування кнопок кількості
+function centerQuantityButtons() {
+    const containers = document.querySelectorAll('.quantity-buttons-container');
+    
+    containers.forEach(container => {
+        const visibleButtons = container.querySelectorAll('.quantity-btn:not(.hidden)');
+        const buttonCount = visibleButtons.length;
+        
+        // Видаляємо попередні класи
+        container.classList.remove('single-btn', 'two-btns', 'three-btns', 'four-btns', 'five-btns');
+        
+        // Додаємо відповідний клас залежно від кількості
+        if (buttonCount === 1) {
+            container.classList.add('single-btn');
+        } else if (buttonCount === 2) {
+            container.classList.add('two-btns');
+        } else if (buttonCount === 3) {
+            container.classList.add('three-btns');
+        } else if (buttonCount === 4) {
+            container.classList.add('four-btns');
+        } else if (buttonCount >= 5) {
+            container.classList.add('five-btns');
+        }
+    });
+}
+
 // Ініціалізація головної сторінки
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🏠 Ініціалізація головної сторінки...');
@@ -483,6 +512,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Оновлюємо лічильник та прогрес бар
     updateCartCount();
     updateProgressBar();
+    
+    // Центруємо кнопки кількості
+    centerQuantityButtons();
     
     console.log('✅ Головна сторінка ініціалізована');
 });
@@ -591,21 +623,11 @@ function updateCartOverlay() {
                         ${colorInfo}
                         ${quantityInfo}
                         <div class="item-total">
-                            <span class="quantity">Кількість: ${item.quantity || 1}</span>
                             <span class="price">${Math.round(item.price * (item.quantity || 1))} грн</span>
                         </div>
                     </div>
                 </div>
                 <div class="cart-item-actions-overlay">
-                    <div class="quantity-controls-overlay">
-                        <button class="quantity-btn-overlay" onclick="changeQuantityOverlay('${item.id}', -1)">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                        <span class="quantity-display-overlay">${item.quantity || 1}</span>
-                        <button class="quantity-btn-overlay" onclick="changeQuantityOverlay('${item.id}', 1)">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    </div>
                     <button class="remove-item-btn-overlay" onclick="removeFromCartOverlay('${item.id}')">
                         <i class="fas fa-trash"></i>
                     </button>
@@ -617,18 +639,6 @@ function updateCartOverlay() {
     }
 }
 
-function changeQuantityOverlay(itemId, change) {
-    const item = cart.items.find(item => item.id === itemId);
-    if (item) {
-        item.quantity = Math.max(1, (item.quantity || 1) + change);
-        cart.total = cart.items.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
-        
-        updateCartCount();
-        updateProgressBar();
-        updateCartOverlay();
-        saveCartToStorage();
-    }
-}
 
 function removeFromCartOverlay(itemId) {
     cart.items = cart.items.filter(item => item.id !== itemId);

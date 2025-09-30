@@ -862,11 +862,16 @@ def orders_list(request):
         
         # Фільтр по статусу
         status_filter = request.GET.get('status', 'all')
+        payment_filter = request.GET.get('payment', 'all')
         
         if status_filter == 'all':
             orders = json_manager.get_orders()
         else:
             orders = json_manager.get_orders_by_status(status_filter)
+        
+        # Фільтр по способу оплати
+        if payment_filter != 'all':
+            orders = [o for o in orders if o.get('payment') == payment_filter]
         
         # Статистика
         all_orders = json_manager.get_orders()
@@ -875,12 +880,17 @@ def orders_list(request):
             'new': len([o for o in all_orders if o.get('status') == 'нове']),
             'processing': len([o for o in all_orders if o.get('status') == 'в обробці']),
             'completed': len([o for o in all_orders if o.get('status') == 'виконано']),
-            'cancelled': len([o for o in all_orders if o.get('status') == 'скасовано'])
+            'cancelled': len([o for o in all_orders if o.get('status') == 'скасовано']),
+            # Статистика по способах оплати
+            'payment_card': len([o for o in all_orders if o.get('payment') == 'card']),
+            'payment_online': len([o for o in all_orders if o.get('payment') == 'online']),
+            'payment_other': len([o for o in all_orders if o.get('payment') not in ['card', 'online']])
         }
         
         context = {
             'orders': orders,
             'current_filter': status_filter,
+            'current_payment_filter': payment_filter,
             'stats': stats
         }
         return render(request, 'admin_panel/orders_list.html', context)

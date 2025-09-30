@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if title %}{{ title }}{% else %}Отримання квитанції{% endif %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Плаваючі білі шари -->
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+        <div class="shape shape-5"></div>
+    </div>
+
+    <!-- Шапка сайту -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <h1><a href="/" style="text-decoration: none; color: inherit;">Квітковий магазин</a></h1>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Основний контент -->
+    <main class="payment-page">
+        <div class="payment-container">
+            <div class="payment-card">
+                <div class="payment-icon">
+                    <i class="fas fa-file-invoice"></i>
+                </div>
+                <h1 class="payment-title">Отримання квитанції</h1>
+                <p class="payment-message">
+                    Введіть ID рахунку для отримання квитанції про оплату. 
+                    Квитанція буде надіслана на вашу електронну пошту.
+                </p>
+                
+                <div class="receipt-info">
+                    <h3><i class="fas fa-info-circle"></i> Про квитанції</h3>
+                    <ul>
+                        <li><i class="fas fa-file-pdf"></i> Квитанція у форматі PDF</li>
+                        <li><i class="fas fa-envelope"></i> Надсилається на email</li>
+                        <li><i class="fas fa-download"></i> Можна завантажити безпосередньо</li>
+                        <li><i class="fas fa-shield-alt"></i> Офіційний документ про оплату</li>
+                    </ul>
+                </div>
+                
+                <form class="receipt-form" method="post" action="{% if invoice_id %}{% url 'receipt_detail' invoice_id=invoice_id %}{% else %}{% url 'receipt_page' %}{% endif %}">
+                    {% csrf_token %}
+                    
+                    {% if not invoice_id %}
+                    <div class="form-group">
+                        <label for="invoiceId">ID рахунку *</label>
+                        <input type="text" id="invoiceId" name="invoiceId" required 
+                               placeholder="Наприклад, p2_9ZgpZVsl3"
+                               value="{{ invoice_id|default:'' }}">
+                        <small class="form-help">Введіть ідентифікатор рахунку</small>
+                    </div>
+                    {% else %}
+                    <div class="form-group">
+                        <label>ID рахунку</label>
+                        <div class="invoice-display">
+                            <i class="fas fa-receipt"></i>
+                            <span>{{ invoice_id }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="form-group">
+                        <label for="email">Email для надсилання квитанції</label>
+                        <input type="email" id="email" name="email" 
+                               placeholder="your@email.com"
+                               value="{{ request.GET.email|default:'' }}">
+                        <small class="form-help">Опціонально. Якщо не вказано, квитанція буде доступна тільки для завантаження</small>
+                    </div>
+                    
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                            <span class="checkmark"></span>
+                            Я погоджуюся з обробкою персональних даних для отримання квитанції
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-file-download"></i>
+                        Отримати квитанцію
+                    </button>
+                </form>
+                
+                <div class="receipt-actions">
+                    <a href="/payment/status/" class="btn btn-secondary">
+                        <i class="fas fa-search"></i>
+                        Перевірити статус
+                    </a>
+                    <a href="/payment/merchant/" class="btn btn-secondary">
+                        <i class="fas fa-store"></i>
+                        Дані мерчанта
+                    </a>
+                    <a href="/" class="btn btn-secondary">
+                        <i class="fas fa-home"></i>
+                        На головну
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        .payment-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #607D8B 0%, #455A64 100%);
+        }
+
+        .payment-container {
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .payment-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .payment-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            color: #607D8B;
+        }
+
+        .payment-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .payment-message {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .receipt-info {
+            background: #e3f2fd;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .receipt-info h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .receipt-info h3 i {
+            margin-right: 10px;
+        }
+
+        .receipt-info ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #1976d2;
+        }
+
+        .receipt-info li {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .receipt-info li i {
+            margin-right: 10px;
+            color: #607D8B;
+        }
+
+        .receipt-form {
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #607D8B;
+        }
+
+        .form-help {
+            display: block;
+            margin-top: 5px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .invoice-display {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .invoice-display i {
+            margin-right: 10px;
+            color: #607D8B;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #607D8B 0%, #455A64 100%);
+            color: white;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(96, 125, 139, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .receipt-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .payment-card {
+                padding: 30px 20px;
+            }
+
+            .payment-title {
+                font-size: 2rem;
+            }
+
+            .receipt-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+
+    <script>
+        // Валідація форми
+        document.querySelector('.receipt-form').addEventListener('submit', function(e) {
+            const agreeTerms = document.getElementById('agreeTerms').checked;
+            
+            if (!agreeTerms) {
+                e.preventDefault();
+                alert('Будь ласка, погодьтеся з обробкою персональних даних');
+                return;
+            }
+        });
+
+        // Автоматичне заповнення ID рахунку з URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const invoiceId = urlParams.get('invoiceId');
+        if (invoiceId && !document.getElementById('invoiceId').value) {
+            document.getElementById('invoiceId').value = invoiceId;
+        }
+    </script>
+</body>
+</html>

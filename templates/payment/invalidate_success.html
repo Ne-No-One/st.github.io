@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if title %}{{ title }}{% else %}Замовлення деактивовано{% endif %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Плаваючі білі шари -->
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+        <div class="shape shape-5"></div>
+    </div>
+
+    <!-- Шапка сайту -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <h1><a href="/" style="text-decoration: none; color: inherit;">Квітковий магазин</a></h1>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Основний контент -->
+    <main class="payment-page">
+        <div class="payment-container">
+            <div class="payment-card success">
+                <div class="payment-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h1 class="payment-title">Замовлення деактивовано</h1>
+                <p class="payment-message">
+                    Замовлення <strong>{{ invoice_id }}</strong> успішно деактивовано. 
+                    Рахунок більше недоступний для оплати.
+                </p>
+                
+                <div class="invalidate-details">
+                    <h3><i class="fas fa-info-circle"></i> Деталі деактивації</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">ID рахунку:</span>
+                        <span class="detail-value">{{ invoice_id }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Статус:</span>
+                        <span class="detail-value status-invalidated">Деактивовано</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Тип операції:</span>
+                        <span class="detail-value">Деактивація (без повернення коштів)</span>
+                    </div>
+                </div>
+                
+                <div class="next-steps">
+                    <h3><i class="fas fa-list"></i> Наступні кроки</h3>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> Клієнт отримає email з повідомленням про деактивацію</li>
+                        <li><i class="fas fa-ban"></i> Рахунок більше недоступний для оплати</li>
+                        <li><i class="fas fa-phone"></i> Менеджер може зв'язатися з клієнтом для уточнення</li>
+                        <li><i class="fas fa-trash"></i> Замовлення видалено з активних</li>
+                    </ul>
+                </div>
+                
+                <div class="payment-actions">
+                    <a href="/payment/status/{{ invoice_id }}/" class="btn btn-primary">
+                        <i class="fas fa-search"></i>
+                        Перевірити статус
+                    </a>
+                    <a href="/payment/invalidate/" class="btn btn-secondary">
+                        <i class="fas fa-ban"></i>
+                        Деактивувати інше замовлення
+                    </a>
+                    <a href="/payment/cancel/" class="btn btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Скасувати замовлення
+                    </a>
+                    <a href="/" class="btn btn-secondary">
+                        <i class="fas fa-home"></i>
+                        На головну
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        .payment-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        }
+
+        .payment-container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .payment-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .payment-card.success {
+            border-top: 5px solid #4CAF50;
+        }
+
+        .payment-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+
+        .payment-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .payment-message {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .invalidate-details {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .invalidate-details h3 {
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .invalidate-details h3 i {
+            margin-right: 10px;
+            color: #4CAF50;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .detail-value {
+            color: #333;
+        }
+
+        .status-invalidated {
+            color: #ff9800;
+            font-weight: 600;
+        }
+
+        .next-steps {
+            background: #e8f5e8;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .next-steps h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .next-steps h3 i {
+            margin-right: 10px;
+        }
+
+        .next-steps ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #2e7d32;
+        }
+
+        .next-steps li {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .next-steps li i {
+            margin-right: 10px;
+            color: #4CAF50;
+        }
+
+        .payment-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .payment-card {
+                padding: 30px 20px;
+            }
+
+            .payment-title {
+                font-size: 2rem;
+            }
+
+            .payment-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .detail-value {
+                text-align: left;
+            }
+        }
+    </style>
+</body>
+</html>

@@ -43,6 +43,37 @@
     </div>
 </div>
 
+<!-- Статистика по способах оплати -->
+<div class="row mb-4">
+    <div class="col-12">
+        <h5 class="text-primary mb-3">
+            <i class="fas fa-credit-card me-2"></i>
+            Статистика по способах оплати
+        </h5>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+        <div class="stat-card border-primary text-center">
+            <i class="fas fa-credit-card text-primary"></i>
+            <h6 class="text-primary">Банківська карта</h6>
+            <h4>{{ stats.payment_card }}</h4>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+        <div class="stat-card border-success text-center">
+            <i class="fas fa-mobile-alt text-success"></i>
+            <h6 class="text-success">Онлайн оплата</h6>
+            <h4>{{ stats.payment_online }}</h4>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+        <div class="stat-card border-secondary text-center">
+            <i class="fas fa-question text-secondary"></i>
+            <h6 class="text-secondary">Інші способи</h6>
+            <h4>{{ stats.payment_other }}</h4>
+        </div>
+    </div>
+</div>
+
 <!-- Фільтри -->
 <div class="card mb-4">
     <div class="card-header">
@@ -52,22 +83,41 @@
         </h5>
     </div>
     <div class="card-body">
-        <div class="btn-group" role="group">
-            <a href="?status=all" class="btn {% if current_filter == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %}">
-                Всі
-            </a>
-            <a href="?status=нове" class="btn {% if current_filter == 'нове' %}btn-warning{% else %}btn-outline-warning{% endif %}">
-                Нові
-            </a>
-            <a href="?status=в обробці" class="btn {% if current_filter == 'в обробці' %}btn-info{% else %}btn-outline-info{% endif %}">
-                В обробці
-            </a>
-            <a href="?status=виконано" class="btn {% if current_filter == 'виконано' %}btn-success{% else %}btn-outline-success{% endif %}">
-                Виконано
-            </a>
-            <a href="?status=скасовано" class="btn {% if current_filter == 'скасовано' %}btn-danger{% else %}btn-outline-danger{% endif %}">
-                Скасовано
-            </a>
+        <div class="row">
+            <div class="col-md-6">
+                <h6 class="text-muted mb-2">Фільтр по статусу:</h6>
+                <div class="btn-group" role="group">
+                    <a href="?status=all" class="btn {% if current_filter == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                        Всі
+                    </a>
+                    <a href="?status=нове" class="btn {% if current_filter == 'нове' %}btn-warning{% else %}btn-outline-warning{% endif %}">
+                        Нові
+                    </a>
+                    <a href="?status=в обробці" class="btn {% if current_filter == 'в обробці' %}btn-info{% else %}btn-outline-info{% endif %}">
+                        В обробці
+                    </a>
+                    <a href="?status=виконано" class="btn {% if current_filter == 'виконано' %}btn-success{% else %}btn-outline-success{% endif %}">
+                        Виконано
+                    </a>
+                    <a href="?status=скасовано" class="btn {% if current_filter == 'скасовано' %}btn-danger{% else %}btn-outline-danger{% endif %}">
+                        Скасовано
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-muted mb-2">Фільтр по способу оплати:</h6>
+                <div class="btn-group" role="group">
+                    <a href="?payment=all" class="btn {% if request.GET.payment != 'card' and request.GET.payment != 'online' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                        Всі
+                    </a>
+                    <a href="?payment=card" class="btn {% if request.GET.payment == 'card' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                        <i class="fas fa-credit-card me-1"></i>Карта
+                    </a>
+                    <a href="?payment=online" class="btn {% if request.GET.payment == 'online' %}btn-success{% else %}btn-outline-success{% endif %}">
+                        <i class="fas fa-mobile-alt me-1"></i>Онлайн
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -90,6 +140,7 @@
                             <th>Клієнт</th>
                             <th>Дата</th>
                             <th>Сума</th>
+                            <th>Спосіб оплати</th>
                             <th>Статус</th>
                             <th>Дії</th>
                         </tr>
@@ -114,6 +165,24 @@
                             </td>
                             <td>
                                 <strong>{{ order.total_amount }} {{ order.currency }}</strong>
+                            </td>
+                            <td>
+                                {% if order.payment == 'card' %}
+                                    <span class="badge bg-primary">
+                                        <i class="fas fa-credit-card me-1"></i>
+                                        Банківська карта
+                                    </span>
+                                {% elif order.payment == 'online' %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-mobile-alt me-1"></i>
+                                        Онлайн оплата
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary">
+                                        <i class="fas fa-question me-1"></i>
+                                        {{ order.payment|default:"Не вказано" }}
+                                    </span>
+                                {% endif %}
                             </td>
                             <td>
                                 {% if order.status == 'нове' %}

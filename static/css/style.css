@@ -97,6 +97,239 @@ body {
     z-index: 1;
 }
 
+/* Monobank Brand Styles */
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;800&display=swap');
+
+/* Monobank Button Base Styles */
+.mono-checkout-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.mono-checkout-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.mono-checkout-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Monobank Button Text */
+.mono-checkout-text {
+    font-weight: 600;
+    margin-right: 8px;
+}
+
+/* Monobank Logo */
+.mono-checkout-logo {
+    font-weight: 800;
+    font-size: 1.1em;
+}
+
+/* Monobank Button Sizes */
+.mono-checkout-btn.small {
+    height: 32px;
+    padding: 0 12px;
+    font-size: 12px;
+    min-width: 120px;
+}
+
+.mono-checkout-btn.small .mono-checkout-logo {
+    font-size: 12px;
+}
+
+.mono-checkout-btn.medium {
+    height: 48px;
+    padding: 0 16px;
+    font-size: 14px;
+    min-width: 160px;
+}
+
+.mono-checkout-btn.medium .mono-checkout-logo {
+    font-size: 14px;
+}
+
+.mono-checkout-btn.large {
+    height: 64px;
+    padding: 0 20px;
+    font-size: 18px;
+    min-width: 200px;
+}
+
+.mono-checkout-btn.large .mono-checkout-logo {
+    font-size: 18px;
+}
+
+/* Monobank Button Variants */
+.mono-checkout-btn.standard {
+    background: #000000;
+    color: #ffffff;
+}
+
+.mono-checkout-btn.standard:hover {
+    background: #333333;
+}
+
+.mono-checkout-btn.white {
+    background: #ffffff;
+    color: #000000;
+    border: 1px solid #e0e0e0;
+}
+
+.mono-checkout-btn.white:hover {
+    background: #f5f5f5;
+    border-color: #cccccc;
+}
+
+.mono-checkout-btn.gray {
+    background: #f5f5f5;
+    color: #000000;
+    border: 1px solid #e0e0e0;
+}
+
+.mono-checkout-btn.gray:hover {
+    background: #eeeeee;
+    border-color: #cccccc;
+}
+
+.mono-checkout-btn.white-outline {
+    background: #ffffff;
+    color: #000000;
+    border: 1px solid #000000;
+}
+
+.mono-checkout-btn.white-outline:hover {
+    background: #f5f5f5;
+}
+
+/* Monobank Button in Cart */
+.cart-actions .mono-checkout-btn {
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Monobank Button in Product Card */
+.product-card .mono-checkout-btn {
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Monobank Button Responsive */
+@media (max-width: 768px) {
+    .mono-checkout-btn {
+        width: 100%;
+        margin: 10px 0;
+    }
+    
+    .mono-checkout-btn.small {
+        height: 40px;
+        font-size: 14px;
+    }
+    
+    .mono-checkout-btn.medium {
+        height: 48px;
+        font-size: 16px;
+    }
+    
+    .mono-checkout-btn.large {
+        height: 56px;
+        font-size: 18px;
+    }
+}
+
+/* Monobank Button Loading State */
+.mono-checkout-btn.loading {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.mono-checkout-btn.loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: mono-spin 1s linear infinite;
+    margin-left: 8px;
+}
+
+@keyframes mono-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Monobank Button Disabled State */
+.mono-checkout-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Monobank Button Focus State */
+.mono-checkout-btn:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}
+
+/* Monobank Button in Payment Forms */
+.payment-form .mono-checkout-btn {
+    margin: 15px 0;
+}
+
+/* Monobank Button Group */
+.mono-checkout-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.mono-checkout-group .mono-checkout-btn {
+    flex: 1;
+    min-width: 150px;
+}
+
+/* Monobank Button with Icon */
+.mono-checkout-btn.with-icon {
+    padding-left: 12px;
+}
+
+.mono-checkout-btn .mono-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    background: currentColor;
+    mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>') no-repeat center;
+    mask-size: contain;
+}
+
+/* Monobank Button Animation */
+.mono-checkout-btn.animate {
+    animation: mono-pulse 2s infinite;
+}
+
+@keyframes mono-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(0, 123, 255, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
+}
+
 .shape {
     position: absolute;
     background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
@@ -568,7 +801,7 @@ body {
     white-space: nowrap !important;
 }
 
-/* Уніфікуємо контейнер кнопок з центруванням на всіх пристроях */
+/* Уніфікуємо контейнер кнопок з адаптивним центруванням */
 .quantity-buttons-container {
     display: flex !important;
     flex-direction: row !important;
@@ -581,6 +814,59 @@ body {
     padding: 0 !important;
     margin: 0 !important;
     box-sizing: border-box !important;
+    /* Адаптивне центрування залежно від кількості кнопок */
+    min-height: 50px !important;
+}
+
+/* Адаптивні стилі для різної кількості кнопок */
+.quantity-buttons-container:has(.quantity-btn:nth-child(1):last-child) {
+    justify-content: center !important;
+}
+
+.quantity-buttons-container:has(.quantity-btn:nth-child(2):last-child) {
+    justify-content: center !important;
+    gap: 12px !important;
+}
+
+.quantity-buttons-container:has(.quantity-btn:nth-child(3):last-child) {
+    justify-content: center !important;
+    gap: 10px !important;
+}
+
+.quantity-buttons-container:has(.quantity-btn:nth-child(4):last-child) {
+    justify-content: center !important;
+    gap: 8px !important;
+}
+
+.quantity-buttons-container:has(.quantity-btn:nth-child(5):last-child) {
+    justify-content: center !important;
+    gap: 6px !important;
+}
+
+/* Додаткові стилі для динамічного центрування */
+.quantity-buttons-container.single-btn {
+    justify-content: center !important;
+    gap: 0 !important;
+}
+
+.quantity-buttons-container.two-btns {
+    justify-content: center !important;
+    gap: 16px !important;
+}
+
+.quantity-buttons-container.three-btns {
+    justify-content: center !important;
+    gap: 12px !important;
+}
+
+.quantity-buttons-container.four-btns {
+    justify-content: center !important;
+    gap: 10px !important;
+}
+
+.quantity-buttons-container.five-btns {
+    justify-content: center !important;
+    gap: 8px !important;
 }
 
 /* Специфічний стиль для #home */
@@ -4027,17 +4313,19 @@ Z-INDEX СТРУКТУРА:
 }
 
 .cart-item-image-overlay {
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 100px;
     border-radius: 8px;
     overflow: hidden;
     flex-shrink: 0;
+    aspect-ratio: 4/5;
 }
 
 .cart-item-image-overlay img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
 }
 
 .cart-item-info-overlay {
@@ -4066,36 +4354,6 @@ Z-INDEX СТРУКТУРА:
     gap: 10px;
 }
 
-.quantity-controls-overlay {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.quantity-btn-overlay {
-    width: 30px;
-    height: 30px;
-    border: none;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.3s ease;
-}
-
-.quantity-btn-overlay:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-.quantity-display-overlay {
-    color: #ffffff;
-    font-weight: 600;
-    min-width: 30px;
-    text-align: center;
-}
 
 .remove-item-btn-overlay {
     background: rgba(255, 0, 0, 0.2);
@@ -4799,24 +5057,46 @@ Z-INDEX СТРУКТУРА:
     background: linear-gradient(135deg, #4CAF50, #45a049);
     border: 2px solid #4CAF50;
     color: #ffffff;
-    border-radius: 25px;
-    padding: 16px 24px;
-    font-size: 1rem;
-    font-weight: 700;
+    border-radius: 16px;
+    padding: 18px 24px;
+    font-size: 1.2rem;
+    font-weight: 800;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    gap: 12px;
+    box-shadow: 
+        0 8px 25px rgba(76, 175, 80, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.5px;
+}
+
+.checkout-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s ease;
 }
 
 .checkout-btn:hover {
     background: linear-gradient(135deg, #45a049, #4CAF50);
     border-color: #45a049;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5);
+    transform: translateY(-3px);
+    box-shadow: 
+        0 12px 35px rgba(76, 175, 80, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.checkout-btn:hover::before {
+    left: 100%;
 }
 
 .checkout-btn:active {
@@ -4865,18 +5145,20 @@ Z-INDEX СТРУКТУРА:
 }
 
 .cart-item-image {
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 100px;
     border-radius: 8px;
     overflow: hidden;
     margin-right: 12px;
     flex-shrink: 0;
+    aspect-ratio: 4/5;
 }
 
 .cart-item-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
 }
 
 .cart-item-info {
@@ -5239,14 +5521,11 @@ Z-INDEX СТРУКТУРА:
 
 /* Секція форми замовлення */
 .order-form-section {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 20px;
-    padding: 25px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
+    padding: 35px;
+    position: relative;
 }
+
+/* Hover ефекти для order-form-section прибрані */
 
 .order-form-section .form-section {
     margin-bottom: 30px;
@@ -5395,9 +5674,7 @@ Z-INDEX СТРУКТУРА:
     }
     
     .cart-summary-section {
-        position: sticky;
-        top: 160px; /* Висота шапки + прогрес бар на мобільних */
-        max-height: calc(100vh - 180px);
+        width: 100%;
     }
     
     .order-form-section .form-row {
@@ -5426,9 +5703,9 @@ Z-INDEX СТРУКТУРА:
 .cart-page {
     min-height: 100vh;
     padding-top: 80px;
-    background: #000000;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
     color: #ffffff;
-    font-family: Arial, sans-serif;
+    font-family: 'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     position: relative;
     overflow-x: hidden;
 }
@@ -5498,34 +5775,57 @@ Z-INDEX СТРУКТУРА:
 }
 
 .cart-page-container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 40px 20px;
+    position: relative;
+    z-index: 2;
 }
 
-/* Заголовок сторінки кошика - мінімальний */
+/* Заголовок сторінки кошика - сучасний */
 .cart-page-header {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 15px;
-    padding: 8px 0;
+    margin-bottom: 40px;
+    padding: 30px 0;
+    position: relative;
+}
+
+.cart-page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #4CAF50, transparent);
+    border-radius: 2px;
 }
 
 .cart-page-title {
     color: #ffffff;
-    font-size: 1.2rem;
-    font-weight: 500;
+    font-size: 2.5rem;
+    font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 8px;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    gap: 15px;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    letter-spacing: -0.5px;
+    position: relative;
 }
 
 .cart-page-title i {
     color: #4CAF50;
-    font-size: 1rem;
-    text-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+    font-size: 2.2rem;
+    filter: drop-shadow(0 0 10px rgba(76, 175, 80, 0.3));
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
 }
 
 .back-to-shop-btn {
@@ -5555,9 +5855,18 @@ Z-INDEX СТРУКТУРА:
 .cart-page-body {
     display: grid;
     grid-template-columns: 2fr 1fr;
-    gap: 40px;
+    gap: 50px;
     align-items: start;
+    position: relative;
 }
+
+/* Опускаємо елементи на ПК */
+@media (min-width: 769px) {
+    .cart-page-body {
+        margin-top: 100px;
+    }
+}
+
 
 /* Основна секція з товарами та формою */
 .cart-main-section {
@@ -5568,13 +5877,8 @@ Z-INDEX СТРУКТУРА:
 
 /* Секція товарів */
 .cart-items-section {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 20px;
-    padding: 25px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
+    padding: 35px;
+    position: relative;
 }
 
 /* Hover ефекти для cart-items-section прибрані */
@@ -5592,41 +5896,92 @@ Z-INDEX СТРУКТУРА:
 /* Стилі для товарів в кошику */
 .cart-item {
     display: grid;
-    grid-template-columns: 80px 1fr auto;
-    gap: 20px;
+    grid-template-columns: 100px 1fr auto;
+    gap: 25px;
     align-items: center;
-    background: rgba(255, 255, 255, 0.08);
-    padding: 20px;
-    border-radius: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+    padding: 25px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.cart-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(76, 175, 80, 0.3), transparent);
 }
 
 .cart-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    transform: translateY(-3px);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
     border-color: rgba(76, 175, 80, 0.3);
+    box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
+
 .cart-item-image {
-    width: 80px;
-    height: 80px;
-    border-radius: 10px;
+    width: 100px;
+    height: 120px;
+    border-radius: 16px;
     overflow: hidden;
-    background: #333;
+    background: linear-gradient(135deg, #333 0%, #444 100%);
+    aspect-ratio: 4/5;
+    position: relative;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cart-item-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
 }
 
 .cart-item-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cart-item:hover .cart-item-image {
+    transform: scale(1.02);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+}
+
+.cart-item:hover .cart-item-image img {
+    transform: scale(1.08);
+}
+
+.cart-item:hover .cart-item-image::before {
+    opacity: 1;
 }
 
 .cart-item-info h4 {
     color: #ffffff;
-    font-size: 1.2rem;
-    margin-bottom: 8px;
-    font-weight: 600;
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .cart-item-details {
@@ -5708,23 +6063,43 @@ Z-INDEX СТРУКТУРА:
 }
 
 .remove-item-btn {
-    width: 35px;
-    height: 35px;
+    width: 45px;
+    height: 45px;
     border: none;
     border-radius: 50%;
-    background: rgba(244, 67, 54, 0.2);
-    color: #f44336;
+    background: linear-gradient(135deg, rgba(244, 67, 54, 0.2) 0%, rgba(244, 67, 54, 0.1) 100%);
+    color: #ff6b6b;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 1rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(244, 67, 54, 0.2);
+}
+
+.remove-item-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
 }
 
 .remove-item-btn:hover {
-    background: rgba(244, 67, 54, 0.4);
-    transform: scale(1.1);
+    background: linear-gradient(135deg, rgba(244, 67, 54, 0.3) 0%, rgba(244, 67, 54, 0.2) 100%);
+    transform: scale(1.1) translateY(-2px);
+    box-shadow: 0 8px 25px rgba(244, 67, 54, 0.4);
+}
+
+.remove-item-btn:hover::before {
+    transform: translateX(100%);
 }
 
 /* Порожній кошик */
@@ -5781,11 +6156,18 @@ Z-INDEX СТРУКТУРА:
 
 /* Секція підсумку - прилипає до шапки */
 .cart-summary-section {
-    position: sticky;
-    top: 100px; /* Висота шапки */
-    max-height: calc(100vh - 120px);
-    overflow-y: auto;
-    transition: all 0.3s ease;
+    width: 100%;
+}
+
+/* Sticky тільки на великих екранах як в робочому прикладі */
+@media (min-width: 1024px) {
+    .cart-summary-section {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 20px;
+        width: 320px;
+        flex-shrink: 0;
+    }
 }
 
 /* Секція кнопок дій з кошиком */
@@ -5852,21 +6234,57 @@ Z-INDEX СТРУКТУРА:
 }
 
 .cart-summary-card {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 20px;
-    padding: 25px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border-radius: 24px;
+    padding: 35px;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.cart-summary-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(76, 175, 80, 0.5), transparent);
+}
+
+.cart-summary-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .summary-title {
     color: #ffffff;
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: 1.8rem;
+    font-weight: 800;
     margin-bottom: 25px;
     text-align: center;
-    text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    letter-spacing: -0.5px;
+    position: relative;
+}
+
+.summary-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #4CAF50, transparent);
+    border-radius: 1px;
 }
 
 /* Деталі підсумку */
@@ -6132,11 +6550,6 @@ Z-INDEX СТРУКТУРА:
 
 /* Адаптивність */
 @media (max-width: 768px) {
-    .cart-page-body {
-        grid-template-columns: 1fr;
-        gap: 30px;
-    }
-    
     .cart-page-header {
         margin-bottom: 10px;
         padding: 5px 0;
@@ -6158,8 +6571,9 @@ Z-INDEX СТРУКТУРА:
     }
     
     .cart-item-image {
-        width: 60px;
-        height: 60px;
+        width: 70px;
+        height: 87.5px;
+        aspect-ratio: 4/5;
     }
     
     .cart-item-actions {
@@ -6191,4 +6605,982 @@ Z-INDEX СТРУКТУРА:
 
 .cart-item {
     animation: slideInUp 0.3s ease;
+}
+
+/* Стилі для чекбокса згоди з умовами */
+.checkbox-group {
+    margin-top: 20px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #666;
+    position: relative;
+    padding-left: 35px;
+}
+
+.checkbox-label input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background-color: #fff;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.checkbox-label:hover input ~ .checkmark {
+    border-color: #667eea;
+}
+
+.checkbox-label input:checked ~ .checkmark {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 6px;
+    top: 2px;
+    width: 6px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.checkbox-label input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.checkbox-label a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.checkbox-label a:hover {
+    text-decoration: underline;
+}
+
+/* Monobank Payment Section on Cart Page */
+.monobank-payment-section {
+    margin-top: 20px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+}
+
+.monobank-payment-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.monobank-payment-header h4 {
+    color: #2c3e50;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+}
+
+.monobank-payment-header p {
+    color: #6c757d;
+    font-size: 14px;
+    margin: 0;
+}
+
+.monobank-payment-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
+.monobank-additional-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+/* Cart-specific Monobank button styles */
+.cart-mono-btn {
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+/* Responsive adjustments for Monobank buttons on cart page */
+@media (max-width: 768px) {
+    .monobank-payment-section {
+        padding: 15px;
+    }
+    
+    .monobank-payment-header h4 {
+        font-size: 16px;
+    }
+    
+    .monobank-payment-header p {
+        font-size: 13px;
+    }
+    
+    .monobank-additional-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .monobank-additional-buttons .mono-checkout-btn {
+        width: 100%;
+        max-width: 250px;
+    }
+    
+    .cart-mono-btn {
+        max-width: 100%;
+    }
+}
+
+/* Card Payment Section Styles */
+.card-payment-section {
+    margin-top: 20px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.card-payment-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.card-payment-header h4 {
+    color: #2c3e50;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+}
+
+.card-payment-header p {
+    color: #6c757d;
+    font-size: 14px;
+    margin: 0;
+}
+
+.card-payment-form {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.card-payment-form .form-group label {
+    display: block;
+    color: #2c3e50 !important;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.card-payment-form .form-group input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #2c3e50;
+    background-color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+.card-payment-form .form-group input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.card-payment-form .form-group input::placeholder {
+    color: #6c757d;
+}
+
+.card-details-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.card-details-row .form-group {
+    flex: 1;
+}
+
+.card-pay-btn {
+    width: 100%;
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+.card-pay-btn:hover {
+    background: linear-gradient(135deg, #45a049 0%, #4CAF50 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+}
+
+.card-pay-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
+}
+
+.card-pay-btn.loading {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.card-pay-btn.loading i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments for card payment section */
+@media (max-width: 768px) {
+    .card-payment-section {
+        padding: 15px;
+    }
+    
+    .card-payment-header h4 {
+        font-size: 16px;
+    }
+    
+    .card-payment-header p {
+        font-size: 13px;
+    }
+    
+    .card-details-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .card-pay-btn {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+}
+
+/* Стилі для подарункової секції */
+#gift-info-section {
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+#gift-info-section.show {
+    display: block !important;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Стилі для секції особливих вимог до квітів */
+.form-section h3 {
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-section h3 i {
+    color: #4CAF50;
+    font-size: 1.1rem;
+}
+
+/* Стилі для селектів */
+select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+select:focus {
+    outline: none;
+    border-color: #4CAF50;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+select option {
+    background: #1a1a1a;
+    color: #ffffff;
+    padding: 10px;
+}
+
+/* Стилі для textarea */
+textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 80px;
+    transition: all 0.3s ease;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #4CAF50;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+textarea::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Стилі для секції підтвердження замовлення */
+.order-confirmation-section {
+    text-align: center;
+    padding: 25px 20px;
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(76, 175, 80, 0.05) 100%);
+    border-radius: 16px;
+    border: 2px solid rgba(76, 175, 80, 0.2);
+    margin: 20px 0;
+}
+
+.confirm-order-btn {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 16px;
+    padding: 16px 24px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 
+        0 8px 25px rgba(76, 175, 80, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.3px;
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+}
+
+.confirm-order-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s ease;
+}
+
+.confirm-order-btn:hover {
+    background: linear-gradient(135deg, #45a049 0%, #4CAF50 100%);
+    transform: translateY(-3px);
+    box-shadow: 
+        0 12px 35px rgba(76, 175, 80, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.confirm-order-btn:hover::before {
+    left: 100%;
+}
+
+.confirm-order-btn:active {
+    transform: translateY(-1px);
+}
+
+.confirmation-note {
+    margin-top: 15px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+/* Стилі для секції оплати */
+.payment-section {
+    margin-top: 30px;
+}
+
+.payment-card {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border-radius: 24px;
+    padding: 35px;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.payment-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(76, 175, 80, 0.5), transparent);
+}
+
+.payment-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.payment-title {
+    color: #ffffff;
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 25px;
+    text-align: center;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    letter-spacing: -0.5px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.payment-title i {
+    color: #4CAF50;
+    font-size: 1.6rem;
+    filter: drop-shadow(0 0 10px rgba(76, 175, 80, 0.3));
+}
+
+.payment-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #4CAF50, transparent);
+    border-radius: 1px;
+}
+
+/* Стилі для способів оплати в секції оплати */
+.payment-section .payment-methods {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+    justify-content: center;
+}
+
+.payment-section .payment-method {
+    flex: 1;
+    max-width: 200px;
+}
+
+.payment-section .payment-method input[type="radio"] {
+    display: none;
+}
+
+.payment-section .payment-method label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.payment-section .payment-method label:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(76, 175, 80, 0.3);
+    transform: translateY(-2px);
+}
+
+.payment-section .payment-method input[type="radio"]:checked + label {
+    background: rgba(76, 175, 80, 0.1);
+    border-color: #4CAF50;
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.2);
+}
+
+.payment-section .payment-method label i {
+    font-size: 2rem;
+    color: #4CAF50;
+}
+
+.payment-section .payment-method label span {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+/* Адаптивність для секції оплати */
+@media (max-width: 768px) {
+    .payment-section .payment-methods {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .payment-section .payment-method {
+        max-width: none;
+    }
+    
+    .payment-section .payment-method label {
+        flex-direction: row;
+        justify-content: flex-start;
+        padding: 15px;
+    }
+    
+    .payment-section .payment-method label i {
+        font-size: 1.5rem;
+    }
+}
+
+/* Адаптивність для мобільних пристроїв */
+@media (max-width: 768px) {
+    /* Загальні стилі для мобільної версії */
+    .cart-page-body {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 0;
+        max-width: 100%;
+    }
+    
+    /* Секції на повну ширину на мобільних */
+    .cart-main-section,
+    .cart-summary-section {
+        width: 100%;
+        margin: 0;
+        padding: 0 15px;
+    }
+    
+    .cart-page-container {
+        padding: 0 10px;
+    }
+    
+    /* Заголовок сторінки */
+    .cart-page-title {
+        font-size: 1.8rem;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    /* Секція товарів */
+    .cart-items-section {
+        padding: 20px 15px;
+        margin-bottom: 20px;
+    }
+    
+    .cart-item {
+        grid-template-columns: 80px 1fr auto;
+        gap: 15px;
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .cart-item-image {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .cart-item-info h4 {
+        font-size: 1rem;
+        margin-bottom: 8px;
+    }
+    
+    .cart-item-info p {
+        font-size: 0.85rem;
+    }
+    
+    .remove-item-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+    
+    /* Форма замовлення */
+    .order-form-section {
+        padding: 20px 15px;
+        margin-bottom: 20px;
+    }
+    
+    .form-section {
+        margin-bottom: 25px;
+    }
+    
+    .form-section h3 {
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-group label {
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 12px 15px;
+        font-size: 0.9rem;
+    }
+    
+    /* Подарункова інформація */
+    #gift-info-section {
+        padding: 15px;
+        margin-top: 15px;
+    }
+    
+    /* Секція оплати */
+    .payment-section {
+        margin-top: 20px;
+    }
+    
+    .payment-card {
+        padding: 20px 15px;
+    }
+    
+    .payment-title {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+    
+    .payment-section .payment-methods {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .payment-section .payment-method {
+        max-width: none;
+    }
+    
+    .payment-section .payment-method label {
+        flex-direction: row;
+        justify-content: flex-start;
+        padding: 15px;
+    }
+    
+    .payment-section .payment-method label i {
+        font-size: 1.5rem;
+    }
+    
+    /* Картка підсумку */
+    .cart-summary-card {
+        padding: 20px 15px;
+    }
+    
+    .summary-title {
+        font-size: 1.3rem;
+        margin-bottom: 20px;
+    }
+    
+    .summary-row {
+        font-size: 0.9rem;
+        padding: 8px 0;
+    }
+    
+    .summary-row.total-row {
+        font-size: 1.1rem;
+        padding: 12px 0;
+    }
+    
+    /* Кнопка підтвердження замовлення */
+    .confirm-order-btn {
+        padding: 14px 20px;
+        font-size: 1rem;
+        max-width: 100%;
+        width: 100%;
+    }
+    
+    .order-confirmation-section {
+        padding: 20px 15px;
+        margin: 15px 0;
+    }
+    
+    .confirmation-note {
+        font-size: 0.85rem;
+        margin-top: 12px;
+    }
+    
+    /* Додаткова інформація */
+    .cart-info {
+        margin-top: 20px;
+    }
+    
+    .info-item {
+        font-size: 0.85rem;
+        padding: 8px 0;
+    }
+    
+    .info-item i {
+        font-size: 1rem;
+        margin-right: 8px;
+    }
+    
+    /* Кнопки загалом */
+    .checkout-btn {
+        padding: 14px 20px;
+        font-size: 1rem;
+        width: 100%;
+    }
+    
+    /* Monobank кнопки */
+    .monobank-payment-buttons {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .monobank-additional-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .mono-checkout-btn {
+        width: 100%;
+        padding: 12px 20px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Додаткові стилі для дуже маленьких екранів */
+@media (max-width: 480px) {
+    .cart-page-container {
+        padding: 0;
+    }
+    
+    .cart-page-body {
+        padding: 0;
+        gap: 15px;
+    }
+    
+    /* Секції на повну ширину на дуже маленьких екранах */
+    .cart-main-section,
+    .cart-summary-section {
+        padding: 0 10px;
+    }
+    
+    .cart-page-title {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+    
+    .cart-items-section,
+    .order-form-section,
+    .payment-card,
+    .cart-summary-card {
+        padding: 15px 10px;
+    }
+    
+    .cart-item {
+        grid-template-columns: 70px 1fr auto;
+        gap: 10px;
+        padding: 12px;
+    }
+    
+    .cart-item-image {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .cart-item-info h4 {
+        font-size: 0.9rem;
+    }
+    
+    .cart-item-info p {
+        font-size: 0.8rem;
+    }
+    
+    .remove-item-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 0.8rem;
+    }
+    
+    .form-section h3 {
+        font-size: 1.1rem;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 10px 12px;
+        font-size: 0.85rem;
+    }
+    
+    .confirm-order-btn {
+        padding: 12px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .order-confirmation-section {
+        padding: 15px 10px;
+    }
+    
+    .summary-title {
+        font-size: 1.2rem;
+    }
+    
+    .summary-row {
+        font-size: 0.85rem;
+    }
+    
+    .summary-row.total-row {
+        font-size: 1rem;
+    }
+    
+    .info-item {
+        font-size: 0.8rem;
+    }
+    
+    .mono-checkout-btn {
+        padding: 10px 15px;
+        font-size: 0.85rem;
+    }
+}
+
+/* Стилі для горизонтальної орієнтації мобільних пристроїв */
+@media (max-width: 768px) and (orientation: landscape) {
+    .cart-page-body {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 0;
+    }
+    
+    /* Секції на повну ширину в горизонтальній орієнтації */
+    .cart-main-section,
+    .cart-summary-section {
+        width: 100%;
+        margin: 0;
+        padding: 0 15px;
+    }
+    
+    .cart-items-section {
+        order: 1;
+    }
+    
+    .order-form-section {
+        order: 2;
+    }
+    
+    .cart-summary-section {
+        order: 3;
+    }
+    
+    .payment-section {
+        order: 4;
+    }
+    
+    .cart-item {
+        grid-template-columns: 60px 1fr auto;
+        padding: 10px;
+    }
+    
+    .cart-item-image {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .form-section {
+        margin-bottom: 15px;
+    }
+    
+    .form-section h3 {
+        font-size: 1rem;
+        margin-bottom: 10px;
+    }
+    
+    .form-group {
+        margin-bottom: 10px;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 8px 10px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .confirm-order-btn {
+        max-width: 350px;
+        padding: 18px 30px;
+        font-size: 1.2rem;
+    }
 }

@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if title %}{{ title }}{% else %}Оплата через iFrame{% endif %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Плаваючі білі шари -->
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+        <div class="shape shape-5"></div>
+    </div>
+
+    <!-- Шапка сайту -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <h1><a href="/" style="text-decoration: none; color: inherit;">Квітковий магазин</a></h1>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Основний контент -->
+    <main class="payment-page">
+        <div class="payment-container">
+            <div class="payment-card">
+                <div class="payment-icon">
+                    <i class="fas fa-window-maximize"></i>
+                </div>
+                <h1 class="payment-title">Оплата через iFrame</h1>
+                <p class="payment-message">
+                    Оплата безпосередньо на сайті без перенаправлень. 
+                    Введіть деталі замовлення та перейдіть до оплати.
+                </p>
+                
+                <div class="iframe-info">
+                    <h3><i class="fas fa-info-circle"></i> Переваги iFrame оплати</h3>
+                    <ul>
+                        <li><i class="fas fa-shield-alt"></i> Безпечна оплата на сайті</li>
+                        <li><i class="fas fa-mobile-alt"></i> Підтримка мобільних пристроїв</li>
+                        <li><i class="fas fa-credit-card"></i> Всі способи оплати Monobank</li>
+                        <li><i class="fas fa-clock"></i> Швидка обробка платежів</li>
+                        <li><i class="fas fa-lock"></i> Не залишаєте сайт</li>
+                    </ul>
+                </div>
+                
+                <form class="iframe-payment-form" onsubmit="submitIframePayment(event)">
+                    <div class="form-section">
+                        <h3><i class="fas fa-shopping-cart"></i> Деталі замовлення</h3>
+                        
+                        <div class="form-group">
+                            <label for="paymentAmount">Сума до сплати *</label>
+                            <input type="number" id="paymentAmount" name="amount" required 
+                                   step="0.01" min="0.01" placeholder="0.00">
+                            <small class="form-help">Сума в гривнях</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="orderReference">Номер замовлення</label>
+                            <input type="text" id="orderReference" name="reference" 
+                                   placeholder="Опціонально">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="orderDescription">Опис замовлення</label>
+                            <input type="text" id="orderDescription" name="destination" 
+                                   placeholder="Опис товарів або послуг">
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3><i class="fas fa-cog"></i> Налаштування оплати</h3>
+                        
+                        <div class="form-group">
+                            <label for="paymentType">Тип платежу</label>
+                            <select id="paymentType" name="paymentType">
+                                <option value="debit">Звичайна оплата</option>
+                                <option value="hold">Блокування коштів</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="validity">Термін дії (години)</label>
+                            <input type="number" id="validity" name="validity" 
+                                   min="1" max="72" value="24" placeholder="24">
+                            <small class="form-help">Скільки годин дійсний рахунок (1-72)</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                            <span class="checkmark"></span>
+                            Я погоджуюся з умовами обробки платежів та політикою конфіденційності
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-window-maximize"></i>
+                        Створити рахунок для оплати
+                    </button>
+                </form>
+                
+                <div class="payment-actions">
+                    <a href="/payment/sync/" class="btn btn-secondary">
+                        <i class="fas fa-credit-card"></i>
+                        Синхронна оплата
+                    </a>
+                    <a href="/payment/card/" class="btn btn-secondary">
+                        <i class="fas fa-credit-card"></i>
+                        Оплата за реквізитами
+                    </a>
+                    <a href="/payment/merchant/" class="btn btn-secondary">
+                        <i class="fas fa-store"></i>
+                        Дані мерчанта
+                    </a>
+                    <a href="/" class="btn btn-secondary">
+                        <i class="fas fa-home"></i>
+                        На головну
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        .payment-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+        }
+
+        .payment-container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .payment-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .payment-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            color: #2196F3;
+        }
+
+        .payment-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .payment-message {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .iframe-info {
+            background: #e3f2fd;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .iframe-info h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .iframe-info h3 i {
+            margin-right: 10px;
+        }
+
+        .iframe-info ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #1976d2;
+        }
+
+        .iframe-info li {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .iframe-info li i {
+            margin-right: 10px;
+            color: #2196f3;
+        }
+
+        .iframe-payment-form {
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-section h3 i {
+            margin-right: 10px;
+            color: #2196F3;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+
+        .form-help {
+            display: block;
+            margin-top: 5px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(33, 150, 243, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .payment-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .payment-card {
+                padding: 30px 20px;
+            }
+
+            .payment-title {
+                font-size: 2rem;
+            }
+
+            .payment-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+
+    <script>
+        // Відправка форми iFrame оплати
+        async function submitIframePayment(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const amount = parseFloat(formData.get('amount'));
+            const agreeTerms = formData.get('agreeTerms');
+            
+            if (!agreeTerms) {
+                alert('Будь ласка, погодьтеся з умовами обробки платежів');
+                return;
+            }
+            
+            if (amount <= 0) {
+                alert('Введіть суму більше 0');
+                return;
+            }
+            
+            if (confirm('Створити рахунок для оплати на суму ' + amount + ' грн?')) {
+                const paymentData = {
+                    amount: amount,
+                    ccy: 980,
+                    reference: formData.get('reference') || null,
+                    destination: formData.get('destination') || null,
+                    paymentType: formData.get('paymentType'),
+                    validity: parseInt(formData.get('validity')) * 3600  // Конвертуємо в секунди
+                };
+                
+                try {
+                    const response = await fetch('/api/payment/iframe/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken')
+                        },
+                        body: JSON.stringify(paymentData)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // Перенаправляємо на сторінку з iFrame
+                        window.location.href = `/payment/iframe/pay/${result.invoiceId}/?url=${encodeURIComponent(result.pageUrl)}`;
+                    } else {
+                        alert('Помилка створення рахунку: ' + result.error);
+                    }
+                } catch (error) {
+                    console.error('Помилка:', error);
+                    alert('Помилка з\'єднання з сервером');
+                }
+            }
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html>

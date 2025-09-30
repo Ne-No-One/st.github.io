@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if title %}{{ title }}{% else %}Дані мерчанта{% endif %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Плаваючі білі шари -->
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+        <div class="shape shape-5"></div>
+    </div>
+
+    <!-- Шапка сайту -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <h1><a href="/" style="text-decoration: none; color: inherit;">Квітковий магазин</a></h1>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Основний контент -->
+    <main class="payment-page">
+        <div class="payment-container">
+            <div class="payment-card success">
+                <div class="payment-icon">
+                    <i class="fas fa-store"></i>
+                </div>
+                <h1 class="payment-title">Дані мерчанта</h1>
+                <p class="payment-message">
+                    Інформація про ваш мерчант-акаунт у Monobank успішно отримана.
+                </p>
+                
+                <div class="merchant-info">
+                    <h3><i class="fas fa-info-circle"></i> Інформація про мерчанта</h3>
+                    
+                    <div class="info-card">
+                        <div class="info-row">
+                            <span class="info-label">
+                                <i class="fas fa-id-card"></i>
+                                ID мерчанта:
+                            </span>
+                            <span class="info-value">{{ merchant_data.merchantId }}</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">
+                                <i class="fas fa-building"></i>
+                                Найменування:
+                            </span>
+                            <span class="info-value">{{ merchant_data.merchantName }}</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="info-label">
+                                <i class="fas fa-hashtag"></i>
+                                ЄДРПОУ:
+                            </span>
+                            <span class="info-value">{{ merchant_data.edrpou }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="merchant-status">
+                    <h3><i class="fas fa-check-circle"></i> Статус підключення</h3>
+                    <div class="status-indicators">
+                        <div class="status-item success">
+                            <i class="fas fa-check"></i>
+                            <span>API підключення активне</span>
+                        </div>
+                        <div class="status-item success">
+                            <i class="fas fa-check"></i>
+                            <span>Токен валідний</span>
+                        </div>
+                        <div class="status-item success">
+                            <i class="fas fa-check"></i>
+                            <span>Мерчант налаштований</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="merchant-actions">
+                    <h3><i class="fas fa-tools"></i> Доступні операції</h3>
+                    <div class="action-grid">
+                        <a href="/payment/create-invoice/" class="action-card">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Створити рахунок</span>
+                        </a>
+                        <a href="/payment/status/" class="action-card">
+                            <i class="fas fa-search"></i>
+                            <span>Перевірити статус</span>
+                        </a>
+                        <a href="/payment/cancel/" class="action-card">
+                            <i class="fas fa-times"></i>
+                            <span>Скасувати замовлення</span>
+                        </a>
+                        <a href="/payment/invalidate/" class="action-card">
+                            <i class="fas fa-ban"></i>
+                            <span>Деактивувати замовлення</span>
+                        </a>
+                        <a href="/payment/finalize/" class="action-card">
+                            <i class="fas fa-check-double"></i>
+                            <span>Фіналізувати холд</span>
+                        </a>
+                        <a href="/payment/merchant/" class="action-card">
+                            <i class="fas fa-sync"></i>
+                            <span>Оновити дані</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="payment-actions">
+                    <a href="/" class="btn btn-primary">
+                        <i class="fas fa-home"></i>
+                        На головну
+                    </a>
+                    <button onclick="refreshMerchantData()" class="btn btn-secondary">
+                        <i class="fas fa-sync"></i>
+                        Оновити дані
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        .payment-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #2196F3 0%, #1976d2 100%);
+        }
+
+        .payment-container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .payment-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .payment-card.success {
+            border-top: 5px solid #2196F3;
+        }
+
+        .payment-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            color: #2196F3;
+        }
+
+        .payment-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .payment-message {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .merchant-info {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .merchant-info h3 {
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .merchant-info h3 i {
+            margin-right: 10px;
+            color: #2196F3;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #666;
+            display: flex;
+            align-items: center;
+        }
+
+        .info-label i {
+            margin-right: 8px;
+            color: #2196F3;
+        }
+
+        .info-value {
+            color: #333;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .merchant-status {
+            background: #e8f5e8;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .merchant-status h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .merchant-status h3 i {
+            margin-right: 10px;
+        }
+
+        .status-indicators {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .status-item.success {
+            color: #2e7d32;
+        }
+
+        .status-item i {
+            margin-right: 10px;
+            color: #4CAF50;
+        }
+
+        .merchant-actions {
+            background: #fff3e0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .merchant-actions h3 {
+            color: #ef6c00;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .merchant-actions h3 i {
+            margin-right: 10px;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .action-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .action-card i {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #2196F3;
+        }
+
+        .action-card span {
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .payment-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2196F3 0%, #1976d2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(33, 150, 243, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .payment-card {
+                padding: 30px 20px;
+            }
+
+            .payment-title {
+                font-size: 2rem;
+            }
+
+            .payment-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .action-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .info-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .info-value {
+                text-align: left;
+            }
+        }
+    </style>
+
+    <script>
+        function refreshMerchantData() {
+            // Показуємо індикатор завантаження
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Оновлення...';
+            btn.disabled = true;
+            
+            // Перезавантажуємо сторінку
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

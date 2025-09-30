@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if title %}{{ title }}{% else %}Статус замовлення{% endif %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Плаваючі білі шари -->
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+        <div class="shape shape-5"></div>
+    </div>
+
+    <!-- Шапка сайту -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <h1><a href="/" style="text-decoration: none; color: inherit;">Квітковий магазин</a></h1>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Основний контент -->
+    <main class="payment-page">
+        <div class="payment-container">
+            {% if show_form %}
+            <!-- Форма для введення ID рахунку -->
+            <div class="payment-card">
+                <div class="payment-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h1 class="payment-title">Перевірка статусу замовлення</h1>
+                <p class="payment-message">
+                    Введіть ID рахунку для перевірки статусу замовлення
+                </p>
+                
+                <form class="status-form" onsubmit="checkInvoiceStatus(event)">
+                    <div class="form-group">
+                        <label for="invoiceId">ID рахунку *</label>
+                        <input type="text" id="invoiceId" name="invoiceId" required 
+                               placeholder="Наприклад: p2_9ZgpZVsl3" 
+                               pattern="[a-zA-Z0-9_]+">
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i>
+                        Перевірити статус
+                    </button>
+                </form>
+                
+                <div class="payment-actions">
+                    <a href="/" class="btn btn-secondary">
+                        <i class="fas fa-home"></i>
+                        На головну
+                    </a>
+                </div>
+            </div>
+            
+            {% elif success %}
+            <!-- Відображення статусу замовлення -->
+            <div class="payment-card status-card">
+                <div class="payment-icon status-{{ status|default:'unknown' }}">
+                    {% if status == 'success' %}
+                        <i class="fas fa-check-circle"></i>
+                    {% elif status == 'failure' %}
+                        <i class="fas fa-times-circle"></i>
+                    {% elif status == 'processing' %}
+                        <i class="fas fa-clock"></i>
+                    {% else %}
+                        <i class="fas fa-question-circle"></i>
+                    {% endif %}
+                </div>
+                
+                <h1 class="payment-title">
+                    {% if status == 'success' %}
+                        Замовлення оплачено
+                    {% elif status == 'failure' %}
+                        Помилка оплати
+                    {% elif status == 'processing' %}
+                        Обробка платежу
+                    {% else %}
+                        Статус невідомий
+                    {% endif %}
+                </h1>
+                
+                <div class="status-details">
+                    <div class="detail-row">
+                        <span class="detail-label">ID рахунку:</span>
+                        <span class="detail-value">{{ invoice_id }}</span>
+                    </div>
+                    
+                    {% if amount %}
+                    <div class="detail-row">
+                        <span class="detail-label">Сума:</span>
+                        <span class="detail-value">{{ amount|floatformat:2 }} грн</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if final_amount %}
+                    <div class="detail-row">
+                        <span class="detail-label">Сума до сплати:</span>
+                        <span class="detail-value">{{ final_amount|floatformat:2 }} грн</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if created_date %}
+                    <div class="detail-row">
+                        <span class="detail-label">Дата створення:</span>
+                        <span class="detail-value">{{ created_date|date:"d.m.Y H:i" }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if modified_date %}
+                    <div class="detail-row">
+                        <span class="detail-label">Останнє оновлення:</span>
+                        <span class="detail-value">{{ modified_date|date:"d.m.Y H:i" }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if destination %}
+                    <div class="detail-row">
+                        <span class="detail-label">Призначення:</span>
+                        <span class="detail-value">{{ destination }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if failure_reason %}
+                    <div class="detail-row error">
+                        <span class="detail-label">Причина помилки:</span>
+                        <span class="detail-value">{{ failure_reason }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                {% if payment_info %}
+                <div class="payment-info">
+                    <h3><i class="fas fa-credit-card"></i> Інформація про платіж</h3>
+                    <div class="payment-details">
+                        {% if payment_info.maskedPan %}
+                        <div class="detail-row">
+                            <span class="detail-label">Картка:</span>
+                            <span class="detail-value">{{ payment_info.maskedPan }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        {% if payment_info.bank %}
+                        <div class="detail-row">
+                            <span class="detail-label">Банк:</span>
+                            <span class="detail-value">{{ payment_info.bank }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        {% if payment_info.paymentSystem %}
+                        <div class="detail-row">
+                            <span class="detail-label">Платіжна система:</span>
+                            <span class="detail-value">{{ payment_info.paymentSystem|upper }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        {% if payment_info.approvalCode %}
+                        <div class="detail-row">
+                            <span class="detail-label">Код підтвердження:</span>
+                            <span class="detail-value">{{ payment_info.approvalCode }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="payment-actions">
+                    <button onclick="refreshStatus()" class="btn btn-primary">
+                        <i class="fas fa-sync-alt"></i>
+                        Оновити статус
+                    </button>
+                    <a href="/payment/status/" class="btn btn-secondary">
+                        <i class="fas fa-search"></i>
+                        Перевірити інший рахунок
+                    </a>
+                    <a href="/" class="btn btn-secondary">
+                        <i class="fas fa-home"></i>
+                        На головну
+                    </a>
+                </div>
+            </div>
+            
+            {% else %}
+            <!-- Помилка -->
+            <div class="payment-card failure">
+                <div class="payment-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h1 class="payment-title">Помилка</h1>
+                <p class="payment-message">
+                    {{ error|default:"Не вдалося отримати інформацію про замовлення" }}
+                </p>
+                
+                <div class="payment-actions">
+                    <a href="/payment/status/" class="btn btn-primary">
+                        <i class="fas fa-search"></i>
+                        Спробувати ще раз
+                    </a>
+                    <a href="/" class="btn btn-secondary">
+                        <i class="fas fa-home"></i>
+                        На головну
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <style>
+        .payment-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .payment-container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .payment-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .payment-card.failure {
+            border-top: 5px solid #f44336;
+        }
+
+        .payment-card.status-card {
+            text-align: left;
+        }
+
+        .payment-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .payment-icon.status-success {
+            color: #4CAF50;
+        }
+
+        .payment-icon.status-failure {
+            color: #f44336;
+        }
+
+        .payment-icon.status-processing {
+            color: #ff9800;
+        }
+
+        .payment-icon.status-unknown {
+            color: #9e9e9e;
+        }
+
+        .payment-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .payment-message {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .status-form {
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .status-details {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-row.error {
+            color: #f44336;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .detail-value {
+            color: #333;
+            text-align: right;
+        }
+
+        .payment-info {
+            background: #e3f2fd;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .payment-info h3 {
+            margin-bottom: 15px;
+            color: #1976d2;
+        }
+
+        .payment-details .detail-row {
+            padding: 8px 0;
+        }
+
+        .payment-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .payment-card {
+                padding: 30px 20px;
+            }
+
+            .payment-title {
+                font-size: 2rem;
+            }
+
+            .payment-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .detail-value {
+                text-align: left;
+            }
+        }
+    </style>
+
+    <script>
+        function checkInvoiceStatus(event) {
+            event.preventDefault();
+            const invoiceId = document.getElementById('invoiceId').value;
+            if (invoiceId) {
+                window.location.href = `/payment/status/${invoiceId}/`;
+            }
+        }
+
+        function refreshStatus() {
+            const invoiceId = '{{ invoice_id }}';
+            if (invoiceId) {
+                window.location.reload();
+            }
+        }
+    </script>
+</body>
+</html>

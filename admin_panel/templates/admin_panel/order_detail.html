@@ -35,6 +35,26 @@
                         
                         <h6>Загальна сума:</h6>
                         <p><strong>{{ order.total_amount }} {{ order.currency }}</strong></p>
+                        
+                        <h6>Спосіб оплати:</h6>
+                        <p>
+                            {% if order.payment == 'card' %}
+                                <span class="badge bg-primary">
+                                    <i class="fas fa-credit-card me-1"></i>
+                                    Банківська карта
+                                </span>
+                            {% elif order.payment == 'online' %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-mobile-alt me-1"></i>
+                                    Онлайн оплата
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary">
+                                    <i class="fas fa-question me-1"></i>
+                                    {{ order.payment|default:"Не вказано" }}
+                                </span>
+                            {% endif %}
+                        </p>
                     </div>
                 </div>
                 
@@ -154,6 +174,88 @@
             </div>
         </div>
         
+        <!-- Платіжна інформація -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-credit-card me-2"></i>
+                    Платіжна інформація
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6>Спосіб оплати:</h6>
+                    <p>
+                        {% if order.payment == 'card' %}
+                            <span class="badge bg-primary">
+                                <i class="fas fa-credit-card me-1"></i>
+                                Банківська карта
+                            </span>
+                        {% elif order.payment == 'online' %}
+                            <span class="badge bg-success">
+                                <i class="fas fa-mobile-alt me-1"></i>
+                                Онлайн оплата (Monobank)
+                            </span>
+                        {% else %}
+                            <span class="badge bg-secondary">
+                                <i class="fas fa-question me-1"></i>
+                                {{ order.payment|default:"Не вказано" }}
+                            </span>
+                        {% endif %}
+                    </p>
+                </div>
+                
+                {% if order.payment == 'online' and order.invoice_id %}
+                <div class="mb-3">
+                    <h6>ID рахунку:</h6>
+                    <p><code>{{ order.invoice_id }}</code></p>
+                </div>
+                
+                <div class="mb-3">
+                    <h6>Статус оплати:</h6>
+                    <p>
+                        {% if order.payment_status == 'success' %}
+                            <span class="badge bg-success">
+                                <i class="fas fa-check me-1"></i>
+                                Оплачено
+                            </span>
+                        {% elif order.payment_status == 'pending' %}
+                            <span class="badge bg-warning">
+                                <i class="fas fa-clock me-1"></i>
+                                В обробці
+                            </span>
+                        {% elif order.payment_status == 'failed' %}
+                            <span class="badge bg-danger">
+                                <i class="fas fa-times me-1"></i>
+                                Помилка оплати
+                            </span>
+                        {% else %}
+                            <span class="badge bg-secondary">
+                                <i class="fas fa-question me-1"></i>
+                                Невідомо
+                            </span>
+                        {% endif %}
+                    </p>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary" onclick="checkPaymentStatus('{{ order.invoice_id }}')">
+                        <i class="fas fa-sync me-1"></i>
+                        Перевірити статус оплати
+                    </button>
+                    <button class="btn btn-outline-success" onclick="downloadReceipt('{{ order.invoice_id }}')">
+                        <i class="fas fa-download me-1"></i>
+                        Завантажити квитанцію
+                    </button>
+                    <button class="btn btn-outline-info" onclick="viewPaymentDetails('{{ order.invoice_id }}')">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Деталі платежу
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
         <!-- Швидкі дії -->
         <div class="card">
             <div class="card-header">
@@ -181,4 +283,114 @@
         </div>
     </div>
 </div>
+
+<!-- Модальне вікно для деталей платежу -->
+<div class="modal fade" id="paymentDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Деталі платежу</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="paymentDetailsContent">
+                <div class="text-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Завантаження...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Функція для перевірки статусу оплати
+function checkPaymentStatus(invoiceId) {
+    const button = event.target;
+    const originalText = button.innerHTML;
+    
+    button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Перевірка...';
+    button.disabled = true;
+    
+    fetch(`/api/payment/status/${invoiceId}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(`Статус оплати: ${data.status}\nСума: ${data.amount/100} грн\nДата: ${new Date(data.createdDate).toLocaleString()}`);
+            } else {
+                alert('Помилка отримання статусу: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Помилка:', error);
+            alert('Помилка з\'єднання з сервером');
+        })
+        .finally(() => {
+            button.innerHTML = originalText;
+            button.disabled = false;
+        });
+}
+
+// Функція для завантаження квитанції
+function downloadReceipt(invoiceId) {
+    const button = event.target;
+    const originalText = button.innerHTML;
+    
+    button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Завантаження...';
+    button.disabled = true;
+    
+    window.open(`/payment/receipt/${invoiceId}/download/`, '_blank');
+    
+    setTimeout(() => {
+        button.innerHTML = originalText;
+        button.disabled = false;
+    }, 2000);
+}
+
+// Функція для перегляду деталей платежу
+function viewPaymentDetails(invoiceId) {
+    const modal = new bootstrap.Modal(document.getElementById('paymentDetailsModal'));
+    const content = document.getElementById('paymentDetailsContent');
+    
+    content.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Завантаження...</span></div></div>';
+    modal.show();
+    
+    fetch(`/api/payment/status/${invoiceId}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                content.innerHTML = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Основна інформація</h6>
+                            <p><strong>ID рахунку:</strong> ${data.invoiceId}</p>
+                            <p><strong>Статус:</strong> <span class="badge bg-${data.status === 'success' ? 'success' : data.status === 'failure' ? 'danger' : 'warning'}">${data.status}</span></p>
+                            <p><strong>Сума:</strong> ${data.amount/100} грн</p>
+                            <p><strong>Фінальна сума:</strong> ${data.finalAmount ? data.finalAmount/100 : data.amount/100} грн</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Дати</h6>
+                            <p><strong>Створено:</strong> ${new Date(data.createdDate).toLocaleString()}</p>
+                            <p><strong>Оновлено:</strong> ${new Date(data.modifiedDate).toLocaleString()}</p>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>Деталі платежу</h6>
+                            <p><strong>Призначення:</strong> ${data.destination || 'Не вказано'}</p>
+                            <p><strong>Референс:</strong> ${data.reference || 'Не вказано'}</p>
+                            ${data.failureReason ? `<p><strong>Причина помилки:</strong> ${data.failureReason}</p>` : ''}
+                        </div>
+                    </div>
+                `;
+            } else {
+                content.innerHTML = `<div class="alert alert-danger">Помилка отримання деталей: ${data.error}</div>`;
+            }
+        })
+        .catch(error => {
+            console.error('Помилка:', error);
+            content.innerHTML = '<div class="alert alert-danger">Помилка з\'єднання з сервером</div>';
+        });
+}
+</script>
 {% endblock %}

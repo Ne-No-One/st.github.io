@@ -1,5 +1,10 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+import json
+import uuid
+from datetime import datetime
 
 def home(request):
     """Головна сторінка сайту"""
@@ -89,3 +94,89 @@ def cart(request):
         </body>
         </html>
         """)
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def save_order(request):
+    """
+    API для збереження замовлення на сервері
+    """
+    try:
+        # Отримуємо дані з запиту
+        data = json.loads(request.body)
+        
+        # Валідація обов'язкових полів
+        required_fields = ['items', 'total', 'customer', 'delivery', 'payment']
+        for field in required_fields:
+            if field not in data:
+                return JsonResponse({'error': f'Відсутнє обов\'язкове поле: {field}'}, status=400)
+        
+        # Імпортуємо JSONManager
+        from json_manager import JSONManager
+        json_manager = JSONManager()
+        
+        # Генеруємо унікальний ID та номер замовлення
+        order_id = str(uuid.uuid4())
+        order_number = f"ORD-{datetime.now().strftime('%Y%m%d')}-{order_id[:8].upper()}"
+        
+        # Формуємо замовлення
+        order = {
+            'id': order_id,
+            'order_number': order_number,
+            'order_date': datetime.now().isoformat(),
+            'delivery_date': data['delivery'].get('date', ''),
+            'delivery_time': data['delivery'].get('time', ''),
+            'customer_name': f"{data['customer']['firstName']} {data['customer']['lastName']}",
+            'customer_phone': data['customer']['phone'],
+            'customer_email': data['customer'].get('email', ''),
+            'delivery_city': data['delivery']['city'],
+            'delivery_address': data['delivery']['address'],
+            'delivery_postal_code': data['delivery'].get('postalCode', ''),
+            'payment': data['payment'],
+            'total_amount': data['total'],
+            'currency': 'UAH',
+            'items': data['items'],
+            'notes': data.get('notes', ''),
+            'subscribe_news': data.get('subscribeNews', False),
+            'status': 'нове',
+            'created_at': datetime.now().isoformat(),
+            'updated_at': datetime.now().isoformat()
+        }
+        
+        # Зберігаємо замовлення через JSONManager
+        json_manager.save_order(order)
+        
+        return JsonResponse({
+            'success': True,
+            'order_id': order_id,
+            'order_number': order_number,
+            'message': 'Замовлення успішно збережено'
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': f'Помилка збереження замовлення: {str(e)}'
+        }, status=500)
+
+@require_http_methods(["GET"])
+def get_orders(request):
+    """
+    API для отримання списку замовлень
+    """
+    try:
+        from json_manager import JSONManager
+        json_manager = JSONManager()
+        
+        orders = json_manager.get_orders()
+        
+        return JsonResponse({
+            'success': True,
+            'orders': orders
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': f'Помилка отримання замовлень: {str(e)}'
+        }, status=500)

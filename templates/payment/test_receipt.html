@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тестова квитанція</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .receipt-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        .receipt-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            padding: 2rem;
+        }
+        .test-badge {
+            background: #fbbf24;
+            color: #92400e;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        .receipt-content {
+            font-family: 'Courier New', monospace;
+        }
+        @media print {
+            .btn, .alert, .receipt-header {
+                display: none !important;
+            }
+            .receipt-container {
+                box-shadow: none !important;
+                border-radius: 0 !important;
+            }
+            .receipt-content h3 {
+                font-size: 18px;
+                margin-bottom: 10px;
+            }
+            .receipt-content .row {
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="receipt-container">
+                <div class="receipt-header text-center">
+                    <div class="test-badge mb-3">ТЕСТОВИЙ РЕЖИМ</div>
+                    <h1 class="mb-3">
+                        <i class="fas fa-receipt me-3"></i>
+                        Квитанція про оплату
+                    </h1>
+                    <p class="mb-0">Документ про успішну оплату в тестовому режимі</p>
+                </div>
+                
+                <div class="p-4">
+                    <div class="alert alert-info text-center mb-4">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Тестовий режим:</strong> Це симуляція квитанції про оплату
+                    </div>
+                    
+                    <div class="receipt-content">
+                        <div class="text-center mb-4">
+                            <h3>КВИТАНЦІЯ ПРО ОПЛАТУ</h3>
+                            <p class="text-muted">Тестовий режим</p>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <strong>Номер квитанції:</strong>
+                            </div>
+                            <div class="col-6">
+                                <code>{{ receipt_number }}</code>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <strong>ID рахунку:</strong>
+                            </div>
+                            <div class="col-6">
+                                <code>{{ invoice_id }}</code>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <strong>Номер замовлення:</strong>
+                            </div>
+                            <div class="col-6">
+                                {{ order_id }}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <strong>Сума:</strong>
+                            </div>
+                            <div class="col-6">
+                                <strong class="text-success fs-5">{{ amount }} {{ currency }}</strong>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <strong>Дата оплати:</strong>
+                            </div>
+                            <div class="col-6">
+                                {{ payment_date }}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <strong>Спосіб оплати:</strong>
+                            </div>
+                            <div class="col-6">
+                                <span class="badge bg-success">Monobank (Тест)</span>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <strong>Статус:</strong>
+                            </div>
+                            <div class="col-6">
+                                <span class="badge bg-success">Оплачено</span>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="text-center">
+                            <p class="text-muted small">
+                                Ця квитанція згенерована в тестовому режимі<br>
+                                Для реальних платежів буде створена справжня квитанція
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <button class="btn btn-primary w-100" onclick="window.print()">
+                                    <i class="fas fa-print me-2"></i>
+                                    Друк квитанції
+                                </button>
+                            </div>
+                            <div class="col-md-3">
+                                <a href="/test-payment-demo/" class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-flask me-2"></i>
+                                    Тест Демо
+                                </a>
+                            </div>
+                            <div class="col-md-3">
+                                <a href="/test-payment-success/?invoiceId={{ invoice_id }}&orderId={{ order_id }}&amount={{ amount }}" 
+                                   class="btn btn-outline-success w-100" target="_blank">
+                                    <i class="fas fa-check me-2"></i>
+                                    Успішна оплата
+                                </a>
+                            </div>
+                            <div class="col-md-3">
+                                <a href="/admin-panel/payments/" class="btn btn-outline-info w-100">
+                                    <i class="fas fa-cog me-2"></i>
+                                    Адмін-панель
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

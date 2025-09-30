@@ -8,6 +8,7 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
 {% if error %}
@@ -66,22 +67,34 @@
     </div>
 </div>
 
-<!-- Основний контент сторінки кошика -->
+<!-- ======================================== -->
+<!-- ОСНОВНИЙ КОНТЕНТ СТОРІНКИ КОШИКА -->
+<!-- ======================================== -->
 <main class="cart-page">
     <div class="cart-page-container">
-        <!-- Заголовок сторінки -->
+
+        <!-- ======================================== -->
+        <!-- ЗАГОЛОВОК СТОРІНКИ КОШИКА -->
+        <!-- ======================================== -->
         <div class="cart-page-header">
-            <h1 class="cart-page-title">
+            <h2 class="cart-page-title">
                 <i class="fas fa-shopping-cart"></i>
                 Кошик покупок
-            </h1>
+            </h2>
         </div>
 
-        <!-- Тіло сторінки кошика -->
+        <!-- ======================================== -->
+        <!-- ОСНОВНА СТРУКТУРА СТОРІНКИ -->
+        <!-- ======================================== -->
         <div class="cart-page-body">
-            <!-- Ліва частина - товари та форма -->
+            
+            <!-- ======================================== -->
+            <!-- СЕКЦІЯ 1: ТОВАРИ ТА ФОРМА ЗАМОВЛЕННЯ -->
+            <!-- ======================================== -->
             <div class="cart-main-section">
-                <!-- Товари в кошику -->
+                <!-- ======================================== -->
+                <!-- ПІДСЕКЦІЯ 1.1: ТОВАРИ В КОШИКУ -->
+                <!-- ======================================== -->
                 <div class="cart-items-section">
                     <div class="cart-items-container">
                         <div id="cart-items" class="cart-items-list">
@@ -115,9 +128,13 @@
                     </div>
                 </div>
                 
-                <!-- Форма замовлення під товарами -->
+                <!-- ======================================== -->
+                <!-- ПІДСЕКЦІЯ 1.2: ФОРМА ЗАМОВЛЕННЯ -->
+                <!-- ======================================== -->
                 <div class="order-form-section" id="order-form">
-                    <!-- Секція з інформацією про замовлення -->
+                    <!-- ======================================== -->
+                    <!-- ПІДСЕКЦІЯ 1.2.1: ДЕТАЛІ ЗАМОВЛЕННЯ -->
+                    <!-- ======================================== -->
                     <div class="form-section order-summary-section">
                         <h3><i class="fas fa-shopping-cart"></i> Деталі замовлення</h3>
                         <div class="order-summary-info">
@@ -136,6 +153,9 @@
                         </div>
                     </div>
 
+                    <!-- ======================================== -->
+                    <!-- ПІДСЕКЦІЯ 1.2.2: КОНТАКТНА ІНФОРМАЦІЯ -->
+                    <!-- ======================================== -->
                     <div class="form-section">
                         <h3><i class="fas fa-user"></i> Контактна інформація</h3>
                         <div class="form-row">
@@ -160,6 +180,9 @@
                         </div>
                     </div>
 
+                    <!-- ======================================== -->
+                    <!-- ПІДСЕКЦІЯ 1.2.3: АДРЕСА ДОСТАВКИ -->
+                    <!-- ======================================== -->
                     <div class="form-section">
                         <h3><i class="fas fa-map-marker-alt"></i> Адреса доставки</h3>
                         <div class="form-group">
@@ -192,33 +215,99 @@
                         </div>
                     </div>
 
+
+                    <!-- ======================================== -->
+                    <!-- ПІДСЕКЦІЯ 1.2.5: ПОДАРУНКОВА ІНФОРМАЦІЯ -->
+                    <!-- ======================================== -->
                     <div class="form-section">
-                        <h3><i class="fas fa-credit-card"></i> Спосіб оплати</h3>
-                        <div class="payment-methods">
-                            <div class="payment-method">
-                                <input type="radio" id="payment-cash" name="payment" value="cash">
-                                <label for="payment-cash">
-                                    <i class="fas fa-money-bill-wave"></i>
-                                    <span>Готівка при отриманні</span>
-                                </label>
+                        <h3><i class="fas fa-gift"></i> Подарункова інформація</h3>
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="isGift" name="isGift" onchange="toggleGiftInfo()">
+                                <span class="checkmark"></span>
+                                Це подарунок
+                            </label>
+                        </div>
+                        
+                        <div id="gift-info-section" style="display: none;">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="recipientName">Ім'я отримувача *</label>
+                                    <input type="text" id="recipientName" name="recipientName" placeholder="Введіть ім'я отримувача">
+                                </div>
+                                <div class="form-group">
+                                    <label for="recipientPhone">Телефон отримувача</label>
+                                    <input type="tel" id="recipientPhone" name="recipientPhone" placeholder="+380 (__) ___-__-__">
+                                </div>
                             </div>
-                            <div class="payment-method">
-                                <input type="radio" id="payment-card" name="payment" value="card">
-                                <label for="payment-card">
-                                    <i class="fas fa-credit-card"></i>
-                                    <span>Банківська карта</span>
-                                </label>
+                            
+                            <div class="form-group">
+                                <label for="giftMessage">Повідомлення до подарунка</label>
+                                <textarea id="giftMessage" name="giftMessage" rows="3" placeholder="Напишіть ваше побажання..."></textarea>
                             </div>
-                            <div class="payment-method">
-                                <input type="radio" id="payment-online" name="payment" value="online">
-                                <label for="payment-online">
-                                    <i class="fas fa-mobile-alt"></i>
-                                    <span>Онлайн оплата</span>
-                                </label>
+                            
+                            <div class="form-group">
+                                <label for="giftOccasion">Привід для подарунка</label>
+                                <select id="giftOccasion" name="giftOccasion">
+                                    <option value="">Оберіть привід</option>
+                                    <option value="birthday">День народження</option>
+                                    <option value="anniversary">Річниця</option>
+                                    <option value="valentine">День закоханих</option>
+                                    <option value="mothers-day">День матері</option>
+                                    <option value="womens-day">8 Березня</option>
+                                    <option value="graduation">Випускний</option>
+                                    <option value="wedding">Весілля</option>
+                                    <option value="apology">Вибачення</option>
+                                    <option value="congratulations">Вітання</option>
+                                    <option value="other">Інше</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="giftDeliveryType">Тип доставки подарунка</label>
+                                <select id="giftDeliveryType" name="giftDeliveryType">
+                                    <option value="surprise">Сюрприз (без попередження)</option>
+                                    <option value="announced">З попередженням</option>
+                                    <option value="hand-delivery">Вручення особисто</option>
+                                </select>
                             </div>
                         </div>
                     </div>
 
+                    <!-- ======================================== -->
+                    <!-- ПІДСЕКЦІЯ 1.2.6: ОСОБЛИВІ ВИМОГИ ДО КВІТІВ -->
+                    <!-- ======================================== -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-seedling"></i> Особливі вимоги до квітів</h3>
+                        <div class="form-group">
+                            <label for="flowerPreferences">Побажання щодо квітів</label>
+                            <textarea id="flowerPreferences" name="flowerPreferences" rows="2" placeholder="Наприклад: тільки свіжі квіти, певні кольори, без певних квітів..."></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="allergies">Алергії отримувача</label>
+                                <input type="text" id="allergies" name="allergies" placeholder="Вкажіть алергії, якщо є">
+                            </div>
+                            <div class="form-group">
+                                <label for="vaseNeeded">Потрібна ваза</label>
+                                <select id="vaseNeeded" name="vaseNeeded">
+                                    <option value="yes">Так, з вазою</option>
+                                    <option value="no">Ні, без вази</option>
+                                    <option value="optional">На вибір</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="specialInstructions">Спеціальні інструкції</label>
+                            <textarea id="specialInstructions" name="specialInstructions" rows="2" placeholder="Будь-які особливі інструкції для кур'єра..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- ======================================== -->
+                    <!-- ПІДСЕКЦІЯ 1.2.7: ДОДАТКОВІ ПОБАЖАННЯ -->
+                    <!-- ======================================== -->
                     <div class="form-section">
                         <h3><i class="fas fa-comment"></i> Додаткові побажання</h3>
                         <div class="form-group">
@@ -231,7 +320,109 @@
                 </div>
             </div>
 
-            <!-- Права частина - підсумок замовлення -->
+            <!-- ======================================== -->
+            <!-- СЕКЦІЯ 2: ОПЛАТА (ПІСЛЯ ПІДТВЕРДЖЕННЯ) -->
+            <!-- ======================================== -->
+            <div class="payment-section" id="payment-section" style="display: none;">
+                <div class="payment-card">
+                    <h3 class="payment-title">
+                        <i class="fas fa-credit-card"></i>
+                        Оплата замовлення
+                    </h3>
+                    
+                    <div class="payment-methods">
+                        <div class="payment-method">
+                            <input type="radio" id="payment-card" name="payment" value="card">
+                            <label for="payment-card">
+                                <i class="fas fa-credit-card"></i>
+                                <span>Банківська карта</span>
+                            </label>
+                        </div>
+                        <div class="payment-method">
+                            <input type="radio" id="payment-online" name="payment" value="online" checked>
+                            <label for="payment-online">
+                                <i class="fas fa-mobile-alt"></i>
+                                <span>Онлайн оплата</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Monobank кнопки оплати -->
+                    <div class="monobank-payment-section" id="monobank-payment-section" style="display: none;">
+                        <div class="monobank-payment-header">
+                            <h4>Швидка оплата через Monobank</h4>
+                            <p>Безпечна оплата карткою, Apple Pay, Google Pay</p>
+                        </div>
+                        
+                        <div class="monobank-payment-buttons">
+                            <!-- Кнопка оплати кошика -->
+                            <button class="mono-checkout-btn large standard cart-mono-btn" id="cart-mono-btn" onclick="processCartMonoPayment()">
+                                <span class="mono-checkout-text">Оформити через</span>
+                                <span class="mono-checkout-logo">mono checkout</span>
+                            </button>
+                            
+                            <!-- Додаткові кнопки для різних способів оплати -->
+                            <div class="monobank-additional-buttons">
+                                <button class="mono-checkout-btn medium white" id="mono-card-btn" onclick="processMonoCardPayment()">
+                                    <span class="mono-checkout-text">Оплатити карткою</span>
+                                    <span class="mono-checkout-logo">mono</span>
+                                </button>
+                                
+                                <button class="mono-checkout-btn medium white" id="mono-apple-pay-btn" onclick="processMonoApplePay()">
+                                    <span class="mono-checkout-text">Apple Pay</span>
+                                    <span class="mono-checkout-logo">mono</span>
+                                </button>
+                                
+                                <button class="mono-checkout-btn medium white" id="mono-google-pay-btn" onclick="processMonoGooglePay()">
+                                    <span class="mono-checkout-text">Google Pay</span>
+                                    <span class="mono-checkout-logo">mono</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Секція оплати банківською картою -->
+                    <div class="card-payment-section" id="card-payment-section" style="display: none;">
+                        <div class="card-payment-header">
+                            <h4>Оплата банківською картою</h4>
+                            <p>Безпечна оплата через Monobank</p>
+                        </div>
+                        
+                        <div class="card-payment-form">
+                            <div class="form-group">
+                                <label for="card-number">Номер картки</label>
+                                <input type="text" id="card-number" name="card-number" placeholder="1234 5678 9012 3456" maxlength="19">
+                            </div>
+                            
+                            <div class="card-details-row">
+                                <div class="form-group">
+                                    <label for="card-expiry">Термін дії</label>
+                                    <input type="text" id="card-expiry" name="card-expiry" placeholder="MM/YY" maxlength="5">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="card-cvv">CVV</label>
+                                    <input type="text" id="card-cvv" name="card-cvv" placeholder="123" maxlength="4">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="card-holder">Ім'я власника картки</label>
+                                <input type="text" id="card-holder" name="card-holder" placeholder="Іван Іванович Іванов">
+                            </div>
+                            
+                            <button type="button" class="btn-primary card-pay-btn" id="card-pay-btn" onclick="processCardPayment()">
+                                <i class="fas fa-credit-card"></i>
+                                Оплатити карткою
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ======================================== -->
+            <!-- СЕКЦІЯ 3: ПІДСУМОК ЗАМОВЛЕННЯ -->
+            <!-- ======================================== -->
             <div class="cart-summary-section">
                 <div class="cart-summary-card">
                     <h3 class="summary-title">Підсумок замовлення</h3>
@@ -255,8 +446,8 @@
                         </div>
                     </div>
 
-                    <!-- Кнопка підтвердження -->
-                    <div class="cart-actions">
+                    <!-- Кнопка підтвердження (показується тільки після заповнення форми) -->
+                    <div class="cart-actions" id="cart-actions" style="display: none;">
                         <button class="checkout-btn primary-btn" id="checkout-btn" onclick="submitOrder()">
                             <i class="fas fa-check"></i>
                             Підтвердити замовлення
@@ -277,6 +468,17 @@
                             <i class="fas fa-undo"></i>
                             <span>Повернення протягом 14 днів</span>
                         </div>
+                    </div>
+
+                    <!-- Кнопка підтвердження замовлення -->
+                    <div class="order-confirmation-section">
+                        <button type="button" class="confirm-order-btn" id="confirm-order-btn" onclick="confirmOrder()">
+                            <i class="fas fa-check-circle"></i>
+                            Підтвердити замовлення
+                        </button>
+                        <p class="confirmation-note">
+                            Після підтвердження ви зможете обрати спосіб оплати
+                        </p>
                     </div>
                 </div>
             </div>
@@ -338,6 +540,597 @@
 
 <script src="{% static 'js/main.js' %}"></script>
 <script src="{% static 'js/cart.js' %}"></script>
+<script src="{% static 'js/mono-checkout.js' %}"></script>
+
+<!-- Monobank Checkout Functions -->
+<script>
+    // Функція для перемикання подарункової інформації
+    function toggleGiftInfo() {
+        const isGift = document.getElementById('isGift').checked;
+        const giftSection = document.getElementById('gift-info-section');
+        const recipientName = document.getElementById('recipientName');
+        
+        if (isGift) {
+            giftSection.style.display = 'block';
+            recipientName.required = true;
+        } else {
+            giftSection.style.display = 'none';
+            recipientName.required = false;
+            // Очищаємо поля подарункової інформації
+            document.getElementById('recipientName').value = '';
+            document.getElementById('recipientPhone').value = '';
+            document.getElementById('giftMessage').value = '';
+            document.getElementById('giftOccasion').value = '';
+            document.getElementById('giftDeliveryType').value = 'surprise';
+        }
+    }
+
+    // Функція підтвердження замовлення
+    function confirmOrder() {
+        console.log('🔄 Підтвердження замовлення...');
+        
+        // Валідація форми
+        if (!validateOrderForm()) {
+            return;
+        }
+        
+        // Показуємо секцію оплати
+        const paymentSection = document.getElementById('payment-section');
+        const cartActions = document.getElementById('cart-actions');
+        
+        if (paymentSection) {
+            paymentSection.style.display = 'block';
+            paymentSection.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        if (cartActions) {
+            cartActions.style.display = 'block';
+        }
+        
+        // Ховаємо кнопку підтвердження в формі
+        const confirmBtn = document.getElementById('confirm-order-btn');
+        if (confirmBtn) {
+            confirmBtn.style.display = 'none';
+        }
+        
+        // Ініціалізуємо платіжні секції
+        initializePaymentMethods();
+        
+        console.log('✅ Замовлення підтверджено, показано секцію оплати');
+    }
+
+    // Валідація форми замовлення
+    function validateOrderForm() {
+        const requiredFields = [
+            'firstName', 'lastName', 'phone', 'city', 'address'
+        ];
+        
+        let isValid = true;
+        let firstErrorField = null;
+        
+        requiredFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field && !field.value.trim()) {
+                isValid = false;
+                if (!firstErrorField) {
+                    firstErrorField = field;
+                }
+                field.style.borderColor = '#ff4444';
+            } else if (field) {
+                field.style.borderColor = '';
+            }
+        });
+        
+        // Перевіряємо чи обрано подарунок і заповнено ім'я отримувача
+        const isGift = document.getElementById('isGift').checked;
+        if (isGift) {
+            const recipientName = document.getElementById('recipientName');
+            if (!recipientName.value.trim()) {
+                isValid = false;
+                if (!firstErrorField) {
+                    firstErrorField = recipientName;
+                }
+                recipientName.style.borderColor = '#ff4444';
+            }
+        }
+        
+        
+        if (!isValid) {
+            alert('Будь ласка, заповніть всі обов\'язкові поля');
+            if (firstErrorField) {
+                firstErrorField.focus();
+                firstErrorField.scrollIntoView({ behavior: 'smooth' });
+            }
+            return false;
+        }
+        
+        return true;
+    }
+
+    // Показуємо/ховаємо секції оплати при виборі способу оплати
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🔄 Ініціалізація обробки способів оплати...');
+        
+        const paymentMethods = document.querySelectorAll('input[name="payment"]');
+        const monobankSection = document.getElementById('monobank-payment-section');
+        const cardSection = document.getElementById('card-payment-section');
+        
+        console.log('📊 Знайдено елементів:', {
+            paymentMethods: paymentMethods.length,
+            monobankSection: !!monobankSection,
+            cardSection: !!cardSection
+        });
+        
+        // Функція для оновлення відображення секцій
+        function updatePaymentSections(selectedValue) {
+            console.log('🔄 Оновлення секцій оплати для:', selectedValue);
+            
+            // Ховаємо всі секції
+            if (monobankSection) {
+                monobankSection.style.display = 'none';
+                console.log('❌ Сховано секцію Monobank');
+            }
+            if (cardSection) {
+                cardSection.style.display = 'none';
+                console.log('❌ Сховано секцію картки');
+            }
+            
+            // Показуємо відповідну секцію
+            if (selectedValue === 'online' && monobankSection) {
+                monobankSection.style.display = 'block';
+                console.log('✅ Показано секцію Monobank');
+            } else if (selectedValue === 'card' && cardSection) {
+                cardSection.style.display = 'block';
+                console.log('✅ Показано секцію картки');
+            }
+        }
+        
+        // Встановлюємо початковий стан
+        const onlineRadio = document.getElementById('payment-online');
+        const cardRadio = document.getElementById('payment-card');
+        
+        console.log('🔍 Початковий стан радіо кнопок:', {
+            onlineChecked: onlineRadio ? onlineRadio.checked : 'не знайдено',
+            cardChecked: cardRadio ? cardRadio.checked : 'не знайдено'
+        });
+        
+        if (onlineRadio && onlineRadio.checked) {
+            updatePaymentSections('online');
+        } else if (cardRadio && cardRadio.checked) {
+            updatePaymentSections('card');
+        } else {
+            // Якщо нічого не обрано, обираємо онлайн за замовчуванням
+            if (onlineRadio) {
+                onlineRadio.checked = true;
+                updatePaymentSections('online');
+                console.log('🔄 Встановлено онлайн оплату за замовчуванням');
+            }
+        }
+        
+        // Додаємо обробники подій
+        paymentMethods.forEach((method, index) => {
+            console.log(`📝 Додавання обробника для кнопки ${index + 1}:`, method.value);
+            
+            method.addEventListener('change', function() {
+                console.log('🔄 Зміна способу оплати на:', this.value);
+                updatePaymentSections(this.value);
+            });
+            
+            // Додаємо обробник кліку для надійності
+            method.addEventListener('click', function() {
+                console.log('🖱️ Клік по радіо кнопці:', this.value);
+                setTimeout(() => {
+                    if (this.checked) {
+                        updatePaymentSections(this.value);
+                    }
+                }, 10);
+            });
+        });
+        
+        // Ініціалізуємо подарункову секцію
+        toggleGiftInfo();
+        
+        console.log('✅ Ініціалізація обробки способів оплати завершена');
+    });
+    
+    // Обробка оплати кошика через Monobank
+    async function processCartMonoPayment() {
+        try {
+            const button = document.getElementById('cart-mono-btn');
+            if (button) {
+                button.classList.add('loading');
+                button.disabled = true;
+            }
+            
+            // Отримуємо дані кошика
+            const cartData = getCartData();
+            
+            if (cartData.items.length === 0) {
+                throw new Error('Кошик порожній');
+            }
+            
+            // Формуємо дані для створення рахунку
+            const invoiceData = {
+                amount: cartData.total,
+                ccy: 980,
+                items: cartData.items.map(item => ({
+                    name: item.name,
+                    quantity: item.quantity,
+                    price: item.price
+                })),
+                reference: `cart_${Date.now()}`,
+                destination: `Оплата кошика (${cartData.items.length} товарів)`
+            };
+            
+            // Створюємо рахунок з кошика
+            const response = await fetch('/payment/create-cart-invoice/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(invoiceData)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                window.location.href = result.pageUrl;
+            } else {
+                throw new Error(result.error || 'Помилка створення рахунку');
+            }
+        } catch (error) {
+            console.error('Помилка оплати:', error);
+            alert('Помилка: ' + error.message);
+        } finally {
+            const button = document.getElementById('cart-mono-btn');
+            if (button) {
+                button.classList.remove('loading');
+                button.disabled = false;
+            }
+        }
+    }
+    
+    // Обробка оплати карткою через Monobank
+    async function processMonoCardPayment() {
+        try {
+            const button = document.getElementById('mono-card-btn');
+            if (button) {
+                button.classList.add('loading');
+                button.disabled = true;
+            }
+            
+            // Отримуємо дані кошика
+            const cartData = getCartData();
+            
+            if (cartData.items.length === 0) {
+                throw new Error('Кошик порожній');
+            }
+            
+            // Формуємо дані для створення рахунку
+            const invoiceData = {
+                amount: cartData.total,
+                ccy: 980,
+                items: cartData.items.map(item => ({
+                    name: item.name,
+                    quantity: item.quantity,
+                    price: item.price
+                })),
+                reference: `card_payment_${Date.now()}`,
+                destination: `Оплата карткою (${cartData.items.length} товарів)`,
+                paymentType: 'debit'
+            };
+            
+            // Створюємо рахунок
+            const response = await fetch('/payment/create-cart-invoice/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(invoiceData)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                window.location.href = result.pageUrl;
+            } else {
+                throw new Error(result.error || 'Помилка створення рахунку');
+            }
+        } catch (error) {
+            console.error('Помилка оплати карткою:', error);
+            alert('Помилка: ' + error.message);
+        } finally {
+            const button = document.getElementById('mono-card-btn');
+            if (button) {
+                button.classList.remove('loading');
+                button.disabled = false;
+            }
+        }
+    }
+    
+    // Обробка Apple Pay через Monobank
+    async function processMonoApplePay() {
+        try {
+            const button = document.getElementById('mono-apple-pay-btn');
+            if (button) {
+                button.classList.add('loading');
+                button.disabled = true;
+            }
+            
+            // Отримуємо дані кошика
+            const cartData = getCartData();
+            
+            if (cartData.items.length === 0) {
+                throw new Error('Кошик порожній');
+            }
+            
+            // Формуємо дані для створення рахунку
+            const invoiceData = {
+                amount: cartData.total,
+                ccy: 980,
+                items: cartData.items.map(item => ({
+                    name: item.name,
+                    quantity: item.quantity,
+                    price: item.price
+                })),
+                reference: `apple_pay_${Date.now()}`,
+                destination: `Apple Pay (${cartData.items.length} товарів)`,
+                paymentType: 'debit'
+            };
+            
+            // Створюємо рахунок
+            const response = await fetch('/payment/create-cart-invoice/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(invoiceData)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                window.location.href = result.pageUrl;
+            } else {
+                throw new Error(result.error || 'Помилка створення рахунку');
+            }
+        } catch (error) {
+            console.error('Помилка Apple Pay:', error);
+            alert('Помилка: ' + error.message);
+        } finally {
+            const button = document.getElementById('mono-apple-pay-btn');
+            if (button) {
+                button.classList.remove('loading');
+                button.disabled = false;
+            }
+        }
+    }
+    
+    // Обробка Google Pay через Monobank
+    async function processMonoGooglePay() {
+        try {
+            const button = document.getElementById('mono-google-pay-btn');
+            if (button) {
+                button.classList.add('loading');
+                button.disabled = true;
+            }
+            
+            // Отримуємо дані кошика
+            const cartData = getCartData();
+            
+            if (cartData.items.length === 0) {
+                throw new Error('Кошик порожній');
+            }
+            
+            // Формуємо дані для створення рахунку
+            const invoiceData = {
+                amount: cartData.total,
+                ccy: 980,
+                items: cartData.items.map(item => ({
+                    name: item.name,
+                    quantity: item.quantity,
+                    price: item.price
+                })),
+                reference: `google_pay_${Date.now()}`,
+                destination: `Google Pay (${cartData.items.length} товарів)`,
+                paymentType: 'debit'
+            };
+            
+            // Створюємо рахунок
+            const response = await fetch('/payment/create-cart-invoice/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(invoiceData)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                window.location.href = result.pageUrl;
+            } else {
+                throw new Error(result.error || 'Помилка створення рахунку');
+            }
+        } catch (error) {
+            console.error('Помилка Google Pay:', error);
+            alert('Помилка: ' + error.message);
+        } finally {
+            const button = document.getElementById('mono-google-pay-btn');
+            if (button) {
+                button.classList.remove('loading');
+                button.disabled = false;
+            }
+        }
+    }
+    
+    // Отримання даних кошика
+    function getCartData() {
+        const cartItems = [];
+        const cartItemsList = document.getElementById('cart-items');
+        
+        if (cartItemsList) {
+            const items = cartItemsList.querySelectorAll('.cart-item');
+            items.forEach(item => {
+                const name = item.querySelector('.item-name')?.textContent || 'Товар';
+                const price = parseFloat(item.querySelector('.item-price')?.textContent?.replace(/[^\d.,]/g, '').replace(',', '.') || '0');
+                const quantity = parseInt(item.querySelector('.quantity-input')?.value || '1');
+                
+                cartItems.push({
+                    name: name,
+                    price: price,
+                    quantity: quantity
+                });
+            });
+        }
+        
+        const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        
+        return {
+            items: cartItems,
+            total: total
+        };
+    }
+    
+    // Обробка оплати банківською картою
+    async function processCardPayment() {
+        try {
+            const button = document.getElementById('card-pay-btn');
+            if (button) {
+                button.classList.add('loading');
+                button.disabled = true;
+            }
+            
+            // Валідація форми картки
+            const cardNumber = document.getElementById('card-number').value.replace(/\s/g, '');
+            const cardExpiry = document.getElementById('card-expiry').value;
+            const cardCvv = document.getElementById('card-cvv').value;
+            const cardHolder = document.getElementById('card-holder').value;
+            
+            if (!cardNumber || !cardExpiry || !cardCvv || !cardHolder) {
+                throw new Error('Будь ласка, заповніть всі поля картки');
+            }
+            
+            if (cardNumber.length < 16) {
+                throw new Error('Номер картки повинен містити мінімум 16 цифр');
+            }
+            
+            if (cardCvv.length < 3) {
+                throw new Error('CVV код повинен містити мінімум 3 цифри');
+            }
+            
+            // Отримуємо дані кошика
+            const cartData = getCartData();
+            
+            if (cartData.items.length === 0) {
+                throw new Error('Кошик порожній');
+            }
+            
+            // Спочатку зберігаємо замовлення на сервері
+            const saveResponse = await fetch('/api/orders/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(cartData)
+            });
+            
+            const saveResult = await saveResponse.json();
+            
+            if (!saveResult.success) {
+                throw new Error('Помилка збереження замовлення: ' + saveResult.error);
+            }
+            
+            console.log('✅ Замовлення збережено на сервері:', saveResult.order_number);
+            
+            // Формуємо дані для створення рахунку з карткою
+            const invoiceData = {
+                amount: cartData.total,
+                ccy: 980,
+                order_id: saveResult.order_id,
+                order_number: saveResult.order_number,
+                cardData: {
+                    pan: cardNumber,
+                    exp: cardExpiry.replace('/', ''),
+                    cvv: cardCvv
+                },
+                merchantPaymInfo: {
+                    reference: `card_${Date.now()}`,
+                    destination: `Оплата кошика (${cartData.items.length} товарів)`,
+                    basketOrder: cartData.items.map(item => ({
+                        name: item.name,
+                        qty: item.quantity,
+                        sum: item.price,
+                        total: item.price * item.quantity
+                    }))
+                },
+                redirectUrl: window.location.origin + '/payment/success/',
+                webHookUrl: window.location.origin + '/payment/webhook/'
+            };
+            
+            // Створюємо рахунок з оплатою карткою
+            const response = await fetch('/payment/card/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(invoiceData)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                // Очищаємо кошик перед перенаправленням
+                cart.items = [];
+                updateCartDisplay();
+                saveCartToStorage();
+                
+                if (result.tdsUrl) {
+                    // Потрібна 3DS автентифікація
+                    window.location.href = result.tdsUrl;
+                } else {
+                    // Успішна оплата
+                    window.location.href = '/payment/success/';
+                }
+            } else {
+                throw new Error(result.error || 'Помилка створення рахунку');
+            }
+            
+        } catch (error) {
+            console.error('Помилка оплати карткою:', error);
+            alert('Помилка: ' + error.message);
+        } finally {
+            const button = document.getElementById('card-pay-btn');
+            if (button) {
+                button.classList.remove('loading');
+                button.disabled = false;
+            }
+        }
+    }
+    
+    // Отримання CSRF токена
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+</script>
 </body>
 </html>
 
