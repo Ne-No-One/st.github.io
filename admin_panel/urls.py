@@ -1,10 +1,20 @@
 from django.urls import path
 from . import views
 from . import payment_views
+from . import auth_views
 
 app_name = 'admin_panel'
 
 urlpatterns = [
+    # Authentication
+    path('login/', auth_views.admin_login, name='login'),
+    path('logout/', auth_views.admin_logout, name='logout'),
+    path('profile/', auth_views.admin_profile, name='admin_profile'),
+    path('users/', auth_views.admin_users_list, name='admin_users_list'),
+    path('api/users/create/', auth_views.create_admin_user, name='api_create_admin'),
+    path('api/users/<int:admin_id>/toggle/', auth_views.toggle_admin_status, name='api_toggle_admin'),
+    
+    # Dashboard
     path('', views.admin_dashboard, name='dashboard'),
     path('site-settings/', views.site_settings, name='site_settings'),
     path('main-product/', views.main_product_settings, name='main_product_settings'),
@@ -48,4 +58,21 @@ urlpatterns = [
     path('payments/<str:order_id>/status/', payment_views.check_payment_status, name='check_payment_status'),
     path('payments/<str:order_id>/receipt/', payment_views.download_payment_receipt, name='download_payment_receipt'),
     path('payments/reports/', payment_views.payment_reports, name='payment_reports'),
+    
+    # Marketing
+    path('marketing/', views.marketing_settings, name='marketing_settings'),
+    
+    # Marketing AJAX API
+    path('api/marketing/progress-bar/toggle/', views.toggle_progress_bar, name='api_toggle_progress_bar'),
+    path('api/marketing/milestones/add/', views.add_milestone_ajax, name='api_add_milestone'),
+    path('api/marketing/milestones/<int:milestone_id>/update/', views.update_milestone_ajax, name='api_update_milestone'),
+    path('api/marketing/milestones/<int:milestone_id>/delete/', views.delete_milestone_ajax, name='api_delete_milestone'),
+    path('api/marketing/milestones/<int:milestone_id>/get/', views.get_milestone_ajax, name='api_get_milestone'),
+    
+    # Media Library API
+    path('api/media-files/', views.get_media_files, name='api_media_files'),
+    
+    # Color order update
+    path('api/colors/update-order/', views.update_color_order, name='update_color_order'),
+    path('api/colors/update-status/', views.update_color_status, name='update_color_status'),
 ]

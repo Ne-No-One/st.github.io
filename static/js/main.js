@@ -420,6 +420,34 @@ function getColorQuantityImages(colorName) {
     return {};
 }
 
+// Функція для отримання статусів кількостей для кольору
+function getColorQuantityStatuses(colorName) {
+    const colorDot = document.querySelector(`[data-color="${colorName}"]`);
+    console.log('🔍 Шукаємо статуси для кольору:', colorName);
+    console.log('   └─ colorDot знайдено:', !!colorDot);
+    
+    if (colorDot) {
+        console.log('   └─ data-quantity-statuses:', colorDot.dataset.quantityStatuses);
+        
+        if (colorDot.dataset.quantityStatuses) {
+            try {
+                const statuses = JSON.parse(colorDot.dataset.quantityStatuses);
+                console.log('📊 ✅ Розпарсено quantity_statuses:', statuses);
+                return statuses;
+            } catch (e) {
+                console.error('❌ Помилка парсингу quantity_statuses:', e);
+                console.error('   └─ Сирі дані:', colorDot.dataset.quantityStatuses);
+                return {};
+            }
+        } else {
+            console.log('⚠️ quantity_statuses порожній або відсутній');
+        }
+    } else {
+        console.log('❌ colorDot не знайдено');
+    }
+    return {};
+}
+
 // Функція для оновлення видимості кнопок кількостей на основі наявності фото та складу
 function updateQuantityButtonsVisibility(colorName) {
     console.log('🔍 Оновлюємо видимість кнопок кількостей для кольору:', colorName);
@@ -428,9 +456,9 @@ function updateQuantityButtonsVisibility(colorName) {
     const quantityImages = getColorQuantityImages(colorName);
     console.log('📸 Доступні фото для кольору:', quantityImages);
     
-    // Всі кількості завжди доступні (склад видалено)
-    const availableQuantities = window.quantityOptions || [];
-    console.log('📦 Всі кількості доступні:', availableQuantities);
+    // Отримуємо статуси для цього кольору
+    const quantityStatuses = getColorQuantityStatuses(colorName);
+    console.log('📊 Статуси кількостей для кольору:', quantityStatuses);
     
     // Отримуємо всі кнопки кількостей
     const quantityButtons = document.querySelectorAll('.quantity-btn');
@@ -441,67 +469,187 @@ function updateQuantityButtonsVisibility(colorName) {
         const imageUrl = quantityImages && quantityImages[quantity] ? quantityImages[quantity] : '';
         const hasImage = imageUrl && imageUrl.trim() !== '' && imageUrl !== 'null' && imageUrl !== 'undefined';
         
-        // Кількість завжди доступна (склад видалено)
-        const hasStock = true;
+        // Перевіряємо статус конкретної кількості для цього кольору
+        const qtyStatusRaw = quantityStatuses ? quantityStatuses[quantity] : null;
+        const qtyStatus = qtyStatusRaw || { is_active: true, in_stock: true };
+        const isActive = qtyStatus.is_active !== false;
+        const hasStock = qtyStatus.in_stock !== false;
         
-        console.log(`🔍 Кількість ${quantity}:`, {
-            hasImage,
-            hasStock,
-            imageUrl: imageUrl,
-            buttonElement: button,
-            rawQuantityImages: quantityImages
-        });
+        // Скорочене логування
+        console.log(`🔍 Кількість ${quantity}: active=${isActive}, stock=${hasStock}, photo=${hasImage ? 'є' : 'немає'}`);
         
+        // Спрощена логіка - як для кольорів
         if (hasImage) {
             // Показуємо кнопку якщо є фото
             button.style.display = 'inline-block';
-            button.disabled = false;
-            button.classList.remove('hidden', 'out-of-stock', 'low-stock');
             button.style.visibility = 'visible';
-            button.title = ''; // Прибираємо tooltip з інформацією про склад
+            button.classList.remove('hidden');
             
-            console.log('✅ Показуємо кнопку для кількості:', quantity, 'з фото:', imageUrl);
+            // Перевіряємо наявність - спочатку перевіряємо per-quantity статус
+            if (!isActive) {
+                // Якщо неактивна для цього кольору - ХОВАЄМО (не видаляємо!)
+                button.style.setProperty('display', 'none', 'important');
+                button.disabled = true;
+                button.classList.add('hidden');
+                console.log('❌ Кількість неактивна (приховано):', quantity);
+            } else if (!hasStock) {
+                // Якщо немає в наявності - показуємо з червоною лінією, але НЕ блокуємо клік
+                button.classList.add('out-of-stock');
+                // НЕ встановлюємо disabled - дозволяємо клік для перегляду фото
+                button.title = `${quantity} шт - Немає в наявності (можна переглянути)`;
+                console.log('⚠️ Без наявності (можна клікати):', quantity);
+            } else {
+                // Повністю доступна
+                button.classList.remove('out-of-stock');
+                button.disabled = false;
+                button.title = '';
+                console.log('✅ Доступна:', quantity);
+            }
         } else {
-            // Приховуємо кнопку якщо немає фото
-            button.style.display = 'none';
+            // ХОВАЄМО якщо немає фото (не видаляємо!)
+            button.style.setProperty('display', 'none', 'important');
             button.disabled = true;
             button.classList.add('hidden');
-            button.style.visibility = 'hidden';
-            
-            if (!hasImage) {
-                console.log('❌ Приховуємо кнопку для кількості:', quantity, '(немає фото або порожній URL)');
-            }
+            console.log('❌ Немає фото (приховано):', quantity);
         }
     });
     
     // Перевіряємо чи є хоча б одна активна кнопка
-    const visibleButtons = Array.from(quantityButtons).filter(btn => btn.style.display !== 'none');
-    if (visibleButtons.length === 0) {
-        console.log('⚠️ Немає доступних кількостей для цього кольору');
-        // Можна додати повідомлення користувачу
-    } else {
-        // Знаходимо кнопку з найбільшою ціною за одиницю
-        const sortedButtons = visibleButtons.sort((a, b) => {
-            const priceA = parseFloat(a.dataset.pricePerUnit || 0);
-            const priceB = parseFloat(b.dataset.pricePerUnit || 0);
-            return priceB - priceA; // Сортуємо за спаданням ціни
+    const visibleButtons = Array.from(quantityButtons).filter(btn => {
+        const display = window.getComputedStyle(btn).display;
+        return display !== 'none';
+    });
+    
+    console.log(`📊 Всього видимих кнопок після фільтрації: ${visibleButtons.length}`);
+    
+    // ДИНАМІЧНО ОНОВЛЮЄМО РОЗМІРИ КНОПОК та КОНТЕЙНЕРА
+    const container = document.querySelector('.quantity-buttons-container');
+    if (container) {
+        // Видаляємо старі класи
+        container.classList.remove('single-btn', 'two-btns', 'three-btns', 'four-btns', 'five-btns');
+        
+        // Визначаємо розміри на основі кількості кнопок та ширини екрану
+        let buttonPadding, buttonFontSize, buttonMinWidth, containerGap;
+        const isMobile = window.innerWidth <= 768;
+        
+        if (visibleButtons.length === 1) {
+            container.classList.add('single-btn');
+            buttonPadding = isMobile ? '12px 20px' : '14px 24px';
+            buttonFontSize = isMobile ? '1rem' : '1.1rem';
+            buttonMinWidth = isMobile ? '70px' : '80px';
+            containerGap = '0';
+        } else if (visibleButtons.length === 2) {
+            container.classList.add('two-btns');
+            buttonPadding = isMobile ? '10px 16px' : '12px 20px';
+            buttonFontSize = isMobile ? '0.95rem' : '1rem';
+            buttonMinWidth = isMobile ? '60px' : '70px';
+            containerGap = isMobile ? '12px' : '16px';
+        } else if (visibleButtons.length === 3) {
+            container.classList.add('three-btns');
+            buttonPadding = isMobile ? '9px 14px' : '10px 16px';
+            buttonFontSize = isMobile ? '0.9rem' : '0.95rem';
+            buttonMinWidth = isMobile ? '52px' : '60px';
+            containerGap = isMobile ? '10px' : '12px';
+        } else if (visibleButtons.length === 4) {
+            container.classList.add('four-btns');
+            buttonPadding = isMobile ? '8px 12px' : '10px 14px';
+            buttonFontSize = isMobile ? '0.85rem' : '0.9rem';
+            buttonMinWidth = isMobile ? '48px' : '55px';
+            containerGap = isMobile ? '8px' : '10px';
+        } else if (visibleButtons.length >= 5) {
+            container.classList.add('five-btns');
+            buttonPadding = isMobile ? '7px 10px' : '8px 12px';
+            buttonFontSize = isMobile ? '0.8rem' : '0.85rem';
+            buttonMinWidth = isMobile ? '44px' : '50px';
+            containerGap = isMobile ? '6px' : '8px';
+        }
+        
+        // Застосовуємо стилі до контейнера з !important
+        container.style.setProperty('gap', containerGap, 'important');
+        container.style.setProperty('justify-content', 'center', 'important');
+        container.style.setProperty('display', 'flex', 'important');
+        container.style.setProperty('flex-direction', 'row', 'important');
+        container.style.setProperty('align-items', 'center', 'important');
+        container.style.setProperty('flex-wrap', 'wrap', 'important');
+        container.style.setProperty('width', '100%', 'important');
+        container.style.setProperty('box-sizing', 'border-box', 'important');
+        
+        // Застосовуємо стилі до ВИДИМИХ кнопок
+        visibleButtons.forEach(button => {
+            button.style.setProperty('padding', buttonPadding, 'important');
+            button.style.setProperty('font-size', buttonFontSize, 'important');
+            button.style.setProperty('min-width', buttonMinWidth, 'important');
         });
         
-        const mostExpensiveButton = sortedButtons[0];
+        console.log(`🎯 Оновлено ${visibleButtons.length} кнопок: padding=${buttonPadding}, gap=${containerGap}`);
+    }
+    
+    if (visibleButtons.length === 0) {
+        console.log('⚠️ Немає доступних кількостей для цього кольору');
+        // Блокуємо кнопку "Додати в кошик"
+        const addToCartBtn = document.querySelector('.add-to-cart-btn');
+        if (addToCartBtn) {
+            addToCartBtn.disabled = true;
+            addToCartBtn.style.opacity = '0.5';
+            addToCartBtn.style.cursor = 'not-allowed';
+            console.log('🚫 Кнопку кошика заблоковано - немає доступних кількостей');
+        }
+    } else {
+        // Фільтруємо тільки ДОСТУПНІ кнопки (БЕЗ out-of-stock класу)
+        const availableButtons = visibleButtons.filter(btn => !btn.classList.contains('out-of-stock'));
+        
+        console.log(`📊 Доступних кнопок (без out-of-stock): ${availableButtons.length} з ${visibleButtons.length}`);
+        
+        let selectedButton;
+        
+        if (availableButtons.length > 0) {
+            // Обираємо НАЙМЕНШУ доступну кількість
+            const sortedButtons = availableButtons.sort((a, b) => {
+                const qtyA = parseInt(a.dataset.quantity || 0);
+                const qtyB = parseInt(b.dataset.quantity || 0);
+                return qtyA - qtyB; // Сортуємо за ЗРОСТАННЯМ кількості
+            });
+            
+            selectedButton = sortedButtons[0];
+            console.log('✅ Обрано найменшу ДОСТУПНУ кількість:', selectedButton.dataset.quantity);
+            
+            // Розблоковуємо кнопку "Додати в кошик"
+            const addToCartBtn = document.querySelector('.add-to-cart-btn');
+            if (addToCartBtn) {
+                addToCartBtn.disabled = false;
+                addToCartBtn.style.opacity = '1';
+                addToCartBtn.style.cursor = 'pointer';
+            }
+        } else {
+            // Немає доступних - обираємо будь-яку видиму (з out-of-stock)
+            selectedButton = visibleButtons[0];
+            console.log('⚠️ Всі кількості без наявності, обрано:', selectedButton.dataset.quantity);
+            
+            // Блокуємо кнопку "Додати в кошик"
+            const addToCartBtn = document.querySelector('.add-to-cart-btn');
+            if (addToCartBtn) {
+                addToCartBtn.disabled = true;
+                addToCartBtn.style.opacity = '0.5';
+                addToCartBtn.style.cursor = 'not-allowed';
+                console.log('🚫 Кнопку кошика заблоковано - немає наявних кількостей');
+            }
+        }
         
         // Видаляємо активний клас з усіх кнопок
-        quantityButtons.forEach(btn => btn.classList.remove('active'));
+        quantityButtons.forEach(btn => {
+            btn.classList.remove('active');
+        });
         
-        // Додаємо активний клас до кнопки з найбільшою ціною
-        if (mostExpensiveButton) {
-            mostExpensiveButton.classList.add('active');
-            console.log('🔄 Активуємо кнопку з найбільшою ціною:', mostExpensiveButton.dataset.quantity, 'грн за одиницю');
+        // Додаємо активний клас до обраної кнопки
+        if (selectedButton) {
+            selectedButton.classList.add('active');
+            console.log('🔄 Активовано кнопку:', selectedButton.dataset.quantity);
             
             // Оновлюємо фото для цієї кількості
-            updateQuantityImage(mostExpensiveButton.dataset.quantity);
+            updateQuantityImage(selectedButton.dataset.quantity);
             
             // Оновлюємо ціну для нової активної кнопки
-            updatePrice(mostExpensiveButton);
+            updatePrice(selectedButton);
         }
     }
 }
@@ -514,7 +662,7 @@ function showQuantityImages(colorName) {
     const grid = document.getElementById('quantityImagesGrid');
     
     if (!container || !grid) {
-        console.log('❌ Контейнер не знайдено');
+        // Контейнер не існує в поточному дизайні - це нормально
         return;
     }
     
@@ -693,11 +841,19 @@ document.addEventListener('DOMContentLoaded', () => {
         // Показуємо фото для всіх кількостей першого кольору
         showQuantityImages(colorName);
         
-        // Встановлюємо фото для поточної кількості
-        const activeQuantity = document.querySelector('.quantity-btn.active');
-        if (activeQuantity) {
-            updateQuantityImage(activeQuantity.dataset.quantity);
-        }
+        // Оновлюємо видимість кнопок (це також встановить активну кнопку)
+        updateQuantityButtonsVisibility(colorName);
+        
+        // Встановлюємо фото для поточної активної кількості (після оновлення видимості)
+        setTimeout(() => {
+            const activeQuantity = document.querySelector('.quantity-btn.active');
+            if (activeQuantity) {
+                console.log('🖼️ Встановлюємо фото для активної кількості:', activeQuantity.dataset.quantity);
+                updateQuantityImage(activeQuantity.dataset.quantity);
+            } else {
+                console.log('⚠️ Немає активної кнопки після ініціалізації');
+            }
+        }, 100);
     }
     
     // Перевіряємо наявність всіх важливих елементів
@@ -712,6 +868,20 @@ document.addEventListener('DOMContentLoaded', () => {
 // Додатково скидаємо скрол при завантаженні сторінки
 window.addEventListener('load', function() {
     window.scrollTo(0, 0);
+});
+
+// Обробник зміни розміру вікна для адаптації кнопок кількості
+let resizeTimeout;
+window.addEventListener('resize', function() {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(function() {
+        const activeColor = document.querySelector('.color-dot.active');
+        if (activeColor) {
+            const colorName = activeColor.dataset.color;
+            console.log('🔄 Зміна розміру екрану, оновлюємо кнопки для:', colorName);
+            updateQuantityButtonsVisibility(colorName);
+        }
+    }, 250); // Debounce 250ms
 });
 
 // ===== ОПТИМІЗАЦІЯ ДЛЯ ШВИДШОГО ЗАВАНТАЖЕННЯ =====
@@ -809,6 +979,23 @@ function initializePriceCalculation() {
         
         // Функція обробки кліку
         function handleClick(e) {
+            // Перевіряємо чи кнопка прихована (is_active=false)
+            const computedStyle = window.getComputedStyle(this);
+            if (computedStyle.display === 'none') {
+                console.log(`🚫 Клік на приховану кнопку ${this.dataset.quantity} ігнорується`);
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+            
+            // Перевіряємо чи кнопка disabled (in_stock=false)
+            if (this.disabled) {
+                console.log(`🚫 Клік на неактивну кнопку ${this.dataset.quantity} ігнорується`);
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+            
             e.preventDefault();
             e.stopPropagation();
             console.log(`🖱️ КЛІК на кількість: ${this.dataset.quantity}`);
@@ -849,14 +1036,27 @@ function initializePriceCalculation() {
     if (quantityButtons.length > 0) {
         console.log('✅ Знайдено кнопки кількості, ініціалізуємо...');
         
-        // Знаходимо найдорожчий варіант за замовчуванням
-        const sortedButtons = Array.from(quantityButtons).sort((a, b) => {
+        // Фільтруємо тільки ВИДИМІ кнопки (не приховані через is_active=false)
+        const visibleButtons = Array.from(quantityButtons).filter(btn => {
+            const computedStyle = window.getComputedStyle(btn);
+            return computedStyle.display !== 'none';
+        });
+        
+        console.log(`💰 Видимих кнопок: ${visibleButtons.length} з ${quantityButtons.length}`);
+        
+        if (visibleButtons.length === 0) {
+            console.log('⚠️ Немає видимих кнопок кількості');
+            return;
+        }
+        
+        // Знаходимо найдорожчий варіант серед ВИДИМИХ кнопок
+        const sortedButtons = visibleButtons.sort((a, b) => {
             const priceA = parseFloat(a.dataset.pricePerUnit || 0);
             const priceB = parseFloat(b.dataset.pricePerUnit || 0);
             return priceB - priceA; // Сортуємо за спаданням ціни
         });
         
-        let defaultBtn = sortedButtons[0] || quantityButtons[0];
+        let defaultBtn = sortedButtons[0];
         
         // Видаляємо всі активні класи та встановлюємо активний тільки для найдорожчого
         quantityButtons.forEach(btn => btn.classList.remove('active'));

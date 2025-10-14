@@ -1,452 +1,401 @@
 {% extends 'admin_panel/base.html' %}
 
-{% block title %}Дашборд - Адмін Панель{% endblock %}
-{% block page_title %}Дашборд{% endblock %}
+{% block title %}Dashboard - Адмін Панель{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
 
 {% block content %}
-<!-- Основна статистика -->
-<div class="row mb-4">
-    <div class="col-lg-3 col-md-6 mb-3">
-        <div class="stat-card border-primary">
-            <i class="fas fa-shopping-cart text-primary"></i>
-            <h6 class="text-primary">Замовлення</h6>
-            <h4>{{ orders_count }}</h4>
-            <small class="text-muted">+5 цього тижня</small>
-            <a href="{% url 'admin_panel:orders_list' %}" class="btn btn-sm btn-primary mt-2">Переглянути</a>
-        </div>
-    </div>
-
-    <div class="col-lg-3 col-md-6 mb-3">
-        <div class="stat-card border-success">
-            <i class="fas fa-users text-success"></i>
-            <h6 class="text-success">Клієнти</h6>
-            <h4>{{ customers_count }}</h4>
-            <small class="text-muted">+2 нових</small>
-            <a href="{% url 'admin_panel:customers_list' %}" class="btn btn-sm btn-success mt-2">Переглянути</a>
-        </div>
-    </div>
-
-
-</div>
-
-<!-- Прогрес бари -->
-<div class="row mb-4">
-    <div class="col-md-6 mb-3">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h6 class="mb-0"><i class="fas fa-chart-line me-2"></i>Статистика замовлень</h6>
+<div class="dashboard-container">
+    
+    <!-- Статистика -->
+    <div class="stats-grid">
+        <!-- Замовлення -->
+        <div class="stat-card-modern">
+            <i class="fas fa-shopping-cart stat-icon text-primary"></i>
+            <div class="stat-label">Замовлення</div>
+            <div class="stat-value">{{ orders_count|default:0 }}</div>
+            <div class="stat-change">
+                <i class="fas fa-list me-1"></i>Всього в системі
             </div>
-            <div class="card-body">
-                <div class="progress-item mb-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="small">Завершені замовлення</span>
-                        <span class="small text-success">85%</span>
-                    </div>
-                    <div class="progress" style="height: 8px;">
-                        <div class="progress-bar bg-success" style="width: 85%"></div>
-                    </div>
-                </div>
-                <div class="progress-item mb-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="small">В обробці</span>
-                        <span class="small text-warning">10%</span>
-                    </div>
-                    <div class="progress" style="height: 8px;">
-                        <div class="progress-bar bg-warning" style="width: 10%"></div>
-                    </div>
-                </div>
-                <div class="progress-item">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="small">Скасовані</span>
-                        <span class="small text-danger">5%</span>
-                    </div>
-                    <div class="progress" style="height: 8px;">
-                        <div class="progress-bar bg-danger" style="width: 5%"></div>
-                    </div>
-                </div>
+            <div class="mt-3">
+                <a href="{% url 'admin_panel:orders_list' %}" class="btn btn-sm btn-outline-primary">
+                    Переглянути <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Клієнти -->
+        <div class="stat-card-modern">
+            <i class="fas fa-users stat-icon text-success"></i>
+            <div class="stat-label">Клієнти</div>
+            <div class="stat-value">{{ customers_count|default:0 }}</div>
+            <div class="stat-change">
+                <i class="fas fa-user-plus me-1"></i>Зареєстровано
+            </div>
+            <div class="mt-3">
+                <a href="{% url 'admin_panel:customers_list' %}" class="btn btn-sm btn-outline-success">
+                    Переглянути <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Додаткові товари -->
+        <div class="stat-card-modern">
+            <i class="fas fa-box stat-icon text-info"></i>
+            <div class="stat-label">Додаткові товари</div>
+            <div class="stat-value">{{ additional_products_count|default:0 }}</div>
+            <div class="stat-change">
+                <i class="fas fa-palette me-1"></i>{{ color_options_count|default:0 }} кольорів
+            </div>
+            <div class="mt-3">
+                <a href="{% url 'admin_panel:additional_products' %}" class="btn btn-sm btn-outline-info">
+                    Управляти <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Кількості -->
+        <div class="stat-card-modern">
+            <i class="fas fa-layer-group stat-icon text-warning"></i>
+            <div class="stat-label">Варіанти кількості</div>
+            <div class="stat-value">{{ quantity_options_count|default:0 }}</div>
+            <div class="stat-change">
+                <i class="fas fa-star me-1"></i>Основний товар
+            </div>
+            <div class="mt-3">
+                <a href="{% url 'admin_panel:main_product_settings' %}" class="btn btn-sm btn-outline-warning">
+                    Налаштувати <i class="fas fa-arrow-right ms-1"></i>
+                </a>
             </div>
         </div>
     </div>
     
-</div>
-
-<!-- Детальна статистика -->
-<div class="row mb-4">
-    <div class="col-lg-8 mb-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-chart-line me-2"></i>
-                    Статистика продажів
-                </h5>
-            </div>
-            <div class="card-body">
-                <canvas id="salesChart" height="300"></canvas>
+    <!-- Фінансова статистика (якщо є замовлення) -->
+    {% if orders_count > 0 %}
+    <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+        <div class="stat-card-modern" style="background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(76, 175, 80, 0.05) 100%);">
+            <i class="fas fa-dollar-sign stat-icon" style="color: #4CAF50;"></i>
+            <div class="stat-label">Загальний дохід</div>
+            <div class="stat-value" style="color: #4CAF50;">{{ total_revenue|default:0 }}₴</div>
+            <div class="stat-change">
+                <i class="fas fa-shopping-cart me-1"></i>{{ orders_count }} замовлень
             </div>
         </div>
+        
+        <div class="stat-card-modern" style="background: linear-gradient(135deg, rgba(13, 110, 253, 0.1) 0%, rgba(13, 110, 253, 0.05) 100%);">
+            <i class="fas fa-receipt stat-icon" style="color: #0d6efd;"></i>
+            <div class="stat-label">Середній чек</div>
+            <div class="stat-value" style="color: #0d6efd;">{{ average_check|default:0 }}₴</div>
+            <div class="stat-change">
+                <i class="fas fa-calculator me-1"></i>На замовлення
+            </div>
+        </div>
+        
+        <div class="stat-card-modern" style="background: linear-gradient(135deg, rgba(25, 135, 84, 0.1) 0%, rgba(25, 135, 84, 0.05) 100%);">
+            <i class="fas fa-check-circle stat-icon" style="color: #198754;"></i>
+            <div class="stat-label">Виконано</div>
+            <div class="stat-value" style="color: #198754;">{{ completed_count|default:0 }}</div>
+            <div class="stat-change">
+                <i class="fas fa-percentage me-1"></i>{{ percent_completed|default:0 }}% успішність
+            </div>
+        </div>
+        
+        <div class="stat-card-modern" style="background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 193, 7, 0.05) 100%);">
+            <i class="fas fa-clock stat-icon" style="color: #ffc107;"></i>
+            <div class="stat-label">В роботі</div>
+            <div class="stat-value" style="color: #ffc107;">{{ pending_count|default:0 }}</div>
+            <div class="stat-change">
+                <i class="fas fa-hourglass-half me-1"></i>Потребують уваги
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Швидкі дії -->
+    <div class="quick-actions">
+        <a href="{% url 'admin_panel:main_product_settings' %}" class="quick-action-btn">
+            <i class="fas fa-star"></i>
+            <span>Головний товар</span>
+        </a>
+        <a href="{% url 'admin_panel:additional_products' %}" class="quick-action-btn">
+            <i class="fas fa-box"></i>
+            <span>Додаткові товари</span>
+        </a>
+        <a href="{% url 'admin_panel:orders_list' %}" class="quick-action-btn">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Замовлення</span>
+        </a>
+        <a href="{% url 'admin_panel:marketing_settings' %}" class="quick-action-btn">
+            <i class="fas fa-bullhorn"></i>
+            <span>Маркетинг</span>
+        </a>
+        <a href="{% url 'admin_panel:payment_management' %}" class="quick-action-btn">
+            <i class="fas fa-credit-card"></i>
+            <span>Платежі</span>
+        </a>
+        <a href="{% url 'admin_panel:site_settings' %}" class="quick-action-btn">
+            <i class="fas fa-cog"></i>
+            <span>Налаштування</span>
+        </a>
     </div>
     
-    <div class="col-lg-4 mb-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-chart-pie me-2"></i>
-                    Категорії товарів
-                </h5>
-            </div>
-            <div class="card-body">
-                <canvas id="categoriesChart" height="200"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Фінансова статистика -->
-<div class="row mb-4">
-    <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card compact-card text-center">
-            <div class="card-body">
-                <i class="fas fa-dollar-sign fa-2x text-success mb-2"></i>
-                <h6>Дохід цього місяця</h6>
-                <h4 class="text-success">45,000 грн</h4>
-                <small class="text-muted">+12% від минулого місяця</small>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card compact-card text-center">
-            <div class="card-body">
-                <i class="fas fa-chart-line fa-2x text-info mb-2"></i>
-                <h6>Прибуток</h6>
-                <h4 class="text-info">27,000 грн</h4>
-                <small class="text-muted">Рентабельність: 60%</small>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card compact-card text-center">
-            <div class="card-body">
-                <i class="fas fa-shopping-bag fa-2x text-primary mb-2"></i>
-                <h6>Середній чек</h6>
-                <h4 class="text-primary">1,800 грн</h4>
-                <small class="text-muted">+5% від минулого тижня</small>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card compact-card text-center">
-            <div class="card-body">
-                <i class="fas fa-star fa-2x text-warning mb-2"></i>
-                <h6>Топ товар</h6>
-                <h4 class="text-warning">Преміум букет</h4>
-                <small class="text-muted">25 замовлень</small>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Останні дії та сповіщення -->
-<div class="row">
-    <div class="col-lg-6 mb-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-clock me-2"></i>
+    <!-- Основний контент -->
+    <div class="main-grid">
+        <!-- Ліва колонка: Замовлення -->
+        <div class="dashboard-section">
+            <div class="section-header compact">
+                <h3 class="section-title compact">
+                    <i class="fas fa-shopping-cart"></i>
                     Останні замовлення
-                </h5>
+                </h3>
+                <a href="{% url 'admin_panel:orders_list' %}" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-list"></i>
+                    <span class="d-none d-md-inline ms-1">Всі</span>
+                </a>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-dark table-sm">
-                        <tbody>
-                            {% if recent_orders %}
-                                {% for order in recent_orders %}
-                                <tr>
-                                    <td><strong>{{ order.order_number }}</strong></td>
-                                    <td>{{ order.customer_name }}</td>
-                                    <td>
-                                        {% if order.status == 'нове' %}
-                                            <span class="badge bg-warning">{{ order.status }}</span>
-                                        {% elif order.status == 'в обробці' %}
-                                            <span class="badge bg-info">{{ order.status }}</span>
-                                        {% elif order.status == 'виконано' %}
-                                            <span class="badge bg-success">{{ order.status }}</span>
-                                        {% else %}
-                                            <span class="badge bg-danger">{{ order.status }}</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ order.total_amount }} грн</td>
-                                </tr>
-                                {% endfor %}
-                            {% else %}
-                                <tr>
-                                    <td colspan="4" class="text-center text-muted">Немає замовлень</td>
-                                </tr>
+            
+            <div class="orders-list">
+                {% if recent_orders %}
+                    {% for order in recent_orders %}
+                    <div class="order-item">
+                        <div class="order-header">
+                            <span class="order-number">#{{ order.order_number }}</span>
+                            <span class="order-status {% if order.status == 'нове' %}bg-warning{% elif order.status == 'в обробці' %}bg-info{% elif order.status == 'виконано' %}bg-success{% else %}bg-danger{% endif %}">
+                                {{ order.status }}
+                            </span>
+                        </div>
+                        <div class="order-details">
+                            <div>
+                                <i class="fas fa-user me-1"></i>{{ order.customer_name|default:"Клієнт" }}
+                            </div>
+                            <div class="order-amount">{{ order.total_amount|default:0 }} грн</div>
+                        </div>
+                        <div class="order-details mt-2">
+                            <small class="text-muted">
+                                <i class="fas fa-clock me-1"></i>{{ order.date|default:"Сьогодні" }}
+                            </small>
+                            {% if order.id %}
+                            <a href="{% url 'admin_panel:order_detail' order.id %}" class="btn btn-xs btn-link">
+                                Деталі <i class="fas fa-chevron-right"></i>
+                            </a>
                             {% endif %}
-                        </tbody>
-                    </table>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-shopping-cart"></i>
+                        <p>Немає останніх замовлень</p>
+                        <small>Замовлення з'являться тут після першої покупки</small>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Права колонка: Нотифікації та дії -->
+        <div>
+            <!-- Нотифікації -->
+            <div class="dashboard-section mb-4">
+                <div class="section-header compact">
+                    <h3 class="section-title compact">
+                        <i class="fas fa-bell"></i>
+                        Важливо
+                    </h3>
                 </div>
-                <div class="text-center mt-3">
-                    <a href="{% url 'admin_panel:orders_list' %}" class="btn btn-primary btn-sm">
-                        Переглянути всі замовлення
+                
+                <div class="notifications-list">
+                    {% if orders_count > 0 %}
+                        <div class="notification-item">
+                            <div class="notification-icon info">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-title">Всього замовлень</div>
+                                <div class="notification-text">{{ orders_count }} замовлень в системі</div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                    {% if customers_count > 0 %}
+                        <div class="notification-item">
+                            <div class="notification-icon success">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-title">База клієнтів</div>
+                                <div class="notification-text">{{ customers_count }} клієнтів зареєстровано</div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                    {% if additional_products_count > 0 or color_options_count > 0 %}
+                        <div class="notification-item">
+                            <div class="notification-icon info">
+                                <i class="fas fa-box"></i>
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-title">Каталог товарів</div>
+                                <div class="notification-text">{{ additional_products_count }} додаткових товарів, {{ color_options_count }} кольорів</div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                    {% if not orders_count and not customers_count and not additional_products_count %}
+                        <div class="empty-state">
+                            <i class="fas fa-bell"></i>
+                            <p>Немає нових сповіщень</p>
+                            <small>Тут з'являтимуться важливі події</small>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Швидкий доступ -->
+            <div class="dashboard-section">
+                <div class="section-header compact">
+                    <h3 class="section-title compact">
+                        <i class="fas fa-link"></i>
+                        Посилання
+                    </h3>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <a href="/" target="_blank" class="btn btn-outline-light btn-sm">
+                        <i class="fas fa-globe me-2"></i>Відкрити сайт
+                    </a>
+                    <a href="/health/" target="_blank" class="btn btn-outline-light btn-sm">
+                        <i class="fas fa-heart me-2"></i>Health Check
+                    </a>
+                    <a href="{% url 'admin_panel:financial_reports' %}" class="btn btn-outline-light btn-sm">
+                        <i class="fas fa-file-invoice me-2"></i>Фінансові звіти
+                    </a>
+                    <a href="{% url 'admin_panel:marketing_settings' %}" class="btn btn-outline-light btn-sm">
+                        <i class="fas fa-bullhorn me-2"></i>Маркетинг
                     </a>
                 </div>
             </div>
         </div>
     </div>
     
-    <div class="col-lg-6 mb-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-bell me-2"></i>
-                    Сповіщення
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="alert alert-warning">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    <strong>Увага!</strong> {{ low_stock_count }} товарів з низькими залишками
+    <!-- Нижня секція: Графіки та статистика -->
+    <div class="row">
+        {% if orders_count > 0 %}
+        <div class="col-lg-8 mb-4">
+            <div class="dashboard-section" style="height: 400px;">
+                <div class="section-header compact">
+                    <h3 class="section-title compact">
+                        <i class="fas fa-chart-bar"></i>
+                        Статистика
+                    </h3>
                 </div>
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle me-2"></i>
-                    <strong>Нагадування:</strong> 3 замовлення чекають обробки
-                </div>
-                <div class="alert alert-success">
-                    <i class="fas fa-check-circle me-2"></i>
-                    <strong>Успіх:</strong> Виконано 5 замовлень сьогодні
+                <div style="height: 300px;">
+                    <canvas id="ordersChart"></canvas>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-<!-- Швидкий доступ -->
-<div class="row">
-    <!-- Налаштування та товари -->
-    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-        <div class="card compact-card text-center">
-            <div class="card-body">
-                <i class="fas fa-cog text-primary mb-2"></i>
-                <h6 class="card-title mb-2">Налаштування сайту</h6>
-                <p class="card-text mb-2">
-                    {% if site_settings %}
-                        <span class="badge bg-success">Показується</span>
-                    {% else %}
-                        <span class="badge bg-warning">Приховано</span>
-                    {% endif %}
-                </p>
-                <a href="{% url 'admin_panel:site_settings' %}" class="btn btn-primary btn-sm">
-                    <i class="fas fa-edit me-1"></i>Налаштувати
-                </a>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-        <div class="card compact-card text-center">
-            <div class="card-body">
-                <i class="fas fa-star text-warning mb-2"></i>
-                <h6 class="card-title mb-2">Головний товар</h6>
-                <p class="card-text mb-2">
-                    {% if main_product %}
-                        <span class="badge bg-success">Показується</span>
-                    {% else %}
-                        <span class="badge bg-warning">Приховано</span>
-                    {% endif %}
-                </p>
-                <a href="{% url 'admin_panel:main_product_settings' %}" class="btn btn-primary btn-sm">
-                    <i class="fas fa-edit me-1"></i>Налаштувати
-                        </a>
-                    </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-        <div class="card compact-card text-center">
-            <div class="card-body">
-                <i class="fas fa-box text-info mb-2"></i>
-                <h6 class="card-title mb-2">Додаткові товари</h6>
-                <p class="card-text mb-2">
-                    {% if additional_products_count > 0 %}
-                        <span class="badge bg-success">Показується</span>
-                    {% else %}
-                        <span class="badge bg-warning">Приховано</span>
-                    {% endif %}
-                </p>
-                <a href="{% url 'admin_panel:additional_products' %}" class="btn btn-primary btn-sm">
-                    <i class="fas fa-plus me-1"></i>Управляти
-                        </a>
-                    </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-        <div class="card compact-card text-center">
-            <div class="card-body">
-                <i class="fas fa-concierge-bell text-success mb-2"></i>
-                <h6 class="card-title mb-2">Послуги</h6>
-                <p class="card-text mb-2">
-                    {% if services_count > 0 %}
-                        <span class="badge bg-success">Показується</span>
-                    {% else %}
-                        <span class="badge bg-warning">Приховано</span>
-                    {% endif %}
-                </p>
-                <a href="{% url 'admin_panel:services' %}" class="btn btn-primary btn-sm">
-                    <i class="fas fa-edit me-1"></i>Управляти
-                        </a>
-                    </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-        <div class="card compact-card text-center">
-            <div class="card-body">
-                <i class="fas fa-address-book text-danger mb-2"></i>
-                <h6 class="card-title mb-2">Контакти</h6>
-                <p class="card-text mb-2">
-                    {% if contact_info %}
-                        <span class="badge bg-success">Показується</span>
-                    {% else %}
-                        <span class="badge bg-warning">Приховано</span>
-                    {% endif %}
-                </p>
-                <a href="{% url 'admin_panel:contact_info' %}" class="btn btn-primary btn-sm">
-                    <i class="fas fa-edit me-1"></i>Редагувати
-                        </a>
-                    </div>
+        
+        <div class="col-lg-4 mb-4">
+            <div class="dashboard-section" style="height: 400px;">
+                <div class="section-header compact">
+                    <h3 class="section-title compact">
+                        <i class="fas fa-chart-pie"></i>
+                        Статуси
+                    </h3>
                 </div>
-    </div>
-    
-    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-        <div class="card compact-card text-center">
-            <div class="card-body">
-                <i class="fas fa-info-circle text-secondary mb-2"></i>
-                <h6 class="card-title mb-2">Про нас</h6>
-                <p class="card-text mb-2">
-                    {% if about_section %}
-                        <span class="badge bg-success">Показується</span>
-                    {% else %}
-                        <span class="badge bg-warning">Приховано</span>
-                    {% endif %}
-                </p>
-                <a href="{% url 'admin_panel:about_section' %}" class="btn btn-primary btn-sm">
-                    <i class="fas fa-edit me-1"></i>Редагувати
-                </a>
+                <div style="height: 300px;">
+                    <canvas id="statusChart"></canvas>
+                </div>
             </div>
         </div>
+        {% else %}
+        <div class="col-12 mb-4">
+            <div class="dashboard-section">
+                <div class="empty-state">
+                    <i class="fas fa-chart-line"></i>
+                    <p>Немає даних для графіків</p>
+                    <small>Графіки з'являться після перших замовлень</small>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+// Графіки з реальними даними
 document.addEventListener('DOMContentLoaded', function() {
-    // Графік продажів
-    const salesCtx = document.getElementById('salesChart').getContext('2d');
-    const salesChart = new Chart(salesCtx, {
-        type: 'line',
-        data: {
-            labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'],
-            datasets: [{
-                label: 'Продажі (грн)',
-                data: [1200, 1900, 3000, 2500, 2200, 3500, 4000],
-                borderColor: '#0d6efd',
-                backgroundColor: 'rgba(13, 110, 253, 0.1)',
-                tension: 0.4,
-                fill: true
-            }, {
-                label: 'Замовлення',
-                data: [3, 5, 8, 6, 5, 9, 12],
-                borderColor: '#198754',
-                backgroundColor: 'rgba(25, 135, 84, 0.1)',
-                tension: 0.4,
-                yAxisID: 'y1'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    labels: {
-                        color: '#e0e0e0'
-                    }
-                }
+    {% if orders_count > 0 %}
+    // Графік статистики замовлень
+    const ordersCtx = document.getElementById('ordersChart');
+    if (ordersCtx) {
+        new Chart(ordersCtx.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Нові', 'В обробці', 'Виконано', 'Скасовано'],
+                datasets: [{
+                    label: 'Кількість замовлень',
+                    data: [{{ orders_new }}, {{ orders_processing }}, {{ orders_completed }}, {{ orders_cancelled }}],
+                    backgroundColor: [
+                        'rgba(255, 193, 7, 0.8)',
+                        'rgba(13, 110, 253, 0.8)',
+                        'rgba(25, 135, 84, 0.8)',
+                        'rgba(220, 53, 69, 0.8)'
+                    ],
+                    borderColor: ['#ffc107', '#0d6efd', '#198754', '#dc3545'],
+                    borderWidth: 2
+                }]
             },
-            scales: {
-                x: {
-                    ticks: {
-                        color: '#e0e0e0'
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: {
+                        ticks: { color: 'var(--admin-text-muted)' },
+                        grid: { display: false }
                     },
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.1)'
-                    }
-                },
-                y: {
-                    type: 'linear',
-                    display: true,
-                    position: 'left',
-                    ticks: {
-                        color: '#e0e0e0'
-                    },
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.1)'
-                    }
-                },
-                y1: {
-                    type: 'linear',
-                    display: true,
-                    position: 'right',
-                    ticks: {
-                        color: '#e0e0e0'
-                    },
-                    grid: {
-                        drawOnChartArea: false
+                    y: {
+                        ticks: { color: 'var(--admin-text-muted)', stepSize: 1 },
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        beginAtZero: true
                     }
                 }
             }
-        }
-    });
+        });
+    }
 
-    // Графік категорій
-    const categoriesCtx = document.getElementById('categoriesChart').getContext('2d');
-    const categoriesChart = new Chart(categoriesCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Букети', 'Композиції', 'Вази', 'Подарунки'],
-            datasets: [{
-                data: [45, 25, 20, 10],
-                backgroundColor: [
-                    '#0d6efd',
-                    '#198754',
-                    '#ffc107',
-                    '#dc3545'
-                ],
-                borderColor: 'transparent',
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        color: '#e0e0e0',
-                        padding: 15,
-                        font: {
-                            size: 12
+    // Графік статусів
+    const statusCtx = document.getElementById('statusChart');
+    if (statusCtx) {
+        new Chart(statusCtx.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Виконано', 'В обробці', 'Скасовано'],
+                datasets: [{
+                    data: [{{ orders_completed }}, {{ orders_processing }}, {{ orders_cancelled }}],
+                    backgroundColor: ['#198754', '#0d6efd', '#dc3545'],
+                    borderColor: 'var(--admin-bg-primary)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: 'var(--admin-text-primary)',
+                            padding: 15,
+                            font: { size: 12 }
                         }
                     }
                 }
             }
-        }
-    });
+        });
+    }
+    {% endif %}
 });
 </script>
 {% endblock %}
+

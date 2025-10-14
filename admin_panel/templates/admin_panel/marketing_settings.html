@@ -1,0 +1,748 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Маркетинг - Адмін Панель{% endblock %}
+{% block page_title %}Маркетинг{% endblock %}
+
+{% block content %}
+<div class="admin-form-container">
+    
+    <!-- Tabs -->
+    <ul class="nav nav-tabs mb-4" role="tablist">
+        <li class="nav-item">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-progress">
+                <i class="fas fa-chart-line me-2"></i>Прогрес-бар
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-promo">
+                <i class="fas fa-ticket-alt me-2"></i>Промокоди
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-discounts">
+                <i class="fas fa-percent me-2"></i>Знижки
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-actions">
+                <i class="fas fa-gift me-2"></i>Акції
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-delivery">
+                <i class="fas fa-truck me-2"></i>Доставка
+            </button>
+        </li>
+    </ul>
+    
+    <div class="tab-content">
+        <!-- Прогрес-бар -->
+        <div class="tab-pane fade show active" id="tab-progress">
+            <div class="admin-form-section">
+                <div class="section-header compact">
+                    <h5 class="section-title compact">
+                        <i class="fas fa-chart-line"></i>
+                        Прогрес-бар з етапами
+                    </h5>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="progress_enabled" 
+                               {% if settings.progress_bar.enabled %}checked{% endif %} 
+                               onchange="toggleProgressBar(this.checked)">
+                        <label class="form-check-label" for="progress_enabled">
+                            Увімкнено
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="info-box mb-4" style="background: rgba(59, 130, 246, 0.08); border-left: 4px solid var(--accent-color); padding: 15px; border-radius: 6px;">
+                    <div class="d-flex align-items-start gap-2">
+                        <i class="fas fa-info-circle mt-1" style="color: var(--accent-color); font-size: 18px;"></i>
+                        <div>
+                            <strong style="color: var(--accent-color);">Як працює прогрес-бар</strong>
+                            <p class="mb-0 mt-1" style="font-size: 0.9rem; line-height: 1.5;">
+                                Етапи автоматично сортуються за сумою. Коли користувач додає товари в кошик, 
+                                прогрес-бар показує прогрес до наступного етапу і винагороду.
+                                <strong style="color: var(--warning-color);">Важливо:</strong> Сума розраховується БЕЗ вартості доставки.
+                            </p>
+                        </div>
+                                    </div>
+                                </div>
+                                
+                <!-- Список етапів (таблиця) -->
+                {% if settings.progress_bar.milestones %}
+                <div class="table-responsive mb-4">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px;" class="text-center">
+                                    <i class="fas fa-sort-numeric-down me-1"></i>
+                                    №
+                                </th>
+                                <th>
+                                    <i class="fas fa-heading me-1"></i>
+                                    Назва етапу
+                                </th>
+                                <th style="width: 120px;" class="text-center">
+                                    <i class="fas fa-money-bill me-1"></i>
+                                    Сума
+                                </th>
+                                <th>
+                                    <i class="fas fa-gift me-1"></i>
+                                    Винагорода
+                                </th>
+                                <th style="width: 120px;" class="text-center">
+                                    <i class="fas fa-cog me-1"></i>
+                                    Дії
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="milestones-container">
+                    {% for milestone in settings.progress_bar.milestones %}
+                            <tr data-milestone-id="{{ milestone.id }}" class="milestone-row">
+                                <td class="text-center">
+                                    <span class="badge bg-primary" style="font-size: 14px; padding: 6px 10px;">
+                                        {{ forloop.counter }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div style="width: 3px; height: 35px; background: {{ milestone.color }}; border-radius: 2px; margin-right: 10px;"></div>
+                                        <div>
+                                            <div style="font-weight: 600; margin-bottom: 4px;">{{ milestone.title }}</div>
+                                            <small class="text-muted" style="font-size: 0.85rem;">{{ milestone.message|truncatewords:10 }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-success" style="font-size: 14px; padding: 6px 12px;">
+                                        {{ milestone.amount }} ₴
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-wrap gap-2">
+                                    {% if milestone.discount_percent %}
+                                        <span class="badge bg-warning text-dark">
+                                                <i class="fas fa-percent me-1"></i>
+                                                {{ milestone.discount_percent }}%
+                                        </span>
+                                    {% endif %}
+                                    {% if milestone.free_shipping %}
+                                        <span class="badge bg-info">
+                                                <i class="fas fa-shipping-fast me-1"></i>
+                                            Доставка
+                                        </span>
+                                    {% endif %}
+                                    {% if milestone.gift %}
+                                            <span class="badge bg-purple">
+                                                <i class="fas fa-gift me-1"></i>
+                                            {{ milestone.gift }}
+                                        </span>
+                                    {% endif %}
+                                        {% if not milestone.discount_percent and not milestone.free_shipping and not milestone.gift %}
+                                            <span class="text-muted" style="font-size: 0.85rem;"><i>Без винагороди</i></span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button class="btn btn-sm btn-outline-primary" onclick="editMilestone({{ milestone.id }})" title="Редагувати">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="deleteMilestone({{ milestone.id }})" title="Видалити">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                                </div>
+                                
+                <!-- Підсумок -->
+                <div class="d-flex gap-3 align-items-center mb-3" style="padding: 15px; background: rgba(59, 130, 246, 0.05); border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.1);">
+                    <div class="flex-grow-1">
+                        <i class="fas fa-chart-line me-2" style="color: var(--accent-color);"></i>
+                        <strong>Всього етапів:</strong> 
+                        <span style="color: var(--accent-color);">{{ settings.progress_bar.milestones|length }}</span>
+                                </div>
+                    <div class="flex-grow-1 text-end">
+                        <i class="fas fa-trophy me-2" style="color: var(--accent-color);"></i>
+                        <strong>Максимальна сума:</strong> 
+                        <span style="color: var(--accent-color);">
+                        {% if settings.progress_bar.milestones %}
+                            {% with settings.progress_bar.milestones|last as last_milestone %}
+                                {{ last_milestone.amount }} ₴
+                            {% endwith %}
+                        {% else %}
+                            0 ₴
+                        {% endif %}
+                        </span>
+                            </div>
+                        </div>
+                {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-chart-line"></i>
+                            <p>Немає етапів</p>
+                    <small>Додайте перший етап прогрес-бару для мотивації покупців</small>
+                        </div>
+                {% endif %}
+                
+                <!-- Кнопка додавання -->
+                <button class="btn btn-primary" onclick="showAddMilestoneForm()">
+                    <i class="fas fa-plus me-2"></i>
+                    Додати етап
+                </button>
+            </div>
+        </div>
+        
+        <!-- Промокоди -->
+        <div class="tab-pane fade" id="tab-promo">
+            <div class="admin-form-section">
+                <div class="section-header compact">
+                    <h5 class="section-title compact">
+                        <i class="fas fa-ticket-alt"></i>
+                        Промокоди
+                    </h5>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i>
+                        Додати
+                    </button>
+                </div>
+                
+                <div class="empty-state">
+                    <i class="fas fa-ticket-alt"></i>
+                    <p>Промокоди</p>
+                    <small>Функція буде доступна найближчим часом</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Знижки -->
+        <div class="tab-pane fade" id="tab-discounts">
+            <div class="admin-form-section">
+                <div class="section-header compact">
+                    <h5 class="section-title compact">
+                        <i class="fas fa-percent"></i>
+                        Знижки
+                    </h5>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i>
+                        Додати
+                    </button>
+                </div>
+                
+                <div class="empty-state">
+                    <i class="fas fa-percent"></i>
+                    <p>Знижки</p>
+                    <small>Функція буде доступна найближчим часом</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Акції -->
+        <div class="tab-pane fade" id="tab-actions">
+            <div class="admin-form-section">
+                <div class="section-header compact">
+                    <h5 class="section-title compact">
+                        <i class="fas fa-gift"></i>
+                        Акції
+                    </h5>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i>
+                        Додати
+                    </button>
+                </div>
+                
+                <div class="empty-state">
+                    <i class="fas fa-gift"></i>
+                    <p>Акції</p>
+                    <small>Функція буде доступна найближчим часом</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Доставка -->
+        <div class="tab-pane fade" id="tab-delivery">
+            <div class="admin-form-section">
+                <div class="section-header compact">
+                    <h5 class="section-title compact">
+                        <i class="fas fa-truck"></i>
+                        Міста доставки
+                    </h5>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i>
+                        Додати місто
+                    </button>
+                </div>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Геолокація активна!</strong>
+                    <p class="mb-0 mt-1 small">
+                        Система автоматично визначає місто користувача при вході на сайт.
+                        Тут ви можете налаштувати список міст доставки та умови.
+                    </p>
+                </div>
+                
+                <div class="empty-state">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <p>Додайте міста доставки</p>
+                    <small>Налаштування міст доступне через окрему сторінку налаштувань сайту</small>
+                    <div class="mt-3">
+                        <a href="{% url 'admin_panel:site_settings' %}" class="btn btn-primary">
+                            <i class="fas fa-cog me-1"></i>
+                            Налаштування сайту
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальне вікно додавання/редагування етапу -->
+<div class="modal fade" id="milestoneModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="background: var(--card-bg); border: 1px solid var(--border-color);">
+            <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
+                <h5 class="modal-title" id="milestoneModalTitle">
+                    <i class="fas fa-chart-line me-2"></i>
+                    Додати етап прогрес-бару
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="milestoneForm">
+                    <input type="hidden" id="milestone_id" value="">
+                    
+                    <div class="row">
+                        <!-- Основна інформація -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" style="color: #fff; font-weight: 600;">
+                                <i class="fas fa-heading me-1"></i>
+                                Назва етапу *
+                            </label>
+                            <input type="text" class="form-control" id="milestone_title" 
+                                   placeholder="Наприклад: Досягніть 1000₴ для бонусу" required
+                                   style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); color: #fff;">
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" style="color: #fff; font-weight: 600;">
+                                <i class="fas fa-money-bill me-1"></i>
+                                Сума (грн) *
+                            </label>
+                            <input type="number" class="form-control" id="milestone_amount" 
+                                   placeholder="1000" min="0" required
+                                   style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); color: #fff; font-size: 18px; font-weight: 600; text-align: center;">
+                        </div>
+                        
+                        <div class="col-12 mb-3">
+                            <label class="form-label" style="color: #fff; font-weight: 600;">
+                                <i class="fas fa-comment me-1"></i>
+                                Повідомлення користувачу *
+                            </label>
+                            <textarea class="form-control" id="milestone_message" rows="2" 
+                                      placeholder="Додайте ще {amount}₴ для отримання бонусу" required
+                                      style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); color: #fff;"></textarea>
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Використовуйте {amount} для відображення залишку суми
+                            </small>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" style="color: #fff; font-weight: 600;">
+                                <i class="fas fa-palette me-1"></i>
+                                Колір прогрес-бару *
+                            </label>
+                            <div class="input-group">
+                                <input type="color" class="form-control form-control-color" id="milestone_color" value="#10b981">
+                                <input type="text" class="form-control" id="milestone_color_text" value="#10b981"
+                                       style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); color: #fff; font-weight: 600;">
+                            </div>
+                        </div>
+                        
+                        <!-- Винагороди -->
+                        <div class="col-12 mt-3 mb-3">
+                            <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; padding: 15px;">
+                                <h6 style="color: #3b82f6; margin-bottom: 15px;">
+                                <i class="fas fa-gift me-2"></i>
+                                    Винагорода (оберіть ОДИН варіант)
+                            </h6>
+                        
+                                <!-- Вибір типу бонусу -->
+                                <div class="row">
+                        <div class="col-md-4 mb-3">
+                                        <div class="form-check" style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; border: 2px solid transparent; cursor: pointer;" onclick="selectRewardType('shipping')">
+                                            <input class="form-check-input" type="radio" name="reward_type" id="reward_shipping" value="shipping">
+                                            <label class="form-check-label" for="reward_shipping" style="cursor: pointer; font-weight: 600;">
+                                                <i class="fas fa-shipping-fast me-2" style="color: #10b981;"></i>
+                                    Безкоштовна доставка
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                                        <div class="form-check" style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; border: 2px solid transparent; cursor: pointer;" onclick="selectRewardType('discount')">
+                                            <input class="form-check-input" type="radio" name="reward_type" id="reward_discount" value="discount">
+                                            <label class="form-check-label" for="reward_discount" style="cursor: pointer; font-weight: 600;">
+                                                <i class="fas fa-percent me-2" style="color: #f59e0b;"></i>
+                                                Знижка
+                                            </label>
+                                        </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                                        <div class="form-check" style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; border: 2px solid transparent; cursor: pointer;" onclick="selectRewardType('gift')">
+                                            <input class="form-check-input" type="radio" name="reward_type" id="reward_gift" value="gift">
+                                            <label class="form-check-label" for="reward_gift" style="cursor: pointer; font-weight: 600;">
+                                                <i class="fas fa-gift me-2" style="color: #8b5cf6;"></i>
+                                                Подарунок
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Поле знижки (показується тільки якщо обрано) -->
+                                <div id="discount_field" style="display: none; margin-top: 15px;">
+                                    <label class="form-label" style="color: #fff; font-weight: 600;">
+                                        <i class="fas fa-percent me-2"></i>
+                                        Відсоток знижки *
+                                    </label>
+                                    <input type="number" class="form-control" id="milestone_discount" 
+                                           placeholder="Наприклад: 10" min="1" max="100"
+                                           style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: #fff; font-size: 18px; font-weight: 600; text-align: center;">
+                                    <small class="text-muted mt-2 d-block">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Знижка буде застосована до загальної суми товарів
+                                    </small>
+                                </div>
+                                
+                                <!-- Поле подарунку (показується тільки якщо обрано) -->
+                                <div id="gift_field" style="display: none; margin-top: 15px;">
+                                    <label class="form-label" style="color: #fff; font-weight: 600;">
+                                        <i class="fas fa-gift me-2"></i>
+                                        Оберіть подарунок зі списку додаткових товарів *
+                                    </label>
+                                    <select class="form-control" id="milestone_gift" style="background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); color: #fff; font-size: 15px;">
+                                        <option value="" style="background: #1a1d2e; color: #999;">-- Оберіть товар зі списку --</option>
+                                {% for product in additional_products %}
+                                            <option value="{{ product.title }}" style="background: #1a1d2e; color: #fff;">
+                                                {{ product.title }} ({{ product.price|floatformat:0 }} {{ product.currency }})
+                                            </option>
+                                {% endfor %}
+                            </select>
+                                    <small class="text-muted mt-2 d-block">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Подарунок буде автоматично додано в кошик користувача
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid var(--border-color);">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>
+                    Скасувати
+                </button>
+                <button type="button" class="btn btn-primary" onclick="saveMilestone()">
+                    <i class="fas fa-save me-1"></i>
+                    Зберегти
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// CSRF токен для AJAX запитів
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+const csrftoken = getCookie('csrftoken');
+
+// Синхронізація color input з text input
+document.getElementById('milestone_color').addEventListener('input', function(e) {
+    document.getElementById('milestone_color_text').value = e.target.value;
+});
+
+document.getElementById('milestone_color_text').addEventListener('input', function(e) {
+    document.getElementById('milestone_color').value = e.target.value;
+});
+
+// Функція вибору типу винагороди
+function selectRewardType(type) {
+    console.log('🎁 Обрано тип винагороди:', type);
+    
+    // Знімаємо виділення з усіх карток
+    document.querySelectorAll('.form-check[style*="cursor: pointer"]').forEach(card => {
+        card.style.border = '2px solid transparent';
+        card.style.background = 'rgba(255, 255, 255, 0.05)';
+    });
+    
+    // Виділяємо обрану картку
+    const selectedCard = document.querySelector(`#reward_${type}`).closest('.form-check');
+    if (selectedCard) {
+        selectedCard.style.border = '2px solid var(--primary-color, #3b82f6)';
+        selectedCard.style.background = 'rgba(59, 130, 246, 0.15)';
+    }
+    
+    // Ставимо галочку на radio
+    document.getElementById(`reward_${type}`).checked = true;
+    
+    // Ховаємо всі поля
+    document.getElementById('discount_field').style.display = 'none';
+    document.getElementById('gift_field').style.display = 'none';
+    
+    // Показуємо потрібне поле
+    if (type === 'discount') {
+        document.getElementById('discount_field').style.display = 'block';
+        document.getElementById('milestone_discount').focus();
+    } else if (type === 'gift') {
+        document.getElementById('gift_field').style.display = 'block';
+        document.getElementById('milestone_gift').focus();
+    }
+}
+
+// Увімкнути/вимкнути прогрес-бар
+async function toggleProgressBar(enabled) {
+    try {
+        const response = await fetch('{% url "admin_panel:api_toggle_progress_bar" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify({ enabled: enabled })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showSuccess(data.message);
+        } else {
+            showError(data.error || 'Помилка збереження');
+        }
+    } catch (error) {
+        console.error('Помилка:', error);
+        showError('Помилка зв\'язку з сервером');
+    }
+}
+
+// Показати форму додавання етапу
+function showAddMilestoneForm() {
+    // Очищуємо форму
+    document.getElementById('milestoneForm').reset();
+    document.getElementById('milestone_id').value = '';
+    document.getElementById('milestoneModalTitle').innerHTML = '<i class="fas fa-plus me-2"></i>Додати етап прогрес-бару';
+    
+    // Скидаємо вибір типу винагороди
+    document.querySelectorAll('input[name="reward_type"]').forEach(radio => {
+        radio.checked = false;
+    });
+    
+    // Ховаємо всі поля винагород
+    document.getElementById('discount_field').style.display = 'none';
+    document.getElementById('gift_field').style.display = 'none';
+    
+    // Скидаємо стилі карток
+    document.querySelectorAll('.form-check[style*="cursor: pointer"]').forEach(card => {
+        card.style.border = '2px solid transparent';
+        card.style.background = 'rgba(255, 255, 255, 0.05)';
+    });
+    
+    // Показуємо модальне вікно
+    const modal = new bootstrap.Modal(document.getElementById('milestoneModal'));
+    modal.show();
+}
+
+// Редагувати етап
+async function editMilestone(id) {
+    try {
+        const response = await fetch(`/admin-panel/api/marketing/milestones/${id}/get/`);
+        const data = await response.json();
+        
+        if (data.success) {
+            const milestone = data.milestone;
+            
+            // Заповнюємо форму
+            document.getElementById('milestone_id').value = milestone.id;
+            document.getElementById('milestone_title').value = milestone.title;
+            document.getElementById('milestone_amount').value = milestone.amount;
+            document.getElementById('milestone_message').value = milestone.message;
+            document.getElementById('milestone_color').value = milestone.color;
+            document.getElementById('milestone_color_text').value = milestone.color;
+            
+            // Визначаємо який тип бонусу обрано
+            if (milestone.free_shipping) {
+                selectRewardType('shipping');
+            } else if (milestone.discount_percent) {
+                selectRewardType('discount');
+                document.getElementById('milestone_discount').value = milestone.discount_percent;
+            } else if (milestone.gift) {
+                selectRewardType('gift');
+                
+                // Встановлюємо значення в select
+            const giftSelect = document.getElementById('milestone_gift');
+                giftSelect.value = milestone.gift;
+                
+                if (!giftSelect.value) {
+                    console.warn('⚠️ Подарунок не знайдено в списку товарів:', milestone.gift);
+                }
+            }
+            
+            // Змінюємо заголовок
+            document.getElementById('milestoneModalTitle').innerHTML = '<i class="fas fa-edit me-2"></i>Редагувати етап';
+            
+            // Показуємо модальне вікно
+            const modal = new bootstrap.Modal(document.getElementById('milestoneModal'));
+            modal.show();
+        } else {
+            showError(data.error || 'Етап не знайдено');
+        }
+    } catch (error) {
+        console.error('Помилка:', error);
+        showError('Помилка завантаження даних');
+    }
+}
+
+// Зберегти етап
+async function saveMilestone() {
+    const form = document.getElementById('milestoneForm');
+    
+    // Валідація
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    // Перевіряємо чи обрано тип винагороди
+    const rewardType = document.querySelector('input[name="reward_type"]:checked');
+    if (!rewardType) {
+        alert('⚠️ Оберіть тип винагороди: безкоштовна доставка, знижка або подарунок');
+        return;
+    }
+    
+    const milestoneId = document.getElementById('milestone_id').value;
+    const isEdit = milestoneId !== '';
+    
+    // Базові дані
+    const milestoneData = {
+        title: document.getElementById('milestone_title').value,
+        amount: parseInt(document.getElementById('milestone_amount').value),
+        message: document.getElementById('milestone_message').value,
+        color: document.getElementById('milestone_color').value,
+        free_shipping: false,
+        discount_percent: null,
+        gift: null
+    };
+    
+    // Встановлюємо обраний тип бонусу
+    if (rewardType.value === 'shipping') {
+        milestoneData.free_shipping = true;
+        console.log('✅ Обрано: Безкоштовна доставка');
+    } else if (rewardType.value === 'discount') {
+        const discountValue = document.getElementById('milestone_discount').value;
+        if (!discountValue || discountValue <= 0) {
+            alert('⚠️ Введіть відсоток знижки (від 1 до 100)');
+            return;
+        }
+        milestoneData.discount_percent = parseInt(discountValue);
+        console.log('✅ Обрано: Знижка', milestoneData.discount_percent + '%');
+    } else if (rewardType.value === 'gift') {
+        const giftValue = document.getElementById('milestone_gift').value;
+        
+        if (!giftValue) {
+            alert('⚠️ Оберіть подарунок зі списку додаткових товарів');
+            return;
+        }
+        milestoneData.gift = giftValue;
+        console.log('✅ Обрано: Подарунок', giftValue);
+    }
+    
+    try {
+        const url = isEdit 
+            ? `/admin-panel/api/marketing/milestones/${milestoneId}/update/`
+            : '{% url "admin_panel:api_add_milestone" %}';
+        
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify(milestoneData)
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showSuccess(data.message);
+            
+            // Закриваємо модальне вікно
+            const modal = bootstrap.Modal.getInstance(document.getElementById('milestoneModal'));
+            modal.hide();
+            
+            // Перезавантажуємо сторінку для відображення змін
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        } else {
+            showError(data.error || 'Помилка збереження');
+        }
+    } catch (error) {
+        console.error('Помилка:', error);
+        showError('Помилка зв\'язку з сервером');
+    }
+}
+
+// Видалити етап
+async function deleteMilestone(id) {
+    if (!confirm('Ви впевнені, що хочете видалити цей етап?')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/admin-panel/api/marketing/milestones/${id}/delete/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showSuccess(data.message);
+            
+            // Перезавантажуємо сторінку для оновлення нумерації етапів
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        } else {
+            showError(data.error || 'Помилка видалення');
+        }
+    } catch (error) {
+        console.error('Помилка:', error);
+        showError('Помилка зв\'язку з сервером');
+    }
+}
+</script>
+{% endblock %}

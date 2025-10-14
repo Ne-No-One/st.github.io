@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест ефектів свічення</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            font-family: Arial, sans-serif;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 50px;
+            font-size: 2.5rem;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card h2 {
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            color: #ff6b6b;
+            text-align: center;
+        }
+
+        .image-wrapper {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .image-wrapper img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Варіант 1: Box Shadow Glow */
+        .glow-box-shadow img {
+            border-radius: 15px;
+            box-shadow: 
+                0 0 8px rgba(255, 95, 0, 0.2),
+                0 0 16px rgba(255, 95, 0, 0.15),
+                0 0 24px rgba(255, 95, 0, 0.1),
+                inset 0 0 8px rgba(255, 95, 0, 0.08);
+            animation: soft-flow 4s ease-in-out infinite;
+        }
+
+        @keyframes soft-flow {
+            0%, 100% {
+                box-shadow: 
+                    0 0 8px rgba(255, 95, 0, 0.2),
+                    0 0 16px rgba(255, 95, 0, 0.15),
+                    0 0 24px rgba(255, 95, 0, 0.1),
+                    inset 0 0 8px rgba(255, 95, 0, 0.08);
+            }
+            50% {
+                box-shadow: 
+                    0 0 12px rgba(255, 95, 0, 0.25),
+                    0 0 24px rgba(255, 95, 0, 0.18),
+                    0 0 36px rgba(255, 95, 0, 0.12),
+                    inset 0 0 12px rgba(255, 95, 0, 0.1);
+            }
+        }
+
+        /* Варіант 2: Overlay з градієнтом */
+        .glow-overlay::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, 
+                rgba(255, 95, 0, 0.15) 0%,
+                rgba(255, 95, 0, 0.08) 40%,
+                transparent 60%);
+            pointer-events: none;
+            animation: soft-overlay 5s ease-in-out infinite;
+            border-radius: 15px;
+            z-index: 2;
+        }
+
+        .glow-overlay::after {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            right: -8px;
+            bottom: -8px;
+            background: radial-gradient(circle at center, 
+                rgba(255, 95, 0, 0.18) 0%,
+                rgba(255, 95, 0, 0.08) 60%,
+                transparent 80%);
+            z-index: -1;
+            filter: blur(20px);
+            animation: soft-outer 5s ease-in-out infinite;
+            border-radius: 15px;
+        }
+
+        @keyframes soft-overlay {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.6; }
+        }
+
+        @keyframes soft-outer {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Варіант 3: Border Glow */
+        .glow-border {
+            padding: 2px;
+            background: linear-gradient(45deg, 
+                rgba(255, 95, 0, 0.3), rgba(255, 95, 0, 0.2), rgba(255, 95, 0, 0.1), rgba(255, 95, 0, 0.2), rgba(255, 95, 0, 0.3));
+            background-size: 200% 200%;
+            animation: soft-border 6s ease-in-out infinite;
+            border-radius: 20px;
+        }
+
+        .glow-border img {
+            border-radius: 15px;
+            filter: brightness(1.1);
+        }
+
+        @keyframes soft-border {
+            0%, 100% { 
+                background-position: 0% 50%;
+                opacity: 0.4;
+            }
+            50% { 
+                background-position: 100% 50%;
+                opacity: 0.6;
+            }
+        }
+
+        /* Варіант 4: Підсвічування конкретної області */
+        .glow-spotlight::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, 
+                rgba(255, 95, 0, 0.25) 0%,
+                rgba(255, 95, 0, 0.12) 50%,
+                transparent 70%);
+            filter: blur(15px);
+            animation: soft-spotlight 4s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes soft-spotlight {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.05);
+                opacity: 0.5;
+            }
+        }
+
+        /* Варіант 5: Неонове свічення */
+        .glow-neon {
+            position: relative;
+            padding: 4px;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 20px;
+        }
+
+        .glow-neon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 1px solid rgba(255, 95, 0, 0.4);
+            border-radius: 20px;
+            box-shadow: 
+                0 0 4px rgba(255, 95, 0, 0.25),
+                0 0 8px rgba(255, 95, 0, 0.18),
+                0 0 16px rgba(255, 95, 0, 0.12),
+                inset 0 0 4px rgba(255, 95, 0, 0.12),
+                inset 0 0 8px rgba(255, 95, 0, 0.08);
+            animation: soft-neon 3s ease-in-out infinite;
+        }
+
+        .glow-neon img {
+            border-radius: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes soft-neon {
+            0%, 100% {
+                box-shadow: 
+                    0 0 4px rgba(255, 95, 0, 0.25),
+                    0 0 8px rgba(255, 95, 0, 0.18),
+                    0 0 16px rgba(255, 95, 0, 0.12),
+                    inset 0 0 4px rgba(255, 95, 0, 0.12),
+                    inset 0 0 8px rgba(255, 95, 0, 0.08);
+            }
+            50% {
+                box-shadow: 
+                    0 0 6px rgba(255, 95, 0, 0.3),
+                    0 0 12px rgba(255, 95, 0, 0.22),
+                    0 0 24px rgba(255, 95, 0, 0.15),
+                    0 0 36px rgba(255, 95, 0, 0.1),
+                    inset 0 0 6px rgba(255, 95, 0, 0.15),
+                    inset 0 0 12px rgba(255, 95, 0, 0.1);
+            }
+        }
+
+        /* Варіант 6: 3D підйом зі свіченням */
+        .glow-3d {
+            perspective: 1000px;
+        }
+
+        .glow-3d .image-wrapper {
+            transform-style: preserve-3d;
+            transition: transform 0.3s ease;
+        }
+
+        .glow-3d:hover .image-wrapper {
+            transform: translateZ(20px);
+        }
+
+        .glow-3d img {
+            border-radius: 15px;
+            box-shadow: 
+                0 6px 18px rgba(255, 95, 0, 0.15),
+                0 12px 36px rgba(255, 95, 0, 0.1),
+                0 0 12px rgba(255, 95, 0, 0.2);
+        }
+
+        .glow-3d::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 15%;
+            right: 15%;
+            height: 20px;
+            background: radial-gradient(ellipse, 
+                rgba(255, 95, 0, 0.2) 0%,
+                transparent 70%);
+            filter: blur(15px);
+            animation: soft-shadow 4s ease-in-out infinite;
+        }
+
+        @keyframes soft-shadow {
+            0%, 100% { 
+                opacity: 0.25;
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 0.45;
+                transform: scale(1.03);
+            }
+        }
+
+        /* Додатковий стиль для опису */
+        .description {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 0, 0, 0.1);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            color: #ffcccc;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+        }
+
+        /* Секція з комбінацією ефектів */
+        .combo-section {
+            margin-top: 60px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+        }
+
+        .combo-section h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: #ff6b6b;
+        }
+
+        .combo-image {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* Комбінований ефект */
+        .glow-combo {
+            position: relative;
+            padding: 6px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 25px;
+        }
+
+        .glow-combo::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: radial-gradient(circle at center, 
+                rgba(255, 95, 0, 0.2) 0%,
+                rgba(255, 95, 0, 0.1) 50%,
+                transparent 70%);
+            filter: blur(20px);
+            animation: soft-combo 5s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        .glow-combo .image-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, 
+                rgba(255, 255, 255, 0.05) 0%,
+                rgba(255, 95, 0, 0.12) 30%,
+                transparent 70%);
+            filter: blur(18px);
+            animation: soft-inner-move 6s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .glow-combo img {
+            border-radius: 20px;
+            box-shadow: 
+                inset 0 0 12px rgba(255, 95, 0, 0.1),
+                0 0 8px rgba(255, 95, 0, 0.2);
+            border: 1px solid rgba(255, 95, 0, 0.2);
+        }
+
+        @keyframes soft-combo {
+            0%, 100% { 
+                opacity: 0.3;
+                filter: blur(20px);
+            }
+            50% { 
+                opacity: 0.5;
+                filter: blur(25px);
+            }
+        }
+
+        @keyframes soft-inner-move {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.4;
+            }
+            33% {
+                transform: translate(-30%, -50%) scale(1.03);
+                opacity: 0.6;
+            }
+            66% {
+                transform: translate(-70%, -50%) scale(0.97);
+                opacity: 0.5;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .card h2 {
+                font-size: 1.1rem;
+            }
+
+            .image-wrapper img {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌹 Тестування ефектів червоного свічення на букеті троянд</h1>
+
+        <div class="grid">
+            <!-- Варіант 1 -->
+            <div class="card">
+                <h2>1. Box Shadow Glow (Пульсація)</h2>
+                <div class="image-wrapper glow-box-shadow">
+                    <img src="/static/images/roses.png" alt="Помаранчеві троянди - Box Shadow Glow">
+                </div>
+                <div class="description">
+                    Класичний box-shadow з анімацією пульсації. Створює враження дихання світла.
+                </div>
+            </div>
+
+            <!-- Варіант 2 -->
+            <div class="card">
+                <h2>2. Overlay + Зовнішнє свічення</h2>
+                <div class="image-wrapper glow-overlay">
+                    <img src="/static/images/roses.png" alt="Помаранчеві троянди - Overlay Glow">
+                </div>
+                <div class="description">
+                    Напівпрозорий червоний overlay поверх фото + зовнішнє розмите свічення знизу.
+                </div>
+            </div>
+
+            <!-- Варіант 3 -->
+            <div class="card">
+                <h2>3. Animated Border Glow</h2>
+                <div class="image-wrapper glow-border">
+                    <img src="/static/images/roses.png" alt="Помаранчеві троянди - Border Glow">
+                </div>
+                <div class="description">
+                    Анімована рамка з градієнтом, що рухається по периметру.
+                </div>
+            </div>
+
+            <!-- Варіант 4 -->
+            <div class="card">
+                <h2>4. Spotlight (Прожектор)</h2>
+                <div class="image-wrapper glow-spotlight">
+                    <img src="/static/images/roses.png" alt="Помаранчеві троянди - Spotlight">
+                </div>
+                <div class="description">
+                    Ефект прожектора - яскрава пляма в центрі з пульсацією.
+                </div>
+            </div>
+
+            <!-- Варіант 5 -->
+            <div class="card">
+                <h2>5. Neon Glow (Неон)</h2>
+                <div class="image-wrapper glow-neon">
+                    <img src="/static/images/roses.png" alt="Помаранчеві троянди - Neon Glow">
+                </div>
+                <div class="description">
+                    Неонова рамка з інтенсивним свіченням як у неонових вивісок.
+                </div>
+            </div>
+
+            <!-- Варіант 6 -->
+            <div class="card">
+                <h2>6. 3D Lift + Shadow (Наведіть курсор)</h2>
+                <div class="image-wrapper glow-3d">
+                    <img src="/static/images/roses.png" alt="Помаранчеві троянди - 3D Lift">
+                </div>
+                <div class="description">
+                    3D ефект підйому при наведенні + червона тінь знизу.
+                </div>
+            </div>
+        </div>
+
+        <!-- Комбінований ефект -->
+        <div class="combo-section">
+            <h2>🔥 Комбінований ефект - "Вогняне свічення"</h2>
+            <div class="combo-image glow-combo">
+                <div class="image-wrapper">
+                    <img src="/static/images/roses.png" alt="Помаранчеві троянди - Комбінований ефект">
+                </div>
+            </div>
+            <div class="description" style="max-width: 600px; margin: 20px auto 0;">
+                <strong>Комбінація:</strong> Зовнішнє розмите червоне свічення + внутрішній рухомий spotlight + 
+                рамка з червоною тінню + inset shadow. Створює ефект "горіння" або магічного артефакту.
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; padding: 20px;">
+            <a href="/" style="color: #ff6b6b; text-decoration: none; font-size: 1.1rem;">
+                ← Повернутись на головну
+            </a>
+        </div>
+    </div>
+</body>
+</html>
+

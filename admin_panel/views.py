@@ -1,6 +1,35 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from django.core.files.storage import FileSystemStorage
+from django.conf import settings
+from django.views.decorators.http import require_http_methods
+import os
+
+def handle_image_upload(uploaded_file, subfolder='products'):
+    """
+    Обробка завантаження зображення
+    
+    Args:
+        uploaded_file: File object з request.FILES
+        subfolder: Підпапка в media/ (default: 'products')
+    
+    Returns:
+        str: URL завантаженого файлу або None якщо помилка
+    """
+    try:
+        # Створюємо FileSystemStorage
+        upload_path = os.path.join(settings.MEDIA_ROOT, subfolder)
+        fs = FileSystemStorage(location=upload_path, base_url=f'{settings.MEDIA_URL}{subfolder}/')
+        
+        # Зберігаємо файл
+        filename = fs.save(uploaded_file.name, uploaded_file)
+        file_url = fs.url(filename)
+        
+        return file_url
+    except Exception as e:
+        print(f"❌ Помилка завантаження файлу: {e}")
+        return None
 
 def admin_dashboard(request):
     """Головна сторінка адмін панелі"""
@@ -8,22 +37,64 @@ def admin_dashboard(request):
         from json_manager import JSONManager
         json_manager = JSONManager()
         
-        # Отримуємо останні замовлення (максимум 5)
+        # Отримуємо всі дані
         all_orders = json_manager.get_orders()
+        all_customers = json_manager.get_customers()
+        additional_products = json_manager.get_additional_products()
+        color_options = json_manager.get_color_options()
+        quantity_options = json_manager.get_quantity_options()
+        
+        # Останні замовлення (максимум 5)
         recent_orders = sorted(all_orders, key=lambda x: x.get('date', ''), reverse=True)[:5]
         
+        # Розрахунок реальної статистики
+        total_revenue = sum(order.get('total_amount', 0) for order in all_orders)
+        completed_orders = [o for o in all_orders if o.get('status') == 'виконано']
+        pending_orders = [o for o in all_orders if o.get('status') in ['нове', 'в обробці']]
+        
+        # Середній чек
+        average_check = round(total_revenue / len(all_orders)) if len(all_orders) > 0 else 0
+        
+        # Статистика по статусах
+        orders_new = len([o for o in all_orders if o.get('status') == 'нове'])
+        orders_processing = len([o for o in all_orders if o.get('status') == 'в обробці'])
+        orders_completed = len([o for o in all_orders if o.get('status') == 'виконано'])
+        orders_cancelled = len([o for o in all_orders if o.get('status') == 'скасовано'])
+        
+        # Відсотки для графіків
+        total = len(all_orders) if len(all_orders) > 0 else 1
+        percent_completed = round((orders_completed / total) * 100)
+        percent_processing = round((orders_processing / total) * 100)
+        percent_cancelled = round((orders_cancelled / total) * 100)
+        
         context = {
+            # Основні дані
             'site_settings': json_manager.get_site_settings(),
             'main_product': json_manager.get_main_product(),
-            'additional_products_count': len(json_manager.get_additional_products()),
-            'color_options_count': len(json_manager.get_color_options()),
-            'quantity_options_count': len(json_manager.get_quantity_options()),
-            'services_count': len(json_manager.get_services()),
-            'contact_info': json_manager.get_contact_info(),
-            'about_section': json_manager.get_about_section(),
-            # Нові дані
+            
+            # Статистика
             'orders_count': len(all_orders),
-            'customers_count': len(json_manager.get_customers()),
+            'customers_count': len(all_customers),
+            'additional_products_count': len(additional_products),
+            'color_options_count': len(color_options),
+            'quantity_options_count': len(quantity_options),
+            
+            # Фінанси
+            'total_revenue': round(total_revenue),
+            'average_check': average_check,
+            'completed_count': len(completed_orders),
+            'pending_count': len(pending_orders),
+            
+            # Статистика по статусах
+            'orders_new': orders_new,
+            'orders_processing': orders_processing,
+            'orders_completed': orders_completed,
+            'orders_cancelled': orders_cancelled,
+            'percent_completed': percent_completed,
+            'percent_processing': percent_processing,
+            'percent_cancelled': percent_cancelled,
+            
+            # Замовлення
             'recent_orders': recent_orders,
         }
         return render(request, 'admin_panel/dashboard.html', context)
@@ -68,11 +139,38 @@ def site_settings(request):
                 loading_text = request.POST.get('loading_text', '').strip()
                 error_text = request.POST.get('error_text', '').strip()
                 
+                # Отримуємо налаштування доставки
+                delivery_cost = request.POST.get('delivery_cost', '50').strip()
+                free_delivery_threshold = request.POST.get('free_delivery_threshold', '1000').strip()
+                
+                # Перетворюємо в числа
+                try:
+                    delivery_cost = int(delivery_cost)
+                except ValueError:
+                    delivery_cost = 50
+                    
+                try:
+                    free_delivery_threshold = int(free_delivery_threshold)
+                except ValueError:
+                    free_delivery_threshold = 1000
+                
+                # Обробка логотипу
+                site_logo = request.POST.get('site_logo', '').strip()
+                logo_file = request.FILES.get('site_logo_file')
+                
+                if logo_file:
+                    # Завантажуємо файл і отримуємо URL
+                    site_logo = handle_image_upload(logo_file, 'site')
+                elif not site_logo:
+                    # Якщо немає ні URL ні файлу, залишаємо старе значення або пусте
+                    site_logo = settings_obj.get('site_logo', '')
+                
                 
                 # Оновлюємо налаштування сайту
                 updated_settings = {
                     'site_title': site_title,
                     'site_description': site_description,
+                    'site_logo': site_logo,
                     'cart_button_text': cart_button_text or 'В кошик',
                     'remove_from_cart_text': remove_from_cart_text or 'З кошика',
                     'premium_label_text': premium_label_text or 'Преміум',
@@ -83,7 +181,9 @@ def site_settings(request):
                     'cart_count_label': cart_count_label or 'шт',
                     'currency_symbol': currency_symbol or 'грн',
                     'loading_text': loading_text or 'Сайт завантажується...',
-                    'error_text': error_text or 'Помилка завантаження сайту'
+                    'error_text': error_text or 'Помилка завантаження сайту',
+                    'delivery_cost': delivery_cost,
+                    'free_delivery_threshold': free_delivery_threshold
                 }
                 
                 # Оновлюємо головний товар
@@ -287,9 +387,12 @@ def main_product_settings(request):
         for color in colors:
             color['default_image'] = json_manager.get_default_image_for_color(color['id'])
         
+        # Сортуємо кольори за полем order
+        colors_sorted = sorted(colors, key=lambda x: x.get('order', 999))
+        
         context = {
             'product': main_product,
-            'variants': colors,  # Кольори
+            'variants': colors_sorted,  # Кольори (відсортовані)
             'quantities': quantities  # Варіанти кількості
         }
         return render(request, 'admin_panel/main_product_settings.html', context)
@@ -318,20 +421,23 @@ def edit_color_variant(request, color_id):
             hex_code = request.POST.get('hex_code', '').strip()
             image_url = request.POST.get('image_url', '').strip()
             is_active = request.POST.get('is_active') == 'on'
+            in_stock = request.POST.get('in_stock') == 'on'
             
             if not name or not hex_code or not image_url:
                 messages.error(request, 'Основні поля (назва, hex-код, зображення) є обов\'язковими!')
             elif not hex_code.startswith('#') or len(hex_code) != 7:
                 messages.error(request, 'Hex-код повинен мати формат #rrggbb!')
             else:
-                updated_color = {
-                    'name': name,
-                    'hex_code': hex_code,
-                    'image_url': image_url,
-                    'is_active': is_active
-                }
-                if json_manager.update_color_option_with_layers(color_id, **updated_color):
-                    messages.success(request, f'Колір "{name}" успішно оновлено!')
+                if json_manager.update_color_option_with_layers(color_id, name, hex_code, image_url, is_active, in_stock):
+                    status = []
+                    if is_active:
+                        if in_stock:
+                            status.append("активний та в наявності")
+                        else:
+                            status.append("активний але НЕ В НАЯВНОСТІ (буде з перекресленням)")
+                    else:
+                        status.append("деактивовано (зникне з сайту)")
+                    messages.success(request, f'Колір "{name}" успішно оновлено! Статус: {status[0]}')
                     return redirect('admin_panel:main_product_settings')
                 else:
                     messages.error(request, 'Помилка збереження кольору!')
@@ -437,6 +543,7 @@ def edit_quantity_variant(request, quantity_id):
             quantity_value = request.POST.get('quantity', '').strip()
             price_per_unit = request.POST.get('price_per_unit', '').strip()
             is_active = request.POST.get('is_active') == 'on'
+            in_stock = request.POST.get('in_stock') == 'on'
             
             try:
                 quantity_value = int(quantity_value)
@@ -445,13 +552,16 @@ def edit_quantity_variant(request, quantity_id):
                 if quantity_value <= 0 or price_per_unit <= 0:
                     messages.error(request, 'Кількість та ціна повинні бути більше 0!')
                 else:
-                    updated_quantity = {
-                        'quantity': quantity_value,
-                        'price_per_unit': price_per_unit,
-                        'is_active': is_active
-                    }
-                    if json_manager.update_quantity_option(quantity_id, **updated_quantity):
-                        messages.success(request, f'Варіант кількості "{quantity_value}" успішно оновлено!')
+                    if json_manager.update_quantity_option(quantity_id, quantity_value, price_per_unit, is_active, in_stock):
+                        status = []
+                        if is_active:
+                            if in_stock:
+                                status.append("активний та в наявності")
+                            else:
+                                status.append("активний але НЕ В НАЯВНОСТІ (буде з перекресленням)")
+                        else:
+                            status.append("деактивовано (зникне з сайту)")
+                        messages.success(request, f'Варіант кількості "{quantity_value}" успішно оновлено! Статус: {status[0]}')
                         return redirect('admin_panel:main_product_settings')
                     else:
                         messages.error(request, 'Помилка збереження варіанту кількості!')
@@ -579,34 +689,63 @@ def create_color_with_quantities(request):
             name = request.POST.get('color_name', '').strip()
             hex_code = request.POST.get('hex_code', '').strip()
             order = request.POST.get('order', '1').strip()
+            is_active = request.POST.get('is_active') == 'on'
+            in_stock = request.POST.get('in_stock') == 'on'
             
             # Перевіряємо основні поля
             if not name or not hex_code:
                 messages.error(request, 'Основні поля кольору (назва, hex-код) є обов\'язковими!')
-            elif not hex_code.startswith('#') or len(hex_code) != 7:
-                messages.error(request, 'Hex-код повинен мати формат #rrggbb!')
+            elif hex_code.lower() != 'transparent' and (not hex_code.startswith('#') or len(hex_code) != 7):
+                messages.error(request, 'Hex-код повинен мати формат #rrggbb або бути "transparent"!')
             else:
                 try:
                     order_int = int(order) if order else 1
                 except ValueError:
                     order_int = 1
                 
-                # Збираємо дані про кількості та фото
+                # Збираємо дані про кількості, фото та статуси
                 quantities_data = []
                 for qty in quantities:
                     quantity = qty['quantity']
                     image_url_key = f'quantity_{quantity}_image'
-                    quantity_image_url = request.POST.get(image_url_key, '').strip()
+                    file_key = f'quantity_{quantity}_file'
+                    active_key = f'qty_{quantity}_active'
+                    stock_key = f'qty_{quantity}_stock'
                     
-                    if quantity_image_url:  # Додаємо тільки якщо є фото
+                    # Спочатку перевіряємо чи є завантажений файл
+                    uploaded_file = request.FILES.get(file_key)
+                    quantity_image_url = None
+                    
+                    if uploaded_file:
+                        # Завантажуємо файл і отримуємо URL
+                        quantity_image_url = handle_image_upload(uploaded_file, 'products/main')
+                        print(f"📤 Завантажено файл для {quantity}: {quantity_image_url}")
+                    else:
+                        # Якщо файл не завантажено, беремо URL
+                        quantity_image_url = request.POST.get(image_url_key, '').strip()
+                        print(f"🔗 URL для {quantity}: {quantity_image_url}")
+                    
+                    qty_active = request.POST.get(active_key) == 'on'
+                    qty_stock = request.POST.get(stock_key) == 'on'
+                    
+                    print(f"📝 Кількість {quantity}: має_фото={bool(quantity_image_url)}, active={qty_active}, stock={qty_stock}")
+                    
+                    # Додаємо кількість з фото або без (фото необов'язкове)
+                    if quantity_image_url:
                         quantities_data.append({
                             'quantity': quantity,
-                            'image_url': quantity_image_url
+                            'image_url': quantity_image_url,
+                            'is_active': qty_active,
+                            'in_stock': qty_stock
                         })
+                    # Зберігаємо статуси навіть якщо немає фото
+                    # (backend має зберегти quantity_statuses окремо від quantity_images)
+                
+                print(f"📊 Всього зібрано даних для кількостей: {len(quantities_data)}")
                 
                 if is_edit_mode:
                     # Редагуємо існуючий колір
-                    if json_manager.update_color_option_with_layers(int(edit_color_id), name, hex_code, '', True):
+                    if json_manager.update_color_option_with_layers(int(edit_color_id), name, hex_code, '', is_active, in_stock):
                         # Спочатку видаляємо всі існуючі фото для цього кольору
                         colors = json_manager.get_color_options()
                         for color in colors:
@@ -618,24 +757,68 @@ def create_color_with_quantities(request):
                                             json_manager.delete_quantity_image_for_color(int(edit_color_id), quantity)
                                 break
                         
-                        # Потім додаємо нові фото
+                        # Потім додаємо нові фото зі статусами
                         for qty_data in quantities_data:
-                            json_manager.update_quantity_image_for_color(int(edit_color_id), qty_data['quantity'], qty_data['image_url'])
+                            json_manager.update_quantity_image_for_color(
+                                int(edit_color_id), 
+                                qty_data['quantity'], 
+                                qty_data['image_url'],
+                                qty_data.get('is_active', True),
+                                qty_data.get('in_stock', True)
+                            )
                         
-                        messages.success(request, f'Колір "{name}" з {len(quantities_data)} фото по кількостях успішно оновлено!')
+                        # Повідомлення зі статусом
+                        status = []
+                        if is_active:
+                            if in_stock:
+                                status.append("активний та в наявності")
+                            else:
+                                status.append("активний але НЕ В НАЯВНОСТІ (буде з перекресленням)")
+                        else:
+                            status.append("деактивовано (зникне з сайту)")
+                        
+                        photo_info = f"з {len(quantities_data)} фото" if quantities_data else "без фото"
+                        messages.success(request, f'✅ Колір "{name}" {photo_info} оновлено! Статус: {status[0]}')
                         return redirect('admin_panel:main_product_settings')
                     else:
                         messages.error(request, 'Помилка оновлення кольору!')
                 else:
                     # Створюємо новий колір
-                    if json_manager.add_color_with_quantities(name, hex_code, '', order_int, quantities_data):
-                        messages.success(request, f'Колір "{name}" з {len(quantities_data)} фото по кількостях успішно створено!')
+                    if json_manager.add_color_with_quantities(name, hex_code, '', order_int, quantities_data, is_active, in_stock):
+                        # Повідомлення зі статусом
+                        status = []
+                        if is_active:
+                            if in_stock:
+                                status.append("активний та в наявності")
+                            else:
+                                status.append("активний але НЕ В НАЯВНОСТІ (буде з перекресленням)")
+                        else:
+                            status.append("деактивовано (зникне з сайту)")
+                        
+                        photo_info = f"з {len(quantities_data)} фото" if quantities_data else "без фото (можна додати пізніше)"
+                        messages.success(request, f'✅ Колір "{name}" {photo_info} створено! Статус: {status[0]}')
                         return redirect('admin_panel:main_product_settings')
                     else:
                         messages.error(request, 'Помилка створення кольору!')
         
+        # Підготовка даних статусів для кожної кількості
+        quantities_with_statuses = []
+        for qty in quantities:
+            qty_with_status = qty.copy()
+            if is_edit_mode and color_data and 'quantity_statuses' in color_data:
+                qty_key = str(qty['quantity'])
+                status = color_data['quantity_statuses'].get(qty_key, {'is_active': True, 'in_stock': True})
+                qty_with_status['status_active'] = status.get('is_active', True)
+                qty_with_status['status_stock'] = status.get('in_stock', True)
+                print(f"📋 Завантажено статус для {qty_key}: active={qty_with_status['status_active']}, stock={qty_with_status['status_stock']}")
+            else:
+                qty_with_status['status_active'] = True
+                qty_with_status['status_stock'] = True
+                print(f"📋 Дефолтні статуси для {qty['quantity']}: active=True, stock=True")
+            quantities_with_statuses.append(qty_with_status)
+        
         context = {
-            'quantities': quantities,
+            'quantities': quantities_with_statuses,
             'is_edit_mode': is_edit_mode,
             'color_data': color_data
         }
@@ -649,24 +832,104 @@ def additional_products(request):
         from json_manager import JSONManager
         json_manager = JSONManager()
         products = json_manager.get_additional_products()
+        
+        # Отримуємо категорії
+        additional_settings = json_manager.get_additional_settings()
+        categories = additional_settings.get('categories', [])
 
         if request.method == 'POST':
-            title = request.POST.get('title', '').strip()
-            description = request.POST.get('description', '').strip()
-            price_str = request.POST.get('price', '').strip()
-            currency = request.POST.get('currency', '').strip()
-            image_url = request.POST.get('image_url', '').strip()
-
-            if not title or not price_str or not price_str.replace('.', '', 1).isdigit():
-                messages.error(request, 'Назва та ціна (число) є обов\'язковими!')
-            else:
-                price = float(price_str)
-                if json_manager.add_additional_product(title, description, price, currency, image_url):
-                    messages.success(request, 'Додатковий товар успішно додано!')
+            action = request.POST.get('action', '')
+            
+            # Додавання товару
+            if action == 'add_product':
+                title = request.POST.get('title', '').strip()
+                description = request.POST.get('description', '').strip()
+                price_str = request.POST.get('price', '').strip()
+                currency = request.POST.get('currency', '').strip()
+                category = request.POST.get('category', '').strip()
+                is_active = request.POST.get('is_active') == 'on'
+                in_stock = request.POST.get('in_stock') == 'on'
+                
+                # Обробка зображення: спочатку файл, потім URL
+                uploaded_file = request.FILES.get('image_file')
+                if uploaded_file:
+                    image_url = handle_image_upload(uploaded_file, 'products/additional')
+                    print(f"📤 Завантажено файл: {image_url}")
                 else:
-                    messages.error(request, 'Помилка додавання додаткового товару!')
+                    image_url = request.POST.get('image_url', '').strip()
+                    print(f"🔗 Використано URL: {image_url}")
+
+                if not title or not price_str or not price_str.replace('.', '', 1).isdigit():
+                    messages.error(request, 'Назва та ціна (число) є обов\'язковими!')
+                else:
+                    price = float(price_str)
+                    if json_manager.add_additional_product(title, description, price, currency, image_url, category, is_active=is_active, in_stock=in_stock):
+                        # Формуємо повідомлення з урахуванням статусу
+                        status_parts = []
+                        if is_active:
+                            if in_stock:
+                                status_parts.append("активний та в наявності")
+                            else:
+                                status_parts.append("активний але немає в наявності")
+                        else:
+                            status_parts.append("деактивований")
+                        
+                        status_msg = f'Додатковий товар успішно додано ({status_parts[0]})!'
+                        messages.success(request, status_msg)
+                    else:
+                        messages.error(request, 'Помилка додавання додаткового товару!')
+            
+            # Додавання категорії
+            elif action == 'add_category':
+                category_title = request.POST.get('category_title', '').strip()
+                category_order = request.POST.get('category_order', '1').strip()
+                
+                if not category_title:
+                    messages.error(request, 'Назва категорії не може бути порожньою!')
+                else:
+                    try:
+                        order = int(category_order) if category_order else len(categories) + 1
+                    except ValueError:
+                        order = len(categories) + 1
+                    
+                    if json_manager.add_category(category_title, order):
+                        messages.success(request, f'Категорію "{category_title}" успішно додано!')
+                    else:
+                        messages.error(request, 'Категорія з такою назвою вже існує!')
+            
+            # Редагування категорії
+            elif action == 'edit_category':
+                category_id = request.POST.get('category_id', '').strip()
+                category_title = request.POST.get('edit_category_title', '').strip()
+                category_order = request.POST.get('edit_category_order', '1').strip()
+                
+                if not category_title:
+                    messages.error(request, 'Назва категорії не може бути порожньою!')
+                else:
+                    try:
+                        order = int(category_order) if category_order else 1
+                    except ValueError:
+                        order = 1
+                    
+                    if json_manager.update_category(category_id, category_title, order):
+                        messages.success(request, f'Категорію успішно оновлено!')
+                    else:
+                        messages.error(request, 'Помилка оновлення категорії!')
+            
+            # Видалення категорії
+            elif action == 'delete_category':
+                category_id = request.POST.get('category_id', '').strip()
+                if json_manager.delete_category(category_id):
+                    messages.success(request, 'Категорію успішно видалено!')
+                else:
+                    messages.error(request, 'Помилка видалення категорії!')
+            
             return redirect('admin_panel:additional_products')
-        return render(request, 'admin_panel/additional_products.html', {'products': products})
+        
+        return render(request, 'admin_panel/additional_products.html', {
+            'products': products,
+            'categories': categories
+        })
     except Exception as e:
         return HttpResponse(f"Помилка: {e}")
 
@@ -688,13 +951,31 @@ def edit_additional_product(request, product_id):
             messages.error(request, 'Товар не знайдено!')
             return redirect('admin_panel:additional_products')
         
+        # Отримуємо категорії
+        additional_settings = json_manager.get_additional_settings()
+        categories = additional_settings.get('categories', [])
+        
         if request.method == 'POST':
             title = request.POST.get('title', '').strip()
             description = request.POST.get('description', '').strip()
             price_str = request.POST.get('price', '').strip()
             currency = request.POST.get('currency', '').strip()
-            image_url = request.POST.get('image_url', '').strip()
             order = request.POST.get('order', '1').strip()
+            category = request.POST.get('category', '').strip()
+            is_active = request.POST.get('is_active') == 'on'
+            in_stock = request.POST.get('in_stock') == 'on'
+            
+            # Обробка зображення: спочатку файл, потім URL, потім старе значення
+            uploaded_file = request.FILES.get('image_file')
+            if uploaded_file:
+                image_url = handle_image_upload(uploaded_file, 'products/additional')
+                print(f"📤 Завантажено новий файл: {image_url}")
+            else:
+                image_url = request.POST.get('image_url', '').strip()
+                if not image_url:
+                    # Якщо нічого не введено, залишаємо старе зображення
+                    image_url = product.get('image_url', '')
+                print(f"🔗 Використано URL або старе зображення: {image_url}")
 
             if not title or not price_str or not price_str.replace('.', '', 1).isdigit():
                 messages.error(request, 'Назва та ціна (число) є обов\'язковими!')
@@ -704,13 +985,27 @@ def edit_additional_product(request, product_id):
                 except ValueError:
                     order_int = 1
                 price = float(price_str)
-                if json_manager.update_additional_product(product_id, title, description, price, currency, image_url, order_int):
-                    messages.success(request, 'Додатковий товар успішно оновлено!')
+                if json_manager.update_additional_product(product_id, title, description, price, currency, image_url, order_int, category, is_active=is_active, in_stock=in_stock):
+                    # Формуємо повідомлення з урахуванням статусу
+                    status_parts = []
+                    if is_active:
+                        if in_stock:
+                            status_parts.append("активний та в наявності")
+                        else:
+                            status_parts.append("активний але немає в наявності")
+                    else:
+                        status_parts.append("деактивований")
+                    
+                    status_msg = f'Додатковий товар успішно оновлено ({status_parts[0]})!'
+                    messages.success(request, status_msg)
                     return redirect('admin_panel:additional_products')
                 else:
                     messages.error(request, 'Помилка оновлення додаткового товару!')
         
-        return render(request, 'admin_panel/edit_additional_product.html', {'product': product})
+        return render(request, 'admin_panel/edit_additional_product.html', {
+            'product': product,
+            'categories': categories
+        })
     except Exception as e:
         return HttpResponse(f"Помилка: {e}")
 
@@ -858,6 +1153,7 @@ def orders_list(request):
     """Список замовлень"""
     try:
         from json_manager import JSONManager
+        from mysite.encryption_utils import decrypt_order_data
         json_manager = JSONManager()
         
         # Фільтр по статусу
@@ -868,6 +1164,9 @@ def orders_list(request):
             orders = json_manager.get_orders()
         else:
             orders = json_manager.get_orders_by_status(status_filter)
+        
+        # Дешифруємо дані для відображення в адмін-панелі
+        orders = [decrypt_order_data(order) for order in orders]
         
         # Фільтр по способу оплати
         if payment_filter != 'all':
@@ -901,12 +1200,16 @@ def order_detail(request, order_id):
     """Деталі замовлення"""
     try:
         from json_manager import JSONManager
+        from mysite.encryption_utils import decrypt_order_data
         json_manager = JSONManager()
         
         order = json_manager.get_order_by_id(order_id)
         if not order:
             messages.error(request, f"Замовлення з ID {order_id} не знайдено")
             return redirect('admin_panel:orders_list')
+        
+        # Дешифруємо дані для відображення
+        order = decrypt_order_data(order)
         
         context = {'order': order}
         return render(request, 'admin_panel/order_detail.html', context)
@@ -1116,3 +1419,389 @@ def daily_sales_report(request):
         return render(request, 'admin_panel/daily_sales_report.html', context)
     except Exception as e:
         return HttpResponse(f"Помилка: {e}")
+
+def marketing_settings(request):
+    """Налаштування маркетингу (прогрес-бар, промокоди, знижки, акції)"""
+    try:
+        from json_manager import JSONManager
+        json_manager = JSONManager()
+        
+        # Отримуємо налаштування прогрес-бару
+        progress_bar_settings = json_manager.get_progress_bar_settings()
+        
+        # Отримуємо додаткові товари для вибору подарунків
+        additional_products = json_manager.get_additional_products()
+        
+        context = {
+            'settings': {
+                'progress_bar': progress_bar_settings
+            },
+            'additional_products': additional_products
+        }
+        return render(request, 'admin_panel/marketing_settings.html', context)
+    except Exception as e:
+        messages.error(request, f'❌ Помилка: {e}')
+        return render(request, 'admin_panel/marketing_settings.html', {'settings': {}})
+
+def get_media_files(request):
+    """API для отримання списку медіа-файлів"""
+    from django.http import JsonResponse
+    import glob
+    
+    try:
+        media_path = os.path.join(settings.MEDIA_ROOT, 'products')
+        files = []
+        
+        # Сканування всіх підпапок
+        for root, dirs, filenames in os.walk(media_path):
+            for filename in filenames:
+                if filename.lower().endswith(('.jpg', '.jpeg', '.png', '.webp', '.gif')):
+                    file_path = os.path.join(root, filename)
+                    rel_path = os.path.relpath(file_path, settings.MEDIA_ROOT)
+                    url = f"{settings.MEDIA_URL}{rel_path.replace(os.sep, '/')}"
+                    
+                    # Визначаємо категорію
+                    category = 'main' if 'main' in rel_path else 'additional'
+                    
+                    files.append({
+                        'name': filename,
+                        'url': url,
+                        'category': category,
+                        'path': rel_path
+                    })
+        
+        # Сортуємо по даті (новіші першими)
+        files.sort(key=lambda x: x['name'], reverse=True)
+        
+        return JsonResponse({'files': files, 'count': len(files)})
+    except Exception as e:
+        return JsonResponse({'error': str(e), 'files': []}, status=500)
+
+
+# ===== MARKETING PROGRESS BAR API =====
+
+def toggle_progress_bar(request):
+    """AJAX: Увімкнути/вимкнути прогрес-бар"""
+    from django.http import JsonResponse
+    import json as json_lib
+    
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Метод не дозволено'}, status=405)
+    
+    try:
+        from json_manager import JSONManager
+        json_manager = JSONManager()
+        
+        data = json_lib.loads(request.body)
+        enabled = data.get('enabled', True)
+        
+        if json_manager.update_progress_bar_enabled(enabled):
+            return JsonResponse({
+                'success': True,
+                'message': 'Прогрес-бар ' + ('увімкнено' if enabled else 'вимкнено')
+            })
+        else:
+            return JsonResponse({'success': False, 'error': 'Помилка збереження'}, status=500)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+def add_milestone_ajax(request):
+    """AJAX: Додати новий етап прогрес-бару"""
+    from django.http import JsonResponse
+    import json as json_lib
+    
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Метод не дозволено'}, status=405)
+    
+    try:
+        from json_manager import JSONManager
+        json_manager = JSONManager()
+        
+        data = json_lib.loads(request.body)
+        
+        print(f"📥 Отримано дані для додавання етапу: {data}")
+        
+        # Валідація
+        required_fields = ['amount', 'title', 'message', 'color']
+        for field in required_fields:
+            if field not in data or not data[field]:
+                error_msg = f'Поле "{field}" є обов\'язковим'
+                print(f"❌ Валідація: {error_msg}")
+                return JsonResponse({
+                    'success': False, 
+                    'error': error_msg
+                }, status=400)
+        
+        # Створюємо об'єкт етапу
+        milestone_data = {
+            'amount': int(data['amount']),
+            'title': data['title'],
+            'message': data['message'],
+            'color': data['color']
+        }
+        
+        # Додаткові поля (опціонально)
+        # Знижка
+        discount_value = data.get('discount_percent')
+        if discount_value and str(discount_value).strip() not in ['', 'null', 'None']:
+            try:
+                discount_int = int(discount_value)
+                if discount_int > 0:
+                    milestone_data['discount_percent'] = discount_int
+                    print(f"💰 Знижка додана: {discount_int}%")
+                else:
+                    milestone_data['discount_percent'] = None
+            except (ValueError, TypeError):
+                milestone_data['discount_percent'] = None
+                print(f"⚠️ Некоректне значення знижки: {discount_value}")
+        else:
+            milestone_data['discount_percent'] = None
+        
+        # Безкоштовна доставка (boolean)
+        milestone_data['free_shipping'] = bool(data.get('free_shipping'))
+        print(f"🚚 Безкоштовна доставка: {'УВІМКНЕНО' if milestone_data['free_shipping'] else 'ВИМКНЕНО'}")
+        
+        # Подарунок (спочатку перевіряємо custom, потім select)
+        gift_value = data.get('gift')
+        if gift_value and str(gift_value).strip() not in ['', 'null', 'None']:
+            milestone_data['gift'] = str(gift_value).strip()
+            print(f"🎁 Подарунок додано: {milestone_data['gift']}")
+        else:
+            milestone_data['gift'] = None
+        
+        print(f"✅ Підготовлено дані етапу: {milestone_data}")
+        
+        new_id = json_manager.add_milestone(milestone_data)
+        
+        if new_id:
+            print(f"✅ Етап #{new_id} додано успішно")
+            return JsonResponse({
+                'success': True,
+                'message': f'Етап "{data["title"]}" додано успішно!',
+                'milestone_id': new_id
+            })
+        else:
+            print(f"❌ Помилка додавання етапу")
+            return JsonResponse({'success': False, 'error': 'Помилка додавання'}, status=500)
+    except Exception as e:
+        print(f"💥 Виключення: {e}")
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+def update_milestone_ajax(request, milestone_id):
+    """AJAX: Оновити етап прогрес-бару"""
+    from django.http import JsonResponse
+    import json as json_lib
+    
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Метод не дозволено'}, status=405)
+    
+    try:
+        from json_manager import JSONManager
+        json_manager = JSONManager()
+        
+        data = json_lib.loads(request.body)
+        
+        print(f"📥 Отримано дані для оновлення етапу #{milestone_id}: {data}")
+        
+        # Валідація
+        required_fields = ['amount', 'title', 'message', 'color']
+        for field in required_fields:
+            if field not in data or not data[field]:
+                error_msg = f'Поле "{field}" є обов\'язковим'
+                print(f"❌ Валідація: {error_msg}")
+                return JsonResponse({
+                    'success': False, 
+                    'error': error_msg
+                }, status=400)
+        
+        # Створюємо об'єкт етапу
+        milestone_data = {
+            'amount': int(data['amount']),
+            'title': data['title'],
+            'message': data['message'],
+            'color': data['color']
+        }
+        
+        # Додаткові поля (опціонально)
+        # Знижка
+        discount_value = data.get('discount_percent')
+        if discount_value and str(discount_value).strip() not in ['', 'null', 'None']:
+            try:
+                discount_int = int(discount_value)
+                if discount_int > 0:
+                    milestone_data['discount_percent'] = discount_int
+                    print(f"💰 Знижка оновлена: {discount_int}%")
+                else:
+                    milestone_data['discount_percent'] = None
+            except (ValueError, TypeError):
+                milestone_data['discount_percent'] = None
+                print(f"⚠️ Некоректне значення знижки: {discount_value}")
+        else:
+            milestone_data['discount_percent'] = None
+        
+        # Безкоштовна доставка (boolean)
+        milestone_data['free_shipping'] = bool(data.get('free_shipping'))
+        print(f"🚚 Безкоштовна доставка: {'УВІМКНЕНО' if milestone_data['free_shipping'] else 'ВИМКНЕНО'}")
+        
+        # Подарунок (спочатку перевіряємо custom, потім select)
+        gift_value = data.get('gift')
+        if gift_value and str(gift_value).strip() not in ['', 'null', 'None']:
+            milestone_data['gift'] = str(gift_value).strip()
+            print(f"🎁 Подарунок оновлено: {milestone_data['gift']}")
+        else:
+            milestone_data['gift'] = None
+        
+        print(f"✅ Підготовлено дані для оновлення: {milestone_data}")
+        
+        if json_manager.update_milestone(milestone_id, milestone_data):
+            print(f"✅ Етап #{milestone_id} оновлено успішно")
+            return JsonResponse({
+                'success': True,
+                'message': f'Етап "{data["title"]}" оновлено успішно!'
+            })
+        else:
+            print(f"❌ Етап #{milestone_id} не знайдено")
+            return JsonResponse({'success': False, 'error': 'Етап не знайдено'}, status=404)
+    except Exception as e:
+        print(f"💥 Виключення: {e}")
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+def delete_milestone_ajax(request, milestone_id):
+    """AJAX: Видалити етап прогрес-бару"""
+    from django.http import JsonResponse
+    
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Метод не дозволено'}, status=405)
+    
+    try:
+        from json_manager import JSONManager
+        json_manager = JSONManager()
+        
+        if json_manager.delete_milestone(milestone_id):
+            return JsonResponse({
+                'success': True,
+                'message': 'Етап видалено успішно!'
+            })
+        else:
+            return JsonResponse({'success': False, 'error': 'Етап не знайдено'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+def get_milestone_ajax(request, milestone_id):
+    """AJAX: Отримати дані етапу"""
+    from django.http import JsonResponse
+    
+    if request.method != 'GET':
+        return JsonResponse({'success': False, 'error': 'Метод не дозволено'}, status=405)
+    
+    try:
+        from json_manager import JSONManager
+        json_manager = JSONManager()
+        
+        milestone = json_manager.get_milestone_by_id(milestone_id)
+        
+        if milestone:
+            return JsonResponse({
+                'success': True,
+                'milestone': milestone
+            })
+        else:
+            return JsonResponse({'success': False, 'error': 'Етап не знайдено'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+@require_http_methods(["POST"])
+def update_color_order(request):
+    """
+    Оновлює порядок кольорів через AJAX
+    """
+    try:
+        import json as json_lib
+        from json_manager import JSONManager
+        json_manager = JSONManager()
+        
+        data = json_lib.loads(request.body)
+        order_data = data.get('order', [])
+        
+        if not order_data:
+            return JsonResponse({'success': False, 'error': 'Порожні дані порядку'}, status=400)
+        
+        # Отримуємо всі кольори
+        color_options = json_manager.get_color_options()
+        
+        # Оновлюємо order для кожного кольору
+        for item in order_data:
+            color_id = item.get('id')
+            new_order = item.get('order')
+            
+            for color in color_options:
+                if color.get('id') == color_id:
+                    color['order'] = new_order
+                    break
+        
+        # Зберігаємо оновлені дані
+        json_manager.update_color_options(color_options)
+        
+        print(f"✅ Порядок кольорів оновлено: {order_data}")
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Порядок кольорів оновлено'
+        })
+        
+    except Exception as e:
+        print(f"❌ Помилка оновлення порядку кольорів: {str(e)}")
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+@require_http_methods(["POST"])
+def update_color_status(request):
+    """
+    Оновлює статус кольору (is_active або in_stock) через AJAX
+    """
+    try:
+        import json as json_lib
+        from json_manager import JSONManager
+        json_manager = JSONManager()
+        
+        data = json_lib.loads(request.body)
+        color_id = data.get('color_id')
+        field = data.get('field')
+        value = data.get('value')
+        
+        if not color_id or not field:
+            return JsonResponse({'success': False, 'error': 'Відсутні обов\'язкові параметри'}, status=400)
+        
+        if field not in ['is_active', 'in_stock']:
+            return JsonResponse({'success': False, 'error': 'Недопустиме поле'}, status=400)
+        
+        # Отримуємо всі кольори
+        color_options = json_manager.get_color_options()
+        
+        # Знаходимо і оновлюємо колір
+        color_found = False
+        for color in color_options:
+            if color.get('id') == color_id:
+                color[field] = value
+                color_found = True
+                break
+        
+        if not color_found:
+            return JsonResponse({'success': False, 'error': 'Колір не знайдено'}, status=404)
+        
+        # Зберігаємо оновлені дані
+        json_manager.update_color_options(color_options)
+        
+        print(f"✅ Статус {field}={value} оновлено для кольору {color_id}")
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Статус {field} оновлено'
+        })
+        
+    except Exception as e:
+        print(f"❌ Помилка оновлення статусу кольору: {str(e)}")
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)

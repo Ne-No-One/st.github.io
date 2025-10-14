@@ -1,0 +1,253 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Адміністратори - Адмін Панель{% endblock %}
+
+{% block content %}
+<div class="admin-form-container">
+    <div class="admin-form-section">
+        <div class="section-header compact">
+            <h5 class="section-title compact">
+                <i class="fas fa-users-cog"></i>
+                Адміністратори ({{ admins|length }})
+            </h5>
+            <button class="btn btn-primary btn-sm" onclick="showCreateAdminModal()">
+                <i class="fas fa-plus"></i>
+                <span class="d-none d-md-inline ms-1">Створити</span>
+            </button>
+        </div>
+
+        {% if admins %}
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag me-1"></i>ID</th>
+                        <th><i class="fas fa-user me-1"></i>Username</th>
+                        <th><i class="fas fa-id-card me-1"></i>Ім'я</th>
+                        <th><i class="fas fa-envelope me-1"></i>Email</th>
+                        <th><i class="fas fa-shield-alt me-1"></i>Роль</th>
+                        <th><i class="fas fa-clock me-1"></i>Останній вхід</th>
+                        <th><i class="fas fa-toggle-on me-1"></i>Статус</th>
+                        <th><i class="fas fa-cog me-1"></i>Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for admin_user in admins %}
+                    <tr>
+                        <td>{{ admin_user.id }}</td>
+                        <td>
+                            <strong style="color: var(--admin-primary);">{{ admin_user.username }}</strong>
+                        </td>
+                        <td>{{ admin_user.name }}</td>
+                        <td>{{ admin_user.email|default:"—" }}</td>
+                        <td>
+                            {% if admin_user.role == 'super_admin' %}
+                                <span class="badge" style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);">
+                                    <i class="fas fa-crown"></i>
+                                    Super Admin
+                                </span>
+                            {% else %}
+                                <span class="badge bg-primary">
+                                    <i class="fas fa-user"></i>
+                                    Admin
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if admin_user.last_login %}
+                                <small>{{ admin_user.last_login|slice:':16' }}</small>
+                            {% else %}
+                                <small class="text-muted">Ніколи</small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if admin_user.is_active %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check-circle"></i>
+                                    Активний
+                                </span>
+                            {% else %}
+                                <span class="badge bg-danger">
+                                    <i class="fas fa-times-circle"></i>
+                                    Вимкнений
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                {% if admin_user.id != request.session.admin_id %}
+                                <button class="btn btn-sm btn-warning" onclick="toggleAdminStatus({{ admin_user.id }}, '{{ admin_user.username }}')" title="Змінити статус">
+                                    <i class="fas fa-toggle-on"></i>
+                                </button>
+                                {% else %}
+                                <button class="btn btn-sm btn-secondary" disabled title="Це ваш акаунт">
+                                    <i class="fas fa-user"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-users-cog"></i>
+                <p>Адміністраторів не знайдено</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal для створення адміністратора -->
+<div class="modal fade" id="createAdminModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-user-plus"></i>
+                    Створити адміністратора
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createAdminForm">
+                    <div class="mb-3">
+                        <label for="new_username" class="form-label">
+                            <i class="fas fa-user"></i>
+                            Username (логін) *
+                        </label>
+                        <input type="text" class="form-control" id="new_username" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="new_name" class="form-label">
+                            <i class="fas fa-id-card"></i>
+                            Повне ім'я *
+                        </label>
+                        <input type="text" class="form-control" id="new_name" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="new_email" class="form-label">
+                            <i class="fas fa-envelope"></i>
+                            Email
+                        </label>
+                        <input type="email" class="form-control" id="new_email">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="new_password" class="form-label">
+                            <i class="fas fa-lock"></i>
+                            Пароль *
+                        </label>
+                        <input type="password" class="form-control" id="new_password" required minlength="8">
+                        <small class="text-muted">Мінімум 8 символів</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="new_role" class="form-label">
+                            <i class="fas fa-shield-alt"></i>
+                            Роль *
+                        </label>
+                        <select class="form-select" id="new_role" required>
+                            <option value="admin">Admin (звичайний доступ)</option>
+                            <option value="super_admin">Super Admin (повний доступ)</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i>
+                    Скасувати
+                </button>
+                <button type="button" class="btn btn-primary" onclick="createAdmin()">
+                    <i class="fas fa-save"></i>
+                    Створити
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showCreateAdminModal() {
+    const modal = new bootstrap.Modal(document.getElementById('createAdminModal'));
+    modal.show();
+}
+
+async function createAdmin() {
+    const username = document.getElementById('new_username').value.trim();
+    const name = document.getElementById('new_name').value.trim();
+    const email = document.getElementById('new_email').value.trim();
+    const password = document.getElementById('new_password').value;
+    const role = document.getElementById('new_role').value;
+    
+    if (!username || !name || !password) {
+        alert('Заповніть всі обов\'язкові поля');
+        return;
+    }
+    
+    if (password.length < 8) {
+        alert('Пароль має містити мінімум 8 символів');
+        return;
+    }
+    
+    try {
+        const response = await fetch('{% url "admin_panel:api_create_admin" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                username: username,
+                name: name,
+                email: email,
+                password: password,
+                role: role
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert(result.message);
+            location.reload();
+        } else {
+            alert('Помилка: ' + result.error);
+        }
+    } catch (error) {
+        console.error('Помилка:', error);
+        alert('Помилка створення адміністратора');
+    }
+}
+
+async function toggleAdminStatus(adminId, username) {
+    if (!confirm(`Змінити статус адміністратора ${username}?`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/admin-panel/api/users/${adminId}/toggle/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            location.reload();
+        } else {
+            alert('Помилка: ' + result.error);
+        }
+    } catch (error) {
+        console.error('Помилка:', error);
+        alert('Помилка зміни статусу');
+    }
+}
+</script>
+{% endblock %}
+

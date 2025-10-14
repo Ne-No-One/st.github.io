@@ -32,14 +32,18 @@
 <header class="header">
     <nav class="navbar">
         <div class="nav-brand">
-            <h1>{% if site_settings %}{{ site_settings.site_title }}{% else %}Квітковий магазин{% endif %}</h1>
+            {% if site_settings.site_logo %}
+                <img src="{{ site_settings.site_logo }}" alt="{{ site_settings.site_title }}" class="site-logo">
+            {% else %}
+                <h1>{% if site_settings %}{{ site_settings.site_title }}{% else %}Квітковий магазин{% endif %}</h1>
+            {% endif %}
             <button class="b2b-button">{{ site_settings.b2b_button_text|default:"B2B" }}</button>
         </div>
         
         <!-- Прогрес бар в навбарі -->
         <div class="navbar-progress-container">
             <div class="progress-info">
-                <span class="progress-label">Прогрес до безкоштовної доставки</span>
+                <span class="progress-label" id="progress-label">Прогрес до бонусу</span>
                 <span class="progress-amount" id="progress-text">0₴ / 1000₴</span>
             </div>
             <div class="progress-bar">
@@ -48,13 +52,24 @@
         </div>
         
         <div class="nav-actions">
-            <button class="cart-icon" id="cart-link" onclick="openCart()">
+            <a href="/cart/" class="cart-icon" id="cart-link">
                 <span class="cart-icon-symbol">🛒</span>
                 <span class="cart-count" id="cart-count">0</span>
-            </button>
+            </a>
         </div>
     </nav>
 </header>
+
+<!-- Мобільний прогрес бар -->
+<div class="progress-container" id="mobile-progress-container">
+    <div class="progress-info">
+        <span class="progress-label" id="progress-label-mobile">Прогрес до бонусу</span>
+        <span class="progress-amount" id="progress-text-mobile">0₴ / 1000₴</span>
+    </div>
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill-mobile"></div>
+    </div>
+</div>
 
 
 
@@ -91,16 +106,19 @@
                 <h3>{{ site_settings.color_selector_title|default:"колір пакування" }}</h3>
                 <div class="color-dots">
                     {% for color in color_options %}
+                        {# Створюємо кнопку тільки якщо is_active=true #}
                         {% if color.is_active %}
-                        <div class="color-dot {% if forloop.first %}active{% endif %}" 
+                        <div class="color-dot {% if forloop.first %}active{% endif %}{% if color.in_stock == False %} out-of-stock{% endif %}" 
                              data-color="{{ color.name|lower }}" 
+                             data-in-stock="{% if color.in_stock == False %}false{% else %}true{% endif %}"
                              data-default-image="{{ color.default_image|default:'' }}"
-                             data-quantity-images="{{ color.quantity_images_json }}"
+                             data-quantity-images='{{ color.quantity_images_json|safe }}'
+                             data-quantity-statuses='{{ color.quantity_statuses_json|safe }}'
                              data-flowers-image="{{ color.flowers_image_url|default:'' }}"
                              data-mask-image="{{ color.mask_image_url|default:'' }}"
                              data-packaging-texture="{{ color.packaging_texture_url|default:'' }}"
                              style="background-color: {{ color.hex_code }};"
-                             title="{{ color.name }}"
+                             title="{{ color.name }}{% if color.in_stock == False %} (Немає в наявності){% endif %}"
                              onclick="selectColor(this, '{{ color.hex_code }}', '{{ color.flowers_image_url|default:'' }}', '{{ color.mask_image_url|default:'' }}', '{{ color.packaging_texture_url|default:'' }}')">
                         </div>
                         {% endif %}
@@ -113,9 +131,11 @@
                 <h3>{{ site_settings.quantity_selector_title|default:"кількість квітів" }}</h3>
                 <div class="quantity-buttons-container">
                     {% for qty in quantity_options %}
+                        {# Створюємо кнопку тільки якщо is_active=true #}
                         {% if qty.is_active %}
-                        <button class="quantity-btn {% if forloop.first %}active{% endif %}"
+                        <button class="quantity-btn {% if forloop.first %}active{% endif %}{% if qty.in_stock == False %} out-of-stock{% endif %}"
                                 data-quantity="{{ qty.quantity }}"
+                                data-in-stock="{% if qty.in_stock == False %}false{% else %}true{% endif %}"
                                 data-price-per-unit="{{ qty.price_per_unit }}"
                                 data-currency="грн">
                             {{ qty.quantity }}
@@ -133,7 +153,7 @@
                     {% if quantity_options %}
                         {% with first_qty=quantity_options.0 %}
                             {% if first_qty.price_per_unit and first_qty.quantity %}
-                                <span class="final-price">{{ first_qty.price_per_unit|floatformat:0 }}</span> {{ main_product.currency }}
+                                <span class="final-price">{% widthratio first_qty.price_per_unit 1 first_qty.quantity %}</span> {{ main_product.currency }}
                             {% else %}
                                 {% if main_product.price %}
                                     {{ main_product.price }} {{ main_product.currency }}
@@ -176,35 +196,83 @@
     <div class="additional-products-content">
         <div class="additional-products-header">
             <h2 class="section-title">{{ additional_settings.section_title|default:"Додаткові товари" }}</h2>
-            <button class="add-all-btn" onclick="toggleAllAdditionalProducts()">
-                Додати всі
-            </button>
         </div>
-        <div class="additional-products-grid">
-            {% if additional_products %}
-                {% for product in additional_products %}
-                    {% if product.image or product.image_url %}
-                    <div class="additional-product-card" data-product-id="{{ product.id }}">
-                        <div class="additional-product-image">
-                            {% if product.image %}
-                                <img src="{{ product.image.url }}" alt="{{ product.title }}" loading="lazy">
-                            {% elif product.image_url %}
-                                <img src="{{ product.image_url }}" alt="{{ product.title }}" loading="lazy">
-                            {% endif %}
-                            <div class="product-status">В кошику</div>
-                        </div>
-                        <div class="additional-product-info">
-                            <h3>{{ product.title }}</h3>
-                            <div class="additional-product-price-container">
-                                <div class="additional-product-price">{{ product.price|floatformat:0 }} {{ product.currency }}</div>
-                                <button class="additional-add-to-cart-btn" onclick="toggleAdditionalProduct({{ product.id }})">
-                                    Додати в кошик
-                                </button>
-                            </div>
-                        </div>
+        <div class="additional-products-categories">
+            {% if additional_settings.categories %}
+                {% for category in additional_settings.categories %}
+                <div class="additional-products-category">
+                    <div class="category-header">
+                        <h3 class="category-title">{{ category.title }}</h3>
                     </div>
-                    {% endif %}
+                    <div class="additional-products-grid">
+                        {% for product in additional_products %}
+                            {% if product.category == category.id %}
+                                {% if product.image or product.image_url %}
+                                <div class="additional-product-card{% if not product.is_active %} hidden{% elif product.in_stock == False %} out-of-stock{% endif %}" 
+                                     data-product-id="{{ product.id }}" 
+                                     data-category="{{ product.category }}"
+                                     data-is-active="{% if product.is_active %}true{% else %}false{% endif %}"
+                                     data-in-stock="{% if product.in_stock == False %}false{% else %}true{% endif %}">
+                                    <div class="additional-product-image">
+                                        {% if product.image %}
+                                            <img src="{{ product.image.url }}" alt="{{ product.title }}" loading="lazy">
+                                        {% elif product.image_url %}
+                                            <img src="{{ product.image_url }}" alt="{{ product.title }}" loading="lazy">
+                                        {% endif %}
+                                        <div class="product-status">В кошику</div>
+                                    </div>
+                                    <div class="additional-product-info">
+                                        <h3>{{ product.title }}</h3>
+                                        <div class="additional-product-price-container">
+                                            <div class="additional-product-price">{{ product.price|floatformat:0 }} {{ product.currency }}</div>
+                                            <button class="additional-add-to-cart-btn{% if product.in_stock == False %} disabled{% endif %}" 
+                                                    onclick="{% if product.in_stock != False %}toggleAdditionalProduct({{ product.id }}){% else %}return false;{% endif %}"
+                                                    {% if product.in_stock == False %}disabled{% endif %}>
+                                                {% if product.in_stock == False %}Немає в наявності{% else %}Додати в кошик{% endif %}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
                 {% endfor %}
+            {% else %}
+                <!-- Fallback if no categories defined -->
+                <div class="additional-products-grid">
+                    {% if additional_products %}
+                        {% for product in additional_products %}
+                            {% if product.image or product.image_url %}
+                            <div class="additional-product-card{% if not product.is_active %} hidden{% elif product.in_stock == False %} out-of-stock{% endif %}" 
+                                 data-product-id="{{ product.id }}"
+                                 data-is-active="{% if product.is_active %}true{% else %}false{% endif %}"
+                                 data-in-stock="{% if product.in_stock == False %}false{% else %}true{% endif %}">
+                                <div class="additional-product-image">
+                                    {% if product.image %}
+                                        <img src="{{ product.image.url }}" alt="{{ product.title }}" loading="lazy">
+                                    {% elif product.image_url %}
+                                        <img src="{{ product.image_url }}" alt="{{ product.title }}" loading="lazy">
+                                    {% endif %}
+                                    <div class="product-status">В кошику</div>
+                                </div>
+                                <div class="additional-product-info">
+                                    <h3>{{ product.title }}</h3>
+                                    <div class="additional-product-price-container">
+                                        <div class="additional-product-price">{{ product.price|floatformat:0 }} {{ product.currency }}</div>
+                                        <button class="additional-add-to-cart-btn{% if product.in_stock == False %} disabled{% endif %}" 
+                                                onclick="{% if product.in_stock != False %}toggleAdditionalProduct({{ product.id }}){% else %}return false;{% endif %}"
+                                                {% if product.in_stock == False %}disabled{% endif %}>
+                                            {% if product.in_stock == False %}Немає в наявності{% else %}Додати в кошик{% endif %}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
             {% endif %}
         </div>
     </div>
@@ -283,44 +351,11 @@
 </section>
 {% endif %}
 
-<!-- Кошик overlay для перегляду та редагування -->
-<div id="cart-overlay" class="cart-overlay">
-    <div class="cart-overlay-content">
-        <div class="cart-overlay-header">
-            <h3><i class="fas fa-shopping-cart"></i> Кошик покупок</h3>
-            <button class="close-cart-btn" onclick="closeCart()">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        
-        <div class="cart-overlay-body">
-            <div id="cart-items-overlay" class="cart-items-overlay">
-                <!-- Товари будуть додані через JavaScript -->
-            </div>
-            
-            <div id="cart-empty-overlay" class="cart-empty-overlay" style="display: none;">
-                <div class="empty-cart-icon">
-                    <i class="fas fa-shopping-bag"></i>
-                </div>
-                <h4>Ваш кошик порожній</h4>
-                <p>Додайте товари, щоб почати покупки</p>
-            </div>
-        </div>
-        
-        <div class="cart-overlay-footer">
-            <div class="cart-total-overlay">
-                <span class="total-label">Всього:</span>
-                <span class="total-amount" id="cart-total-overlay">0 грн</span>
-            </div>
-            <div class="cart-actions-overlay">
-                <button class="btn-secondary" onclick="closeCart()">Продовжити покупки</button>
-                <button class="btn-primary" onclick="goToCheckout()">Оформити замовлення</button>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Кошик overlay видалено - використовуємо сторінку кошика -->
 
         <script src="{% static 'js/main.js' %}"></script>
+        <script src="{% static 'js/progress-bar.js' %}"></script>
+        <script src="{% static 'js/geolocation.js' %}"></script>
         <script src="{% static 'js/home.js' %}"></script>
         
         <!-- Передаємо тексти кнопок та дані про склад в JavaScript -->
@@ -335,7 +370,7 @@
                 colors: {
                     {% for color in color_options %}
                     "{{ color.name|lower }}": {
-                        availableQuantities: {{ color.available_quantities|safe }}
+                        availableQuantities: {{ color.available_quantities|default:"[]"|safe }}
                     }{% if not forloop.last %},{% endif %}
                     {% endfor %}
                 },

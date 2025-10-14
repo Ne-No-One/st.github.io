@@ -1,0 +1,140 @@
+/**
+ * CSS Variables для адмін панелі
+ * Сучасний підхід з CSS Custom Properties
+ */
+
+:root {
+    /* ===== КОЛЬОРИ ===== */
+    
+    /* Основна палітра - спокійні блакитні відтінки */
+    --admin-primary: #3b82f6;
+    --admin-primary-dark: #2563eb;
+    --admin-primary-light: #60a5fa;
+    --admin-accent: #0ea5e9;
+    
+    /* Семантичні кольори - приглушені */
+    --admin-success: #10b981;
+    --admin-warning: #f59e0b;
+    --admin-danger: #ef4444;
+    --admin-info: #06b6d4;
+    
+    /* Фонові кольори (темна тема) - темніші */
+    --admin-bg-primary: #0f1419;
+    --admin-bg-secondary: #1a1f26;
+    --admin-bg-tertiary: #23282f;
+    --admin-bg-hover: rgba(255, 255, 255, 0.03);
+    
+    /* Текст - кращий контраст */
+    --admin-text-primary: #f1f5f9;
+    --admin-text-secondary: #cbd5e1;
+    --admin-text-muted: #94a3b8;
+    
+    /* Обводки - тоншi */
+    --admin-border: rgba(255, 255, 255, 0.08);
+    --admin-border-hover: rgba(59, 130, 246, 0.3);
+    
+    /* ===== ГРАДІЄНТИ - приглушені ===== */
+    --admin-gradient-primary: linear-gradient(135deg, var(--admin-primary) 0%, var(--admin-accent) 100%);
+    --admin-gradient-card: linear-gradient(135deg, var(--admin-bg-tertiary) 0%, var(--admin-bg-secondary) 100%);
+    --admin-gradient-dark: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    --admin-gradient-glow: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+    
+    /* ===== РОЗМІРИ ===== */
+    
+    /* Радіуси */
+    --admin-radius-sm: 8px;
+    --admin-radius-md: 12px;
+    --admin-radius-lg: 16px;
+    --admin-radius-xl: 20px;
+    
+    /* Відступи */
+    --admin-spacing-xs: 8px;
+    --admin-spacing-sm: 12px;
+    --admin-spacing-md: 16px;
+    --admin-spacing-lg: 20px;
+    --admin-spacing-xl: 25px;
+    --admin-spacing-2xl: 30px;
+    
+    /* Gap */
+    --admin-gap-sm: 10px;
+    --admin-gap-md: 15px;
+    --admin-gap-lg: 20px;
+    --admin-gap-xl: 25px;
+    
+    /* ===== ТІНІ ===== */
+    --admin-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.15);
+    --admin-shadow-md: 0 4px 15px rgba(0, 0, 0, 0.2);
+    --admin-shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.25);
+    --admin-shadow-xl: 0 12px 35px rgba(0, 0, 0, 0.3);
+    
+    /* Тіні з glow - приглушені */
+    --admin-shadow-glow: 0 4px 15px rgba(59, 130, 246, 0.15);
+    --admin-shadow-glow-hover: 0 12px 35px rgba(59, 130, 246, 0.25);
+    
+    /* ===== АНІМАЦІЇ ===== */
+    --admin-transition-fast: 0.2s ease;
+    --admin-transition-normal: 0.3s ease;
+    --admin-transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* ===== РОЗМІРИ ШРИФТІВ ===== */
+    --admin-font-xs: 0.75rem;
+    --admin-font-sm: 0.85rem;
+    --admin-font-md: 0.95rem;
+    --admin-font-base: 1rem;
+    --admin-font-lg: 1.2rem;
+    --admin-font-xl: 1.5rem;
+    --admin-font-2xl: 2rem;
+    --admin-font-3xl: 2.5rem;
+    
+    /* ===== BREAKPOINTS (для media queries) ===== */
+    --admin-breakpoint-sm: 480px;
+    --admin-breakpoint-md: 768px;
+    --admin-breakpoint-lg: 1200px;
+    --admin-breakpoint-xl: 1400px;
+    
+    /* ===== SIDEBAR ===== */
+    --admin-sidebar-width: 200px;
+    --admin-sidebar-width-collapsed: 90px;
+    
+    /* ===== Z-INDEX ===== */
+    --admin-z-sidebar: 1000;
+    --admin-z-navbar: 1001;
+    --admin-z-modal: 1050;
+    --admin-z-tooltip: 1060;
+}
+
+/* ===== СВІТЛА ТЕМА (опціонально) ===== */
+body.light-theme {
+    --admin-bg-primary: #ffffff;
+    --admin-bg-secondary: #f8f9fa;
+    --admin-bg-tertiary: #e9ecef;
+    --admin-bg-hover: rgba(0, 0, 0, 0.05);
+    
+    --admin-text-primary: #212529;
+    --admin-text-secondary: #495057;
+    --admin-text-muted: #6c757d;
+    
+    --admin-border: rgba(0, 0, 0, 0.1);
+    --admin-border-hover: rgba(102, 126, 234, 0.5);
+    
+    --admin-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --admin-shadow-md: 0 4px 15px rgba(0, 0, 0, 0.1);
+    --admin-shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* ===== HELPER CLASSES ===== */
+.admin-gradient-text {
+    background: var(--admin-gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.admin-glow {
+    box-shadow: var(--admin-shadow-glow);
+}
+
+.admin-glow:hover {
+    box-shadow: var(--admin-shadow-glow-hover);
+}
+

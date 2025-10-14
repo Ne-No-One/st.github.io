@@ -1,0 +1,206 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Маркетинг - Адмін Панель{% endblock %}
+{% block page_title %}Маркетинг{% endblock %}
+
+{% block content %}
+<div class="admin-form-container">
+    
+    <!-- Tabs -->
+    <ul class="nav nav-tabs mb-4" role="tablist">
+        <li class="nav-item">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-progress">
+                <i class="fas fa-chart-line me-2"></i>Прогрес-бар
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-promo">
+                <i class="fas fa-ticket-alt me-2"></i>Промокоди
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-discounts">
+                <i class="fas fa-percent me-2"></i>Знижки
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-actions">
+                <i class="fas fa-gift me-2"></i>Акції
+            </button>
+        </li>
+    </ul>
+    
+    <div class="tab-content">
+        <!-- Прогрес-бар -->
+        <div class="tab-pane fade show active" id="tab-progress">
+            <div class="admin-form-section">
+                <div class="section-header compact">
+                    <h5 class="section-title compact">
+                        <i class="fas fa-chart-line"></i>
+                        Прогрес-бар з етапами
+                    </h5>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="progress_enabled" {% if settings.progress_bar.enabled %}checked{% endif %} 
+                               onchange="toggleProgressBar(this.checked)">
+                        <label class="form-check-label" for="progress_enabled">
+                            Увімкнено
+                        </label>
+                    </div>
+                </div>
+                
+                <p class="text-muted mb-4">Мотивуйте покупців додавати більше товарів через систему винагород</p>
+                
+                <!-- Список етапів -->
+                <div class="row">
+                    {% for milestone in settings.progress_bar.milestones %}
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="product-card">
+                            <div class="product-card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="product-card-title mb-0">{{ milestone.title }}</h6>
+                                    <div class="d-flex gap-1">
+                                        <button class="btn btn-sm btn-primary" onclick="editMilestone({{ milestone.id }})">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteMilestone({{ milestone.id }})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="product-badges mb-2">
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-dollar-sign"></i>
+                                        {{ milestone.amount }} грн
+                                    </span>
+                                    {% if milestone.discount_percent %}
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="fas fa-percent"></i>
+                                            -{{ milestone.discount_percent }}%
+                                        </span>
+                                    {% endif %}
+                                    {% if milestone.free_shipping %}
+                                        <span class="badge bg-info">
+                                            <i class="fas fa-shipping-fast"></i>
+                                            Доставка
+                                        </span>
+                                    {% endif %}
+                                    {% if milestone.gift %}
+                                        <span class="badge bg-primary">
+                                            <i class="fas fa-gift"></i>
+                                            {{ milestone.gift }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                                
+                                <p class="text-muted small mb-2">{{ milestone.message }}</p>
+                                
+                                <div style="height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;">
+                                    <div style="height: 100%; width: 60%; background: {{ milestone.color }}; border-radius: 2px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Кнопка додавання -->
+                <button class="btn btn-success" onclick="showAddMilestoneForm()">
+                    <i class="fas fa-plus me-2"></i>
+                    Додати етап
+                </button>
+            </div>
+        </div>
+        
+        <!-- Промокоди -->
+        <div class="tab-pane fade" id="tab-promo">
+            <div class="admin-form-section">
+                <div class="section-header compact">
+                    <h5 class="section-title compact">
+                        <i class="fas fa-ticket-alt"></i>
+                        Промокоди
+                    </h5>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i>
+                        Додати
+                    </button>
+                </div>
+                
+                <div class="empty-state">
+                    <i class="fas fa-ticket-alt"></i>
+                    <p>Промокоди</p>
+                    <small>Функція буде доступна найближчим часом</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Знижки -->
+        <div class="tab-pane fade" id="tab-discounts">
+            <div class="admin-form-section">
+                <div class="section-header compact">
+                    <h5 class="section-title compact">
+                        <i class="fas fa-percent"></i>
+                        Знижки
+                    </h5>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i>
+                        Додати
+                    </button>
+                </div>
+                
+                <div class="empty-state">
+                    <i class="fas fa-percent"></i>
+                    <p>Знижки</p>
+                    <small>Функція буде доступна найближчим часом</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Акції -->
+        <div class="tab-pane fade" id="tab-actions">
+            <div class="admin-form-section">
+                <div class="section-header compact">
+                    <h5 class="section-title compact">
+                        <i class="fas fa-gift"></i>
+                        Акції
+                    </h5>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i>
+                        Додати
+                    </button>
+                </div>
+                
+                <div class="empty-state">
+                    <i class="fas fa-gift"></i>
+                    <p>Акції</p>
+                    <small>Функція буде доступна найближчим часом</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleProgressBar(enabled) {
+    showInfo(enabled ? 'Прогрес-бар увімкнено' : 'Прогрес-бар вимкнено');
+    // TODO: AJAX save
+}
+
+function editMilestone(id) {
+    showInfo('Редагування етапу #' + id);
+    // TODO: Modal form
+}
+
+function deleteMilestone(id) {
+    if (confirm('Видалити цей етап?')) {
+        showSuccess('Етап видалено');
+        // TODO: AJAX delete
+    }
+}
+
+function showAddMilestoneForm() {
+    showInfo('Додавання нового етапу');
+    // TODO: Modal form
+}
+</script>
+{% endblock %}

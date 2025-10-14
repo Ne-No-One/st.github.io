@@ -14,14 +14,39 @@
 
 ## 🚀 **Запуск**
 
-### **Єдиний спосіб запуску:**
+### **Простий запуск (рекомендовано):**
+```bash
+python start.py
+```
+
+### **Або стандартний спосіб Django:**
 ```bash
 python manage.py runserver
 ```
 
-### **Доступ до сайтів:**
-- **Основний сайт**: http://127.0.0.1:8000/
-- **Адмін панель**: http://127.0.0.1:8000/admin-panel/
+### **📍 Доступ до сайтів:**
+- 🌐 **Основний сайт**: http://127.0.0.1:8000/
+- ⚙️ **Адмін панель**: http://127.0.0.1:8000/admin-panel/
+- 💚 **Health check**: http://127.0.0.1:8000/health/
+- 🛒 **Кошик**: http://127.0.0.1:8000/cart/
+
+## 🛠️ **Додаткові скрипти**
+
+### **Діагностика та налаштування:**
+```bash
+python scripts/run_with_diagnosis.py  # Запуск з валідацією системи
+python scripts/auto_setup.py          # Автоматичне налаштування
+python scripts/fix_common_errors.py   # Виправлення помилок
+```
+
+### **Тестування:**
+```bash
+python tests/validate_system.py            # Валідація системи
+python tests/test_monobank_integration.py  # Тести Monobank API
+python tests/test_payment_systems.py       # Тести платіжних систем
+```
+
+---
 
 ## 📋 **Структура адмін панелі**
 
@@ -91,13 +116,20 @@ python manage.py runserver
 
 ### **Структура проекту:**
 ```
-📁 Проект
-├── 📁 admin_panel/ - адмін панель
-├── 📁 main/ - основні views
-├── 📁 mysite/ - налаштування Django
-├── 📁 static/ - статичні файли
-├── 📁 templates/ - шаблони
-└── 📄 manage.py - управління Django
+📁 st.github.io/
+├── 📁 admin_panel/     - адмін панель для управління контентом
+├── 📁 main/            - основні views та логіка сайту
+├── 📁 mysite/          - налаштування Django
+├── 📁 static/          - CSS, JS, зображення
+├── 📁 templates/       - HTML шаблони
+├── 📁 docs/            - документація API (14 файлів)
+├── 📁 scripts/         - утилітні скрипти (діагностика, setup)
+├── 📁 tests/           - тестові файли
+├── 📄 start.py         - 🚀 ГОЛОВНИЙ СКРИПТ ЗАПУСКУ
+├── 📄 manage.py        - управління Django
+├── 📄 json_manager.py  - менеджер JSON даних
+├── 📄 data.json        - основна база даних
+└── 📄 requirements.txt - залежності
 ```
 
 ## 🎉 **Результат**

@@ -4,219 +4,223 @@
 {% block page_title %}Замовлення{% endblock %}
 
 {% block content %}
-<!-- Статистика -->
-<div class="row mb-4">
-    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-        <div class="stat-card border-primary text-center">
-            <i class="fas fa-shopping-cart text-primary"></i>
-            <h6 class="text-primary">Всього</h6>
-            <h4>{{ stats.total }}</h4>
+<div class="admin-form-container">
+    
+    <!-- Статистика -->
+    <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));">
+        <div class="stat-card-modern">
+            <i class="fas fa-shopping-cart stat-icon text-primary"></i>
+            <div class="stat-label">Всього</div>
+            <div class="stat-value">{{ stats.total }}</div>
+        </div>
+        
+        <div class="stat-card-modern">
+            <i class="fas fa-plus-circle stat-icon text-warning"></i>
+            <div class="stat-label">Нові</div>
+            <div class="stat-value">{{ stats.new }}</div>
+        </div>
+        
+        <div class="stat-card-modern">
+            <i class="fas fa-clock stat-icon text-info"></i>
+            <div class="stat-label">В обробці</div>
+            <div class="stat-value">{{ stats.processing }}</div>
+        </div>
+        
+        <div class="stat-card-modern">
+            <i class="fas fa-check-circle stat-icon text-success"></i>
+            <div class="stat-label">Виконано</div>
+            <div class="stat-value">{{ stats.completed }}</div>
+        </div>
+        
+        <div class="stat-card-modern">
+            <i class="fas fa-times-circle stat-icon text-danger"></i>
+            <div class="stat-label">Скасовано</div>
+            <div class="stat-value">{{ stats.cancelled }}</div>
         </div>
     </div>
-    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-        <div class="stat-card border-warning text-center">
-            <i class="fas fa-plus-circle text-warning"></i>
-            <h6 class="text-warning">Нові</h6>
-            <h4>{{ stats.new }}</h4>
+    
+    <!-- Статистика по оплаті -->
+    <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: var(--admin-spacing-2xl);">
+        <div class="stat-card-modern">
+            <i class="fas fa-credit-card stat-icon" style="color: var(--admin-primary);"></i>
+            <div class="stat-label">Банківська карта</div>
+            <div class="stat-value">{{ stats.payment_card }}</div>
+        </div>
+        
+        <div class="stat-card-modern">
+            <i class="fas fa-mobile-alt stat-icon" style="color: var(--admin-success);"></i>
+            <div class="stat-label">Онлайн оплата</div>
+            <div class="stat-value">{{ stats.payment_online }}</div>
+        </div>
+        
+        <div class="stat-card-modern">
+            <i class="fas fa-question stat-icon" style="color: var(--admin-text-muted);"></i>
+            <div class="stat-label">Інші способи</div>
+            <div class="stat-value">{{ stats.payment_other }}</div>
         </div>
     </div>
-    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-        <div class="stat-card border-info text-center">
-            <i class="fas fa-clock text-info"></i>
-            <h6 class="text-info">В обробці</h6>
-            <h4>{{ stats.processing }}</h4>
-        </div>
-    </div>
-    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-        <div class="stat-card border-success text-center">
-            <i class="fas fa-check-circle text-success"></i>
-            <h6 class="text-success">Виконано</h6>
-            <h4>{{ stats.completed }}</h4>
-        </div>
-    </div>
-    <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-        <div class="stat-card border-danger text-center">
-            <i class="fas fa-times-circle text-danger"></i>
-            <h6 class="text-danger">Скасовано</h6>
-            <h4>{{ stats.cancelled }}</h4>
-        </div>
-    </div>
-</div>
-
-<!-- Статистика по способах оплати -->
-<div class="row mb-4">
-    <div class="col-12">
-        <h5 class="text-primary mb-3">
-            <i class="fas fa-credit-card me-2"></i>
-            Статистика по способах оплати
-        </h5>
-    </div>
-    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-        <div class="stat-card border-primary text-center">
-            <i class="fas fa-credit-card text-primary"></i>
-            <h6 class="text-primary">Банківська карта</h6>
-            <h4>{{ stats.payment_card }}</h4>
-        </div>
-    </div>
-    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-        <div class="stat-card border-success text-center">
-            <i class="fas fa-mobile-alt text-success"></i>
-            <h6 class="text-success">Онлайн оплата</h6>
-            <h4>{{ stats.payment_online }}</h4>
-        </div>
-    </div>
-    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
-        <div class="stat-card border-secondary text-center">
-            <i class="fas fa-question text-secondary"></i>
-            <h6 class="text-secondary">Інші способи</h6>
-            <h4>{{ stats.payment_other }}</h4>
-        </div>
-    </div>
-</div>
-
-<!-- Фільтри -->
-<div class="card mb-4">
-    <div class="card-header">
-        <h5 class="mb-0">
-            <i class="fas fa-filter me-2"></i>
+    
+    <!-- Фільтри -->
+    <div class="admin-form-section">
+        <h6 class="admin-form-section-header" style="font-size: var(--admin-font-md);">
+            <i class="fas fa-filter"></i>
             Фільтри
-        </h5>
-    </div>
-    <div class="card-body">
+        </h6>
+        
         <div class="row">
-            <div class="col-md-6">
-                <h6 class="text-muted mb-2">Фільтр по статусу:</h6>
-                <div class="btn-group" role="group">
-                    <a href="?status=all" class="btn {% if current_filter == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">
+                    <i class="fas fa-tasks"></i>
+                    Фільтр по статусу:
+                </label>
+                <div class="btn-group w-100" role="group">
+                    <a href="?status=all" class="btn {% if current_filter == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %} btn-sm">
                         Всі
                     </a>
-                    <a href="?status=нове" class="btn {% if current_filter == 'нове' %}btn-warning{% else %}btn-outline-warning{% endif %}">
+                    <a href="?status=нове" class="btn {% if current_filter == 'нове' %}btn-warning{% else %}btn-outline-warning{% endif %} btn-sm">
                         Нові
                     </a>
-                    <a href="?status=в обробці" class="btn {% if current_filter == 'в обробці' %}btn-info{% else %}btn-outline-info{% endif %}">
+                    <a href="?status=в обробці" class="btn {% if current_filter == 'в обробці' %}btn-info{% else %}btn-outline-info{% endif %} btn-sm">
                         В обробці
                     </a>
-                    <a href="?status=виконано" class="btn {% if current_filter == 'виконано' %}btn-success{% else %}btn-outline-success{% endif %}">
+                    <a href="?status=виконано" class="btn {% if current_filter == 'виконано' %}btn-success{% else %}btn-outline-success{% endif %} btn-sm">
                         Виконано
                     </a>
-                    <a href="?status=скасовано" class="btn {% if current_filter == 'скасовано' %}btn-danger{% else %}btn-outline-danger{% endif %}">
+                    <a href="?status=скасовано" class="btn {% if current_filter == 'скасовано' %}btn-danger{% else %}btn-outline-danger{% endif %} btn-sm">
                         Скасовано
                     </a>
                 </div>
             </div>
-            <div class="col-md-6">
-                <h6 class="text-muted mb-2">Фільтр по способу оплати:</h6>
-                <div class="btn-group" role="group">
-                    <a href="?payment=all" class="btn {% if request.GET.payment != 'card' and request.GET.payment != 'online' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            
+            <div class="col-md-6 mb-3">
+                <label class="form-label">
+                    <i class="fas fa-credit-card"></i>
+                    Фільтр по способу оплати:
+                </label>
+                <div class="btn-group w-100" role="group">
+                    <a href="?payment=all" class="btn {% if request.GET.payment != 'card' and request.GET.payment != 'online' %}btn-primary{% else %}btn-outline-primary{% endif %} btn-sm">
                         Всі
                     </a>
-                    <a href="?payment=card" class="btn {% if request.GET.payment == 'card' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                    <a href="?payment=card" class="btn {% if request.GET.payment == 'card' %}btn-primary{% else %}btn-outline-primary{% endif %} btn-sm">
                         <i class="fas fa-credit-card me-1"></i>Карта
                     </a>
-                    <a href="?payment=online" class="btn {% if request.GET.payment == 'online' %}btn-success{% else %}btn-outline-success{% endif %}">
+                    <a href="?payment=online" class="btn {% if request.GET.payment == 'online' %}btn-success{% else %}btn-outline-success{% endif %} btn-sm">
                         <i class="fas fa-mobile-alt me-1"></i>Онлайн
                     </a>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-<!-- Список замовлень -->
-<div class="card">
-    <div class="card-header">
-        <h5 class="mb-0">
-            <i class="fas fa-shopping-cart me-2"></i>
-            Список замовлень ({{ orders|length }})
-        </h5>
-    </div>
-    <div class="card-body">
+    
+    <!-- Список замовлень -->
+    <div class="admin-form-section">
+        <div class="section-header compact">
+            <h5 class="section-title compact">
+                <i class="fas fa-shopping-cart"></i>
+                Замовлення ({{ orders|length }})
+            </h5>
+            <a href="{% url 'admin_panel:dashboard' %}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i>
+                <span class="d-none d-md-inline ms-1">Dashboard</span>
+            </a>
+        </div>
+        
         {% if orders %}
-            <div class="table-responsive">
-                <table class="table table-dark table-hover">
-                    <thead>
-                        <tr>
-                            <th>№ Замовлення</th>
-                            <th>Клієнт</th>
-                            <th>Дата</th>
-                            <th>Сума</th>
-                            <th>Спосіб оплати</th>
-                            <th>Статус</th>
-                            <th>Дії</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for order in orders %}
-                        <tr>
-                            <td>
-                                <strong>{{ order.order_number }}</strong>
-                            </td>
-                            <td>
-                                <div>
-                                    <strong>{{ order.customer_name }}</strong><br>
-                                    <small class="text-muted">{{ order.customer_phone }}</small>
-                                </div>
-                            </td>
-                            <td>
-                                <div>
-                                    {{ order.order_date|slice:":10" }}<br>
-                                    <small class="text-muted">{{ order.order_date|slice:"11:16" }}</small>
-                                </div>
-                            </td>
-                            <td>
-                                <strong>{{ order.total_amount }} {{ order.currency }}</strong>
-                            </td>
-                            <td>
-                                {% if order.payment == 'card' %}
-                                    <span class="badge bg-primary">
-                                        <i class="fas fa-credit-card me-1"></i>
-                                        Банківська карта
-                                    </span>
-                                {% elif order.payment == 'online' %}
-                                    <span class="badge bg-success">
-                                        <i class="fas fa-mobile-alt me-1"></i>
-                                        Онлайн оплата
-                                    </span>
-                                {% else %}
-                                    <span class="badge bg-secondary">
-                                        <i class="fas fa-question me-1"></i>
-                                        {{ order.payment|default:"Не вказано" }}
-                                    </span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if order.status == 'нове' %}
-                                    <span class="badge bg-warning">{{ order.status }}</span>
-                                {% elif order.status == 'в обробці' %}
-                                    <span class="badge bg-info">{{ order.status }}</span>
-                                {% elif order.status == 'виконано' %}
-                                    <span class="badge bg-success">{{ order.status }}</span>
-                                {% elif order.status == 'скасовано' %}
-                                    <span class="badge bg-danger">{{ order.status }}</span>
-                                {% else %}
-                                    <span class="badge bg-secondary">{{ order.status }}</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                <div class="btn-group">
-                                    <a href="{% url 'admin_panel:order_detail' order.id %}" class="btn btn-sm btn-primary" title="Переглянути деталі">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <button class="btn btn-sm btn-warning" onclick="changeOrderStatus('{{ order.id }}', '{{ order.status }}', '{{ order.order_number }}')" title="Змінити статус">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag me-1"></i>№ Замовлення</th>
+                        <th><i class="fas fa-user me-1"></i>Клієнт</th>
+                        <th><i class="fas fa-calendar me-1"></i>Дата</th>
+                        <th><i class="fas fa-dollar-sign me-1"></i>Сума</th>
+                        <th><i class="fas fa-credit-card me-1"></i>Оплата</th>
+                        <th><i class="fas fa-info-circle me-1"></i>Статус</th>
+                        <th><i class="fas fa-cog me-1"></i>Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>
+                            <strong style="color: var(--admin-primary);">{{ order.order_number }}</strong>
+                        </td>
+                        <td>
+                            <div>
+                                <strong style="color: var(--admin-text-primary);">{{ order.customer_name }}</strong><br>
+                                <small class="text-muted">{{ order.customer_phone }}</small>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                <strong style="color: var(--admin-text-primary);">{{ order.order_date|slice:":10" }}</strong><br>
+                                <small class="text-muted">{{ order.order_date|slice:"11:16" }}</small>
+                            </div>
+                        </td>
+                        <td>
+                            <strong style="color: var(--admin-success); font-size: 1.1rem;">{{ order.total_amount }} {{ order.currency }}</strong>
+                        </td>
+                        <td>
+                            {% if order.payment == 'card' %}
+                                <span class="badge bg-primary">
+                                    <i class="fas fa-credit-card"></i>
+                                    Карта
+                                </span>
+                            {% elif order.payment == 'online' %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-mobile-alt"></i>
+                                    Онлайн
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary">
+                                    <i class="fas fa-question"></i>
+                                    {{ order.payment|default:"Не вказано" }}
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if order.status == 'нове' %}
+                                <span class="badge bg-warning text-dark">
+                                    <i class="fas fa-plus-circle"></i>
+                                    {{ order.status }}
+                                </span>
+                            {% elif order.status == 'в обробці' %}
+                                <span class="badge bg-info">
+                                    <i class="fas fa-clock"></i>
+                                    {{ order.status }}
+                                </span>
+                            {% elif order.status == 'виконано' %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check-circle"></i>
+                                    {{ order.status }}
+                                </span>
+                            {% elif order.status == 'скасовано' %}
+                                <span class="badge bg-danger">
+                                    <i class="fas fa-times-circle"></i>
+                                    {{ order.status }}
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ order.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'admin_panel:order_detail' order.id %}" class="btn btn-sm btn-primary" title="Переглянути деталі">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <button class="btn btn-sm btn-warning" onclick="changeOrderStatus('{{ order.id }}', '{{ order.status }}', '{{ order.order_number }}')" title="Змінити статус">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         {% else %}
-            <div class="text-center py-5">
-                <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
-                <h5 class="text-muted">Замовлень не знайдено</h5>
-                <p class="text-muted">З обраними фільтрами замовлень не знайдено</p>
+            <div class="empty-state">
+                <i class="fas fa-shopping-cart"></i>
+                <p>Замовлень не знайдено</p>
+                <small>З обраними фільтрами замовлень не знайдено</small>
             </div>
         {% endif %}
     </div>
@@ -225,7 +229,7 @@
 <!-- Backdrop для overlay -->
 <div id="changeStatusOverlay-backdrop" class="admin-overlay-backdrop"></div>
 
-<!-- Overlay для зміни статусу замовлення -->
+<!-- Overlay для зміни статусу -->
 <div id="changeStatusOverlay" class="admin-overlay">
     <div class="admin-overlay-container">
         <div class="admin-overlay-header">
@@ -240,17 +244,26 @@
                 {% csrf_token %}
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Замовлення:</label>
+                        <label class="form-label">
+                            <i class="fas fa-hashtag"></i>
+                            Замовлення:
+                        </label>
                         <input type="text" class="form-control" id="orderNumber" readonly>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Поточний статус:</label>
+                        <label class="form-label">
+                            <i class="fas fa-info-circle"></i>
+                            Поточний статус:
+                        </label>
                         <input type="text" class="form-control" id="currentStatus" readonly>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="newStatus" class="form-label">Новий статус:</label>
+                        <label for="newStatus" class="form-label">
+                            <i class="fas fa-exchange-alt"></i>
+                            Новий статус:
+                        </label>
                         <select class="form-select" name="status" id="newStatus" required>
                             <option value="нове">🆕 Нове</option>
                             <option value="в обробці">⏳ В обробці</option>
@@ -259,7 +272,10 @@
                         </select>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label for="statusComment" class="form-label">Коментар (необов'язково):</label>
+                        <label for="statusComment" class="form-label">
+                            <i class="fas fa-comment"></i>
+                            Коментар (необов'язково):
+                        </label>
                         <textarea class="form-control" name="comment" id="statusComment" rows="3" placeholder="Причина зміни статусу..."></textarea>
                     </div>
                 </div>
@@ -279,15 +295,30 @@
 </div>
 
 <script>
+// Функції для роботи з overlay
+function openOverlay(overlayId) {
+    const overlay = document.getElementById(overlayId);
+    if (overlay) {
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeOverlay(overlayId) {
+    const overlay = document.getElementById(overlayId);
+    if (overlay) {
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
 function changeOrderStatus(orderId, currentStatus, orderNumber) {
     try {
-        // Заповнюємо форму
         document.getElementById('orderNumber').value = orderNumber;
         document.getElementById('currentStatus').value = currentStatus;
         document.getElementById('newStatus').value = currentStatus;
         document.getElementById('changeStatusForm').action = `/admin-panel/orders/${orderId}/status/`;
         
-        // Відкриваємо overlay
         openOverlay('changeStatusOverlay');
         
         console.log('Overlay зміни статусу відкрито');
@@ -296,5 +327,16 @@ function changeOrderStatus(orderId, currentStatus, orderNumber) {
         alert('Помилка відкриття форми зміни статусу');
     }
 }
+
+// Закриття overlay при кліку на фон
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.admin-overlay').forEach(overlay => {
+        overlay.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeOverlay(this.id);
+            }
+        });
+    });
+});
 </script>
 {% endblock %}

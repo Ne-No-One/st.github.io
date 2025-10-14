@@ -1,0 +1,27 @@
+/**
+ * Стилі для Dashboard
+ */
+
+.dashboard-container {
+    padding: var(--admin-spacing-lg) !important;
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+.content-area .dashboard-container {
+    padding: var(--admin-spacing-lg) !important;
+}
+
+/* ===== RESPONSIVE ДЛЯ DASHBOARD ===== */
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: var(--admin-spacing-sm) !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-container {
+        padding: var(--admin-spacing-xs) !important;
+    }
+}
+

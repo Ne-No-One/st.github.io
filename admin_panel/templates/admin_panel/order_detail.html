@@ -1,20 +1,33 @@
 {% extends 'admin_panel/base.html' %}
 
 {% block title %}Замовлення {{ order.order_number }} - Адмін Панель{% endblock %}
-{% block page_title %}Замовлення {{ order.order_number }}{% endblock %}
 
 {% block content %}
-<div class="row">
-    <!-- Основна інформація -->
-    <div class="col-lg-8">
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="mb-0">
+<div class="admin-form-container">
+    <!-- Заголовок -->
+    <div class="admin-form-section">
+        <div class="section-header compact">
+            <h5 class="section-title compact">
+                <i class="fas fa-shopping-cart"></i>
+                Замовлення {{ order.order_number }}
+            </h5>
+            <a href="{% url 'admin_panel:orders_list' %}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i>
+                <span class="d-none d-md-inline ms-1">Назад</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Основна інформація -->
+        <div class="col-lg-8">
+            <div class="admin-form-section">
+                <h6 class="admin-form-section-header">
                     <i class="fas fa-info-circle me-2"></i>
                     Основна інформація
-                </h5>
-            </div>
-            <div class="card-body">
+                </h6>
+                <div class="card bg-light">
+                    <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
                         <h6>Клієнт:</h6>
@@ -59,24 +72,29 @@
                 </div>
                 
                 <h6>Адреса доставки:</h6>
-                <p>{{ order.delivery_address }}</p>
+                <p>
+                    {% if order.delivery_city %}
+                        <strong>{{ order.delivery_city }}</strong><br>
+                    {% endif %}
+                    {{ order.delivery_address }}
+                </p>
                 
                 {% if order.notes %}
                 <h6>Примітки:</h6>
                 <p>{{ order.notes }}</p>
                 {% endif %}
+                    </div>
+                </div>
             </div>
-        </div>
-        
-        <!-- Товари в замовленні -->
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">
+            
+            <!-- Товари в замовленні -->
+            <div class="admin-form-section">
+                <h6 class="admin-form-section-header">
                     <i class="fas fa-shopping-bag me-2"></i>
                     Товари в замовленні
-                </h5>
-            </div>
-            <div class="card-body">
+                </h6>
+                <div class="card bg-light">
+                    <div class="card-body">
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
@@ -128,22 +146,22 @@
                             </tr>
                         </tfoot>
                     </table>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <!-- Бічна панель -->
-    <div class="col-lg-4">
-        <!-- Статус замовлення -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h6 class="mb-0">
+        </div>
+        
+        <!-- Бічна панель -->
+        <div class="col-lg-4">
+            <!-- Статус замовлення -->
+            <div class="admin-form-section">
+                <h6 class="admin-form-section-header">
                     <i class="fas fa-flag me-2"></i>
                     Статус замовлення
                 </h6>
-            </div>
-            <div class="card-body text-center">
+                <div class="card bg-light">
+                    <div class="card-body text-center">
                 {% if order.status == 'нове' %}
                     <span class="badge bg-warning fs-5 mb-3">{{ order.status }}</span>
                 {% elif order.status == 'в обробці' %}
@@ -171,18 +189,18 @@
                         Оновити статус
                     </button>
                 </form>
+                </div>
             </div>
-        </div>
-        
-        <!-- Платіжна інформація -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h6 class="mb-0">
+            </div>
+            
+            <!-- Платіжна інформація -->
+            <div class="admin-form-section">
+                <h6 class="admin-form-section-header">
                     <i class="fas fa-credit-card me-2"></i>
                     Платіжна інформація
                 </h6>
-            </div>
-            <div class="card-body">
+                <div class="card bg-light">
+                    <div class="card-body">
                 <div class="mb-3">
                     <h6>Спосіб оплати:</h6>
                     <p>
@@ -253,18 +271,18 @@
                     </button>
                 </div>
                 {% endif %}
+                </div>
             </div>
-        </div>
-        
-        <!-- Швидкі дії -->
-        <div class="card">
-            <div class="card-header">
-                <h6 class="mb-0">
+            </div>
+            
+            <!-- Швидкі дії -->
+            <div class="admin-form-section">
+                <h6 class="admin-form-section-header">
                     <i class="fas fa-bolt me-2"></i>
                     Швидкі дії
                 </h6>
-            </div>
-            <div class="card-body">
+                <div class="card bg-light">
+                    <div class="card-body">
                 <a href="{% url 'admin_panel:orders_list' %}" class="btn btn-outline-secondary w-100 mb-2">
                     <i class="fas fa-arrow-left me-1"></i>
                     Назад до списку
@@ -279,6 +297,8 @@
                     Написати email
                 </a>
                 {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

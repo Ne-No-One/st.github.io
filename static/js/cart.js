@@ -4,7 +4,8 @@
 let cart = {
     items: [],
     total: 0,
-    count: 0
+    count: 0,
+    itemsTotal: 0 // Сума БЕЗ доставки (для прогрес-бару)
 };
 
 // Функція для завантаження кошика з localStorage
@@ -16,11 +17,13 @@ function loadCartFromStorage() {
             cart.items = parsedCart.items || [];
             cart.total = parsedCart.total || 0;
             cart.count = parsedCart.count || 0;
+            cart.itemsTotal = parsedCart.itemsTotal || 0;
+            cart.discount = parsedCart.discount || 0;
             console.log('✅ Кошик завантажено з localStorage:', cart);
         }
     } catch (error) {
         console.error('❌ Помилка завантаження кошика:', error);
-        cart = { items: [], total: 0, count: 0 };
+        cart = { items: [], total: 0, count: 0, itemsTotal: 0, discount: 0 };
     }
 }
 
@@ -36,24 +39,44 @@ function saveCartToStorage() {
 
 // Функція для оновлення лічильника кошика в навігації
 function updateCartCount() {
+    // Перераховуємо кількість товарів (на випадок якщо не оновлено)
+    cart.count = cart.items.reduce((total, item) => total + (item.quantity || 1), 0);
+    
     const cartCount = document.getElementById('cart-count');
     if (cartCount) {
         cartCount.textContent = cart.count;
+        cartCount.setAttribute('data-count', cart.count);
+        
+        console.log('🛒 Оновлення лічильника кошика:', cart.count);
+        
         if (cart.count > 0) {
             cartCount.classList.remove('hidden');
+            cartCount.style.display = 'flex';
         } else {
             cartCount.classList.add('hidden');
+            cartCount.style.display = 'none';
         }
+    } else {
+        console.error('❌ Елемент cart-count не знайдено');
     }
 }
 
 // Функція для оновлення прогрес бару
 function updateProgressBar() {
-    const cartTotal = cart.total || 0;
-    const maxAmount = 1000; // Максимальна сума для 100% прогрес бару
+    // ВАЖЛИВО: Передаємо суму БЕЗ доставки для правильного розрахунку бонусів
+    const cartTotal = cart.itemsTotal || 0;
+    
+    // Використовуємо новий динамічний прогрес-бар
+    if (window.progressBarManager) {
+        window.progressBarManager.update(cartTotal);
+        return;
+    }
+    
+    // Fallback для старої версії (якщо прогрес-бар модуль не завантажено)
+    const maxAmount = 1000;
     const progressPercent = Math.min((cartTotal / maxAmount) * 100, 100);
     
-    // Оновлюємо прогрес бар
+    // Оновлюємо прогрес бар у навбарі
     const progressFill = document.getElementById('progress-fill');
     const progressText = document.getElementById('progress-text');
     if (progressFill) {
@@ -61,6 +84,16 @@ function updateProgressBar() {
     }
     if (progressText) {
         progressText.textContent = `${Math.round(cartTotal)}₴ / 1000₴`;
+    }
+    
+    // Оновлюємо мобільний прогрес бар
+    const mobileFill = document.getElementById('progress-fill-mobile');
+    const mobileText = document.getElementById('progress-text-mobile');
+    if (mobileFill) {
+        mobileFill.style.width = progressPercent + '%';
+    }
+    if (mobileText) {
+        mobileText.textContent = `${Math.round(cartTotal)}₴ / 1000₴`;
     }
 }
 
@@ -75,6 +108,11 @@ function updateCartDisplay() {
     const deliveryInfo = document.getElementById('delivery-threshold-info');
     const cartDelivery = document.getElementById('cart-delivery');
     
+    // Оновлюємо відображення бонусів в підсумку (передаємо суму БЕЗ доставки)
+    if (window.progressBarManager && window.progressBarManager.updateCartSummaryRewards) {
+        window.progressBarManager.updateCartSummaryRewards(cart.itemsTotal || 0);
+    }
+    
     // Елементи для відображення інформації про замовлення
     const totalFlowerCount = document.getElementById('total-flower-count');
     const totalItemsCount = document.getElementById('total-items-count');
@@ -86,8 +124,79 @@ function updateCartDisplay() {
     // Очищаємо кошик
     cartItems.innerHTML = '';
     
-    // Обчислюємо загальну суму
-    cart.total = cart.items.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
+    // Обчислюємо загальну суму товарів (БЕЗ доставки)
+    const itemsTotal = cart.items.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
+    
+    // Зберігаємо суму БЕЗ доставки для прогрес-бару
+    cart.itemsTotal = itemsTotal;
+    
+    // Отримуємо налаштування доставки з глобальних змінних або використовуємо значення за замовчуванням
+    const deliverySettings = window.deliverySettings || { cost: 50, freeThreshold: 1000 };
+    
+    // Перевіряємо досягнуті бонуси
+    console.log('🎁 Перевірка бонусів для суми:', itemsTotal);
+    console.log('🔍 window.progressBarManager доступний:', !!window.progressBarManager);
+    
+    let hasFreeShippingBonus = false;
+    let discountPercent = 0;
+    
+    if (window.progressBarManager) {
+        const rewards = window.progressBarManager.getAchievedRewards(itemsTotal);
+        console.log('🎉 Отримано бонусів:', rewards.length);
+        console.log('📋 Список бонусів:', rewards);
+        
+        // Перевіряємо безкоштовну доставку
+        hasFreeShippingBonus = rewards.some(r => r.type === 'shipping');
+        console.log('🚚 Безкоштовна доставка:', hasFreeShippingBonus ? 'ТАК' : 'НІ');
+        
+        // Перевіряємо знижку
+        const discountReward = rewards.find(r => r.type === 'discount');
+        if (discountReward && discountReward.value) {
+            discountPercent = discountReward.value;
+            console.log(`💰 Застосовується знижка: ${discountPercent}%`);
+        } else {
+            console.log('💰 Знижки немає');
+        }
+        
+        // Перевіряємо подарунок
+        const giftReward = rewards.find(r => r.type === 'gift');
+        if (giftReward) {
+            console.log(`🎁 Є подарунок: ${giftReward.value}`);
+        } else {
+            console.log('🎁 Подарунку немає');
+        }
+    } else {
+        console.error('❌ КРИТИЧНО: progressBarManager не завантажено!');
+        console.error('   Перевірте чи завантажується progress-bar.js');
+        console.error('   Перевірте console на помилки завантаження скриптів');
+    }
+    
+    // Застосовуємо знижку до суми товарів
+    let itemsTotalAfterDiscount = itemsTotal;
+    let discountAmount = 0;
+    
+    if (discountPercent > 0) {
+        discountAmount = (itemsTotal * discountPercent) / 100;
+        itemsTotalAfterDiscount = itemsTotal - discountAmount;
+        console.log(`💰 РОЗРАХУНОК ЗНИЖКИ:`);
+        console.log(`   Сума товарів: ${itemsTotal} грн`);
+        console.log(`   Знижка ${discountPercent}%: -${discountAmount} грн`);
+        console.log(`   Сума зі знижкою: ${itemsTotalAfterDiscount} грн`);
+    } else {
+        console.log(`💰 Знижки немає (discountPercent = ${discountPercent})`);
+    }
+    
+    // Додаємо вартість доставки ТІЛЬКИ якщо немає бонусу безкоштовної доставки
+    const deliveryCost = hasFreeShippingBonus ? 0 : deliverySettings.cost;
+    cart.total = itemsTotalAfterDiscount + deliveryCost;
+    cart.discount = discountPercent; // Зберігаємо для відображення
+    
+    console.log(`📊 ПІДСУМОК РОЗРАХУНКІВ:`);
+    console.log(`   Товари: ${itemsTotal} грн`);
+    console.log(`   Знижка: -${discountAmount} грн`);
+    console.log(`   Після знижки: ${itemsTotalAfterDiscount} грн`);
+    console.log(`   Доставка: ${deliveryCost} грн`);
+    console.log(`   ВСЬОГО: ${cart.total} грн`);
     
     if (cart.items.length === 0) {
         // Показуємо порожній кошик
@@ -106,35 +215,64 @@ function updateCartDisplay() {
         cart.items.forEach(item => {
             const cartItem = document.createElement('div');
             cartItem.className = 'cart-item';
+            
+            // Якщо це подарунок - додаємо спеціальний клас
+            if (item.isGift || item.type === 'gift') {
+                cartItem.classList.add('gift-item');
+            }
+            
             // Формуємо інформацію про колір та кількість
             let colorInfo = '';
             let quantityInfo = '';
+            let pricePerUnit = Math.round(item.price);
+            let totalPrice = Math.round(item.price * (item.quantity || 1));
             
             if (item.color) {
                 colorInfo = `<div class="item-color">
                     <span class="color-label">Колір:</span>
-                    <div class="color-preview" style="background-color: ${item.color}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.3); display: inline-block; margin-left: 8px;"></div>
+                    <div class="color-preview" style="background-color: ${item.color}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.3); display: inline-block;"></div>
                 </div>`;
             }
             
             if (item.flowerQuantity && item.flowerQuantity !== '1') {
                 quantityInfo = `<div class="item-quantity">
-                    <span class="quantity-value">${item.flowerQuantity}</span>
+                    <span class="color-label">Кількість:</span>
+                    <span class="quantity-value">${item.flowerQuantity} шт</span>
                 </div>`;
+            }
+            
+            // Для подарунків показуємо спеціальне відображення
+            let priceDisplay = '';
+            if (item.isGift || item.type === 'gift') {
+                priceDisplay = `
+                    <div class="item-quantity">
+                        <span class="color-label" style="color: #10b981;">🎁 Подарунок:</span>
+                        <span class="quantity-value" style="color: #10b981; font-weight: bold;">БЕЗКОШТОВНО</span>
+                </div>
+                `;
+            } else {
+                priceDisplay = `
+                        <div class="item-quantity">
+                            <span class="color-label">Ціна за шт:</span>
+                            <span class="quantity-value">${pricePerUnit} грн</span>
+                        </div>
+                        <div class="item-total">
+                            <span class="quantity">Всього:</span>
+                            <span class="price">${totalPrice} грн</span>
+                        </div>
+                `;
             }
             
             cartItem.innerHTML = `
                 <div class="cart-item-image">
-                    <img src="${item.image}" alt="${item.title}" loading="lazy">
+                    <img src="${item.image}" alt="${item.title}" loading="lazy" onerror="this.src='/static/images/foto 1.jpg'">
                 </div>
                 <div class="cart-item-info">
                     <h4>${item.title}</h4>
                     <div class="cart-item-details">
                         ${colorInfo}
                         ${quantityInfo}
-                        <div class="item-total">
-                            <span class="price">${Math.round(item.price * (item.quantity || 1))} грн</span>
-                        </div>
+                        ${priceDisplay}
                     </div>
                 </div>
                 <div class="cart-item-actions">
@@ -147,32 +285,114 @@ function updateCartDisplay() {
         });
     }
     
+    // Додаємо рядок "Сума товарів" перед знижкою
+    console.log('📝 Оновлення відображення підсумку...');
+    const summaryDetails = document.querySelector('.summary-details');
+    console.log('   summaryDetails знайдено:', !!summaryDetails);
+    
+    let itemsTotalRow = document.getElementById('cart-items-total-row');
+    
+    if (!itemsTotalRow) {
+        console.log('   Створюємо рядок "Сума товарів"');
+        itemsTotalRow = document.createElement('div');
+        itemsTotalRow.id = 'cart-items-total-row';
+        itemsTotalRow.className = 'summary-row';
+        
+        // Вставляємо після cart-items-count
+        const itemsCountRow = summaryDetails.querySelector('.summary-row:has(#cart-items-count)');
+        if (itemsCountRow && itemsCountRow.nextSibling) {
+            summaryDetails.insertBefore(itemsTotalRow, itemsCountRow.nextSibling);
+        }
+    }
+    
+    itemsTotalRow.innerHTML = `
+        <span>Сума товарів:</span>
+        <span>${Math.round(itemsTotal)} грн</span>
+    `;
+    
+    // Додаємо рядок зі знижкою якщо вона є
+    console.log(`💰 Перевірка відображення знижки: discountPercent = ${discountPercent}`);
+    let discountRow = document.getElementById('cart-discount-row');
+    
+    if (discountPercent > 0) {
+        const discountAmount = Math.round((itemsTotal * discountPercent) / 100);
+        console.log(`   ✅ Знижка є! Створюємо/оновлюємо рядок знижки`);
+        console.log(`   Сума знижки: ${discountAmount} грн`);
+        
+        if (!discountRow) {
+            console.log('   Створюємо новий елемент discount-row');
+            discountRow = document.createElement('div');
+            discountRow.id = 'cart-discount-row';
+            discountRow.className = 'summary-row';
+            discountRow.style.color = '#10b981';
+            
+            // Вставляємо після items total
+            if (itemsTotalRow && itemsTotalRow.nextSibling) {
+                summaryDetails.insertBefore(discountRow, itemsTotalRow.nextSibling);
+                console.log('   ✅ Елемент discount-row вставлено після items total');
+            } else {
+                summaryDetails.appendChild(discountRow);
+                console.log('   ✅ Елемент discount-row додано в кінець');
+            }
+        } else {
+            console.log('   Оновлюємо існуючий елемент discount-row');
+        }
+        
+        discountRow.innerHTML = `
+            <span>💰 Знижка ${discountPercent}%:</span>
+            <span style="font-weight: 600;">-${discountAmount} грн</span>
+        `;
+        discountRow.style.display = 'flex';
+        console.log('   ✅ HTML знижки встановлено:', discountRow.innerHTML);
+    } else {
+        console.log('   ℹ️ Знижки немає, ховаємо рядок якщо існує');
+        if (discountRow) {
+            discountRow.style.display = 'none';
+        }
+    }
+    
     // Оновлюємо загальну суму та кількість
     cartTotalPrice.textContent = `${Math.round(cart.total)} грн`;
     const itemsText = cart.count === 1 ? 'товар' : 
                      cart.count < 5 ? 'товари' : 'товарів';
     cartItemsCount.textContent = `${cart.count} ${itemsText}`;
     
-    // Оновлюємо доставку
+    // Перевіряємо чи є безкоштовна доставка в бонусах
+    let hasFreeShipping = false;
+    if (window.progressBarManager) {
+        const rewards = window.progressBarManager.getAchievedRewards(cart.itemsTotal || 0);
+        hasFreeShipping = rewards.some(r => r.type === 'shipping');
+    }
+    
+    // Оновлюємо доставку (тільки якщо є бонус безкоштовної доставки)
     if (cartDelivery) {
-        if (cart.total >= 1000) {
-            cartDelivery.textContent = 'Безкоштовно';
+        if (hasFreeShipping) {
+            cartDelivery.innerHTML = '<span style="color: #10b981; font-weight: 600;">Безкоштовно 🚚</span>';
             cartDelivery.classList.add('free');
         } else {
-            const remaining = Math.round(1000 - cart.total);
-            cartDelivery.textContent = '50 грн';
+            cartDelivery.innerHTML = `${deliverySettings.cost} грн`;
             cartDelivery.classList.remove('free');
         }
     }
     
     // Оновлюємо інформацію про доставку
     if (deliveryInfo) {
-        if (cart.total >= 1000) {
+        if (hasFreeShipping) {
             deliveryInfo.textContent = '🎉 Вітаємо! Ви отримали безкоштовну доставку!';
             deliveryInfo.classList.add('achieved');
         } else {
-            const remaining = Math.round(1000 - cart.total);
-            deliveryInfo.textContent = `Додайте товарів на ${remaining}₴ для безкоштовної доставки`;
+            // Показуємо прогрес до наступного бонусу
+            if (window.progressBarManager) {
+                const current = window.progressBarManager.getCurrentMilestone(cart.itemsTotal || 0);
+                if (current && current.nextMilestone) {
+                    const remaining = Math.round(current.remaining);
+                    deliveryInfo.textContent = `Додайте товарів на ${remaining}₴ для бонусу`;
+                } else {
+                    deliveryInfo.textContent = `Вартість доставки: ${deliverySettings.cost} грн`;
+                }
+            } else {
+                deliveryInfo.textContent = `Вартість доставки: ${deliverySettings.cost} грн`;
+            }
             deliveryInfo.classList.remove('achieved');
         }
     }
@@ -183,28 +403,32 @@ function updateCartDisplay() {
     // Оновлюємо лічильник
     updateCartCount();
     
-    // Підраховуємо загальну кількість квітів
+    // Підраховуємо загальну кількість квітів (тільки для головного товару)
     let totalFlowers = 0;
     cart.items.forEach(item => {
-        if (item.flowerQuantity && item.flowerQuantity !== '1') {
+        // Рахуємо тільки головний товар (квіти), додаткові товари пропускаємо
+        if (item.type === 'main' && item.flowerQuantity) {
             const flowerCount = parseInt(item.flowerQuantity) || 0;
             const itemQuantity = item.quantity || 1;
             totalFlowers += flowerCount * itemQuantity;
-        } else {
-            // Якщо кількість квітів не вказана, вважаємо 1 квіт на товар
-            totalFlowers += (item.quantity || 1);
         }
     });
+    
+    // Перераховуємо cart.count на основі items
+    cart.count = cart.items.reduce((total, item) => total + (item.quantity || 1), 0);
     
     // Оновлюємо відображення інформації про замовлення
     if (totalFlowerCount) {
         totalFlowerCount.textContent = totalFlowers;
+        console.log('   📊 Оновлено кількість квітів:', totalFlowers);
     }
     if (totalItemsCount) {
         totalItemsCount.textContent = cart.count;
+        console.log('   📊 Оновлено кількість товарів:', cart.count);
     }
     if (totalOrderPrice) {
         totalOrderPrice.textContent = `${Math.round(cart.total)} грн`;
+        console.log('   📊 Оновлено загальну суму:', Math.round(cart.total), 'грн');
     }
 }
 
@@ -300,14 +524,88 @@ function clearCart() {
         return;
     }
     
-    if (confirm('Ви впевнені, що хочете очистити кошик?')) {
-        // Очищаємо кошик
+    // Показуємо красиве модальне вікно замість confirm()
+    showClearCartModal();
+}
+
+// Функція для показу модального вікна очищення кошика
+function showClearCartModal() {
+    const modal = document.createElement('div');
+    modal.className = 'clear-cart-modal';
+    modal.innerHTML = `
+        <div class="clear-cart-overlay" onclick="closeClearCartModal()"></div>
+        <div class="clear-cart-content">
+            <div class="clear-cart-icon">
+                <i class="fas fa-trash-alt"></i>
+            </div>
+            <h3>Очистити кошик?</h3>
+            <p>Ви дійсно хочете видалити всі товари з кошика?</p>
+            <p class="warning-text">Ця дія незворотна</p>
+            <div class="clear-cart-actions">
+                <button class="btn-cancel" onclick="closeClearCartModal()">
+                    <i class="fas fa-times"></i>
+                    Скасувати
+                </button>
+                <button class="btn-confirm-clear" onclick="confirmClearCart()">
+                    <i class="fas fa-trash"></i>
+                    Так, очистити
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Анімація появи
+    setTimeout(() => {
+        modal.classList.add('show');
+    }, 10);
+}
+
+// Функція для закриття модального вікна
+function closeClearCartModal() {
+    const modal = document.querySelector('.clear-cart-modal');
+    if (modal) {
+        modal.classList.remove('show');
+        setTimeout(() => {
+            modal.remove();
+        }, 300);
+    }
+}
+
+// Функція підтвердження очищення
+function confirmClearCart() {
+    console.log('🗑️ Очищення кошика...');
+    console.log('   Товарів до очищення:', cart.items.length);
+    
+    // Перевіряємо чи є подарунки
+    const hasGifts = cart.items.some(item => item.isGift);
+    console.log('   Подарунків в кошику:', hasGifts ? 'ТАК' : 'НІ');
+    
+    // ПОВНІСТЮ очищаємо кошик (включно з подарунками)
         cart.items = [];
+    cart.total = 0;
+    cart.count = 0;
+    cart.itemsTotal = 0;
+    cart.discount = 0;
+    
+    console.log('   ✅ Кошик очищено:', cart);
+    
+    // Оновлюємо відображення
         updateCartDisplay();
+    updateCartCount();
+    updateProgressBar();
         saveCartToStorage();
         
-        // Повідомлення видалено - замість них показуємо лічильник на іконці кошику
+    // Явно викликаємо видалення подарунків якщо вони є
+    if (window.progressBarManager && window.progressBarManager.removeGiftFromCart) {
+        window.progressBarManager.removeGiftFromCart();
     }
+    
+    console.log('   ✅ Всі елементи оновлено (включно з подарунками)');
+    
+    // Закриваємо модальне вікно
+    closeClearCartModal();
 }
 
 // Функція для оформлення замовлення
@@ -694,14 +992,35 @@ document.addEventListener('keydown', (e) => {
 // Ініціалізація сторінки кошика
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🛒 Ініціалізація сторінки кошика...');
+    console.log('═══════════════════════════════════════════════════════');
+    
+    // Перевірка доступності модулів
+    console.log('🔍 ПЕРЕВІРКА МОДУЛІВ:');
+    console.log('   - window.progressBarManager:', !!window.progressBarManager);
+    console.log('   - window.deliverySettings:', window.deliverySettings);
+    
+    if (window.progressBarManager) {
+        console.log('   - progressBarManager.update:', typeof window.progressBarManager.update);
+        console.log('   - progressBarManager.getAchievedRewards:', typeof window.progressBarManager.getAchievedRewards);
+        console.log('   - progressBarManager.getCurrentMilestone:', typeof window.progressBarManager.getCurrentMilestone);
+    } else {
+        console.error('❌ КРИТИЧНО: progressBarManager НЕ ЗНАЙДЕНО!');
+        console.error('   Скрипт progress-bar.js не завантажився або виконався з помилкою');
+    }
     
     // Завантажуємо кошик з localStorage
+    console.log('📂 Завантаження кошика з localStorage...');
     loadCartFromStorage();
+    console.log('   - Товарів в кошику:', cart.items.length);
+    console.log('   - Загальна сума:', cart.total);
+    console.log('   - Сума товарів:', cart.itemsTotal);
     
     // Оновлюємо відображення
+    console.log('🎨 Оновлення відображення кошика...');
     updateCartDisplay();
     
     console.log('✅ Сторінка кошика ініціалізована');
+    console.log('═══════════════════════════════════════════════════════');
 });
 
 // Обробка помилок з message port (розширення браузера)

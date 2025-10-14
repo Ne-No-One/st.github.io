@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Симуляція оплати - Тестовий режим</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Використовуємо стилі магазину для body */
+        body {
+            background: #000;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Плаваючі білі шари як на головній сторінці */
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out;
+        }
+        
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .shape-2 {
+            width: 200px;
+            height: 200px;
+            top: 60%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+        
+        .shape-3 {
+            width: 250px;
+            height: 250px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        .simulation-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .test-badge {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: bold;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .simulation-title {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .simulation-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .order-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .order-info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .order-info-row:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #667eea;
+        }
+
+        .payment-options {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .payment-option {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .payment-option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .payment-option.selected {
+            border-color: #667eea;
+            background: #f8f9ff;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .payment-option-icon {
+            font-size: 2rem;
+            width: 50px;
+            text-align: center;
+        }
+
+        .payment-option-content {
+            flex: 1;
+        }
+
+        .payment-option-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .payment-option-desc {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .simulate-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .simulate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .simulate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Модальне вікно процесу оплати */
+        .payment-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .payment-modal.active {
+            display: flex;
+        }
+
+        .payment-modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .payment-spinner {
+            width: 80px;
+            height: 80px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .payment-status {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .payment-progress {
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Плаваючі білі шари -->
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <div class="simulation-container">
+        <div class="test-badge">
+            <i class="fas fa-flask"></i> ТЕСТОВИЙ РЕЖИМ
+        </div>
+
+        <h1 class="simulation-title">
+            <i class="fas fa-credit-card"></i>
+            Симуляція оплати
+        </h1>
+        <p class="simulation-subtitle">
+            Це тестова сторінка для перевірки процесу оплати без використання реальних банківських даних
+        </p>
+
+        <div class="order-info">
+            <div class="order-info-row">
+                <span>Номер замовлення:</span>
+                <span><strong>{{ order_id }}</strong></span>
+            </div>
+            <div class="order-info-row">
+                <span>Товарів:</span>
+                <span>{{ items_count }}</span>
+            </div>
+            <div class="order-info-row">
+                <span>Сума до сплати:</span>
+                <span><strong>{{ amount }} грн</strong></span>
+            </div>
+        </div>
+
+        <h3 style="margin-bottom: 15px;">
+            <i class="fas fa-hand-pointer"></i>
+            Оберіть результат симуляції:
+        </h3>
+
+        <div class="payment-options">
+            <div class="payment-option selected" data-result="success">
+                <div class="payment-option-icon" style="color: #28a745;">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="payment-option-content">
+                    <div class="payment-option-title">Успішна оплата</div>
+                    <div class="payment-option-desc">Симулювати успішне проведення платежу</div>
+                </div>
+            </div>
+
+            <div class="payment-option" data-result="failure">
+                <div class="payment-option-icon" style="color: #dc3545;">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <div class="payment-option-content">
+                    <div class="payment-option-title">Помилка оплати</div>
+                    <div class="payment-option-desc">Симулювати відхилення платежу (недостатньо коштів)</div>
+                </div>
+            </div>
+
+            <div class="payment-option" data-result="3ds">
+                <div class="payment-option-icon" style="color: #ffc107;">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="payment-option-content">
+                    <div class="payment-option-title">3D Secure</div>
+                    <div class="payment-option-desc">Симулювати додаткову верифікацію 3DS</div>
+                </div>
+            </div>
+
+            <div class="payment-option" data-result="timeout">
+                <div class="payment-option-icon" style="color: #6c757d;">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="payment-option-content">
+                    <div class="payment-option-title">Таймаут</div>
+                    <div class="payment-option-desc">Симулювати перевищення часу очікування</div>
+                </div>
+            </div>
+        </div>
+
+        <button class="simulate-btn" onclick="simulatePayment()">
+            <i class="fas fa-play-circle"></i>
+            Почати симуляцію
+        </button>
+
+        <a href="/cart/" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Повернутися до кошика
+        </a>
+    </div>
+
+    <!-- Модальне вікно процесу -->
+    <div class="payment-modal" id="paymentModal">
+        <div class="payment-modal-content">
+            <div class="payment-spinner"></div>
+            <div class="payment-status" id="paymentStatus">Обробка платежу...</div>
+            <div class="payment-progress" id="paymentProgress">Зачекайте, будь ласка</div>
+        </div>
+    </div>
+
+    <script>
+        // Вибір опції оплати
+        document.querySelectorAll('.payment-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        // Симуляція оплати
+        function simulatePayment() {
+            const selectedOption = document.querySelector('.payment-option.selected');
+            const result = selectedOption.dataset.result;
+            const modal = document.getElementById('paymentModal');
+            const statusEl = document.getElementById('paymentStatus');
+            const progressEl = document.getElementById('paymentProgress');
+
+            // Показуємо модальне вікно
+            modal.classList.add('active');
+
+            // Симулюємо процес оплати
+            setTimeout(() => {
+                statusEl.textContent = 'Підключення до банку...';
+                progressEl.textContent = 'Встановлення захищеного з\'єднання';
+            }, 500);
+
+            setTimeout(() => {
+                statusEl.textContent = 'Перевірка даних...';
+                progressEl.textContent = 'Валідація платіжних реквізитів';
+            }, 1500);
+
+            setTimeout(() => {
+                statusEl.textContent = 'Обробка транзакції...';
+                progressEl.textContent = 'Списання коштів з рахунку';
+            }, 2500);
+
+            // Перенаправлення залежно від результату
+            setTimeout(() => {
+                const orderId = '{{ order_id }}';
+                const baseUrl = '/payment/test';
+                
+                switch(result) {
+                    case 'success':
+                        window.location.href = `${baseUrl}/success/?order_id=${orderId}&amount={{ amount }}`;
+                        break;
+                    case 'failure':
+                        window.location.href = `${baseUrl}/failure/?order_id=${orderId}&error=insufficient_funds`;
+                        break;
+                    case '3ds':
+                        window.location.href = `${baseUrl}/3ds/?order_id=${orderId}`;
+                        break;
+                    case 'timeout':
+                        window.location.href = `${baseUrl}/failure/?order_id=${orderId}&error=timeout`;
+                        break;
+                }
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
+

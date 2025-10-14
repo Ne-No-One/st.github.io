@@ -44,6 +44,8 @@ urlpatterns = [
     path('api/payment/iframe/', create_iframe_invoice, name='api_iframe_invoice'),
     path('api/orders/', views.save_order, name='save_order'),
     path('api/orders/list/', views.get_orders, name='get_orders'),
+    path('api/progress-bar/', views.get_progress_bar_settings, name='api_progress_bar_settings'),
+    path('api/delivery-cities/', views.get_delivery_cities, name='api_delivery_cities'),
     
     # Test Payment URLs
     path('test-payment-success/', test_payment_views.test_payment_success, name='test_payment_success'),
@@ -56,6 +58,18 @@ urlpatterns = [
     path('test-cancel-payment/', test_payment_views.test_cancel_payment, name='test_cancel_payment'),
     path('test-refund-payment/', test_payment_views.test_refund_payment, name='test_refund_payment'),
     path('test-simulation-settings/', test_payment_views.test_simulation_settings, name='test_simulation_settings'),
+    
+    # Тестова сторінка ефектів свічення
+    path('glow-test/', views.glow_test, name='glow_test'),
+    
+    # Тестова симуляція оплати
+    path('payment/test/simulation/', views.test_payment_simulation, name='test_payment_simulation'),
+    path('payment/test/success/', views.test_payment_success, name='test_payment_sim_success'),
+    path('payment/test/failure/', views.test_payment_failure, name='test_payment_sim_failure'),
+    path('payment/test/3ds/', views.test_payment_3ds, name='test_payment_sim_3ds'),
+    path('payment/test/card/', views.test_card_payment, name='test_card_payment'),
+    path('payment/test/apple-pay/', views.test_apple_pay, name='test_apple_pay'),
+    path('payment/test/google-pay/', views.test_google_pay, name='test_google_pay'),
     
     path('', views.home, name='home'),
 ]

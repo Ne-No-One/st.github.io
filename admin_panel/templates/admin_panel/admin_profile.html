@@ -1,0 +1,153 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Мій профіль - Адмін Панель{% endblock %}
+
+{% block content %}
+<div class="admin-form-container">
+    <div class="admin-form-section">
+        <div class="section-header compact">
+            <h5 class="section-title compact">
+                <i class="fas fa-user-circle"></i>
+                Мій профіль
+            </h5>
+        </div>
+
+        <div class="row">
+            <!-- Інформація про профіль -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="mb-3">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Інформація про акаунт
+                        </h6>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-user"></i>
+                                Username (логін)
+                            </label>
+                            <input type="text" class="form-control" value="{{ admin.username }}" readonly>
+                            <small class="text-muted">Логін не можна змінити</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-shield-alt"></i>
+                                Роль
+                            </label>
+                            <input type="text" class="form-control" value="{% if admin.role == 'super_admin' %}Super Admin{% else %}Admin{% endif %}" readonly>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-calendar-plus"></i>
+                                Дата створення
+                            </label>
+                            <input type="text" class="form-control" value="{{ admin.created_at|slice:':10' }}" readonly>
+                        </div>
+                        
+                        {% if admin.last_login %}
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-clock"></i>
+                                Останній вхід
+                            </label>
+                            <input type="text" class="form-control" value="{{ admin.last_login|slice:':19' }}" readonly>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Редагування профілю -->
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="mb-3">
+                            <i class="fas fa-edit me-2"></i>
+                            Редагувати профіль
+                        </h6>
+                        
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="update_profile">
+                            
+                            <div class="mb-3">
+                                <label for="name" class="form-label">
+                                    <i class="fas fa-id-card"></i>
+                                    Повне ім'я
+                                </label>
+                                <input type="text" class="form-control" id="name" name="name" value="{{ admin.name }}" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="email" class="form-label">
+                                    <i class="fas fa-envelope"></i>
+                                    Email
+                                </label>
+                                <input type="email" class="form-control" id="email" name="email" value="{{ admin.email }}">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                Зберегти зміни
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Зміна пароля -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="mb-3">
+                            <i class="fas fa-key me-2"></i>
+                            Змінити пароль
+                        </h6>
+                        
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="change_password">
+                            
+                            <div class="mb-3">
+                                <label for="current_password" class="form-label">
+                                    <i class="fas fa-lock"></i>
+                                    Поточний пароль
+                                </label>
+                                <input type="password" class="form-control" id="current_password" name="current_password" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="new_password" class="form-label">
+                                    <i class="fas fa-lock-open"></i>
+                                    Новий пароль
+                                </label>
+                                <input type="password" class="form-control" id="new_password" name="new_password" required minlength="8">
+                                <small class="text-muted">Мінімум 8 символів</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="confirm_password" class="form-label">
+                                    <i class="fas fa-lock-open"></i>
+                                    Підтвердіть новий пароль
+                                </label>
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required minlength="8">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-key"></i>
+                                Змінити пароль
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

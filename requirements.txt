@@ -1,2 +1,15 @@
 Django==4.2.7
 requests==2.31.0
+
+# Production dependencies
+gunicorn==21.2.0
+python-dotenv==1.0.0
+
+# Security and encryption
+cryptography==41.0.7
+
+# Optional: Enhanced features
+# redis==5.0.1  # Якщо використовуєте кешування
+# sentry-sdk==1.38.0  # Якщо використовуєте error tracking
+# pillow==10.1.0  # Якщо потрібна обробка зображень
+# django-ratelimit==4.1.0  # Rate limiting для захисту від DDOS

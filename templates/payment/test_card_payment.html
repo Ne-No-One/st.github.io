@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оплата карткою - Тестовий режим</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Використовуємо стилі магазину для body */
+        body {
+            background: #000;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Плаваючі білі шари як на головній сторінці */
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out;
+        }
+        
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .shape-2 {
+            width: 200px;
+            height: 200px;
+            top: 60%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+        
+        .shape-3 {
+            width: 250px;
+            height: 250px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        .payment-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .test-badge {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: bold;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .payment-title {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .payment-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .order-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .order-info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .order-info-row:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #667eea;
+        }
+
+        .card-form {
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .card-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 15px;
+        }
+
+        .pay-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .pay-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .card-logos {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+            opacity: 0.6;
+        }
+
+        .card-logos i {
+            font-size: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Плаваючі білі шари -->
+    <div class="floating-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <div class="payment-container">
+        <div class="test-badge">
+            <i class="fas fa-flask"></i> ТЕСТОВИЙ РЕЖИМ
+        </div>
+
+        <h1 class="payment-title">
+            <i class="fas fa-credit-card"></i>
+            Оплата карткою
+        </h1>
+        <p class="payment-subtitle">
+            Введіть дані вашої картки для оплати замовлення
+        </p>
+
+        <div class="order-info">
+            <div class="order-info-row">
+                <span>Номер замовлення:</span>
+                <span><strong>{{ order_id }}</strong></span>
+            </div>
+            <div class="order-info-row">
+                <span>Товарів:</span>
+                <span>{{ items_count }}</span>
+            </div>
+            <div class="order-info-row">
+                <span>Сума до сплати:</span>
+                <span><strong>{{ amount }} грн</strong></span>
+            </div>
+        </div>
+
+        <form class="card-form" onsubmit="processPayment(event)">
+            <div class="form-group">
+                <label for="card-number">Номер картки</label>
+                <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19" required>
+            </div>
+
+            <div class="card-row">
+                <div class="form-group">
+                    <label for="card-expiry">Термін дії</label>
+                    <input type="text" id="card-expiry" placeholder="MM/YY" maxlength="5" required>
+                </div>
+                <div class="form-group">
+                    <label for="card-cvv">CVV</label>
+                    <input type="text" id="card-cvv" placeholder="123" maxlength="3" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="card-holder">Ім'я власника</label>
+                <input type="text" id="card-holder" placeholder="IVAN PETRENKO" required>
+            </div>
+
+            <button type="submit" class="pay-btn">
+                <i class="fas fa-lock"></i>
+                Оплатити {{ amount }} грн
+            </button>
+        </form>
+
+        <div class="card-logos">
+            <i class="fab fa-cc-visa" style="color: #1A1F71;"></i>
+            <i class="fab fa-cc-mastercard" style="color: #EB001B;"></i>
+            <i class="fab fa-cc-amex" style="color: #006FCF;"></i>
+        </div>
+
+        <a href="/cart/" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Повернутися до кошика
+        </a>
+    </div>
+
+    <script>
+        // Форматування номера картки
+        document.getElementById('card-number').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '');
+            let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+            e.target.value = formattedValue;
+        });
+
+        // Форматування терміну дії
+        document.getElementById('card-expiry').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2, 4);
+            }
+            e.target.value = value;
+        });
+
+        // Обробка оплати
+        function processPayment(event) {
+            event.preventDefault();
+            
+            // Перенаправлення на симуляцію
+            const orderId = '{{ order_id }}';
+            const amount = '{{ amount }}';
+            window.location.href = `/payment/test/simulation/?order_id=${orderId}&amount=${amount}&items={{ items_count }}`;
+        }
+    </script>
+</body>
+</html>
+

@@ -4,359 +4,307 @@
 {% block page_title %}Головний товар - Повне управління{% endblock %}
 
 {% block content %}
-<div class="row">
+<div class="admin-form-container">
     <!-- Варіанти кольорів -->
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">
-                    <i class="fas fa-palette me-2"></i>
-                    Варіанти кольорів ({{ variants|length }})
-                </h5>
-                <a href="{% url 'admin_panel:create_color_with_quantities' %}" class="btn btn-sm btn-primary">
-                    <i class="fas fa-plus-circle me-1"></i>
-                    Створити колір з кількостями
-                </a>
-            </div>
-            
-                    
-            <div class="card-body">
-                {% if variants %}
-                    <div class="row">
-                        {% for variant in variants %}
-                        <div class="col-lg-2 col-md-3 mb-3">
-                            <div class="card h-100">
-                                {% if variant.default_image %}
-                                    <img src="{{ variant.default_image }}" class="card-img-top" 
-                                         style="height: 200px; object-fit: cover;" alt="{{ variant.name }}">
-                                {% else %}
-                                    <div class="card-img-top d-flex align-items-center justify-content-center" 
-                                         style="height: 200px; background: var(--bg-tertiary); border: 1px solid var(--border-primary);">
-                                        <i class="fas fa-image fa-2x text-muted"></i>
-                                    </div>
-                                {% endif %}
-                                
-                                <div class="card-body">
-                                    <h6 class="card-title">{{ variant.name }}</h6>
-                                    <div class="d-flex align-items-center mb-2">
-                                        <span class="color-preview me-2" style="background-color: {{ variant.hex_code }}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border-primary);"></span>
-                                        <small class="text-muted">{{ variant.hex_code }}</small>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <div class="d-flex gap-1">
-                                            <span class="badge bg-info">ID: {{ variant.id }}</span>
-                                            <span class="badge bg-secondary">Порядок: {{ variant.order|default:"1" }}</span>
-                                            {% if variant.quantity_images %}
-                                                <span class="badge bg-success">
-                                                    <i class="fas fa-images me-1"></i>
-                                                    {{ variant.quantity_images|length }} фото
-                                                </span>
-                                            {% else %}
-                                                <span class="badge bg-warning">
-                                                    <i class="fas fa-exclamation-triangle me-1"></i>
-                                                    Немає фото
-                                                </span>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                    <div class="d-flex justify-content-end">
-                                        <div class="btn-group">
-                                            <a href="{% url 'admin_panel:create_color_with_quantities' %}?edit={{ variant.id }}" 
-                                               class="btn btn-sm btn-primary" title="Редагувати колір з кількостями">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <a href="{% url 'admin_panel:delete_color_from_main' variant.id %}" 
-                                               class="btn btn-sm btn-danger" title="Видалити"
-                                               onclick="return confirm('Видалити {{ variant.name }}?')">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
+    <div class="admin-form-section">
+        <div class="section-header compact">
+            <h5 class="section-title compact">
+                <i class="fas fa-palette"></i>
+                Кольори ({{ variants|length }})
+            </h5>
+            <a href="{% url 'admin_panel:create_color_with_quantities' %}" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i>
+                <span class="d-none d-md-inline ms-1">Створити</span>
+            </a>
+        </div>
+        
+        {% if variants %}
+            <div class="product-cards-grid">
+                {% for variant in variants %}
+                <div class="product-card">
+                    <div class="product-card-body">
+                        <div class="drag-handle" style="position: absolute; top: 10px; right: 10px; cursor: move; color: var(--admin-text-secondary); font-size: 1.2rem;">
+                            <i class="fas fa-grip-vertical"></i>
+                        </div>
+                        <h6 class="product-card-title">{{ variant.name }}</h6>
+                        
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="product-color-preview" style="background-color: {{ variant.hex_code }};"></span>
+                            <small class="text-muted">{{ variant.hex_code }}</small>
+                        </div>
+                        
+                        <!-- Статуси -->
+                        <!-- Перемикачі статусів -->
+                        <div class="mb-3">
+                            <div class="form-check form-switch mb-2">
+                                <input class="form-check-input status-toggle" type="checkbox" 
+                                       id="is_active_{{ variant.id }}" 
+                                       data-color-id="{{ variant.id }}"
+                                       data-field="is_active"
+                                       {% if variant.is_active %}checked{% endif %}>
+                                <label class="form-check-label" for="is_active_{{ variant.id }}" style="font-size: 0.85rem;">
+                                    <i class="fas fa-eye me-1"></i>
+                                    Активний
+                                </label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input status-toggle" type="checkbox" 
+                                       id="in_stock_{{ variant.id }}"
+                                       data-color-id="{{ variant.id }}"
+                                       data-field="in_stock"
+                                       {% if variant.in_stock %}checked{% endif %}>
+                                <label class="form-check-label" for="in_stock_{{ variant.id }}" style="font-size: 0.85rem;">
+                                    <i class="fas fa-box me-1"></i>
+                                    В наявності
+                                </label>
                             </div>
                         </div>
-                        {% endfor %}
+                        
+                        <div class="product-badges mb-3">
+                            <span class="badge bg-secondary">ID: {{ variant.id }}</span>
+                            <span class="badge bg-secondary">
+                                <i class="fas fa-sort-numeric-down"></i>
+                                {{ variant.order|default:"1" }}
+                            </span>
+                            {% if variant.quantity_images %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-images"></i>
+                                    {{ variant.quantity_images|length }}
+                                </span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    Немає фото
+                                </span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="product-card-actions">
+                            <a href="{% url 'admin_panel:create_color_with_quantities' %}?edit={{ variant.id }}" 
+                               class="btn btn-sm btn-primary" title="Редагувати">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'admin_panel:delete_color_from_main' variant.id %}" 
+                               class="btn btn-sm btn-danger" title="Видалити"
+                               onclick="return confirm('Видалити {{ variant.name }}?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
                     </div>
-                {% else %}
-                    <div class="text-center py-4">
-                        <i class="fas fa-palette fa-2x text-muted mb-2"></i>
-                        <h6 class="text-muted">Варіанти кольорів не додані</h6>
-                        <button class="btn btn-success btn-sm" onclick="toggleAddColorForm()">
-                            <i class="fas fa-plus me-1"></i>
-                            Додати перший колір
-                        </button>
-                    </div>
-                {% endif %}
+                </div>
+                {% endfor %}
             </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-palette"></i>
+                <p>Варіанти кольорів не додані</p>
+                <small>Почніть з створення першого кольору з кількостями</small>
+                <div class="mt-3">
+                    <a href="{% url 'admin_panel:create_color_with_quantities' %}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>
+                        Додати перший колір
+                    </a>
+                </div>
             </div>
-        </div>
+        {% endif %}
     </div>
     
-<!-- Варіанти кількості та ціни -->
-<div class="row mt-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">
-                    <i class="fas fa-calculator me-2"></i>
-                    Варіанти кількості та ціни ({{ quantities|length }})
-                </h5>
-                <button class="btn btn-sm btn-success" id="addQuantityButton">
-                    <i class="fas fa-plus me-1"></i>
-                    Додати варіант
-                </button>
-            </div>
-            
-            <!-- Форма додавання кількості -->
-            <div class="card-body border-bottom" id="addQuantityForm" style="display: none;">
-                <form method="post" action="{% url 'admin_panel:main_product_settings' %}" class="p-3 rounded" style="background: var(--bg-tertiary); border: 1px solid var(--border-primary);" onsubmit="return submitQuantityForm(event)" id="quantityForm">
+    <!-- Варіанти кількості та ціни -->
+    <div class="admin-form-section">
+        <div class="section-header compact">
+            <h5 class="section-title compact">
+                <i class="fas fa-calculator"></i>
+                Кількості та ціни ({{ quantities|length }})
+            </h5>
+            <button class="btn btn-success btn-sm" id="addQuantityButton">
+                <i class="fas fa-plus"></i>
+                <span class="d-none d-md-inline ms-1">Додати</span>
+            </button>
+        </div>
+        
+        <!-- Форма додавання -->
+        <div id="addQuantityForm" style="display: none; margin-top: var(--admin-spacing-sm);">
+            <div class="compact-form-container">
+                <form method="post" action="{% url 'admin_panel:main_product_settings' %}" id="quantityForm">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="add_quantity">
-                    <h6 class="mb-3">
-                        <i class="fas fa-plus me-2"></i>
-                        Додати варіант кількості
+                    
+                    <h6 class="compact-form-header">
+                        <i class="fas fa-plus"></i>
+                        Додати варіант
                     </h6>
+                    
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="quantity" class="form-label">Кількість</label>
+                            <label for="quantity" class="form-label">
+                                <i class="fas fa-hashtag"></i>
+                                Кількість
+                            </label>
                             <input type="number" class="form-control" id="quantity" name="quantity" 
                                    placeholder="21" min="1" required>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="price_per_unit" class="form-label">Ціна за одиницю (грн)</label>
+                            <label for="price_per_unit" class="form-label">
+                                <i class="fas fa-dollar-sign"></i>
+                                Ціна за одиницю (грн)
+                            </label>
                             <input type="number" class="form-control" id="price_per_unit" name="price_per_unit" 
                                    placeholder="50" step="1" min="0" required>
                         </div>
-                        <div class="col-md-2 mb-3">
-                            <label for="quantity_order" class="form-label">Порядок</label>
+                        <div class="col-md-4 mb-3">
+                            <label for="quantity_order" class="form-label">
+                                <i class="fas fa-sort-numeric-down"></i>
+                                Порядок
+                            </label>
                             <input type="number" class="form-control" id="quantity_order" name="quantity_order" 
                                    placeholder="1" min="1" max="100" value="1">
                         </div>
-        </div>
+                    </div>
+                    
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-success">
                             <i class="fas fa-save me-1"></i>
                             Зберегти варіант
                         </button>
                         <button type="button" class="btn btn-secondary" id="cancelQuantityButton">
+                            <i class="fas fa-times me-1"></i>
                             Скасувати
                         </button>
                     </div>
                 </form>
-        </div>
-        
-            <div class="card-body">
-                {% if quantities %}
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Кількість (шт)</th>
-                                    <th>Ціна за одиницю</th>
-                                    <th>Загальна ціна</th>
-                                    <th>Порядок</th>
-                                    <th>Статус</th>
-                                    <th>Дії</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for qty in quantities %}
-                                <tr>
-                                    <td>
-                                        <span class="badge bg-info">{{ qty.id }}</span>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-primary fs-6">{{ qty.quantity }}</span>
-                                    </td>
-                                    <td>
-                                        <strong>{{ qty.price_per_unit }} грн</strong>
-                                    </td>
-                                    <td>
-                                        {% widthratio qty.price_per_unit 1 qty.quantity as total_price %}
-                                        <span class="text-success fw-bold">{{ total_price }} грн</span>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-secondary">{{ qty.order|default:"1" }}</span>
-                                    </td>
-                                    <td>
-                                        {% if qty.is_active %}
-                        <span class="badge bg-success">Активний</span>
-                    {% else %}
-                        <span class="badge bg-secondary">Неактивний</span>
-                    {% endif %}
-                                    </td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a href="{% url 'admin_panel:edit_quantity_variant' qty.id %}" 
-                                               class="btn btn-sm btn-primary">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <a href="{% url 'admin_panel:delete_quantity_option' qty.id %}" 
-                                               class="btn btn-sm btn-danger" 
-                                               onclick="return confirm('Видалити варіант {{ qty.quantity }} шт?')">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% else %}
-                    <div class="text-center py-4">
-                        <i class="fas fa-calculator fa-2x text-muted mb-2"></i>
-                        <h6 class="text-muted">Варіанти кількості не додані</h6>
-                        <p class="text-muted small">Додайте варіанти кількості з цінами за одиницю</p>
-                        <button class="btn btn-success" onclick="toggleAddQuantityForm()">
-                            <i class="fas fa-plus me-2"></i>
-                            Додати перший варіант
-                        </button>
-                </div>
-                {% endif %}
             </div>
         </div>
+        
+        {% if quantities %}
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag me-1"></i>ID</th>
+                        <th><i class="fas fa-layer-group me-1"></i>Кількість</th>
+                        <th><i class="fas fa-dollar-sign me-1"></i>Ціна/од</th>
+                        <th><i class="fas fa-calculator me-1"></i>Всього</th>
+                        <th><i class="fas fa-sort me-1"></i>Порядок</th>
+                        <th><i class="fas fa-toggle-on me-1"></i>Статус</th>
+                        <th><i class="fas fa-cog me-1"></i>Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for qty in quantities %}
+                    <tr>
+                        <td>
+                            <span class="badge bg-info">{{ qty.id }}</span>
+                        </td>
+                        <td>
+                            <span class="badge bg-primary" style="font-size: 1rem; padding: 8px 12px;">
+                                {{ qty.quantity }} шт
+                            </span>
+                        </td>
+                        <td>
+                            <strong style="color: var(--admin-text-primary);">{{ qty.price_per_unit }} грн</strong>
+                        </td>
+                        <td>
+                            {% widthratio qty.price_per_unit 1 qty.quantity as total_price %}
+                            <span style="color: var(--admin-success); font-weight: 700; font-size: 1.1rem;">
+                                {{ total_price }} грн
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary">{{ qty.order|default:"1" }}</span>
+                        </td>
+                        <td>
+                            {% if qty.is_active %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check-circle"></i>
+                                    Активний
+                                </span>
+                            {% else %}
+                                <span class="badge bg-danger">
+                                    <i class="fas fa-times-circle"></i>
+                                    Неактивний
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'admin_panel:edit_quantity_variant' qty.id %}" 
+                                   class="btn btn-sm btn-primary" title="Редагувати">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'admin_panel:delete_quantity_option' qty.id %}" 
+                                   class="btn btn-sm btn-danger" title="Видалити"
+                                   onclick="return confirm('Видалити варіант {{ qty.quantity }} шт?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-calculator"></i>
+                <p>Варіанти кількості не додані</p>
+                <small>Додайте варіанти кількості з цінами за одиницю</small>
+                <div class="mt-3">
+                    <button class="btn btn-success" onclick="QuantityFormManager.showForm()">
+                        <i class="fas fa-plus me-2"></i>
+                        Додати перший варіант
+                    </button>
+                </div>
+            </div>
+        {% endif %}
     </div>
 </div>
-
-{% endblock %}
-
-{% block extra_css %}
-<style>
-/* Стилі для форми додавання кількості */
-#addQuantityForm {
-    transition: all 0.3s ease;
-    overflow: hidden;
-}
-
-#addQuantityForm.show {
-    animation: slideDown 0.3s ease;
-}
-
-#addQuantityForm.hide {
-    animation: slideUp 0.3s ease;
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    to {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-}
-
-#addQuantityButton {
-    transition: all 0.2s ease;
-}
-
-#addQuantityButton:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-#quantityForm input:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-}
-
-#quantityForm button:focus {
-    outline: 2px solid #007bff;
-    outline-offset: 2px;
-}
-</style>
 {% endblock %}
 
 {% block extra_js %}
 <script>
 // Модуль для управління формою додавання кількості
 const QuantityFormManager = {
-    // Елементи
     addButton: null,
     cancelButton: null,
     form: null,
     formContainer: null,
     
-    // Ініціалізація
     init: function() {
         console.log('🔧 Ініціалізація QuantityFormManager');
         
-        // Знаходимо елементи
         this.addButton = document.getElementById('addQuantityButton');
         this.cancelButton = document.getElementById('cancelQuantityButton');
         this.form = document.getElementById('quantityForm');
         this.formContainer = document.getElementById('addQuantityForm');
         
-        // Перевіряємо чи всі елементи знайдені
-        if (!this.addButton) {
-            console.error('❌ Кнопка додавання не знайдена!');
-            return false;
-        }
-        
-        if (!this.formContainer) {
-            console.error('❌ Контейнер форми не знайдений!');
-            return false;
-        }
-        
-        if (!this.form) {
-            console.error('❌ Форма не знайдена!');
+        if (!this.addButton || !this.formContainer || !this.form) {
+            console.error('❌ Не всі елементи знайдені!');
             return false;
         }
         
         console.log('✅ Всі елементи знайдені');
-        
-        // Додаємо обробники подій
         this.bindEvents();
-        
         console.log('✅ QuantityFormManager ініціалізовано');
         return true;
     },
     
-    // Прив'язування обробників подій
     bindEvents: function() {
-        // Кнопка додавання
         this.addButton.addEventListener('click', (e) => {
             e.preventDefault();
-            console.log('🖱️ Клік по кнопці додавання');
             this.toggleForm();
         });
         
-        // Кнопка скасування
         if (this.cancelButton) {
             this.cancelButton.addEventListener('click', (e) => {
                 e.preventDefault();
-                console.log('🖱️ Клік по кнопці скасування');
                 this.hideForm();
             });
         }
         
-        // Відправка форми
         this.form.addEventListener('submit', (e) => {
-            console.log('📤 Відправка форми');
             return this.handleFormSubmit(e);
         });
-        
-        console.log('✅ Обробники подій прив\'язано');
     },
     
-    // Показати/приховати форму
     toggleForm: function() {
-        console.log('🔄 Перемикання форми');
-        
         if (this.isFormVisible()) {
             this.hideForm();
         } else {
@@ -364,60 +312,40 @@ const QuantityFormManager = {
         }
     },
     
-    // Показати форму
     showForm: function() {
-        console.log('👁️ Показуємо форму');
         this.formContainer.style.display = 'block';
+        this.formContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
         
-        // Скрол до форми
-        this.formContainer.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center' 
-        });
-        
-        // Фокус на першому полі
         const firstInput = this.form.querySelector('input[type="number"]');
         if (firstInput) {
-            firstInput.focus();
+            setTimeout(() => firstInput.focus(), 300);
         }
     },
     
-    // Приховати форму
     hideForm: function() {
-        console.log('🙈 Приховуємо форму');
         this.formContainer.style.display = 'none';
-        
-        // Очищуємо форму
         this.clearForm();
     },
     
-    // Перевірити чи форма видима
     isFormVisible: function() {
         const style = window.getComputedStyle(this.formContainer);
         return style.display !== 'none';
     },
     
-    // Очистити форму
     clearForm: function() {
-        console.log('🧹 Очищуємо форму');
         const inputs = this.form.querySelectorAll('input[type="number"]');
         inputs.forEach(input => {
-            input.value = '';
+            if (input.id !== 'quantity_order') {
+                input.value = '';
+            }
         });
     },
     
-    // Обробка відправки форми
     handleFormSubmit: function(event) {
-        console.log('📝 Обробка відправки форми');
-        
-        // Отримуємо дані форми
         const formData = new FormData(this.form);
         const quantity = formData.get('quantity');
         const pricePerUnit = formData.get('price_per_unit');
         
-        console.log('📊 Дані форми:', { quantity, pricePerUnit });
-        
-        // Валідація
         if (!quantity || !pricePerUnit) {
             alert('Будь ласка, заповніть всі обов\'язкові поля!');
             event.preventDefault();
@@ -430,36 +358,210 @@ const QuantityFormManager = {
             return false;
         }
         
-        if (parseFloat(pricePerUnit) <= 0) {
-            alert('Ціна за одиницю повинна бути більше 0!');
+        if (parseFloat(pricePerUnit) < 0) {
+            alert('Ціна не може бути від\'ємною!');
             event.preventDefault();
             return false;
         }
         
-        console.log('✅ Валідація пройшла успішно');
-        console.log('📤 Форма відправляється...');
-        
+        console.log('✅ Валідація пройшла, форма відправляється');
         return true;
     }
 };
 
-// Ініціалізація при завантаженні DOM
+// Ініціалізація
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 DOM завантажено, ініціалізуємо QuantityFormManager');
+    console.log('🚀 DOM завантажено');
     
     if (QuantityFormManager.init()) {
-        console.log('✅ QuantityFormManager успішно ініціалізовано');
+        console.log('✅ QuantityFormManager готовий');
     } else {
-        console.error('❌ Помилка ініціалізації QuantityFormManager');
+        console.error('❌ Помилка ініціалізації');
     }
 });
 
-// Додаємо в глобальну область для зворотної сумісності
+// Глобальна функція для зворотної сумісності
 window.toggleAddQuantityForm = function() {
-    console.log('🔄 Виклик через глобальну функцію');
     if (QuantityFormManager) {
         QuantityFormManager.toggleForm();
     }
 };
+
+// ===== ОБРОБКА ПЕРЕМИКАЧІВ СТАТУСІВ =====
+document.addEventListener('DOMContentLoaded', function() {
+    const statusToggles = document.querySelectorAll('.status-toggle');
+    
+    statusToggles.forEach(toggle => {
+        toggle.addEventListener('change', function() {
+            const colorId = this.dataset.colorId;
+            const field = this.dataset.field;
+            const value = this.checked;
+            
+            fetch('{% url "admin_panel:update_color_status" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    color_id: parseInt(colorId),
+                    field: field,
+                    value: value
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log(`✅ Статус ${field} оновлено для кольору ${colorId}`);
+                } else {
+                    console.error('❌ Помилка оновлення статусу:', data.error);
+                    // Повертаємо попередній стан
+                    this.checked = !value;
+                }
+            })
+            .catch(error => {
+                console.error('❌ Помилка запиту:', error);
+                // Повертаємо попередній стан
+                this.checked = !value;
+            });
+        });
+    });
+});
+
+// ===== DRAG AND DROP ДЛЯ КАРТОК КОЛЬОРІВ =====
+document.addEventListener('DOMContentLoaded', function() {
+    const grid = document.querySelector('.product-cards-grid');
+    if (!grid) return;
+    
+    const cards = grid.querySelectorAll('.product-card');
+    let draggedCard = null;
+    
+    cards.forEach(card => {
+        card.setAttribute('draggable', 'true');
+        card.style.cursor = 'move';
+        
+        card.addEventListener('dragstart', function(e) {
+            draggedCard = this;
+            this.style.opacity = '0.5';
+            e.dataTransfer.effectAllowed = 'move';
+        });
+        
+        card.addEventListener('dragend', function(e) {
+            this.style.opacity = '1';
+            cards.forEach(c => c.classList.remove('drag-over'));
+        });
+        
+        card.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            
+            if (draggedCard !== this) {
+                this.classList.add('drag-over');
+            }
+        });
+        
+        card.addEventListener('dragleave', function(e) {
+            this.classList.remove('drag-over');
+        });
+        
+        card.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+            
+            if (draggedCard !== this) {
+                // Визначаємо позицію для вставки
+                const allCards = [...grid.querySelectorAll('.product-card')];
+                const draggedIndex = allCards.indexOf(draggedCard);
+                const targetIndex = allCards.indexOf(this);
+                
+                if (draggedIndex < targetIndex) {
+                    this.parentNode.insertBefore(draggedCard, this.nextSibling);
+                } else {
+                    this.parentNode.insertBefore(draggedCard, this);
+                }
+                
+                // Зберігаємо новий порядок
+                saveColorOrder();
+            }
+        });
+    });
+    
+    function saveColorOrder() {
+        const cards = grid.querySelectorAll('.product-card');
+        const orderData = [];
+        
+        cards.forEach((card, index) => {
+            const editLink = card.querySelector('a[href*="edit="]');
+            if (editLink) {
+                const href = editLink.getAttribute('href');
+                const match = href.match(/edit=(\d+)/);
+                if (match) {
+                    orderData.push({
+                        id: parseInt(match[1]),
+                        order: index + 1
+                    });
+                }
+            }
+        });
+        
+        // Відправляємо AJAX запит для збереження порядку
+        fetch('{% url "admin_panel:update_color_order" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ order: orderData })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('✅ Порядок кольорів збережено');
+                // Показуємо повідомлення
+                showNotification('Порядок кольорів оновлено', 'success');
+                
+                // Перезавантажуємо сторінку через 1 секунду для відображення нового порядку
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                console.error('❌ Помилка збереження порядку:', data.error);
+                showNotification('Помилка збереження порядку', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('❌ Помилка запиту:', error);
+            showNotification('Помилка збереження порядку', 'error');
+        });
+    }
+    
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed`;
+        notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
+        notification.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+            ${message}
+        `;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+});
 </script>
+
+<style>
+.product-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.product-card.drag-over {
+    transform: scale(1.05);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    border: 2px dashed var(--admin-primary);
+}
+</style>
 {% endblock %}
+

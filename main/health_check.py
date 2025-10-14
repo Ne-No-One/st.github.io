@@ -67,7 +67,7 @@ def health_check(request):
     # Перевіряємо шаблони
     templates = [
         'templates/index.html',
-        'templates/admin_panel/base.html'
+        'admin_panel/templates/admin_panel/base.html'
     ]
     
     missing_templates = []

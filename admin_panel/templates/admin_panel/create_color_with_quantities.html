@@ -4,22 +4,19 @@
 {% block page_title %}{% if is_edit_mode %}Редагування{% else %}Створення{% endif %} кольору з кількостями та фото{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">
-                    <i class="fas fa-palette me-2"></i>
-                    {% if is_edit_mode %}Редагування{% else %}Створення{% endif %} кольору з кількостями та фото
-                </h5>
-                <a href="{% url 'admin_panel:main_product_settings' %}" class="btn btn-sm btn-secondary">
-                    <i class="fas fa-arrow-left me-1"></i>
-                    Назад до товарів
-                </a>
-            </div>
-            
-            <div class="card-body">
-                <form method="post" id="colorForm">
+<div class="admin-form-container">
+    <div class="admin-form-section">
+        <div class="section-header compact">
+            <h5 class="section-title compact">
+                <i class="fas fa-palette"></i>
+                {% if is_edit_mode %}Редагування{% else %}Створення{% endif %} кольору
+            </h5>
+            <a href="{% url 'admin_panel:main_product_settings' %}" class="btn btn-sm btn-secondary">
+                <i class="fas fa-arrow-left"></i>
+                <span class="d-none d-md-inline ms-1">Назад</span>
+            </a>
+        </div>
+                <form method="post" id="colorForm" enctype="multipart/form-data">
                     {% csrf_token %}
                     
                     <!-- Основні дані кольору -->
@@ -40,12 +37,19 @@
                             <label for="hex_code" class="form-label">Hex код кольору</label>
                             <div class="input-group">
                                 <input type="text" class="form-control" id="hex_code" name="hex_code" 
-                                       placeholder="#ff0000" pattern="^#[0-9A-Fa-f]{6}$" 
+                                       placeholder="#ff0000" pattern="^(#[0-9A-Fa-f]{6}|transparent)$" 
                                        value="{% if is_edit_mode and color_data %}{{ color_data.hex_code }}{% endif %}" required>
                                 <span class="input-group-text" id="color-preview" 
                                       style="background-color: {% if is_edit_mode and color_data %}{{ color_data.hex_code }}{% else %}#f0f0f0{% endif %}; width: 40px;"></span>
                             </div>
-                            <div class="form-text">Формат: #rrggbb (наприклад, #ff0000)</div>
+                            <div class="form-text">Формат: #rrggbb або "transparent" для прозорого</div>
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" id="is_transparent" onclick="toggleTransparent()">
+                                <label class="form-check-label" for="is_transparent">
+                                    <small><i class="fas fa-eye-slash me-1"></i>Прозорий колір (відсутність кольору пакування)</small>
+                                </label>
+                            </div>
+                            <div class="form-text mt-1"><small class="text-info"><i class="fas fa-info-circle me-1"></i>Прозорість = колір не відображається на сайті</small></div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="order" class="form-label">Порядок відображення</label>
@@ -55,6 +59,44 @@
                         </div>
                     </div>
                     
+                    <!-- Статуси активності та наявності -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="mb-3">
+                                        <i class="fas fa-toggle-on me-2"></i>
+                                        Статуси видимості та наявності
+                                    </h6>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="is_active" name="is_active" 
+                                                       {% if is_edit_mode and color_data %}{% if color_data.is_active %}checked{% endif %}{% else %}checked{% endif %}>
+                                                <label class="form-check-label" for="is_active">
+                                                    <i class="fas fa-eye me-2"></i>
+                                                    <strong>Активний</strong> - показувати колір на сайті
+                                                </label>
+                                            </div>
+                                            <div class="form-text">Якщо вимкнено, колір повністю зникне з сайту</div>
+                                        </div>
+                                        
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="in_stock" name="in_stock" 
+                                                       {% if is_edit_mode and color_data %}{% if color_data.in_stock %}checked{% endif %}{% else %}checked{% endif %}>
+                                                <label class="form-check-label" for="in_stock">
+                                                    <i class="fas fa-box me-2"></i>
+                                                    <strong>В наявності</strong> - колір доступний для замовлення
+                                                </label>
+                                            </div>
+                                            <div class="form-text">Якщо вимкнено, колір буде показуватися з перекресленою іконкою та неактивною кнопкою</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     
                     <!-- Кількості та фото -->
                     <div class="row mb-4">
@@ -63,10 +105,6 @@
                                 <i class="fas fa-images me-2"></i>
                                 Фото для кожної кількості
                             </h6>
-                            <div class="alert alert-info">
-                                <i class="fas fa-info-circle me-2"></i>
-                                <strong>Порада:</strong> Додайте фото для кожної кількості квітів. Якщо фото для певної кількості не вказано, буде використовуватися основне фото кольору.
-                            </div>
                         </div>
                     </div>
                     
@@ -82,17 +120,66 @@
                                     </h6>
                                 </div>
                                 <div class="card-body">
-                                    <label for="quantity_{{ qty.quantity }}_image" class="form-label">URL зображення</label>
-                                    <input type="url" class="form-control quantity-image-input" 
-                                           id="quantity_{{ qty.quantity }}_image" 
-                                           name="quantity_{{ qty.quantity }}_image" 
-                                           placeholder="https://example.com/{{ qty.quantity }}_flowers.jpg"
-                                           data-quantity="{{ qty.quantity }}">
-                                    <div class="form-text">Фото для {{ qty.quantity }} квітів</div>
+                                    <!-- URL зображення -->
+                                    <label for="quantity_{{ qty.quantity }}_image" class="form-label">
+                                        <i class="fas fa-link me-1"></i>URL зображення
+                                    </label>
+                                    <div class="input-group mb-2">
+                                        <input type="text" class="form-control quantity-image-input" 
+                                               id="quantity_{{ qty.quantity }}_image" 
+                                               name="quantity_{{ qty.quantity }}_image" 
+                                               placeholder="https://example.com/{{ qty.quantity }}_flowers.jpg або оберіть з галереї"
+                                               data-quantity="{{ qty.quantity }}">
+                                        <button class="btn btn-outline-secondary" type="button" 
+                                                onclick="openMediaLibrary('quantity_{{ qty.quantity }}_image')"
+                                                title="Обрати з галереї">
+                                            <i class="fas fa-images"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Розділювач -->
+                                    <div class="text-center text-muted my-2" style="font-size: 0.85rem;">
+                                        <span style="background: white; padding: 0 10px;">АБО</span>
+                                        <hr style="margin-top: -12px; border-top: 1px solid #dee2e6;">
+                                    </div>
+                                    
+                                    <!-- Завантаження файлу -->
+                                    <label for="quantity_{{ qty.quantity }}_file" class="form-label">
+                                        <i class="fas fa-upload me-1"></i>Завантажити файл
+                                    </label>
+                                    <input type="file" class="form-control" 
+                                           id="quantity_{{ qty.quantity }}_file" 
+                                           name="quantity_{{ qty.quantity }}_file" 
+                                           accept="image/*"
+                                           onchange="previewUploadedImage(this, {{ qty.quantity }})">
+                                    <div class="form-text">Підтримуються: JPG, PNG, WebP (макс. 5MB)</div>
                                     
                                     <!-- Превью зображення -->
-                                    <div class="mt-2" id="preview_{{ qty.quantity }}" style="display: none;">
-                                        <img src="" alt="Превью" class="img-fluid rounded" style="max-height: 100px;">
+                                    <div class="mt-3" id="preview_{{ qty.quantity }}" style="display: none;">
+                                        <img src="" alt="Превью" class="img-fluid rounded" style="max-height: 120px; border: 2px solid #dee2e6;">
+                                    </div>
+                                    
+                                    <!-- Статуси для цієї кількості -->
+                                    <div class="mt-3 pt-3 border-top">
+                                        <small class="text-muted d-block mb-2"><i class="fas fa-toggle-on me-1"></i>Статуси {{ qty.quantity }} шт:</small>
+                                        <div class="form-check form-switch mb-2">
+                                            <input class="form-check-input" type="checkbox" 
+                                                   id="qty_{{ qty.quantity }}_active" 
+                                                   name="qty_{{ qty.quantity }}_active" 
+                                                   {% if qty.status_active %}checked{% endif %}>
+                                            <label class="form-check-label" for="qty_{{ qty.quantity }}_active">
+                                                <small><i class="fas fa-eye me-1"></i>Активний</small>
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" 
+                                                   id="qty_{{ qty.quantity }}_stock" 
+                                                   name="qty_{{ qty.quantity }}_stock" 
+                                                   {% if qty.status_stock %}checked{% endif %}>
+                                            <label class="form-check-label" for="qty_{{ qty.quantity }}_stock">
+                                                <small><i class="fas fa-box me-1"></i>В наявності</small>
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -124,16 +211,80 @@
 
 {% block extra_js %}
 <script>
+// Превью завантаженого файлу
+function previewUploadedImage(input, quantity) {
+    const file = input.files[0];
+    if (file) {
+        // Перевіряємо розмір (макс 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            alert('Файл занадто великий! Максимальний розмір: 5MB');
+            input.value = '';
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const previewDiv = document.getElementById('preview_' + quantity);
+            const img = previewDiv.querySelector('img');
+            img.src = e.target.result;
+            previewDiv.style.display = 'block';
+            
+            // Очищаємо URL поле якщо файл завантажено
+            const urlInput = document.getElementById('quantity_' + quantity + '_image');
+            if (urlInput) {
+                urlInput.value = '';
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// Функція для перемикання прозорого кольору
+function toggleTransparent() {
+    const checkbox = document.getElementById('is_transparent');
+    const hexInput = document.getElementById('hex_code');
+    const colorPreview = document.getElementById('color-preview');
+    
+    if (checkbox.checked) {
+        hexInput.value = 'transparent';
+        hexInput.readOnly = true;
+        hexInput.style.backgroundColor = '#e9ecef';
+        colorPreview.style.backgroundColor = 'transparent';
+        colorPreview.style.backgroundImage = 'linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc), linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc)';
+        colorPreview.style.backgroundSize = '10px 10px';
+        colorPreview.style.backgroundPosition = '0 0, 5px 5px';
+    } else {
+        hexInput.value = '';
+        hexInput.readOnly = false;
+        hexInput.style.backgroundColor = '';
+        colorPreview.style.backgroundColor = '#f0f0f0';
+        colorPreview.style.backgroundImage = 'none';
+    }
+}
+
 // Оновлення превью кольору при зміні hex коду
 document.getElementById('hex_code').addEventListener('input', function() {
     const colorPreview = document.getElementById('color-preview');
     const hexValue = this.value;
     
-    // Перевіряємо формат hex коду
+    // Перевіряємо формат hex коду або transparent
     if (/^#[0-9A-Fa-f]{6}$/.test(hexValue)) {
         colorPreview.style.backgroundColor = hexValue;
+        colorPreview.style.backgroundImage = 'none';
+        document.getElementById('is_transparent').checked = false;
+        this.readOnly = false;
+        this.style.backgroundColor = '';
+    } else if (hexValue.toLowerCase() === 'transparent') {
+        colorPreview.style.backgroundColor = 'transparent';
+        colorPreview.style.backgroundImage = 'linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc), linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc)';
+        colorPreview.style.backgroundSize = '10px 10px';
+        colorPreview.style.backgroundPosition = '0 0, 5px 5px';
+        document.getElementById('is_transparent').checked = true;
+        this.readOnly = true;
+        this.style.backgroundColor = '#e9ecef';
     } else {
         colorPreview.style.backgroundColor = '#f0f0f0';
+        colorPreview.style.backgroundImage = 'none';
     }
 });
 
@@ -157,37 +308,145 @@ document.querySelectorAll('.quantity-image-input').forEach(input => {
 document.getElementById('colorForm').addEventListener('submit', function(e) {
     const colorName = document.getElementById('color_name').value.trim();
     const hexCode = document.getElementById('hex_code').value.trim();
-    const imageUrl = document.getElementById('image_url').value.trim();
     
-    if (!colorName || !hexCode || !imageUrl) {
+    if (!colorName || !hexCode) {
         e.preventDefault();
-        alert('Будь ласка, заповніть всі обов\'язкові поля кольору!');
+        alert('Будь ласка, заповніть назву та hex-код кольору!');
         return;
     }
     
-    if (!/^#[0-9A-Fa-f]{6}$/.test(hexCode)) {
+    if (!/^(#[0-9A-Fa-f]{6}|transparent)$/.test(hexCode)) {
         e.preventDefault();
-        alert('Hex код повинен мати формат #rrggbb!');
+        alert('Hex код повинен мати формат #rrggbb або бути "transparent"!');
         return;
     }
     
-    // Перевіряємо чи є хоча б одне фото для кількості
+    // Перевіряємо чи є хоча б одне фото для кількості (URL або файл)
     const quantityInputs = document.querySelectorAll('.quantity-image-input');
+    const fileInputs = document.querySelectorAll('input[type="file"][accept="image/*"]');
     let hasAtLeastOneQuantityImage = false;
     
+    // Перевіряємо URL поля
     quantityInputs.forEach(input => {
         if (input.value.trim()) {
             hasAtLeastOneQuantityImage = true;
         }
     });
     
+    // Перевіряємо завантажені файли
     if (!hasAtLeastOneQuantityImage) {
-        if (!confirm('Ви не додали фото для жодної кількості. Продовжити з тільки основним фото?')) {
+        fileInputs.forEach(input => {
+            if (input.files && input.files.length > 0) {
+                hasAtLeastOneQuantityImage = true;
+            }
+        });
+    }
+    
+    if (!hasAtLeastOneQuantityImage) {
+        if (!confirm('Ви не додали фото для жодної кількості. Продовжити без фото?')) {
             e.preventDefault();
             return;
         }
     }
 });
+
+// ===== МЕДІА-БІБЛІОТЕКА =====
+let currentMediaTargetInput = null;
+
+async function openMediaLibrary(targetInputId) {
+    currentMediaTargetInput = targetInputId;
+    
+    try {
+        const response = await fetch('/admin-panel/api/media-files/');
+        const data = await response.json();
+        
+        if (data.files && data.files.length > 0) {
+            showMediaGalleryModal(data.files);
+        } else {
+            alert('Медіа-бібліотека порожня. Завантажте файли або вкажіть URL вручну.');
+        }
+    } catch (error) {
+        console.error('Помилка завантаження медіа-файлів:', error);
+        alert('Не вдалося завантажити медіа-бібліотеку');
+    }
+}
+
+function showMediaGalleryModal(files) {
+    // Створюємо модальне вікно
+    const modal = document.createElement('div');
+    modal.className = 'modal fade';
+    modal.id = 'mediaGalleryModal';
+    modal.setAttribute('tabindex', '-1');
+    
+    modal.innerHTML = `
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content" style="background: var(--card-bg); border: 1px solid var(--border-color);">
+                <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
+                    <h5 class="modal-title">
+                        <i class="fas fa-images me-2"></i>
+                        Медіа-бібліотека (${files.length} файлів)
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3" id="mediaGalleryGrid">
+                        ${files.map(file => `
+                            <div class="col-6 col-md-4 col-lg-3">
+                                <div class="card h-100 media-card" onclick="selectMediaFile('${file.url}')" style="cursor: pointer;">
+                                    <img src="${file.url}" class="card-img-top" alt="${file.name}" 
+                                         style="height: 150px; object-fit: cover;">
+                                    <div class="card-body p-2">
+                                        <small class="text-truncate d-block">${file.name}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
+    
+    // Видаляємо модальне вікно після закриття
+    modal.addEventListener('hidden.bs.modal', function () {
+        modal.remove();
+    });
+}
+
+function selectMediaFile(url) {
+    if (currentMediaTargetInput) {
+        const input = document.getElementById(currentMediaTargetInput);
+        if (input) {
+            input.value = url;
+            
+            // Показуємо превью
+            const quantity = currentMediaTargetInput.split('_')[1];
+            const previewDiv = document.getElementById(`preview_${quantity}`);
+            if (previewDiv) {
+                const img = previewDiv.querySelector('img');
+                img.src = url;
+                previewDiv.style.display = 'block';
+            }
+            
+            // Очищаємо файловий input якщо він є
+            const fileInput = document.getElementById(`quantity_${quantity}_file`);
+            if (fileInput) {
+                fileInput.value = '';
+            }
+        }
+    }
+    
+    // Закриваємо модальне вікно
+    const modal = bootstrap.Modal.getInstance(document.getElementById('mediaGalleryModal'));
+    if (modal) {
+        modal.hide();
+    }
+}
 
 // Автозаповнення hex коду при введенні назви
 document.getElementById('color_name').addEventListener('input', function() {
@@ -204,20 +463,45 @@ document.getElementById('color_name').addEventListener('input', function() {
         'білий': '#ffffff',
         'чорний': '#000000',
         'оранжевий': '#ffa500',
-        'коричневий': '#a52a2a'
+        'коричневий': '#a52a2a',
+        'прозорий': 'transparent'
     };
     
     if (colorMap[name]) {
         hexCodeInput.value = colorMap[name];
         // Оновлюємо превью
         const colorPreview = document.getElementById('color-preview');
-        colorPreview.style.backgroundColor = colorMap[name];
+        if (colorMap[name] === 'transparent') {
+            document.getElementById('is_transparent').checked = true;
+            hexCodeInput.readOnly = true;
+            hexCodeInput.style.backgroundColor = '#e9ecef';
+            colorPreview.style.backgroundColor = 'transparent';
+            colorPreview.style.backgroundImage = 'linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc), linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc)';
+            colorPreview.style.backgroundSize = '10px 10px';
+            colorPreview.style.backgroundPosition = '0 0, 5px 5px';
+        } else {
+            colorPreview.style.backgroundColor = colorMap[name];
+            colorPreview.style.backgroundImage = 'none';
+        }
     }
 });
 
 // Заповнення полів при редагуванні
 {% if is_edit_mode and color_data %}
 document.addEventListener('DOMContentLoaded', function() {
+    // Перевіряємо чи колір прозорий
+    const hexInput = document.getElementById('hex_code');
+    if (hexInput && hexInput.value.toLowerCase() === 'transparent') {
+        document.getElementById('is_transparent').checked = true;
+        hexInput.readOnly = true;
+        hexInput.style.backgroundColor = '#e9ecef';
+        const colorPreview = document.getElementById('color-preview');
+        colorPreview.style.backgroundColor = 'transparent';
+        colorPreview.style.backgroundImage = 'linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc), linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc)';
+        colorPreview.style.backgroundSize = '10px 10px';
+        colorPreview.style.backgroundPosition = '0 0, 5px 5px';
+    }
+    
     // Заповнюємо поля кількостей з існуючими даними
     {% if color_data.quantity_images %}
         {% for qty, img_url in color_data.quantity_images.items %}

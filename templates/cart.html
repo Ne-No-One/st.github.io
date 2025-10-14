@@ -7,8 +7,32 @@
     <meta name="description" content="Кошик покупок - оформити замовлення">
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/clear-cart-modal.css' %}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+    </style>
 </head>
 <body>
 {% if error %}
@@ -32,14 +56,20 @@
 <header class="header">
     <nav class="navbar">
         <div class="nav-brand">
-            <h1><a href="/" style="text-decoration: none; color: inherit;">{% if site_settings %}{{ site_settings.site_title }}{% else %}Квітковий магазин{% endif %}</a></h1>
+            <a href="/" style="text-decoration: none; color: inherit;">
+                {% if site_settings.site_logo %}
+                    <img src="{{ site_settings.site_logo }}" alt="{{ site_settings.site_title }}" class="site-logo">
+                {% else %}
+                    <h1>{% if site_settings %}{{ site_settings.site_title }}{% else %}Квітковий магазин{% endif %}</h1>
+                {% endif %}
+            </a>
             <button class="b2b-button">{{ site_settings.b2b_button_text|default:"B2B" }}</button>
         </div>
         
         <!-- Прогрес бар в навбарі -->
         <div class="navbar-progress-container">
             <div class="progress-info">
-                <span class="progress-label">Прогрес до безкоштовної доставки</span>
+                <span class="progress-label" id="progress-label">Прогрес до бонусу</span>
                 <span class="progress-amount" id="progress-text">0₴ / 1000₴</span>
             </div>
             <div class="progress-bar">
@@ -56,10 +86,10 @@
     </nav>
 </header>
 
-<!-- Прогрес бар до безкоштовної доставки (тільки на мобільних) -->
-<div class="progress-container">
+<!-- Мобільний прогрес бар -->
+<div class="progress-container" id="mobile-progress-container">
     <div class="progress-info">
-        <span class="progress-label">Прогрес до безкоштовної доставки</span>
+        <span class="progress-label" id="progress-label-mobile">Прогрес до бонусу</span>
         <span class="progress-amount" id="progress-text-mobile">0₴ / 1000₴</span>
     </div>
     <div class="progress-bar">
@@ -157,7 +187,26 @@
                     <!-- ПІДСЕКЦІЯ 1.2.2: КОНТАКТНА ІНФОРМАЦІЯ -->
                     <!-- ======================================== -->
                     <div class="form-section">
-                        <h3><i class="fas fa-user"></i> Контактна інформація</h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h3 style="margin: 0;"><i class="fas fa-user"></i> Контактна інформація</h3>
+                            <button type="button" onclick="fillTestData()" style="
+                                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                color: white;
+                                border: none;
+                                padding: 8px 16px;
+                                border-radius: 8px;
+                                cursor: pointer;
+                                font-size: 0.9rem;
+                                font-weight: bold;
+                                display: flex;
+                                align-items: center;
+                                gap: 8px;
+                                transition: transform 0.2s;
+                            " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                                <i class="fas fa-flask"></i>
+                                Тестові дані
+                            </button>
+                        </div>
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="firstName">Ім'я *</label>
@@ -193,15 +242,9 @@
                             <label for="address">Адреса *</label>
                             <input type="text" id="address" name="address" required placeholder="Вулиця, будинок, квартира">
                         </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="postalCode">Поштовий індекс</label>
-                                <input type="text" id="postalCode" name="postalCode" placeholder="01001">
-                            </div>
-                            <div class="form-group">
-                                <label for="deliveryDate">Дата доставки</label>
-                                <input type="date" id="deliveryDate" name="deliveryDate">
-                            </div>
+                        <div class="form-group">
+                            <label for="deliveryDate">Дата доставки</label>
+                            <input type="date" id="deliveryDate" name="deliveryDate">
                         </div>
                         <div class="form-group">
                             <label for="deliveryTime">Час доставки</label>
@@ -242,11 +285,6 @@
                             </div>
                             
                             <div class="form-group">
-                                <label for="giftMessage">Повідомлення до подарунка</label>
-                                <textarea id="giftMessage" name="giftMessage" rows="3" placeholder="Напишіть ваше побажання..."></textarea>
-                            </div>
-                            
-                            <div class="form-group">
                                 <label for="giftOccasion">Привід для подарунка</label>
                                 <select id="giftOccasion" name="giftOccasion">
                                     <option value="">Оберіть привід</option>
@@ -275,38 +313,7 @@
                     </div>
 
                     <!-- ======================================== -->
-                    <!-- ПІДСЕКЦІЯ 1.2.6: ОСОБЛИВІ ВИМОГИ ДО КВІТІВ -->
-                    <!-- ======================================== -->
-                    <div class="form-section">
-                        <h3><i class="fas fa-seedling"></i> Особливі вимоги до квітів</h3>
-                        <div class="form-group">
-                            <label for="flowerPreferences">Побажання щодо квітів</label>
-                            <textarea id="flowerPreferences" name="flowerPreferences" rows="2" placeholder="Наприклад: тільки свіжі квіти, певні кольори, без певних квітів..."></textarea>
-                        </div>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="allergies">Алергії отримувача</label>
-                                <input type="text" id="allergies" name="allergies" placeholder="Вкажіть алергії, якщо є">
-                            </div>
-                            <div class="form-group">
-                                <label for="vaseNeeded">Потрібна ваза</label>
-                                <select id="vaseNeeded" name="vaseNeeded">
-                                    <option value="yes">Так, з вазою</option>
-                                    <option value="no">Ні, без вази</option>
-                                    <option value="optional">На вибір</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="specialInstructions">Спеціальні інструкції</label>
-                            <textarea id="specialInstructions" name="specialInstructions" rows="2" placeholder="Будь-які особливі інструкції для кур'єра..."></textarea>
-                        </div>
-                    </div>
-
-                    <!-- ======================================== -->
-                    <!-- ПІДСЕКЦІЯ 1.2.7: ДОДАТКОВІ ПОБАЖАННЯ -->
+                    <!-- ПІДСЕКЦІЯ 1.2.6: ДОДАТКОВІ ПОБАЖАННЯ -->
                     <!-- ======================================== -->
                     <div class="form-section">
                         <h3><i class="fas fa-comment"></i> Додаткові побажання</h3>
@@ -355,29 +362,49 @@
                         </div>
                         
                         <div class="monobank-payment-buttons">
-                            <!-- Кнопка оплати кошика -->
-                            <button class="mono-checkout-btn large standard cart-mono-btn" id="cart-mono-btn" onclick="processCartMonoPayment()">
-                                <span class="mono-checkout-text">Оформити через</span>
-                                <span class="mono-checkout-logo">mono checkout</span>
+                            <!-- Кнопка ТЕСТОВОЇ оплати кошика -->
+                            <button class="mono-checkout-btn large standard cart-mono-btn" id="cart-mono-btn" onclick="processTestPayment()" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                                <span class="mono-checkout-text">🧪 Тестова оплата</span>
                             </button>
                             
-                            <!-- Додаткові кнопки для різних способів оплати -->
+                            <!-- Реальна кнопка Monobank (закоментована) -->
+                            <!-- <button class="mono-checkout-btn large standard cart-mono-btn" id="cart-mono-btn-real" onclick="processCartMonoPayment()">
+                                <span class="mono-checkout-text">Оформити через</span>
+                                <span class="mono-checkout-logo">mono checkout</span>
+                            </button> -->
+                            
+                            <!-- Додаткові кнопки для різних способів оплати (ТЕСТОВІ) -->
                             <div class="monobank-additional-buttons">
-                                <button class="mono-checkout-btn medium white" id="mono-card-btn" onclick="processMonoCardPayment()">
+                                <button class="mono-checkout-btn medium white" id="mono-card-btn" onclick="processTestCardPayment()" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                                    <span class="mono-checkout-text">🧪 Тест: Картка</span>
+                                </button>
+                                
+                                <button class="mono-checkout-btn medium white" id="mono-apple-pay-btn" onclick="processTestApplePay()" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">
+                                    <span class="mono-checkout-text">🧪 Тест: Apple Pay</span>
+                                </button>
+                                
+                                <button class="mono-checkout-btn medium white" id="mono-google-pay-btn" onclick="processTestGooglePay()" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                                    <span class="mono-checkout-text">🧪 Тест: Google Pay</span>
+                                </button>
+                            </div>
+                            
+                            <!-- Реальні кнопки Monobank (закоментовані) -->
+                            <!-- <div class="monobank-additional-buttons">
+                                <button class="mono-checkout-btn medium white" id="mono-card-btn-real" onclick="processMonoCardPayment()">
                                     <span class="mono-checkout-text">Оплатити карткою</span>
                                     <span class="mono-checkout-logo">mono</span>
                                 </button>
                                 
-                                <button class="mono-checkout-btn medium white" id="mono-apple-pay-btn" onclick="processMonoApplePay()">
+                                <button class="mono-checkout-btn medium white" id="mono-apple-pay-btn-real" onclick="processMonoApplePay()">
                                     <span class="mono-checkout-text">Apple Pay</span>
                                     <span class="mono-checkout-logo">mono</span>
                                 </button>
                                 
-                                <button class="mono-checkout-btn medium white" id="mono-google-pay-btn" onclick="processMonoGooglePay()">
+                                <button class="mono-checkout-btn medium white" id="mono-google-pay-btn-real" onclick="processMonoGooglePay()">
                                     <span class="mono-checkout-text">Google Pay</span>
                                     <span class="mono-checkout-logo">mono</span>
                                 </button>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                     
@@ -411,10 +438,16 @@
                                 <input type="text" id="card-holder" name="card-holder" placeholder="Іван Іванович Іванов">
                             </div>
                             
-                            <button type="button" class="btn-primary card-pay-btn" id="card-pay-btn" onclick="processCardPayment()">
+                            <button type="button" class="btn-primary card-pay-btn" id="card-pay-btn" onclick="processTestPayment()" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                                <i class="fas fa-flask"></i>
+                                🧪 Тестова оплата карткою
+                            </button>
+                            
+                            <!-- Реальна кнопка оплати (закоментована) -->
+                            <!-- <button type="button" class="btn-primary card-pay-btn" id="card-pay-btn-real" onclick="processCardPayment()">
                                 <i class="fas fa-credit-card"></i>
                                 Оплатити карткою
-                            </button>
+                            </button> -->
                         </div>
                     </div>
                 </div>
@@ -452,22 +485,6 @@
                             <i class="fas fa-check"></i>
                             Підтвердити замовлення
                         </button>
-                    </div>
-
-                    <!-- Додаткова інформація -->
-                    <div class="cart-info">
-                        <div class="info-item">
-                            <i class="fas fa-truck"></i>
-                            <span>Безкоштовна доставка від 1000₴</span>
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-shield-alt"></i>
-                            <span>Безпечна оплата</span>
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-undo"></i>
-                            <span>Повернення протягом 14 днів</span>
-                        </div>
                     </div>
 
                     <!-- Кнопка підтвердження замовлення -->
@@ -539,6 +556,8 @@
 {% endif %}
 
 <script src="{% static 'js/main.js' %}"></script>
+<script src="{% static 'js/progress-bar.js' %}"></script>
+<script src="{% static 'js/geolocation.js' %}"></script>
 <script src="{% static 'js/cart.js' %}"></script>
 <script src="{% static 'js/mono-checkout.js' %}"></script>
 
@@ -559,7 +578,6 @@
             // Очищаємо поля подарункової інформації
             document.getElementById('recipientName').value = '';
             document.getElementById('recipientPhone').value = '';
-            document.getElementById('giftMessage').value = '';
             document.getElementById('giftOccasion').value = '';
             document.getElementById('giftDeliveryType').value = 'surprise';
         }
@@ -636,7 +654,7 @@
         
         
         if (!isValid) {
-            alert('Будь ласка, заповніть всі обов\'язкові поля');
+            showNotification('Будь ласка, заповніть всі обов\'язкові поля', 'warning');
             if (firstErrorField) {
                 firstErrorField.focus();
                 firstErrorField.scrollIntoView({ behavior: 'smooth' });
@@ -733,10 +751,284 @@
         console.log('✅ Ініціалізація обробки способів оплати завершена');
     });
     
-    // Обробка оплати кошика через Monobank
+    // Універсальна функція для показу повідомлень
+    function showNotification(message, type = 'info') {
+        const colors = {
+            success: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            error: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+            warning: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
+            info: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)'
+        };
+        
+        const icons = {
+            success: '✅',
+            error: '❌',
+            warning: '⚠️',
+            info: 'ℹ️'
+        };
+        
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${colors[type] || colors.info};
+            color: ${type === 'warning' ? '#333' : 'white'};
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            z-index: 9999;
+            font-weight: bold;
+            animation: slideIn 0.3s ease-out;
+            max-width: 400px;
+            word-wrap: break-word;
+        `;
+        notification.innerHTML = `${icons[type] || icons.info} ${message}`;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease-in';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+    
+    // Заповнення форми тестовими даними
+    function fillTestData() {
+        console.log('🧪 Заповнення тестовими даними...');
+        
+        // Контактна інформація
+        document.getElementById('firstName').value = 'Іван';
+        document.getElementById('lastName').value = 'Петренко';
+        document.getElementById('phone').value = '+380 (67) 123-45-67';
+        document.getElementById('email').value = 'test@example.com';
+        
+        // Адреса доставки
+        document.getElementById('city').value = 'Київ';
+        document.getElementById('address').value = 'вул. Хрещатик, 1, кв. 10';
+        
+        // Дата і час доставки
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const dateStr = tomorrow.toISOString().split('T')[0];
+        document.getElementById('deliveryDate').value = dateStr;
+        document.getElementById('deliveryTime').value = '12:00-15:00';
+        
+        // Коментар
+        document.getElementById('notes').value = 'Тестове замовлення для перевірки системи оплати';
+        
+        console.log('✅ Форма заповнена тестовими даними');
+        
+        // Показуємо повідомлення
+        showNotification('Форма заповнена тестовими даними', 'success');
+    }
+    
+    // Допоміжна функція для отримання даних кошика
+    function getCartDataForPayment() {
+        const cartFromStorage = localStorage.getItem('flowerShopCart');
+        console.log('📦 RAW дані з localStorage (flowerShopCart):', cartFromStorage);
+        
+        let cartData;
+        if (cartFromStorage) {
+            cartData = JSON.parse(cartFromStorage);
+        } else {
+            cartData = { items: [], total: 0, count: 0, itemsTotal: 0 };
+        }
+        
+        console.log('🛒 Дані кошика:', cartData);
+        console.log('📦 Кількість товарів:', cartData.items ? cartData.items.length : 0);
+        console.log('💰 Загальна сума:', cartData.total);
+        console.log('💵 Сума товарів (без доставки):', cartData.itemsTotal);
+        console.log('🔢 Лічильник:', cartData.count);
+        
+        return cartData;
+    }
+    
+    // Збереження даних замовлення перед оплатою
+    async function saveOrderBeforePayment(orderId, cartData) {
+        try {
+            // Визначаємо спосіб оплати
+            const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || 'online';
+            
+            // Збираємо дані форми
+            const orderData = {
+                order_id: orderId,
+                customer: {
+                    firstName: document.getElementById('firstName')?.value || '',
+                    lastName: document.getElementById('lastName')?.value || '',
+                    phone: document.getElementById('phone')?.value || '',
+                    email: document.getElementById('email')?.value || ''
+                },
+                delivery: {
+                    city: document.getElementById('city')?.value || '',
+                    address: document.getElementById('address')?.value || '',
+                    date: document.getElementById('deliveryDate')?.value || '',
+                    time: document.getElementById('deliveryTime')?.value || '',
+                    postalCode: ''
+                },
+                payment: paymentMethod,
+                notes: document.getElementById('notes')?.value || '',
+                subscribeNews: false,
+                items: cartData.items,
+                total: cartData.total
+            };
+            
+            console.log('💾 Збереження замовлення:', orderData);
+            
+            // Відправляємо на сервер
+            const response = await fetch('/api/orders/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(orderData)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                console.log('✅ Замовлення збережено:', result);
+                return true;
+            } else {
+                console.error('❌ Помилка збереження замовлення:', result.error);
+                return false;
+            }
+            
+        } catch (error) {
+            console.error('❌ Помилка збереження замовлення:', error);
+            return false;
+        }
+    }
+    
+    // Функція для отримання CSRF токену
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    // ТЕСТОВА оплата з кошика (загальна симуляція)
+    async function processTestPayment() {
+        try {
+            const cartData = getCartDataForPayment();
+            
+            if (!cartData.items || cartData.items.length === 0) {
+                console.error('❌ Кошик порожній!');
+                showNotification('Кошик порожній! Додайте товари перед оплатою.', 'error');
+                return;
+            }
+            
+            const orderId = `ORDER-${Date.now()}`;
+            let amount = Math.round(cartData.itemsTotal || cartData.total || 0);
+            
+            // Зберігаємо замовлення перед оплатою
+            await saveOrderBeforePayment(orderId, cartData);
+            
+            const url = `/payment/test/simulation/?order_id=${orderId}&amount=${amount}&items=${cartData.count}`;
+            console.log('🔗 Перенаправлення на симуляцію:', url);
+            
+            setTimeout(() => window.location.href = url, 100);
+            
+        } catch (error) {
+            console.error('❌ Помилка:', error);
+            showNotification('Помилка: ' + error.message, 'error');
+        }
+    }
+    
+    // ТЕСТОВА оплата карткою
+    async function processTestCardPayment() {
+        try {
+            const cartData = getCartDataForPayment();
+            
+            if (!cartData.items || cartData.items.length === 0) {
+                showNotification('Кошик порожній! Додайте товари перед оплатою.', 'error');
+                return;
+            }
+            
+            const orderId = `ORDER-${Date.now()}`;
+            let amount = Math.round(cartData.itemsTotal || cartData.total || 0);
+            
+            // Зберігаємо замовлення перед оплатою
+            await saveOrderBeforePayment(orderId, cartData);
+            
+            const url = `/payment/test/card/?order_id=${orderId}&amount=${amount}&items=${cartData.count}`;
+            console.log('💳 Перенаправлення на оплату карткою:', url);
+            
+            window.location.href = url;
+            
+        } catch (error) {
+            console.error('❌ Помилка:', error);
+            showNotification('Помилка: ' + error.message, 'error');
+        }
+    }
+    
+    // ТЕСТОВА оплата Apple Pay
+    async function processTestApplePay() {
+        try {
+            const cartData = getCartDataForPayment();
+            
+            if (!cartData.items || cartData.items.length === 0) {
+                showNotification('Кошик порожній! Додайте товари перед оплатою.', 'error');
+                return;
+            }
+            
+            const orderId = `ORDER-${Date.now()}`;
+            let amount = Math.round(cartData.itemsTotal || cartData.total || 0);
+            
+            // Зберігаємо замовлення перед оплатою
+            await saveOrderBeforePayment(orderId, cartData);
+            
+            const url = `/payment/test/apple-pay/?order_id=${orderId}&amount=${amount}&items=${cartData.count}`;
+            console.log('🍎 Перенаправлення на Apple Pay:', url);
+            
+            window.location.href = url;
+            
+        } catch (error) {
+            console.error('❌ Помилка:', error);
+            showNotification('Помилка: ' + error.message, 'error');
+        }
+    }
+    
+    // ТЕСТОВА оплата Google Pay
+    async function processTestGooglePay() {
+        try {
+            const cartData = getCartDataForPayment();
+            
+            if (!cartData.items || cartData.items.length === 0) {
+                showNotification('Кошик порожній! Додайте товари перед оплатою.', 'error');
+                return;
+            }
+            
+            const orderId = `ORDER-${Date.now()}`;
+            let amount = Math.round(cartData.itemsTotal || cartData.total || 0);
+            
+            // Зберігаємо замовлення перед оплатою
+            await saveOrderBeforePayment(orderId, cartData);
+            
+            const url = `/payment/test/google-pay/?order_id=${orderId}&amount=${amount}&items=${cartData.count}`;
+            console.log('🔍 Перенаправлення на Google Pay:', url);
+            
+            window.location.href = url;
+            
+        } catch (error) {
+            console.error('❌ Помилка:', error);
+            showNotification('Помилка: ' + error.message, 'error');
+        }
+    }
+    
+    // Обробка оплати кошика через Monobank (РЕАЛЬНА - закоментована)
     async function processCartMonoPayment() {
         try {
-            const button = document.getElementById('cart-mono-btn');
+            const button = document.getElementById('cart-mono-btn-real');
             if (button) {
                 button.classList.add('loading');
                 button.disabled = true;
@@ -781,9 +1073,9 @@
             }
         } catch (error) {
             console.error('Помилка оплати:', error);
-            alert('Помилка: ' + error.message);
+            showNotification('Помилка: ' + error.message, 'error');
         } finally {
-            const button = document.getElementById('cart-mono-btn');
+            const button = document.getElementById('cart-mono-btn-real');
             if (button) {
                 button.classList.remove('loading');
                 button.disabled = false;
@@ -840,7 +1132,7 @@
             }
         } catch (error) {
             console.error('Помилка оплати карткою:', error);
-            alert('Помилка: ' + error.message);
+            showNotification('Помилка: ' + error.message, 'error');
         } finally {
             const button = document.getElementById('mono-card-btn');
             if (button) {
@@ -899,7 +1191,7 @@
             }
         } catch (error) {
             console.error('Помилка Apple Pay:', error);
-            alert('Помилка: ' + error.message);
+            showNotification('Помилка: ' + error.message, 'error');
         } finally {
             const button = document.getElementById('mono-apple-pay-btn');
             if (button) {
@@ -958,7 +1250,7 @@
             }
         } catch (error) {
             console.error('Помилка Google Pay:', error);
-            alert('Помилка: ' + error.message);
+            showNotification('Помилка: ' + error.message, 'error');
         } finally {
             const button = document.getElementById('mono-google-pay-btn');
             if (button) {
@@ -1104,7 +1396,7 @@
             
         } catch (error) {
             console.error('Помилка оплати карткою:', error);
-            alert('Помилка: ' + error.message);
+            showNotification('Помилка: ' + error.message, 'error');
         } finally {
             const button = document.getElementById('card-pay-btn');
             if (button) {
@@ -1129,6 +1421,12 @@
         }
         return cookieValue;
     }
+    
+    // Глобальні налаштування доставки з сервера
+    window.deliverySettings = {
+        cost: {{ site_settings.delivery_cost|default:50 }},
+        freeThreshold: {{ site_settings.free_delivery_threshold|default:1000 }}
+    };
 
 </script>
 </body>

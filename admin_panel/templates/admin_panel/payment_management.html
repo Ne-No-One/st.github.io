@@ -4,288 +4,261 @@
 {% block page_title %}Управління платежами{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <!-- Статистика платежів -->
-    <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card bg-primary text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h4 class="card-title">{{ online_orders_count }}</h4>
-                        <p class="card-text">Всього онлайн замовлень</p>
-                    </div>
-                    <div class="align-self-center">
-                        <i class="fas fa-credit-card fa-2x"></i>
-                    </div>
-                </div>
-            </div>
+<div class="admin-form-container">
+    
+    <!-- Статистика -->
+    <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+        <div class="stat-card-modern">
+            <i class="fas fa-credit-card stat-icon text-primary"></i>
+            <div class="stat-label">Всього онлайн</div>
+            <div class="stat-value">{{ online_orders_count }}</div>
+        </div>
+        
+        <div class="stat-card-modern">
+            <i class="fas fa-check-circle stat-icon text-success"></i>
+            <div class="stat-label">Оплачено</div>
+            <div class="stat-value">{{ paid_orders }}</div>
+        </div>
+        
+        <div class="stat-card-modern">
+            <i class="fas fa-clock stat-icon text-warning"></i>
+            <div class="stat-label">В обробці</div>
+            <div class="stat-value">{{ pending_orders }}</div>
+        </div>
+        
+        <div class="stat-card-modern">
+            <i class="fas fa-times-circle stat-icon text-danger"></i>
+            <div class="stat-label">Невдалі</div>
+            <div class="stat-value">{{ failed_orders }}</div>
         </div>
     </div>
     
-    <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card bg-success text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h4 class="card-title">{{ paid_orders }}</h4>
-                        <p class="card-text">Оплачено</p>
-                    </div>
-                    <div class="align-self-center">
-                        <i class="fas fa-check-circle fa-2x"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card bg-warning text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h4 class="card-title">{{ pending_orders }}</h4>
-                        <p class="card-text">В обробці</p>
-                    </div>
-                    <div class="align-self-center">
-                        <i class="fas fa-clock fa-2x"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card bg-danger text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h4 class="card-title">{{ failed_orders }}</h4>
-                        <p class="card-text">Невдалі</p>
-                    </div>
-                    <div class="align-self-center">
-                        <i class="fas fa-times-circle fa-2x"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">
+    <!-- Загальна сума -->
+    <div class="admin-form-section" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(16, 185, 129, 0.02) 100%);">
+        <div class="d-flex align-items-center justify-content-between">
+            <div>
+                <div class="stat-label mb-2">
                     <i class="fas fa-chart-line me-2"></i>
                     Загальна сума оплачених замовлень
-                </h5>
-                <h2 class="text-success">{{ total_amount|floatformat:2 }} {{ currency }}</h2>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Фільтри -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h6 class="mb-0">
-                    <i class="fas fa-filter me-2"></i>
-                    Фільтри
-                </h6>
-            </div>
-            <div class="card-body">
-                <form method="GET" class="row g-3">
-                    <div class="col-md-3">
-                        <label for="status_filter" class="form-label">Статус платежу</label>
-                        <select class="form-select" id="status_filter" name="status">
-                            <option value="">Всі статуси</option>
-                            <option value="success">Оплачено</option>
-                            <option value="pending">В обробці</option>
-                            <option value="failed">Невдалі</option>
-                            <option value="cancelled">Скасовано</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="date_from" class="form-label">Дата від</label>
-                        <input type="date" class="form-control" id="date_from" name="date_from">
-                    </div>
-                    <div class="col-md-3">
-                        <label for="date_to" class="form-label">Дата до</label>
-                        <input type="date" class="form-control" id="date_to" name="date_to">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">&nbsp;</label>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-search me-1"></i>
-                                Фільтрувати
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Список платежів -->
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h6 class="mb-0">
-                    <i class="fas fa-list me-2"></i>
-                    Список платежів
-                </h6>
-                <a href="{% url 'admin_panel:payment_reports' %}" class="btn btn-outline-info btn-sm">
-                    <i class="fas fa-chart-bar me-1"></i>
-                    Звіти
-                </a>
-            </div>
-            <div class="card-body">
-                {% if orders %}
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Номер замовлення</th>
-                                <th>Клієнт</th>
-                                <th>Сума</th>
-                                <th>Статус платежу</th>
-                                <th>Дата замовлення</th>
-                                <th>ID рахунку</th>
-                                <th>Дії</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for order in orders %}
-                            <tr>
-                                <td>
-                                    <strong>{{ order.order_number }}</strong>
-                                </td>
-                                <td>
-                                    {{ order.customer_name }}<br>
-                                    <small class="text-muted">{{ order.customer_phone }}</small>
-                                </td>
-                                <td>
-                                    <strong>{{ order.total_amount }} {{ order.currency }}</strong>
-                                </td>
-                                <td>
-                                    {% if order.payment_status == 'success' %}
-                                        <span class="badge bg-success">
-                                            <i class="fas fa-check me-1"></i>
-                                            Оплачено
-                                        </span>
-                                    {% elif order.payment_status == 'pending' %}
-                                        <span class="badge bg-warning">
-                                            <i class="fas fa-clock me-1"></i>
-                                            В обробці
-                                        </span>
-                                    {% elif order.payment_status == 'failed' %}
-                                        <span class="badge bg-danger">
-                                            <i class="fas fa-times me-1"></i>
-                                            Невдалий
-                                        </span>
-                                    {% elif order.payment_status == 'cancelled' %}
-                                        <span class="badge bg-secondary">
-                                            <i class="fas fa-ban me-1"></i>
-                                            Скасовано
-                                        </span>
-                                    {% else %}
-                                        <span class="badge bg-light text-dark">
-                                            <i class="fas fa-question me-1"></i>
-                                            Невідомо
-                                        </span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {{ order.order_date|slice:":10" }}<br>
-                                    <small class="text-muted">{{ order.order_date|slice:"11:16" }}</small>
-                                </td>
-                                <td>
-                                    {% if order.invoice_id %}
-                                        <code>{{ order.invoice_id|slice:":8" }}...</code>
-                                    {% else %}
-                                        <span class="text-muted">-</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        <a href="{% url 'admin_panel:payment_detail' order.id %}" 
-                                           class="btn btn-outline-primary btn-sm" 
-                                           title="Деталі платежу">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        
-                                        {% if order.payment_status == 'success' %}
-                                        <button class="btn btn-outline-success btn-sm" 
-                                                onclick="downloadReceipt('{{ order.id }}')" 
-                                                title="Завантажити квитанцію">
-                                            <i class="fas fa-download"></i>
-                                        </button>
-                                        <button class="btn btn-outline-warning btn-sm" 
-                                                onclick="showRefundModal('{{ order.id }}', '{{ order.total_amount }}')" 
-                                                title="Повернути кошти">
-                                            <i class="fas fa-undo"></i>
-                                        </button>
-                                        {% endif %}
-                                        
-                                        {% if order.payment_status == 'pending' %}
-                                        <button class="btn btn-outline-info btn-sm" 
-                                                onclick="checkPaymentStatus('{{ order.id }}')" 
-                                                title="Перевірити статус">
-                                            <i class="fas fa-sync"></i>
-                                        </button>
-                                        <button class="btn btn-outline-danger btn-sm" 
-                                                onclick="cancelPayment('{{ order.id }}')" 
-                                                title="Скасувати платіж">
-                                            <i class="fas fa-ban"></i>
-                                        </button>
-                                        {% endif %}
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
                 </div>
-                {% else %}
-                <div class="text-center py-5">
-                    <i class="fas fa-credit-card fa-3x text-muted mb-3"></i>
-                    <h5 class="text-muted">Платежі не знайдено</h5>
-                    <p class="text-muted">Поки що немає замовлень з онлайн оплатою</p>
+                <div style="font-size: 2.5rem; font-weight: 700; color: var(--admin-success);">
+                    {{ total_amount|floatformat:2 }} {{ currency }}
                 </div>
-                {% endif %}
             </div>
+            <i class="fas fa-dollar-sign" style="font-size: 4rem; opacity: 0.1; color: var(--admin-success);"></i>
         </div>
+    </div>
+    
+    <!-- Фільтри -->
+    <div class="admin-form-section">
+        <h6 class="admin-form-section-header" style="font-size: var(--admin-font-md);">
+            <i class="fas fa-filter"></i>
+            Фільтри
+        </h6>
+        
+        <form method="GET" class="row g-3">
+            <div class="col-md-3">
+                <label for="status_filter" class="form-label">
+                    <i class="fas fa-info-circle"></i>
+                    Статус платежу
+                </label>
+                <select class="form-select" id="status_filter" name="status">
+                    <option value="">Всі статуси</option>
+                    <option value="success">Оплачено</option>
+                    <option value="pending">В обробці</option>
+                    <option value="failed">Невдалі</option>
+                    <option value="cancelled">Скасовано</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="date_from" class="form-label">
+                    <i class="fas fa-calendar"></i>
+                    Дата від
+                </label>
+                <input type="date" class="form-control" id="date_from" name="date_from">
+            </div>
+            <div class="col-md-3">
+                <label for="date_to" class="form-label">
+                    <i class="fas fa-calendar"></i>
+                    Дата до
+                </label>
+                <input type="date" class="form-control" id="date_to" name="date_to">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">&nbsp;</label>
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search me-1"></i>
+                    Фільтрувати
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Список платежів -->
+    <div class="admin-form-section">
+        <div class="section-header compact">
+            <h5 class="section-title compact">
+                <i class="fas fa-list"></i>
+                Платежі
+            </h5>
+            <a href="{% url 'admin_panel:payment_reports' %}" class="btn btn-info btn-sm">
+                <i class="fas fa-chart-bar"></i>
+                <span class="d-none d-md-inline ms-1">Звіти</span>
+            </a>
+        </div>
+        
+        {% if orders %}
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag me-1"></i>Замовлення</th>
+                        <th><i class="fas fa-user me-1"></i>Клієнт</th>
+                        <th><i class="fas fa-dollar-sign me-1"></i>Сума</th>
+                        <th><i class="fas fa-info-circle me-1"></i>Статус</th>
+                        <th><i class="fas fa-calendar me-1"></i>Дата</th>
+                        <th><i class="fas fa-file-invoice me-1"></i>ID рахунку</th>
+                        <th><i class="fas fa-cog me-1"></i>Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>
+                            <strong style="color: var(--admin-primary);">{{ order.order_number }}</strong>
+                        </td>
+                        <td>
+                            <strong style="color: var(--admin-text-primary);">{{ order.customer_name }}</strong><br>
+                            <small class="text-muted">{{ order.customer_phone }}</small>
+                        </td>
+                        <td>
+                            <strong style="color: var(--admin-success); font-size: 1.1rem;">{{ order.total_amount }} {{ order.currency }}</strong>
+                        </td>
+                        <td>
+                            {% if order.payment_status == 'success' %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check"></i>
+                                    Оплачено
+                                </span>
+                            {% elif order.payment_status == 'pending' %}
+                                <span class="badge bg-warning text-dark">
+                                    <i class="fas fa-clock"></i>
+                                    В обробці
+                                </span>
+                            {% elif order.payment_status == 'failed' %}
+                                <span class="badge bg-danger">
+                                    <i class="fas fa-times"></i>
+                                    Невдалий
+                                </span>
+                            {% elif order.payment_status == 'cancelled' %}
+                                <span class="badge bg-secondary">
+                                    <i class="fas fa-ban"></i>
+                                    Скасовано
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary">
+                                    <i class="fas fa-question"></i>
+                                    Невідомо
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <strong style="color: var(--admin-text-primary);">{{ order.order_date|slice:":10" }}</strong><br>
+                            <small class="text-muted">{{ order.order_date|slice:"11:16" }}</small>
+                        </td>
+                        <td>
+                            {% if order.invoice_id %}
+                                <code style="color: var(--admin-info);">{{ order.invoice_id|slice:":8" }}...</code>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'admin_panel:payment_detail' order.id %}" 
+                                   class="btn btn-sm btn-primary" 
+                                   title="Деталі">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                
+                                {% if order.payment_status == 'success' %}
+                                <button class="btn btn-sm btn-success" 
+                                        onclick="downloadReceipt('{{ order.id }}')" 
+                                        title="Квитанція">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" 
+                                        onclick="showRefundModal('{{ order.id }}', '{{ order.total_amount }}')" 
+                                        title="Повернути">
+                                    <i class="fas fa-undo"></i>
+                                </button>
+                                {% endif %}
+                                
+                                {% if order.payment_status == 'pending' %}
+                                <button class="btn btn-sm btn-info" 
+                                        onclick="checkPaymentStatus('{{ order.id }}')" 
+                                        title="Перевірити">
+                                    <i class="fas fa-sync"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" 
+                                        onclick="cancelPayment('{{ order.id }}')" 
+                                        title="Скасувати">
+                                    <i class="fas fa-ban"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-credit-card"></i>
+                <p>Платежі не знайдено</p>
+                <small>Поки що немає замовлень з онлайн оплатою</small>
+            </div>
+        {% endif %}
     </div>
 </div>
 
-<!-- Модальне вікно для повернення коштів -->
+<!-- Модальне вікно повернення -->
 <div class="modal fade" id="refundModal" tabindex="-1">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Повернення коштів</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal-content" style="background: var(--admin-bg-secondary); border: 1px solid var(--admin-border);">
+            <div class="modal-header" style="border-bottom: 1px solid var(--admin-border);">
+                <h5 class="modal-title" style="color: var(--admin-text-primary);">
+                    <i class="fas fa-undo me-2"></i>
+                    Повернення коштів
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <form id="refundForm">
                     <div class="mb-3">
-                        <label for="refundAmount" class="form-label">Сума повернення</label>
+                        <label for="refundAmount" class="form-label">
+                            <i class="fas fa-dollar-sign"></i>
+                            Сума повернення
+                        </label>
                         <input type="number" class="form-control" id="refundAmount" step="0.01" required>
                     </div>
                     <div class="mb-3">
-                        <label for="refundReason" class="form-label">Причина повернення</label>
+                        <label for="refundReason" class="form-label">
+                            <i class="fas fa-comment"></i>
+                            Причина повернення
+                        </label>
                         <textarea class="form-control" id="refundReason" rows="3" required></textarea>
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
-                <button type="button" class="btn btn-warning" onclick="processRefund()">Повернути кошти</button>
+            <div class="modal-footer" style="border-top: 1px solid var(--admin-border);">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>
+                    Скасувати
+                </button>
+                <button type="button" class="btn btn-warning" onclick="processRefund()">
+                    <i class="fas fa-undo me-1"></i>
+                    Повернути кошти
+                </button>
             </div>
         </div>
     </div>

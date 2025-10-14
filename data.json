@@ -2,6 +2,7 @@
   "site_settings": {
     "site_title": "Квітковий",
     "site_description": "Красиві квіти для всіх подій - найкращий вибір для ваших особливих моментів",
+    "site_logo": "/media/site/%D0%B0%D1%96%D1%81%D0%A6%D0%A4%D0%90%D0%A1%D0%B2.png",
     "cart_button_text": "В кошик",
     "premium_label_text": "Преміум",
     "header_subtitle": "Красиві квіти для всіх подій",
@@ -15,7 +16,74 @@
     "remove_from_cart_text": "Видалити",
     "show_contact_section": false,
     "show_services_section": false,
-    "show_about_section": false
+    "show_about_section": false,
+    "delivery_cost": 50,
+    "free_delivery_threshold": 1000,
+    "progress_bar": {
+      "enabled": true,
+      "milestones": [
+        {
+          "id": 1,
+          "amount": 1000,
+          "title": "Досягніть 1000₴ для бонусів",
+          "message": "Додайте ще {amount}₴ для отримання бонусів",
+          "color": "#10b981",
+          "discount_percent": null,
+          "free_shipping": false,
+          "gift": "Елегантна ваза"
+        }
+      ]
+    },
+    "delivery_cities": [
+      {
+        "id": 1,
+        "name": "Київ",
+        "region": "Київська область",
+        "delivery_fee": 0,
+        "free_delivery_threshold": 800,
+        "is_active": true
+      },
+      {
+        "id": 2,
+        "name": "Львів",
+        "region": "Львівська область",
+        "delivery_fee": 50,
+        "free_delivery_threshold": 1200,
+        "is_active": true
+      },
+      {
+        "id": 3,
+        "name": "Одеса",
+        "region": "Одеська область",
+        "delivery_fee": 50,
+        "free_delivery_threshold": 1200,
+        "is_active": true
+      },
+      {
+        "id": 4,
+        "name": "Дніпро",
+        "region": "Дніпропетровська область",
+        "delivery_fee": 40,
+        "free_delivery_threshold": 1000,
+        "is_active": true
+      },
+      {
+        "id": 5,
+        "name": "Харків",
+        "region": "Харківська область",
+        "delivery_fee": 40,
+        "free_delivery_threshold": 1000,
+        "is_active": true
+      },
+      {
+        "id": 6,
+        "name": "Запоріжжя",
+        "region": "Запорізька область",
+        "delivery_fee": 40,
+        "free_delivery_threshold": 1000,
+        "is_active": true
+      }
+    ]
   },
   "main_product": {
     "id": 1,
@@ -28,41 +96,199 @@
   },
   "color_options": [
     {
-      "id": 2,
-      "name": "білий",
-      "hex_code": "#fafafa",
+      "id": 5,
+      "name": "Жовтий",
+      "hex_code": "#ffff00",
       "image_url": "",
       "is_active": true,
-      "order": 2,
+      "order": 4,
       "quantity_images": {
-        "51": "https://i.pinimg.com/1200x/a9/a1/f9/a9a1f939c85afa68c29e123ab8e48460.jpg",
-        "101": "https://i.pinimg.com/1200x/a9/a1/f9/a9a1f939c85afa68c29e123ab8e48460.jpg"
+        "21": "/media/products/main/%D0%B2%D0%B2%20(3).jpg",
+        "51": "https://i.pinimg.com/736x/62/a1/34/62a134c929940df0bfa69f20bec0037b.jpg",
+        "101": "https://i.pinimg.com/736x/9d/a8/8c/9da88ca8b4b9ebe243954c132907b2b9.jpg",
+        "201": "https://i.pinimg.com/736x/78/62/39/786239f89af246d265b0ac9e7d68e9e4.jpg"
+      },
+      "in_stock": true,
+      "quantity_statuses": {
+        "21": {
+          "is_active": true,
+          "in_stock": true
+        },
+        "51": {
+          "is_active": true,
+          "in_stock": true
+        },
+        "101": {
+          "is_active": false,
+          "in_stock": false
+        },
+        "201": {
+          "is_active": true,
+          "in_stock": true
+        }
       }
     },
     {
-      "id": 3,
-      "name": "рожевий",
-      "hex_code": "#ff6b9d",
-      "image_url": "",
-      "is_active": true,
-      "order": 3,
-      "quantity_images": {
-        "21": "https://i.pinimg.com/736x/59/90/e2/5990e21db093d2f34ce3cff0c69dad94.jpg",
-        "51": "https://i.pinimg.com/736x/1c/59/2f/1c592f946485f6da4a6c7a7a8dca34a0.jpg",
-        "101": "https://i.pinimg.com/736x/59/90/e2/5990e21db093d2f34ce3cff0c69dad94.jpg",
-        "201": "https://i.pinimg.com/736x/4b/a9/1f/4ba91f3631a709e59676b44efc9fe71f.jpg",
-        "1": "https://i.pinimg.com/1200x/a9/a1/f9/a9a1f939c85afa68c29e123ab8e48460.jpg"
-      }
-    },
-    {
-      "id": 4,
-      "name": "колір",
-      "hex_code": "#ff0000",
+      "id": 6,
+      "name": "БЕЗ ПАКУВАННЯ",
+      "hex_code": "transparent",
       "image_url": "",
       "is_active": true,
       "order": 1,
       "quantity_images": {
-        "21": "https://i.ibb.co/JwtvJyBJ/image.png"
+        "101": "/media/products/main/%D0%B1%D0%B5%D0%B7%20%D0%BF%D0%B0%D0%BA%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F_ZDCtqlO.png",
+        "21": "/media/products/main/%D0%B1%D0%B5%D0%B7%20%D0%BF%D0%B0%D0%BA%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F_umxcxz2.png",
+        "51": "/media/products/main/%D0%B1%D0%B5%D0%B7%20%D0%BF%D0%B0%D0%BA%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F_52WA2lO.png",
+        "1": "/media/products/main/%D0%B1%D0%B5%D0%B7%20%D0%BF%D0%B0%D0%BA%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F_hgzDKYj.png"
+      },
+      "in_stock": true,
+      "quantity_statuses": {
+        "21": {
+          "is_active": true,
+          "in_stock": true
+        },
+        "51": {
+          "is_active": true,
+          "in_stock": true
+        },
+        "101": {
+          "is_active": true,
+          "in_stock": true
+        },
+        "1": {
+          "is_active": true,
+          "in_stock": true
+        }
+      }
+    },
+    {
+      "id": 7,
+      "name": "рожевий",
+      "hex_code": "#ff69b4",
+      "image_url": "",
+      "is_active": false,
+      "order": 3,
+      "quantity_images": {
+        "21": "https://i.pinimg.com/736x/60/cf/50/60cf50654bb6f54de25b733b084c79b1.jpg",
+        "51": "https://i.pinimg.com/736x/60/cf/50/60cf50654bb6f54de25b733b084c79b1.jpg",
+        "101": "https://i.pinimg.com/736x/60/cf/50/60cf50654bb6f54de25b733b084c79b1.jpg"
+      },
+      "in_stock": true,
+      "quantity_statuses": {
+        "21": {
+          "is_active": true,
+          "in_stock": true
+        },
+        "51": {
+          "is_active": true,
+          "in_stock": true
+        },
+        "101": {
+          "is_active": true,
+          "in_stock": true
+        }
+      }
+    },
+    {
+      "id": 8,
+      "name": "Синій",
+      "hex_code": "#0000ff",
+      "image_url": "",
+      "is_active": true,
+      "order": 5,
+      "quantity_images": {
+        "101": "https://imgur.com/oail6UD.png",
+        "21": "https://imgur.com/OxMXHpE.png",
+        "51": "https://imgur.com/dsCPp3v.png"
+      },
+      "in_stock": true,
+      "quantity_statuses": {
+        "21": {
+          "is_active": true,
+          "in_stock": true
+        },
+        "51": {
+          "is_active": true,
+          "in_stock": true
+        },
+        "101": {
+          "is_active": true,
+          "in_stock": true
+        }
+      }
+    },
+    {
+      "id": 9,
+      "name": "Фіолетовий",
+      "hex_code": "#800080",
+      "image_url": "",
+      "is_active": true,
+      "order": 2,
+      "quantity_images": {
+        "21": "https://imgur.com/GE4uRfg.png",
+        "51": "https://imgur.com/9BW8Qr5.png",
+        "101": "https://imgur.com/MWKWcHn.png"
+      },
+      "in_stock": true,
+      "quantity_statuses": {
+        "21": {
+          "is_active": true,
+          "in_stock": true
+        },
+        "51": {
+          "is_active": true,
+          "in_stock": true
+        },
+        "101": {
+          "is_active": true,
+          "in_stock": true
+        }
+      }
+    },
+    {
+      "id": 10,
+      "name": "Червоний",
+      "hex_code": "#ff0000",
+      "image_url": "",
+      "is_active": false,
+      "order": 6,
+      "quantity_images": {
+        "21": "https://imgur.com/P1ZKSyb.png",
+        "51": "https://imgur.com/QVO3gWZ.png",
+        "101": "https://imgur.com/ZmdOLgm.png"
+      },
+      "in_stock": false,
+      "quantity_statuses": {
+        "21": {
+          "is_active": true,
+          "in_stock": true
+        },
+        "51": {
+          "is_active": true,
+          "in_stock": true
+        },
+        "101": {
+          "is_active": true,
+          "in_stock": true
+        }
+      }
+    },
+    {
+      "id": 11,
+      "name": "чорний",
+      "hex_code": "#000000",
+      "image_url": "",
+      "is_active": false,
+      "in_stock": true,
+      "order": 7,
+      "quantity_images": {
+        "21": "https://i.pinimg.com/736x/7d/63/21/7d6321c3b66c8410b49bb6a20d076033.jpg"
+      },
+      "quantity_statuses": {
+        "21": {
+          "is_active": true,
+          "in_stock": true
+        }
       }
     }
   ],
@@ -82,25 +308,12 @@
       "order": 2
     },
     {
-      "id": 3,
-      "quantity": 101,
-      "price_per_unit": 1.0,
-      "is_active": true,
-      "order": 3
-    },
-    {
-      "id": 4,
-      "quantity": 201,
-      "price_per_unit": 1.0,
-      "is_active": true,
-      "order": 4
-    },
-    {
       "id": 5,
-      "quantity": 1,
-      "price_per_unit": 1.0,
+      "quantity": 7,
+      "price_per_unit": 15.0,
       "is_active": true,
-      "order": 1
+      "order": 1,
+      "in_stock": false
     }
   ],
   "additional_products": [
@@ -113,7 +326,9 @@
       "image_url": "https://i.pinimg.com/736x/9d/a8/8c/9da88ca8b4b9ebe243954c132907b2b9.jpg",
       "add_to_cart_text": "Додати в кошик",
       "is_active": true,
-      "order": 3
+      "order": 3,
+      "category": "букети",
+      "in_stock": false
     },
     {
       "id": 2,
@@ -124,7 +339,8 @@
       "image_url": "https://i.pinimg.com/736x/4f/d7/23/4fd72339d6ff791898f84164ed48bc76.jpg",
       "add_to_cart_text": "Додати в кошик",
       "is_active": true,
-      "order": 2
+      "order": 2,
+      "category": "букети"
     },
     {
       "id": 3,
@@ -135,7 +351,8 @@
       "image_url": "https://picsum.photos/300/200?random=5",
       "add_to_cart_text": "Додати в кошик",
       "is_active": true,
-      "order": 5
+      "order": 5,
+      "category": "аксесуари"
     },
     {
       "id": 4,
@@ -146,7 +363,8 @@
       "image_url": "https://picsum.photos/300/200?random=6",
       "add_to_cart_text": "Додати в кошик",
       "is_active": true,
-      "order": 4
+      "order": 4,
+      "category": "упаковка"
     }
   ],
   "additional_settings": {
@@ -154,7 +372,24 @@
     "add_all_text": "Додати всі товари",
     "remove_all_text": "Очистити кошик",
     "show_section": true,
-    "max_products_per_row": 2
+    "max_products_per_row": 2,
+    "categories": [
+      {
+        "id": "букети",
+        "title": "Букети",
+        "order": 1
+      },
+      {
+        "id": "аксесуари",
+        "title": "Аксесуари",
+        "order": 2
+      },
+      {
+        "id": "упаковка",
+        "title": "Упаковка",
+        "order": 3
+      }
+    ]
   },
   "contact_info": {
     "phone": "+380 50 123 45 67",
@@ -204,157 +439,317 @@
   },
   "orders": [
     {
-      "id": 1,
-      "order_number": "ORD-001",
-      "customer_name": "Анна Іваненко",
-      "customer_phone": "+380 50 123 45 67",
-      "customer_email": "anna@example.com",
-      "status": "нове",
-      "total_amount": 3400.0,
-      "currency": "грн",
-      "order_date": "2025-09-12T10:30:00",
-      "delivery_date": "2025-09-13T15:00:00",
-      "delivery_address": "Київ, вул. Хрещатик, 10, кв. 25",
-      "notes": "Доставити до 15:00, дзвонити за годину",
+      "id": "f630a02f-15b7-4583-8e3a-b870a2e8c404",
+      "order_number": "ORD-20251015-F630A02F",
+      "order_date": "2025-10-15T00:34:22.015044",
+      "delivery_date": "2025-10-15",
+      "delivery_time": "12:00-15:00",
+      "customer_name": "Іван Петренко",
+      "customer_phone": "+380 (67) 123-45-67",
+      "customer_email": "test@example.com",
+      "delivery_city": "Київ",
+      "delivery_address": "вул. Хрещатик, 1, кв. 10",
+      "delivery_postal_code": "",
+      "payment": "online",
+      "total_amount": 1105,
+      "currency": "UAH",
       "items": [
         {
-          "type": "main_product",
-          "product_id": 1,
-          "title": "Преміум букет квітів",
-          "quantity": 51,
-          "price_per_unit": 0.45,
-          "total_price": 2295.0,
-          "color": "рожевий"
+          "id": "main-product",
+          "title": "Букет квітів",
+          "price": 105,
+          "currency": "грн",
+          "image": "http://127.0.0.1:8000/media/products/main/%D0%B1%D0%B5%D0%B7%20%D0%BF%D0%B0%D0%BA%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F_umxcxz2.png",
+          "quantity": 1,
+          "color": "transparent",
+          "flowerQuantity": "\n                            21\n                        ",
+          "type": "main"
         },
         {
-          "type": "additional_product",
-          "product_id": 1,
-          "title": "Романтичний букет",
-          "quantity": 1,
-          "price": 1500.0,
-          "total_price": 1500.0
-        }
-      ]
-    },
-    {
-      "id": 2,
-      "order_number": "ORD-002",
-      "customer_name": "Петро Коваленко",
-      "customer_phone": "+380 67 987 65 43",
-      "customer_email": "petro@example.com",
-      "status": "виконано",
-      "total_amount": 2000.0,
-      "currency": "грн",
-      "order_date": "2025-09-12T14:15:00",
-      "delivery_date": "2025-09-14T12:00:00",
-      "delivery_address": "Київ, просп. Перемоги, 25",
-      "notes": "",
-      "items": [
-        {
-          "type": "additional_product",
-          "product_id": 2,
-          "title": "Весняний букет",
-          "quantity": 1,
-          "price": 1200.0,
-          "total_price": 1200.0
-        },
-        {
-          "type": "additional_product",
-          "product_id": 3,
+          "id": "product-3",
           "title": "Елегантна ваза",
+          "price": 800,
+          "currency": "грн",
+          "image": "https://picsum.photos/300/200?random=5",
           "quantity": 1,
-          "price": 800.0,
-          "total_price": 800.0
+          "type": "additional"
+        },
+        {
+          "id": "product-4",
+          "title": "Подарункова упаковка",
+          "price": 200,
+          "currency": "грн",
+          "image": "https://picsum.photos/300/200?random=6",
+          "quantity": 1,
+          "type": "additional"
+        },
+        {
+          "id": "gift-1760475456612",
+          "title": "Елегантна ваза",
+          "price": 0,
+          "currency": "грн",
+          "image": "https://picsum.photos/300/200?random=5",
+          "quantity": 1,
+          "type": "gift",
+          "isGift": true
         }
-      ]
+      ],
+      "notes": "Тестове замовлення для перевірки системи оплати",
+      "subscribe_news": false,
+      "status": "нове",
+      "created_at": "2025-10-15T00:34:22.015058",
+      "updated_at": "2025-10-15T00:34:22.015060"
     },
     {
-      "id": "77ab7818-f7a1-4692-92b1-3c67b22cee68",
-      "order_number": "ORD-20250929-77AB7818",
-      "order_date": "2025-09-29T18:46:54.884520",
-      "delivery_date": "2024-12-30",
-      "delivery_time": "14:00",
-      "customer_name": "Test User",
-      "customer_phone": "+380123456789",
+      "id": "b73a2825-b8bd-4e08-aff4-18ab3956cf5e",
+      "order_number": "ORD-20251015-B73A2825",
+      "order_date": "2025-10-15T00:34:28.239050",
+      "delivery_date": "2025-10-15",
+      "delivery_time": "12:00-15:00",
+      "customer_name": "Іван Петренко",
+      "customer_phone": "+380 (67) 123-45-67",
       "customer_email": "test@example.com",
       "delivery_city": "Київ",
-      "delivery_address": "вул. Тестова, 1",
+      "delivery_address": "вул. Хрещатик, 1, кв. 10",
       "delivery_postal_code": "",
-      "payment": "card",
-      "total_amount": 1000,
+      "payment": "online",
+      "total_amount": 1105,
       "currency": "UAH",
       "items": [
         {
-          "name": "Test Product",
+          "id": "main-product",
+          "title": "Букет квітів",
+          "price": 105,
+          "currency": "грн",
+          "image": "http://127.0.0.1:8000/media/products/main/%D0%B1%D0%B5%D0%B7%20%D0%BF%D0%B0%D0%BA%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F_umxcxz2.png",
           "quantity": 1,
-          "price": 1000
+          "color": "transparent",
+          "flowerQuantity": "\n                            21\n                        ",
+          "type": "main"
+        },
+        {
+          "id": "product-3",
+          "title": "Елегантна ваза",
+          "price": 800,
+          "currency": "грн",
+          "image": "https://picsum.photos/300/200?random=5",
+          "quantity": 1,
+          "type": "additional"
+        },
+        {
+          "id": "product-4",
+          "title": "Подарункова упаковка",
+          "price": 200,
+          "currency": "грн",
+          "image": "https://picsum.photos/300/200?random=6",
+          "quantity": 1,
+          "type": "additional"
+        },
+        {
+          "id": "gift-1760475456612",
+          "title": "Елегантна ваза",
+          "price": 0,
+          "currency": "грн",
+          "image": "https://picsum.photos/300/200?random=5",
+          "quantity": 1,
+          "type": "gift",
+          "isGift": true
         }
       ],
-      "notes": "Test order",
+      "notes": "Тестове замовлення для перевірки системи оплати",
       "subscribe_news": false,
       "status": "нове",
-      "created_at": "2025-09-29T18:46:54.884535",
-      "updated_at": "2025-09-29T18:46:54.884537"
+      "created_at": "2025-10-15T00:34:28.239066",
+      "updated_at": "2025-10-15T00:34:28.239068"
     },
     {
-      "id": "10647081-ba8b-4b9b-ae4b-a9ec593defb1",
-      "order_number": "ORD-20250930-10647081",
-      "order_date": "2025-09-30T14:30:20.168348",
-      "delivery_date": "2024-12-30",
-      "delivery_time": "14:00",
-      "customer_name": "Test User",
-      "customer_phone": "+380123456789",
+      "id": "6641aa8b-d817-45c6-a8f4-f3493cd6c768",
+      "order_number": "ORD-20251015-6641AA8B",
+      "order_date": "2025-10-15T00:34:32.425055",
+      "delivery_date": "2025-10-15",
+      "delivery_time": "12:00-15:00",
+      "customer_name": "Іван Петренко",
+      "customer_phone": "+380 (67) 123-45-67",
       "customer_email": "test@example.com",
       "delivery_city": "Київ",
-      "delivery_address": "вул. Тестова, 1",
+      "delivery_address": "вул. Хрещатик, 1, кв. 10",
       "delivery_postal_code": "",
-      "payment": "card",
-      "total_amount": 1000,
+      "payment": "online",
+      "total_amount": 1105,
       "currency": "UAH",
       "items": [
         {
-          "name": "Test Product",
+          "id": "main-product",
+          "title": "Букет квітів",
+          "price": 105,
+          "currency": "грн",
+          "image": "http://127.0.0.1:8000/media/products/main/%D0%B1%D0%B5%D0%B7%20%D0%BF%D0%B0%D0%BA%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F_umxcxz2.png",
           "quantity": 1,
-          "price": 1000
+          "color": "transparent",
+          "flowerQuantity": "\n                            21\n                        ",
+          "type": "main"
+        },
+        {
+          "id": "product-3",
+          "title": "Елегантна ваза",
+          "price": 800,
+          "currency": "грн",
+          "image": "https://picsum.photos/300/200?random=5",
+          "quantity": 1,
+          "type": "additional"
+        },
+        {
+          "id": "product-4",
+          "title": "Подарункова упаковка",
+          "price": 200,
+          "currency": "грн",
+          "image": "https://picsum.photos/300/200?random=6",
+          "quantity": 1,
+          "type": "additional"
+        },
+        {
+          "id": "gift-1760475456612",
+          "title": "Елегантна ваза",
+          "price": 0,
+          "currency": "грн",
+          "image": "https://picsum.photos/300/200?random=5",
+          "quantity": 1,
+          "type": "gift",
+          "isGift": true
         }
       ],
-      "notes": "Test order",
+      "notes": "Тестове замовлення для перевірки системи оплати",
       "subscribe_news": false,
       "status": "нове",
-      "created_at": "2025-09-30T14:30:20.168364",
-      "updated_at": "2025-09-30T14:30:20.168366"
-    }
-  ],
-  "customers": [
-    {
-      "id": 1,
-      "name": "Анна Іваненко",
-      "phone": "+380 50 123 45 67",
-      "email": "anna@example.com",
-      "address": "Київ, вул. Хрещатик, 10, кв. 25",
-      "birthday": "1990-05-15",
-      "registration_date": "2025-01-15",
-      "total_orders": 3,
-      "total_spent": 8400.0,
-      "last_order_date": "2025-09-12",
-      "loyalty_points": 84,
-      "notes": "VIP клієнт, любить троянди"
+      "created_at": "2025-10-15T00:34:32.425078",
+      "updated_at": "2025-10-15T00:34:32.425081"
     },
     {
-      "id": 2,
-      "name": "Петро Коваленко",
-      "phone": "+380 67 987 65 43",
-      "email": "petro@example.com",
-      "address": "Київ, просп. Перемоги, 25",
-      "birthday": "1985-03-22",
-      "registration_date": "2025-03-10",
-      "total_orders": 1,
-      "total_spent": 2000.0,
-      "last_order_date": "2025-09-12",
-      "loyalty_points": 20,
-      "notes": ""
+      "id": "0636bd3c-e5b1-4f23-8baf-3c56a27e8bb3",
+      "order_number": "ORD-20251015-0636BD3C",
+      "order_date": "2025-10-15T00:34:36.461151",
+      "delivery_date": "2025-10-15",
+      "delivery_time": "12:00-15:00",
+      "customer_name": "Іван Петренко",
+      "customer_phone": "+380 (67) 123-45-67",
+      "customer_email": "test@example.com",
+      "delivery_city": "Київ",
+      "delivery_address": "вул. Хрещатик, 1, кв. 10",
+      "delivery_postal_code": "",
+      "payment": "online",
+      "total_amount": 1105,
+      "currency": "UAH",
+      "items": [
+        {
+          "id": "main-product",
+          "title": "Букет квітів",
+          "price": 105,
+          "currency": "грн",
+          "image": "http://127.0.0.1:8000/media/products/main/%D0%B1%D0%B5%D0%B7%20%D0%BF%D0%B0%D0%BA%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F_umxcxz2.png",
+          "quantity": 1,
+          "color": "transparent",
+          "flowerQuantity": "\n                            21\n                        ",
+          "type": "main"
+        },
+        {
+          "id": "product-3",
+          "title": "Елегантна ваза",
+          "price": 800,
+          "currency": "грн",
+          "image": "https://picsum.photos/300/200?random=5",
+          "quantity": 1,
+          "type": "additional"
+        },
+        {
+          "id": "product-4",
+          "title": "Подарункова упаковка",
+          "price": 200,
+          "currency": "грн",
+          "image": "https://picsum.photos/300/200?random=6",
+          "quantity": 1,
+          "type": "additional"
+        },
+        {
+          "id": "gift-1760475456612",
+          "title": "Елегантна ваза",
+          "price": 0,
+          "currency": "грн",
+          "image": "https://picsum.photos/300/200?random=5",
+          "quantity": 1,
+          "type": "gift",
+          "isGift": true
+        }
+      ],
+      "notes": "Тестове замовлення для перевірки системи оплати",
+      "subscribe_news": false,
+      "status": "нове",
+      "created_at": "2025-10-15T00:34:36.461163",
+      "updated_at": "2025-10-15T00:34:36.461165"
+    },
+    {
+      "id": "a442bc2b-1998-4524-8ddd-7136cfc3bca1",
+      "order_number": "ORD-20251015-A442BC2B",
+      "order_date": "2025-10-15T00:34:40.711258",
+      "delivery_date": "2025-10-15",
+      "delivery_time": "12:00-15:00",
+      "customer_name": "Іван Петренко",
+      "customer_phone": "+380 (67) 123-45-67",
+      "customer_email": "test@example.com",
+      "delivery_city": "Київ",
+      "delivery_address": "вул. Хрещатик, 1, кв. 10",
+      "delivery_postal_code": "",
+      "payment": "online",
+      "total_amount": 1105,
+      "currency": "UAH",
+      "items": [
+        {
+          "id": "main-product",
+          "title": "Букет квітів",
+          "price": 105,
+          "currency": "грн",
+          "image": "http://127.0.0.1:8000/media/products/main/%D0%B1%D0%B5%D0%B7%20%D0%BF%D0%B0%D0%BA%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F_umxcxz2.png",
+          "quantity": 1,
+          "color": "transparent",
+          "flowerQuantity": "\n                            21\n                        ",
+          "type": "main"
+        },
+        {
+          "id": "product-3",
+          "title": "Елегантна ваза",
+          "price": 800,
+          "currency": "грн",
+          "image": "https://picsum.photos/300/200?random=5",
+          "quantity": 1,
+          "type": "additional"
+        },
+        {
+          "id": "product-4",
+          "title": "Подарункова упаковка",
+          "price": 200,
+          "currency": "грн",
+          "image": "https://picsum.photos/300/200?random=6",
+          "quantity": 1,
+          "type": "additional"
+        },
+        {
+          "id": "gift-1760475456612",
+          "title": "Елегантна ваза",
+          "price": 0,
+          "currency": "грн",
+          "image": "https://picsum.photos/300/200?random=5",
+          "quantity": 1,
+          "type": "gift",
+          "isGift": true
+        }
+      ],
+      "notes": "Тестове замовлення для перевірки системи оплати",
+      "subscribe_news": false,
+      "status": "нове",
+      "created_at": "2025-10-15T00:34:40.711280",
+      "updated_at": "2025-10-15T00:34:40.711283"
     }
   ],
+  "customers": [],
   "inventory": [
     {
       "id": 1,
@@ -487,5 +882,99 @@
       "best_selling_product": "Преміум букет квітів",
       "new_customers": 5
     }
-  }
+  },
+  "analytics": {
+    "visits": [
+      {
+        "user_id": "user_1760033225180_q0erixujw",
+        "session_id": "session_1760033225181_65iq8ca5m",
+        "timestamp": "2025-10-09T18:07:05.181Z",
+        "page_url": "/",
+        "page_title": "Квітковий",
+        "device_type": "Mobile",
+        "screen_width": 430,
+        "screen_height": 932,
+        "browser": "Safari",
+        "os": "MacOS",
+        "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1",
+        "referrer": "127.0.0.1",
+        "referrer_url": "http://127.0.0.1:8000/cart/",
+        "utm": {
+          "source": null,
+          "medium": null,
+          "campaign": null,
+          "content": null,
+          "term": null
+        },
+        "city": null,
+        "language": "uk",
+        "id": "visit_20251009210705_0erixujw"
+      },
+      {
+        "user_id": "user_1760033225180_q0erixujw",
+        "session_id": "session_1760033225181_65iq8ca5m",
+        "timestamp": "2025-10-09T18:07:46.301Z",
+        "page_url": "/cart/",
+        "page_title": "Квітковий - Кошик",
+        "device_type": "Desktop",
+        "screen_width": 1451,
+        "screen_height": 911,
+        "browser": "Chrome",
+        "os": "Windows",
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+        "referrer": "127.0.0.1",
+        "referrer_url": "http://127.0.0.1:8000/",
+        "utm": {
+          "source": null,
+          "medium": null,
+          "campaign": null,
+          "content": null,
+          "term": null
+        },
+        "city": null,
+        "language": "uk",
+        "id": "visit_20251009210746_0erixujw"
+      },
+      {
+        "user_id": "user_1760033225180_q0erixujw",
+        "session_id": "session_1760033225181_65iq8ca5m",
+        "timestamp": "2025-10-09T18:07:48.892Z",
+        "page_url": "/",
+        "page_title": "Квітковий",
+        "device_type": "Desktop",
+        "screen_width": 1451,
+        "screen_height": 911,
+        "browser": "Chrome",
+        "os": "Windows",
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+        "referrer": "127.0.0.1",
+        "referrer_url": "http://127.0.0.1:8000/cart/",
+        "utm": {
+          "source": null,
+          "medium": null,
+          "campaign": null,
+          "content": null,
+          "term": null
+        },
+        "city": null,
+        "language": "uk",
+        "id": "visit_20251009210748_0erixujw"
+      }
+    ],
+    "sessions": []
+  },
+  "admin_users": [
+    {
+      "username": "admin",
+      "password_hash": "f6a0a32dbf350f78fdc6b1f73c3bc46ee21442a549d94c5b1ecb3a4ad926d278",
+      "salt": "7723a75688cced2ea135cc4499745cb1",
+      "name": "Головний Адміністратор",
+      "email": "admin@example.com",
+      "role": "super_admin",
+      "created_at": "2025-10-15T01:12:22.494664",
+      "last_login": "2025-10-15T01:20:09.336612",
+      "is_active": true,
+      "id": 1
+    }
+  ]
 }

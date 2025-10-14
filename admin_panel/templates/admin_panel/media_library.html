@@ -1,0 +1,234 @@
+<!-- Media Library Modal -->
+<div class="modal fade" id="mediaLibraryModal" tabindex="-1" aria-labelledby="mediaLibraryLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mediaLibraryLabel">
+                    <i class="fas fa-images me-2"></i>Бібліотека медіа-файлів
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Фільтри -->
+                <div class="mb-3">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-sm btn-outline-primary active" onclick="filterMedia('all')">
+                            <i class="fas fa-images me-1"></i>Всі
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="filterMedia('main')">
+                            <i class="fas fa-star me-1"></i>Основний товар
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="filterMedia('additional')">
+                            <i class="fas fa-box me-1"></i>Додаткові
+                        </button>
+                    </div>
+                    <div class="float-end">
+                        <input type="text" class="form-control form-control-sm" id="mediaSearch" 
+                               placeholder="Пошук..." onkeyup="searchMedia()">
+                    </div>
+                </div>
+                
+                <!-- Галерея зображень -->
+                <div id="mediaGallery" class="media-gallery">
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-spinner fa-spin fa-2x mb-3"></i>
+                        <p>Завантаження медіа-файлів...</p>
+                    </div>
+                </div>
+                
+                <!-- Empty state -->
+                <div id="mediaEmpty" class="text-center text-muted py-5" style="display: none;">
+                    <i class="fas fa-folder-open fa-3x mb-3"></i>
+                    <p>Медіа-файли не знайдено</p>
+                    <small>Завантажте файли через форми додавання/редагування товарів</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Закрити
+                </button>
+                <button type="button" class="btn btn-primary" onclick="selectMediaFile()" disabled id="selectMediaBtn">
+                    <i class="fas fa-check me-1"></i>Обрати файл
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .media-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+        max-height: 500px;
+        overflow-y: auto;
+        padding: 10px;
+    }
+    
+    .media-item {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 3px solid transparent;
+        aspect-ratio: 1;
+    }
+    
+    .media-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .media-item.selected {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+    }
+    
+    .media-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .media-item-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+        padding: 8px;
+        color: white;
+        font-size: 0.75rem;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .media-item:hover .media-item-overlay {
+        opacity: 1;
+    }
+    
+    .media-item-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
+
+<script>
+let selectedMediaUrl = null;
+let currentInputTarget = null;
+
+function openMediaLibrary(inputId) {
+    currentInputTarget = inputId;
+    const modal = new bootstrap.Modal(document.getElementById('mediaLibraryModal'));
+    modal.show();
+    loadMediaFiles();
+}
+
+function loadMediaFiles() {
+    fetch('/admin-panel/api/media-files/')
+        .then(response => response.json())
+        .then(data => {
+            displayMediaFiles(data.files);
+        })
+        .catch(error => {
+            console.error('Помилка завантаження медіа:', error);
+            document.getElementById('mediaGallery').innerHTML = 
+                '<div class="text-center text-danger py-5"><i class="fas fa-exclamation-triangle fa-2x mb-3"></i><p>Помилка завантаження медіа-файлів</p></div>';
+        });
+}
+
+function displayMediaFiles(files) {
+    const gallery = document.getElementById('mediaGallery');
+    const empty = document.getElementById('mediaEmpty');
+    
+    if (!files || files.length === 0) {
+        gallery.style.display = 'none';
+        empty.style.display = 'block';
+        return;
+    }
+    
+    gallery.style.display = 'grid';
+    empty.style.display = 'none';
+    
+    gallery.innerHTML = files.map(file => `
+        <div class="media-item" data-url="${file.url}" data-category="${file.category}" 
+             onclick="selectMedia(this, '${file.url}')">
+            <img src="${file.url}" alt="${file.name}" loading="lazy">
+            <div class="media-item-overlay">
+                <div class="media-item-name">${file.name}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function selectMedia(element, url) {
+    // Знімаємо виділення з усіх
+    document.querySelectorAll('.media-item').forEach(item => {
+        item.classList.remove('selected');
+    });
+    
+    // Виділяємо обраний
+    element.classList.add('selected');
+    selectedMediaUrl = url;
+    
+    // Активуємо кнопку "Обрати"
+    document.getElementById('selectMediaBtn').disabled = false;
+}
+
+function selectMediaFile() {
+    if (selectedMediaUrl && currentInputTarget) {
+        const input = document.getElementById(currentInputTarget);
+        if (input) {
+            input.value = selectedMediaUrl;
+            
+            // Тригеримо подію для показу превью
+            const event = new Event('input', { bubbles: true });
+            input.dispatchEvent(event);
+        }
+        
+        // Закриваємо модальне вікно
+        const modal = bootstrap.Modal.getInstance(document.getElementById('mediaLibraryModal'));
+        modal.hide();
+        
+        // Скидаємо вибір
+        selectedMediaUrl = null;
+        currentInputTarget = null;
+    }
+}
+
+function filterMedia(category) {
+    const items = document.querySelectorAll('.media-item');
+    const buttons = document.querySelectorAll('.btn-group button');
+    
+    // Оновлюємо кнопки
+    buttons.forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    // Фільтруємо елементи
+    items.forEach(item => {
+        const itemCategory = item.dataset.category;
+        if (category === 'all' || itemCategory === category) {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
+
+function searchMedia() {
+    const searchTerm = document.getElementById('mediaSearch').value.toLowerCase();
+    const items = document.querySelectorAll('.media-item');
+    
+    items.forEach(item => {
+        const name = item.querySelector('.media-item-name').textContent.toLowerCase();
+        if (name.includes(searchTerm)) {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
+</script>
+

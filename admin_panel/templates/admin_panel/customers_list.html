@@ -4,138 +4,146 @@
 {% block page_title %}Клієнти{% endblock %}
 
 {% block content %}
-<!-- Статистика -->
-<div class="row mb-4">
-    <div class="col-lg-3 col-md-6 mb-3">
-        <div class="stat-card border-primary text-center">
-            <i class="fas fa-users text-primary"></i>
-            <h6 class="text-primary">Всього клієнтів</h6>
-            <h4>{{ stats.total }}</h4>
+<div class="admin-form-container">
+    
+    <!-- Статистика -->
+    <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+        <div class="stat-card-modern">
+            <i class="fas fa-users stat-icon text-primary"></i>
+            <div class="stat-label">Всього клієнтів</div>
+            <div class="stat-value">{{ stats.total }}</div>
         </div>
-    </div>
-    <div class="col-lg-3 col-md-6 mb-3">
-        <div class="stat-card border-warning text-center">
-            <i class="fas fa-crown text-warning"></i>
-            <h6 class="text-warning">VIP клієнти</h6>
-            <h4>{{ stats.vip }}</h4>
+        
+        <div class="stat-card-modern">
+            <i class="fas fa-crown stat-icon text-warning"></i>
+            <div class="stat-label">VIP клієнти</div>
+            <div class="stat-value">{{ stats.vip }}</div>
             <small class="text-muted">Купили > 5000 грн</small>
         </div>
-    </div>
-    <div class="col-lg-3 col-md-6 mb-3">
-        <div class="stat-card border-success text-center">
-            <i class="fas fa-user-plus text-success"></i>
-            <h6 class="text-success">Нові цього місяця</h6>
-            <h4>{{ stats.new_this_month }}</h4>
+        
+        <div class="stat-card-modern">
+            <i class="fas fa-user-plus stat-icon text-success"></i>
+            <div class="stat-label">Нові цього місяця</div>
+            <div class="stat-value">{{ stats.new_this_month }}</div>
         </div>
-    </div>
-    <div class="col-lg-3 col-md-6 mb-3">
-        <div class="stat-card border-info text-center">
-            <i class="fas fa-plus text-info"></i>
-            <h6 class="text-info">Дії</h6>
-            <a href="{% url 'admin_panel:add_customer' %}" class="btn btn-primary btn-sm mt-2">
-                <i class="fas fa-plus me-1"></i>
+        
+        <div class="stat-card-modern" style="background: var(--admin-gradient-primary); display: flex; align-items: center; justify-content: center;">
+            <a href="{% url 'admin_panel:add_customer' %}" class="btn btn-light" style="font-weight: 600;">
+                <i class="fas fa-plus me-2"></i>
                 Додати клієнта
             </a>
         </div>
     </div>
-</div>
-
-<!-- Список клієнтів -->
-<div class="card">
-    <div class="card-header">
-        <h5 class="mb-0">
-            <i class="fas fa-users me-2"></i>
-            Список клієнтів ({{ customers|length }})
-        </h5>
-    </div>
-    <div class="card-body">
+    
+    <!-- Список клієнтів -->
+    <div class="admin-form-section">
+        <div class="section-header compact">
+            <h5 class="section-title compact">
+                <i class="fas fa-users"></i>
+                Клієнти ({{ customers|length }})
+            </h5>
+            <a href="{% url 'admin_panel:dashboard' %}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left"></i>
+                <span class="d-none d-md-inline ms-1">Dashboard</span>
+            </a>
+        </div>
+        
         {% if customers %}
-            <div class="table-responsive">
-                <table class="table table-dark table-hover">
-                    <thead>
-                        <tr>
-                            <th>Клієнт</th>
-                            <th>Контакти</th>
-                            <th>Замовлень</th>
-                            <th>Загальна сума</th>
-                            <th>Останнє замовлення</th>
-                            <th>Статус</th>
-                            <th>Дії</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for customer in customers %}
-                        <tr>
-                            <td>
-                                <div>
-                                    <strong>{{ customer.name }}</strong>
-                                    {% if customer.birthday %}
-                                    <br><small class="text-muted">
-                                        <i class="fas fa-birthday-cake"></i> {{ customer.birthday }}
-                                    </small>
-                                    {% endif %}
-                                </div>
-                            </td>
-                            <td>
-                                <div>
-                                    <i class="fas fa-phone"></i> {{ customer.phone }}<br>
-                                    {% if customer.email %}
-                                    <i class="fas fa-envelope"></i> {{ customer.email }}
-                                    {% endif %}
-                                </div>
-                            </td>
-                            <td class="text-center">
-                                <span class="badge bg-info">{{ customer.total_orders }}</span>
-                            </td>
-                            <td>
-                                <strong>{{ customer.total_spent }} грн</strong>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-user me-1"></i>Клієнт</th>
+                        <th><i class="fas fa-phone me-1"></i>Контакти</th>
+                        <th><i class="fas fa-shopping-cart me-1"></i>Замовлень</th>
+                        <th><i class="fas fa-dollar-sign me-1"></i>Загальна сума</th>
+                        <th><i class="fas fa-calendar me-1"></i>Останнє замовлення</th>
+                        <th><i class="fas fa-star me-1"></i>Статус</th>
+                        <th><i class="fas fa-cog me-1"></i>Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for customer in customers %}
+                    <tr>
+                        <td>
+                            <div>
+                                <strong style="color: var(--admin-text-primary);">{{ customer.name }}</strong>
+                                {% if customer.birthday %}
                                 <br><small class="text-muted">
-                                    <i class="fas fa-coins"></i> {{ customer.loyalty_points }} балів
+                                    <i class="fas fa-birthday-cake"></i> {{ customer.birthday }}
                                 </small>
-                            </td>
-                            <td>
-                                {% if customer.last_order_date %}
-                                    {{ customer.last_order_date }}
-                                {% else %}
-                                    <span class="text-muted">Немає</span>
                                 {% endif %}
-                            </td>
-                            <td>
-                                {% if customer.total_spent >= 5000 %}
-                                    <span class="badge bg-warning">VIP</span>
-                                {% elif customer.total_orders > 0 %}
-                                    <span class="badge bg-success">Активний</span>
-                                {% else %}
-                                    <span class="badge bg-secondary">Новий</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                <i class="fas fa-phone text-primary"></i> {{ customer.phone }}
+                                {% if customer.email %}
+                                <br><i class="fas fa-envelope text-info"></i> <small>{{ customer.email }}</small>
                                 {% endif %}
-                            </td>
-                            <td>
-                                <div class="btn-group">
-                                    <a href="{% url 'admin_panel:customer_detail' customer.id %}" class="btn btn-sm btn-primary" title="Деталі">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{% url 'admin_panel:edit_customer' customer.id %}" class="btn btn-sm btn-warning" title="Редагувати">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="tel:{{ customer.phone }}" class="btn btn-sm btn-success" title="Зателефонувати">
-                                        <i class="fas fa-phone"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-info" style="font-size: 1rem; padding: 8px 12px;">{{ customer.total_orders }}</span>
+                        </td>
+                        <td>
+                            <strong style="color: var(--admin-success); font-size: 1.1rem;">{{ customer.total_spent }} грн</strong>
+                            <br><small class="text-muted">
+                                <i class="fas fa-coins"></i> {{ customer.loyalty_points }} балів
+                            </small>
+                        </td>
+                        <td>
+                            {% if customer.last_order_date %}
+                                <strong style="color: var(--admin-text-primary);">{{ customer.last_order_date }}</strong>
+                            {% else %}
+                                <span class="text-muted">Немає</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if customer.total_spent >= 5000 %}
+                                <span class="badge bg-warning text-dark">
+                                    <i class="fas fa-crown"></i>
+                                    VIP
+                                </span>
+                            {% elif customer.total_orders > 0 %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check-circle"></i>
+                                    Активний
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary">
+                                    <i class="fas fa-user"></i>
+                                    Новий
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'admin_panel:customer_detail' customer.id %}" class="btn btn-sm btn-primary" title="Деталі">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'admin_panel:edit_customer' customer.id %}" class="btn btn-sm btn-warning" title="Редагувати">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="tel:{{ customer.phone }}" class="btn btn-sm btn-success" title="Зателефонувати">
+                                    <i class="fas fa-phone"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         {% else %}
-            <div class="text-center py-5">
-                <i class="fas fa-users fa-3x text-muted mb-3"></i>
-                <h5 class="text-muted">Клієнтів поки немає</h5>
-                <p class="text-muted">Додайте першого клієнта для початку роботи</p>
-                <a href="{% url 'admin_panel:add_customer' %}" class="btn btn-primary">
-                    <i class="fas fa-plus me-1"></i>
-                    Додати клієнта
-                </a>
+            <div class="empty-state">
+                <i class="fas fa-users"></i>
+                <p>Клієнтів поки немає</p>
+                <small>Додайте першого клієнта для початку роботи</small>
+                <div class="mt-3">
+                    <a href="{% url 'admin_panel:add_customer' %}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>
+                        Додати клієнта
+                    </a>
+                </div>
             </div>
         {% endif %}
     </div>

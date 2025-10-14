@@ -1,0 +1,463 @@
+/**
+ * Стилі для форм адмін панелі
+ * Уніфіковані форми в єдиному стилі
+ */
+
+/* ===== КОНТЕЙНЕР ФОРМИ ===== */
+.admin-form-container {
+    padding: var(--admin-spacing-lg);
+}
+
+/* ===== СЕКЦІЇ ФОРМИ ===== */
+.admin-form-section {
+    background: var(--admin-gradient-dark);
+    border: 1px solid var(--admin-border-hover);
+    border-radius: var(--admin-radius-lg);
+    padding: var(--admin-spacing-xl);
+    margin-bottom: var(--admin-spacing-lg);
+    box-shadow: var(--admin-shadow-md);
+    position: relative;
+    transition: all var(--admin-transition-normal);
+}
+
+.admin-form-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.3), transparent);
+}
+
+.admin-form-section:hover {
+    border-color: rgba(59, 130, 246, 0.3);
+    box-shadow: var(--admin-shadow-lg);
+}
+
+/* Заголовок секції */
+.admin-form-section-header {
+    font-size: var(--admin-font-lg);
+    font-weight: 700;
+    color: var(--admin-text-primary);
+    margin-bottom: var(--admin-spacing-lg);
+    padding-bottom: var(--admin-spacing-md);
+    border-bottom: 2px solid var(--admin-border);
+    display: flex;
+    align-items: center;
+    gap: var(--admin-gap-sm);
+}
+
+.admin-form-section-header i {
+    color: var(--admin-primary);
+}
+
+/* ===== ПОЛЯ ФОРМИ ===== */
+.form-label {
+    color: var(--admin-text-secondary);
+    font-weight: 600;
+    margin-bottom: var(--admin-spacing-xs);
+    display: flex;
+    align-items: center;
+    gap: var(--admin-gap-xs, 6px);
+}
+
+.form-label i {
+    color: var(--admin-primary);
+    opacity: 0.7;
+}
+
+.form-control,
+.form-select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--admin-border);
+    color: var(--admin-text-primary);
+    border-radius: var(--admin-radius-sm);
+    padding: var(--admin-spacing-sm);
+    transition: all var(--admin-transition-normal);
+}
+
+.form-control:focus,
+.form-select:focus {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--admin-primary);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+    color: var(--admin-text-primary);
+}
+
+.form-control::placeholder {
+    color: var(--admin-text-muted);
+    opacity: 0.6;
+}
+
+.form-text {
+    color: var(--admin-text-muted);
+    font-size: var(--admin-font-sm);
+    margin-top: var(--admin-spacing-xs);
+}
+
+/* ===== TEXTAREA ===== */
+textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* ===== CHECKBOXES & SWITCHES ===== */
+.form-check-input {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: var(--admin-border);
+    cursor: pointer;
+}
+
+.form-check-input:checked {
+    background-color: var(--admin-primary);
+    border-color: var(--admin-primary);
+}
+
+.form-check-input:focus {
+    border-color: var(--admin-primary);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+.form-check-label {
+    color: var(--admin-text-secondary);
+    cursor: pointer;
+}
+
+/* ===== INPUT GROUPS ===== */
+.input-group-text {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--admin-border);
+    color: var(--admin-text-secondary);
+}
+
+/* ===== BUTTONS ===== */
+.btn-primary {
+    background: var(--admin-gradient-primary);
+    border: none;
+    color: white;
+    padding: var(--admin-spacing-sm) var(--admin-spacing-lg);
+    border-radius: var(--admin-radius-sm);
+    font-weight: 600;
+    transition: all var(--admin-transition-normal);
+    box-shadow: var(--admin-shadow-glow);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--admin-shadow-glow-hover);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--admin-success) 0%, #45a049 100%);
+    border: none;
+    color: white;
+    padding: var(--admin-spacing-sm) var(--admin-spacing-lg);
+    border-radius: var(--admin-radius-sm);
+    font-weight: 600;
+    transition: all var(--admin-transition-normal);
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+}
+
+.btn-secondary {
+    background: var(--admin-bg-tertiary);
+    border: 1px solid var(--admin-border);
+    color: var(--admin-text-secondary);
+    padding: var(--admin-spacing-sm) var(--admin-spacing-lg);
+    border-radius: var(--admin-radius-sm);
+    font-weight: 600;
+    transition: all var(--admin-transition-normal);
+}
+
+.btn-secondary:hover {
+    background: var(--admin-bg-hover);
+    border-color: var(--admin-primary);
+    color: var(--admin-text-primary);
+}
+
+/* ===== РОЗДІЛЮВАЧІ ===== */
+hr {
+    border-color: var(--admin-border);
+    opacity: 0.3;
+    margin: var(--admin-spacing-lg) 0;
+}
+
+/* Секційний розділювач */
+.section-divider {
+    border: none;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--admin-primary), transparent);
+    opacity: 0.3;
+    margin: var(--admin-spacing-xl) 0;
+}
+
+/* ===== COMPACT FORM STYLES ===== */
+.compact-form-container {
+    background: rgba(59, 130, 246, 0.04);
+    border: 1px solid rgba(59, 130, 246, 0.15);
+    border-radius: var(--admin-radius-sm);
+    padding: var(--admin-spacing-md);
+}
+
+.compact-form-header {
+    font-size: var(--admin-font-sm);
+    color: var(--admin-text-primary);
+    margin-bottom: var(--admin-spacing-sm);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.compact-form-header i {
+    color: var(--admin-primary);
+    font-size: var(--admin-font-xs);
+}
+
+/* ===== PREVIEW PANEL ===== */
+.admin-preview-panel {
+    background: var(--admin-gradient-dark);
+    border: 1px solid var(--admin-border-hover);
+    border-radius: var(--admin-radius-lg);
+    padding: var(--admin-spacing-lg);
+    position: sticky;
+    top: 20px;
+    box-shadow: var(--admin-shadow-md);
+}
+
+.admin-preview-header {
+    font-weight: 700;
+    color: var(--admin-text-primary);
+    margin-bottom: var(--admin-spacing-md);
+    display: flex;
+    align-items: center;
+    gap: var(--admin-gap-sm);
+}
+
+.admin-preview-header i {
+    color: var(--admin-primary);
+}
+
+.admin-preview-content {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--admin-radius-md);
+    padding: var(--admin-spacing-md);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* ===== HELP BADGES ===== */
+.admin-help-badge {
+    background: rgba(59, 130, 246, 0.08);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: var(--admin-radius-sm);
+    padding: var(--admin-spacing-xs) var(--admin-spacing-sm);
+    font-size: var(--admin-font-sm);
+    color: var(--admin-primary);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.admin-help-badge i {
+    font-size: var(--admin-font-xs);
+}
+
+/* ===== FORM VALIDATION ===== */
+.form-control.is-valid,
+.form-select.is-valid {
+    border-color: var(--admin-success);
+    background-image: none;
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: var(--admin-danger);
+    background-image: none;
+}
+
+.valid-feedback {
+    color: var(--admin-success);
+}
+
+.invalid-feedback {
+    color: var(--admin-danger);
+}
+
+/* ===== PRODUCT CARDS GRID ===== */
+.product-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--admin-gap-lg);
+    margin-top: var(--admin-spacing-lg);
+}
+
+.product-card {
+    background: var(--admin-gradient-dark);
+    border: 1px solid var(--admin-border);
+    border-radius: var(--admin-radius-lg);
+    overflow: hidden;
+    transition: all var(--admin-transition-slow);
+    position: relative;
+}
+
+.product-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--admin-gradient-primary);
+    opacity: 0;
+    transition: opacity var(--admin-transition-normal);
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--admin-primary);
+    box-shadow: var(--admin-shadow-glow);
+}
+
+.product-card:hover::before {
+    opacity: 1;
+}
+
+.product-card-image {
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+    background: var(--admin-bg-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-card-image.no-image {
+    border-bottom: 1px solid var(--admin-border);
+}
+
+.product-card-body {
+    padding: var(--admin-spacing-md);
+}
+
+.product-card-title {
+    font-weight: 700;
+    color: var(--admin-text-primary);
+    margin-bottom: var(--admin-spacing-sm);
+    font-size: var(--admin-font-md);
+}
+
+.product-color-preview {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--admin-border);
+    display: inline-block;
+    margin-right: var(--admin-spacing-xs);
+}
+
+.product-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: var(--admin-spacing-sm);
+}
+
+.product-card-actions {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end;
+}
+
+/* ===== BADGES ENHANCEMENTS ===== */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: var(--admin-font-xs);
+    font-weight: 600;
+}
+
+.badge.bg-success {
+    background: linear-gradient(135deg, var(--admin-success) 0%, #45a049 100%) !important;
+}
+
+.badge.bg-info {
+    background: linear-gradient(135deg, var(--admin-info) 0%, #0b5ed7 100%) !important;
+}
+
+.badge.bg-warning {
+    background: linear-gradient(135deg, var(--admin-warning) 0%, #ffca2c 100%) !important;
+}
+
+.badge.bg-danger {
+    background: linear-gradient(135deg, var(--admin-danger) 0%, #bb2d3b 100%) !important;
+}
+
+.badge.bg-secondary {
+    background: var(--admin-bg-tertiary) !important;
+    border: 1px solid var(--admin-border);
+}
+
+/* ===== TABLE STYLES ===== */
+.admin-table {
+    width: 100%;
+    margin-top: var(--admin-spacing-md);
+}
+
+.admin-table thead {
+    background: rgba(59, 130, 246, 0.06);
+    border-bottom: 2px solid var(--admin-primary);
+}
+
+.admin-table th {
+    padding: var(--admin-spacing-xs) var(--admin-spacing-sm);
+    color: var(--admin-text-primary);
+    font-weight: 700;
+    font-size: var(--admin-font-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.admin-table td {
+    padding: var(--admin-spacing-sm);
+    border-bottom: 1px solid var(--admin-border);
+    color: var(--admin-text-secondary);
+    font-size: var(--admin-font-sm);
+}
+
+.admin-table tbody tr {
+    transition: all var(--admin-transition-fast);
+}
+
+.admin-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .admin-form-section {
+        padding: var(--admin-spacing-md);
+    }
+    
+    .admin-preview-panel {
+        position: relative;
+        margin-bottom: var(--admin-spacing-lg);
+    }
+    
+    .product-cards-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: var(--admin-gap-md);
+    }
+    
+    .product-card-image {
+        height: 150px;
+    }
+}
+
