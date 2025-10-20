@@ -136,10 +136,10 @@
       "is_active": true,
       "order": 1,
       "quantity_images": {
-        "101": "/media/products/main/%D0%B1%D0%B5%D0%B7%20%D0%BF%D0%B0%D0%BA%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F_ZDCtqlO.png",
-        "21": "/media/products/main/%D0%B1%D0%B5%D0%B7%20%D0%BF%D0%B0%D0%BA%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F_umxcxz2.png",
-        "51": "/media/products/main/%D0%B1%D0%B5%D0%B7%20%D0%BF%D0%B0%D0%BA%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F_52WA2lO.png",
-        "1": "/media/products/main/%D0%B1%D0%B5%D0%B7%20%D0%BF%D0%B0%D0%BA%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F_hgzDKYj.png"
+        "1": "/media/products/main/%D0%B1%D0%B5%D0%B7%20%D0%BF%D0%B0%D0%BA%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F_hgzDKYj.png",
+        "21": "/media/products/main/%D0%B1%D0%B5%D0%B7%20%D0%BF%D0%B0%D0%BA%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F_HDg8zTM.png",
+        "51": "/media/products/main/%D0%B1%D0%B5%D0%B7%20%D0%BF%D0%B0%D0%BA%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F_wjtQtQJ.png",
+        "101": "/media/products/main/%D0%B1%D0%B5%D0%B7%20%D0%BF%D0%B0%D0%BA%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F_6v7aLFX.png"
       },
       "in_stock": true,
       "quantity_statuses": {
@@ -225,9 +225,8 @@
       "is_active": true,
       "order": 2,
       "quantity_images": {
-        "21": "https://imgur.com/GE4uRfg.png",
-        "51": "https://imgur.com/9BW8Qr5.png",
-        "101": "https://imgur.com/MWKWcHn.png"
+        "21": "/media/products/main/%D1%84%D1%96%D0%BE%D0%BB%D0%B5%D1%82%D0%BE%D0%B2%D0%B8%D0%B9.png",
+        "51": "/media/products/main/%D1%84%D1%96%D0%BE%D0%BB%D0%B5%D1%82%D0%BE%D0%B2%D0%B8%D0%B9_4CpafxB.png"
       },
       "in_stock": true,
       "quantity_statuses": {
@@ -272,24 +271,6 @@
           "in_stock": true
         }
       }
-    },
-    {
-      "id": 11,
-      "name": "чорний",
-      "hex_code": "#000000",
-      "image_url": "",
-      "is_active": false,
-      "in_stock": true,
-      "order": 7,
-      "quantity_images": {
-        "21": "https://i.pinimg.com/736x/7d/63/21/7d6321c3b66c8410b49bb6a20d076033.jpg"
-      },
-      "quantity_statuses": {
-        "21": {
-          "is_active": true,
-          "in_stock": true
-        }
-      }
     }
   ],
   "quantity_options": [
@@ -309,11 +290,11 @@
     },
     {
       "id": 5,
-      "quantity": 7,
+      "quantity": 101,
       "price_per_unit": 15.0,
       "is_active": true,
       "order": 1,
-      "in_stock": false
+      "in_stock": true
     }
   ],
   "additional_products": [
@@ -747,6 +728,374 @@
       "status": "нове",
       "created_at": "2025-10-15T00:34:40.711280",
       "updated_at": "2025-10-15T00:34:40.711283"
+    },
+    {
+      "id": "24a8bc56-e914-47d9-9c28-0bb753e2ce10",
+      "order_number": "ORD-20251020-24A8BC56",
+      "order_date": "2025-10-20T17:14:35.555947",
+      "delivery_date": "2025-10-21",
+      "delivery_time": "12:00-15:00",
+      "customer_name": "Z0FBQUFBQm85a1BNY2dkQm1kMzFjdWo4eWxjeDBuT3c5QXp3ZDVoamhPWWZWRTFMQk05NjlfSGRQYTZQWnZ1YXR1SEgxT0RFM0JRRVNIU1E1XzgtbU9sNnV5S1hWaUpoMWdQVWFsMlIyNG53RU5STU50R2pMZWM9",
+      "customer_phone": "Z0FBQUFBQm85a1BNUGV1N0tnOXBXQVN6Q3FZRDNqQ2hNNXE0WTVTWWN2T0RrZDVEVTBDRnA5M3JVcEVpMGZZQ2NDS1hkY2JRbEpnczR1SE9ndU1qclRtZndrbjBOa0JHVjRJMzF3al9kd2IyNHdvODM0UV8yU0k9",
+      "customer_email": "Z0FBQUFBQm85a1BNczIwOEViMTlXR3pyQ2VkRHBOZi1xVzZoU0h3RG4yaWRvXy1Qbk5vZW5EUVphTi1BNlYzbkN1U1Vuc01TYlJ5ZjV4S1A4eHB5X001X1B6U0d4VVh0NnhwMXY2Z1ZuRU1Qci02ZEROTk1RZW89",
+      "delivery_city": "Київ",
+      "delivery_address": "Z0FBQUFBQm85a1BNdUdCb2g3dTVDR3ZydEVrNHUtVHJnUVFzZDhXbHF1eUd5Q2ZKczNYUXFtUnJjRUFlTDBaek1RSkFGOUgzOHc5TFptZ1ZSTnQ1VHFJNDhGY0ljcWZDU0w3LWdqQXdDVzJoREF1ZGxfSnpyZktINk9CeTRGQnFLX3Z4UE1JMUFiWkE=",
+      "delivery_postal_code": "",
+      "payment": "online",
+      "total_amount": 1200,
+      "currency": "UAH",
+      "items": [
+        {
+          "id": "product-2",
+          "title": "Весняний букет",
+          "price": 1200,
+          "currency": "грн",
+          "image": "https://i.pinimg.com/736x/4f/d7/23/4fd72339d6ff791898f84164ed48bc76.jpg",
+          "quantity": 1,
+          "type": "additional"
+        },
+        {
+          "id": "gift-1760969501029",
+          "title": "Елегантна ваза",
+          "price": 0,
+          "currency": "грн",
+          "image": "https://picsum.photos/300/200?random=5",
+          "quantity": 1,
+          "type": "gift",
+          "isGift": true
+        }
+      ],
+      "notes": "Тестове замовлення для перевірки системи оплати",
+      "subscribe_news": false,
+      "status": "нове",
+      "created_at": "2025-10-20T17:14:35.556341",
+      "updated_at": "2025-10-20T17:14:35.556349",
+      "customer_phone_encrypted": true,
+      "customer_email_encrypted": true,
+      "delivery_address_encrypted": true,
+      "customer_name_encrypted": true
+    },
+    {
+      "id": "b4dec810-904d-410b-a342-a96345467ee5",
+      "order_number": "ORD-20251020-B4DEC810",
+      "order_date": "2025-10-20T17:26:26.933942",
+      "delivery_date": "2025-10-21",
+      "delivery_time": "12:00-15:00",
+      "customer_name": "Z0FBQUFBQm85a2FTZTZsQmg5WFROTVJNa2FuOGFXTm1YWHdGNndJZnUzdjVpbU1yMGdUV2Rhelk2bjZoM3otNy1MYkZ0Z1BOVXBVRm5ZTEVjeXNOcktyT2Y3QzB3UTdBQ1pKc2tYdWhGQjlGQ0J5R2Uyai1hQ3c9",
+      "customer_phone": "Z0FBQUFBQm85a2FTWWIxSWdDNFdRbEhWb255VmVHOGt5eF95Sm5ULWFhZjRBY3NvMXZiQjFOLUpwR0tLcEc1RnBUQ3JJaEtySHFQU21Rb3B4QklNWHIzZlhBTDl6anVUVzNHUExaTXNpQmgzeldtaVlVU2p0NkU9",
+      "customer_email": "Z0FBQUFBQm85a2FTZW16SFNrNW9CT1lxSkhDWXktQUxzemVPUTNZTGhzeUFIQ0FQWlJ0ZFlFajlHYTNLVU9kbkZva1VDMmVUMjdFYU0tRmNBLWhpSkdkd0JaX2F4Vy1DNERqTi1kSkhwYkZuT1VSRFJrTktZQW89",
+      "delivery_city": "Київ",
+      "delivery_address": "Z0FBQUFBQm85a2FTNWhpNHlPT25vOVgwUlVMQ0hjeEF6VjJxU01aR1pvTGd1UG1RSWhMYldldDBOa0F5OUdIaE5yRm12S0tXdGg1VTBzQ1RVMHR1U3dRNm9sM20zcDJ6b3U5UElaUHg5Tk4xNXdORHVLR1dIRWZXMUtXMjFtZDIwN0JzQUtVVElWZ2I=",
+      "delivery_postal_code": "",
+      "payment": "online",
+      "total_amount": 1200,
+      "currency": "UAH",
+      "items": [
+        {
+          "id": "product-2",
+          "title": "Весняний букет",
+          "price": 1200,
+          "currency": "грн",
+          "image": "https://i.pinimg.com/736x/4f/d7/23/4fd72339d6ff791898f84164ed48bc76.jpg",
+          "quantity": 1,
+          "type": "additional"
+        },
+        {
+          "id": "gift-1760969501029",
+          "title": "Елегантна ваза",
+          "price": 0,
+          "currency": "грн",
+          "image": "https://picsum.photos/300/200?random=5",
+          "quantity": 1,
+          "type": "gift",
+          "isGift": true
+        }
+      ],
+      "notes": "Тестове замовлення для перевірки системи оплати",
+      "subscribe_news": false,
+      "status": "нове",
+      "created_at": "2025-10-20T17:26:26.933958",
+      "updated_at": "2025-10-20T17:26:26.933961",
+      "customer_phone_encrypted": true,
+      "customer_email_encrypted": true,
+      "delivery_address_encrypted": true,
+      "customer_name_encrypted": true
+    },
+    {
+      "id": "7afa5b8d-cc38-47e0-8d4a-5ee05bb641d5",
+      "order_number": "ORD-20251020-7AFA5B8D",
+      "order_date": "2025-10-20T17:26:32.024405",
+      "delivery_date": "2025-10-21",
+      "delivery_time": "12:00-15:00",
+      "customer_name": "Z0FBQUFBQm85a2FZM0lCQ1A1X3lTdnB6bTRyam5jdl85d3RSa200Mk54UVdGQnlyOWJLR05wd0JvYi1PN2otblFtTWJOVldRYm5pUFo2MW9iOXpSWGpYci1vY2d2RzcyRVJnb3htUVAxanpDT3doRUFCQmo0Ujg9",
+      "customer_phone": "Z0FBQUFBQm85a2FZcGY4Tk9Ud1R6eDFIS0N2NXpZa3NqZmtCSDIxVk1wUkM5ZzZJVURTZUJEWS01TkdjWHNscnlzLUV4ek9IVVlqdnNnN2ktUExpWUJ3RGRqMWlfeGlwRE8xMjB6bHpzRkVrQVJTWjBkZ2VFYWc9",
+      "customer_email": "Z0FBQUFBQm85a2FZZjl6cTd4WkNUczkwaXJab01QYWQxaWt1dGNrTTZEZ0VpSE5Fdm5MdDUxZDZtQzRyTll6OUw3ZlVBdmdyVlJ4NFhETy1ONlhZMTZ5cnFSX3JHR0xyM25yNEI5RDRDcDNrcDBLSVg1emt3YUk9",
+      "delivery_city": "Київ",
+      "delivery_address": "Z0FBQUFBQm85a2FZVDZrLWxDcnJ5LVJKc1U0cEdtSG5fQlpyMEhvQi04Vnp5ZS1nOVF1c1JwQkY2SU9md0oxYlFKN0VZY0FoUGk1bE9jb2RlZnZhaGRNS3N0bFcwRTlCOEJvSXU4QklYektjaU01cC15ek5yaTJYTENveG4wT1NwUlNBNk5nYVVyTmI=",
+      "delivery_postal_code": "",
+      "payment": "online",
+      "total_amount": 1200,
+      "currency": "UAH",
+      "items": [
+        {
+          "id": "product-2",
+          "title": "Весняний букет",
+          "price": 1200,
+          "currency": "грн",
+          "image": "https://i.pinimg.com/736x/4f/d7/23/4fd72339d6ff791898f84164ed48bc76.jpg",
+          "quantity": 1,
+          "type": "additional"
+        },
+        {
+          "id": "gift-1760969501029",
+          "title": "Елегантна ваза",
+          "price": 0,
+          "currency": "грн",
+          "image": "https://picsum.photos/300/200?random=5",
+          "quantity": 1,
+          "type": "gift",
+          "isGift": true
+        }
+      ],
+      "notes": "Тестове замовлення для перевірки системи оплати",
+      "subscribe_news": false,
+      "status": "нове",
+      "created_at": "2025-10-20T17:26:32.024422",
+      "updated_at": "2025-10-20T17:26:32.024425",
+      "customer_phone_encrypted": true,
+      "customer_email_encrypted": true,
+      "delivery_address_encrypted": true,
+      "customer_name_encrypted": true
+    },
+    {
+      "id": "615ba8b1-bc41-4444-8c2f-05c2329628b1",
+      "order_number": "ORD-20251020-615BA8B1",
+      "order_date": "2025-10-20T17:26:34.720060",
+      "delivery_date": "2025-10-21",
+      "delivery_time": "12:00-15:00",
+      "customer_name": "Z0FBQUFBQm85a2FhTHphOXcxeHdvVDdZdmp6aEl4ZllzREtsd0w0a21DQnkxS20xbnhCQWoxWnZKaVgxbjBDUGZuOGVRUHBUM1Z2c1plZmVySnNtYmxKejV3MnduaU9jRmxHaDE3aVhVQ2FYR01hcXhGV1o0c2s9",
+      "customer_phone": "Z0FBQUFBQm85a2FhMjJKSm5JTVV2a3dUV1ZydzNYU3RzQTYwMjNBdEkySzEtY1VBNmNocGg2VG9FLVJQNDF2QkxrNWdDWkd6WmhfMEJWRnhmOHJkelVLNWZkaEVSc0lhbnV3SDFtb0lOTTVXMDlROGczRE15QzQ9",
+      "customer_email": "Z0FBQUFBQm85a2FhOGtjVk1YQ210bFkyaE9VX1k5VVZrZDRVTDF5emRZNDRKQlAwQjRSVHo3OEVZOHBIUE5SRjNmckxsX2tyNndsRGkwaVZPR1ZkTWh1cl9jWW1zVDJyeklCZ3pBOGV1eTE4T1JVS0ZnNTdTY289",
+      "delivery_city": "Київ",
+      "delivery_address": "Z0FBQUFBQm85a2FhTUhQdjVGUVBzREFMZEJ4a2xSWU9zZi1OVXlnZ2w4aWJzWGhtemE5VlFsVEdyNzdTaFJSMFo5Zi0tX1pKY29jMlI4ODE1T1dlX3FGUGZfZlM3NDZLS0xkWmJfU0M0ZUVkcmhnMG01SWJGS1o2YzhFcW92Rmx1VlM0cE9nSkFGRVM=",
+      "delivery_postal_code": "",
+      "payment": "online",
+      "total_amount": 1200,
+      "currency": "UAH",
+      "items": [
+        {
+          "id": "product-2",
+          "title": "Весняний букет",
+          "price": 1200,
+          "currency": "грн",
+          "image": "https://i.pinimg.com/736x/4f/d7/23/4fd72339d6ff791898f84164ed48bc76.jpg",
+          "quantity": 1,
+          "type": "additional"
+        },
+        {
+          "id": "gift-1760969501029",
+          "title": "Елегантна ваза",
+          "price": 0,
+          "currency": "грн",
+          "image": "https://picsum.photos/300/200?random=5",
+          "quantity": 1,
+          "type": "gift",
+          "isGift": true
+        }
+      ],
+      "notes": "Тестове замовлення для перевірки системи оплати",
+      "subscribe_news": false,
+      "status": "нове",
+      "created_at": "2025-10-20T17:26:34.720073",
+      "updated_at": "2025-10-20T17:26:34.720074",
+      "customer_phone_encrypted": true,
+      "customer_email_encrypted": true,
+      "delivery_address_encrypted": true,
+      "customer_name_encrypted": true
+    },
+    {
+      "id": "6e54769e-86ed-4b18-bc49-c9dc3f5583b0",
+      "order_number": "ORD-20251020-6E54769E",
+      "order_date": "2025-10-20T17:27:21.721055",
+      "delivery_date": "2025-10-21",
+      "delivery_time": "12:00-15:00",
+      "customer_name": "Z0FBQUFBQm85a2JKRzE2anpqN3J2cGNoMmktbE45Q0N4NUcybkNCcGtpVWxqNTduOHFJc1RFVGswcVBsb29sTHZCbHFhclBCVFBkUVJMWlBjZVVjZUlzZlVQRFZkcndkbDM5YTZSV1ZZOU1TNWRSMnpMT1BRZXc9",
+      "customer_phone": "Z0FBQUFBQm85a2JKdzdMTzJOSUJZTjN1SkFOWGVEaDJiMTZ0djRoUWlRbTFGTnVBeEJlUmk5WGJYbjh2cXZtRXBjUmdZdU5hZ01OQko1LUIxcUFYU0J4bUUtZGdLR2VmNEFsVHNlaWRaYjd3dlVmRlZ6ZVgtRTQ9",
+      "customer_email": "Z0FBQUFBQm85a2JKY3hGbVc2OUZub2RmSVN1TjNDOTRJZ2ZvNlFua01DZ3ZTRXBzM0taTHR4WGlYbktRWG9qOUlxenlaZXg2cHdHVm41Z0NBdk1kSTRDVV9oX2c0RERkeXJ3XzdPdHNOSTdYZk5RMG16V1Zzd3c9",
+      "delivery_city": "Київ",
+      "delivery_address": "Z0FBQUFBQm85a2JKSGRjdlVaYmp6UWhUZDlneG9US3hJbGlTT3FQUFJuT1RRUzBORmZJU2tfX2pTdnJHOFJsOF96OF9UX0MtclpacjRPOGxMQTMxRjFTSjVKQV9iNVlydERibHZSaXdMQnlBOWlCaUlDMTVYbnhsLUd3MFZ3M0ZtUE96Z0lwY2RLMzU=",
+      "delivery_postal_code": "",
+      "payment": "online",
+      "total_amount": 1200,
+      "currency": "UAH",
+      "items": [
+        {
+          "id": "product-2",
+          "title": "Весняний букет",
+          "price": 1200,
+          "currency": "грн",
+          "image": "https://i.pinimg.com/736x/4f/d7/23/4fd72339d6ff791898f84164ed48bc76.jpg",
+          "quantity": 1,
+          "type": "additional"
+        },
+        {
+          "id": "gift-1760969501029",
+          "title": "Елегантна ваза",
+          "price": 0,
+          "currency": "грн",
+          "image": "https://picsum.photos/300/200?random=5",
+          "quantity": 1,
+          "type": "gift",
+          "isGift": true
+        }
+      ],
+      "notes": "Тестове замовлення для перевірки системи оплати",
+      "subscribe_news": false,
+      "status": "нове",
+      "created_at": "2025-10-20T17:27:21.721069",
+      "updated_at": "2025-10-20T17:27:21.721070",
+      "customer_phone_encrypted": true,
+      "customer_email_encrypted": true,
+      "delivery_address_encrypted": true,
+      "customer_name_encrypted": true
+    },
+    {
+      "id": "a5fd1dae-b6e8-4ac3-b5aa-b89500486677",
+      "order_number": "ORD-20251020-A5FD1DAE",
+      "order_date": "2025-10-20T17:27:26.347004",
+      "delivery_date": "2025-10-21",
+      "delivery_time": "12:00-15:00",
+      "customer_name": "Z0FBQUFBQm85a2JPSzY3emhiVDBnYjhvcVpQdDJ0TkY2dzVZeUpBVlNQVl9Yd2djYktCWVozWEpzY0RNak9HWEFqMVFuT1JjQ3N4OEZYR2M1SERkc3NCRUNFTHp2MTFwdTdSTjJGc3F1SWdZNXBvRWpYaUEwNFE9",
+      "customer_phone": "Z0FBQUFBQm85a2JPNU5zT3hqZ1NPajdMR2E4VWtZQldUM0RHV1lhZVBzUmxWRFpSMl9kM3pZd2RFdWtKVm9QZFFMZldBOFgxdU1IOUVhNG1adENyS2tWU0VoMlM2UmhTWERaSXNXRktSejlqZHR4bjFqS0ZMZms9",
+      "customer_email": "Z0FBQUFBQm85a2JPMDZDWmZENExPVnNHNlJoMjJPX2NobXpLQ294dG9OaWIwaDY0alFWTEVRb0FhdmxIRHRnZEdpRUtmMGVPUlotN09CckZ2TVZ1V1JoNzdUT3phd0RBQXhNdHlhRzBPXzNqUWlsNmNZRnhVbFk9",
+      "delivery_city": "Київ",
+      "delivery_address": "Z0FBQUFBQm85a2JPaFJfVUZzNEZsdjBJU3MwcmZsaWxhMHRrbG40WGhUUXdfRFYyc2VKN0RXLUZfY0hBYjFTQy0yakptY2R2Tlhvb3ZIdks2MnFkYVVTSjdLXzFveDQ5S18wcVhNcEF3YmZqWUNPQzBIU3pnZG1RcnJ3Q1M1ajgwXzcyZ05zWU9nUDY=",
+      "delivery_postal_code": "",
+      "payment": "online",
+      "total_amount": 1200,
+      "currency": "UAH",
+      "items": [
+        {
+          "id": "product-2",
+          "title": "Весняний букет",
+          "price": 1200,
+          "currency": "грн",
+          "image": "https://i.pinimg.com/736x/4f/d7/23/4fd72339d6ff791898f84164ed48bc76.jpg",
+          "quantity": 1,
+          "type": "additional"
+        },
+        {
+          "id": "gift-1760969501029",
+          "title": "Елегантна ваза",
+          "price": 0,
+          "currency": "грн",
+          "image": "https://picsum.photos/300/200?random=5",
+          "quantity": 1,
+          "type": "gift",
+          "isGift": true
+        }
+      ],
+      "notes": "Тестове замовлення для перевірки системи оплати",
+      "subscribe_news": false,
+      "status": "нове",
+      "created_at": "2025-10-20T17:27:26.347021",
+      "updated_at": "2025-10-20T17:27:26.347024",
+      "customer_phone_encrypted": true,
+      "customer_email_encrypted": true,
+      "delivery_address_encrypted": true,
+      "customer_name_encrypted": true
+    },
+    {
+      "id": "d676bfff-526e-48d7-bf39-1a42ad42f198",
+      "order_number": "ORD-20251020-D676BFFF",
+      "order_date": "2025-10-20T17:27:33.402943",
+      "delivery_date": "2025-10-21",
+      "delivery_time": "12:00-15:00",
+      "customer_name": "Z0FBQUFBQm85a2JWenpEREhJZFk5WGp3RXVDUFEyU3VXRG5LcjFZZE9xSmY5LW1ib2xHU0lkUDljSFRqRDNaZndLN0pLb2xvQ3hwNkQxbmZzNlZURDMzMy00RS0tOWJWbTdsZnh4WFFPa3JNcG13TDRjT1FORTg9",
+      "customer_phone": "Z0FBQUFBQm85a2JWcWQxWHM3Y2l5YUtoT0JQRElnZ1hhOEhHdVgzaVlMNGVjSE1pUmdZUGhUMl9CTXkwSm83XzVJWEVfdEk1SkhTaUx3ZFBCNVRnNXBuSWU3UjFTWC1oYVBWNHhpR2hGM3gteTJSeUlDZVJvQkU9",
+      "customer_email": "Z0FBQUFBQm85a2JWM3pPdjBQYmg3dDZobEc5Tlg4VjI0cFU4YjZGdW12aFFNcFZoWENmeEFKUWs4Z01DRm1yNlZCZURlRUJ2NWV2YVVINnh5SklPZHRyOURjWEJZdVBYTi1FeDRybjRkclZXVEI5cWxSbFQwWmc9",
+      "delivery_city": "Київ",
+      "delivery_address": "Z0FBQUFBQm85a2JWN2dlN01teFZpN2l1ZkNmVGMwcXh0QVJfQTJTM3JUSVJDYmRuY2lsR2x6OWZxWkN0YzljdENySWZfY0VMYkVYRENjQ2ZFMWlDXzZCbk9JUGFCME45XzNYeXZrYkx1dFRQbUFTdHBVSHE2SWtTUUotem11emc2enNvUlRmSnFfWGc=",
+      "delivery_postal_code": "",
+      "payment": "online",
+      "total_amount": 1200,
+      "currency": "UAH",
+      "items": [
+        {
+          "id": "product-2",
+          "title": "Весняний букет",
+          "price": 1200,
+          "currency": "грн",
+          "image": "https://i.pinimg.com/736x/4f/d7/23/4fd72339d6ff791898f84164ed48bc76.jpg",
+          "quantity": 1,
+          "type": "additional"
+        },
+        {
+          "id": "gift-1760969501029",
+          "title": "Елегантна ваза",
+          "price": 0,
+          "currency": "грн",
+          "image": "https://picsum.photos/300/200?random=5",
+          "quantity": 1,
+          "type": "gift",
+          "isGift": true
+        }
+      ],
+      "notes": "Тестове замовлення для перевірки системи оплати",
+      "subscribe_news": false,
+      "status": "нове",
+      "created_at": "2025-10-20T17:27:33.402958",
+      "updated_at": "2025-10-20T17:27:33.402961",
+      "customer_phone_encrypted": true,
+      "customer_email_encrypted": true,
+      "delivery_address_encrypted": true,
+      "customer_name_encrypted": true
+    },
+    {
+      "id": "e18e3226-7c75-4fa7-9db1-999adfa4f789",
+      "order_number": "ORD-20251020-E18E3226",
+      "order_date": "2025-10-20T17:27:43.775327",
+      "delivery_date": "2025-10-21",
+      "delivery_time": "12:00-15:00",
+      "customer_name": "Z0FBQUFBQm85a2JmSnRBR216VlBWdVVZODUtdVItTUJWeS1iRXgtT2h6VVd0eFUzUUpmVFBmb0VXLVVxa0lxeEd1c1A4cEhUNFZEN2VvaW5tWjRrWVB6RWZEV3NVZnQ5NVlZaXN1dFNmd3NxblRNV1Z3TFZOUDQ9",
+      "customer_phone": "Z0FBQUFBQm85a2JmOS1ITUliV3ROVTJ3QVRINE9WTDVXOUdqbTg0TVhsZk1CTjZ2N0ljbmdQQXl6bXVwQlNva0NPdkx1Tm9fdGkydlpDSXgtem41NUpGalg5eW5FUC15WV8tMTVXX3RlMVBVLUtBNjZoSEtkNDg9",
+      "customer_email": "Z0FBQUFBQm85a2JmTDRmX2tySmR6aktQelJlYkM0VU5GVUxjbHhUSzBWb3AzSjQ1dW5mb0kzUm8wcURaNWhsWG12a05iS2NRSkljWHBSMjBkbmM1Y3Bpb1hrQ1JlWnZMM1Bzb05UQjJoVjc3aVZXSTRtcHowMU09",
+      "delivery_city": "Київ",
+      "delivery_address": "Z0FBQUFBQm85a2JmT2FnVlhyU0lITUhEVVRESWdZMHBVNHc0T2FxRGZZLVRjX0YtWkJmTGhsSmduN1NtRnY4UGRzMjZWY1h4cjZITFhTU3NKRGtGY3NidC0yUWlhQ1YzdzZrbmFLSlZtVS0yeUJoQmtPeEZnUDg3ZzUxU0NiYTNKOFlZMFc4eFdTM3U=",
+      "delivery_postal_code": "",
+      "payment": "online",
+      "total_amount": 1200,
+      "currency": "UAH",
+      "items": [
+        {
+          "id": "product-2",
+          "title": "Весняний букет",
+          "price": 1200,
+          "currency": "грн",
+          "image": "https://i.pinimg.com/736x/4f/d7/23/4fd72339d6ff791898f84164ed48bc76.jpg",
+          "quantity": 1,
+          "type": "additional"
+        },
+        {
+          "id": "gift-1760969501029",
+          "title": "Елегантна ваза",
+          "price": 0,
+          "currency": "грн",
+          "image": "https://picsum.photos/300/200?random=5",
+          "quantity": 1,
+          "type": "gift",
+          "isGift": true
+        }
+      ],
+      "notes": "Тестове замовлення для перевірки системи оплати",
+      "subscribe_news": false,
+      "status": "нове",
+      "created_at": "2025-10-20T17:27:43.775338",
+      "updated_at": "2025-10-20T17:27:43.775340",
+      "customer_phone_encrypted": true,
+      "customer_email_encrypted": true,
+      "delivery_address_encrypted": true,
+      "customer_name_encrypted": true
     }
   ],
   "customers": [],

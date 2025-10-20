@@ -227,6 +227,28 @@
                                 <input type="email" id="email" name="email" placeholder="your@email.com">
                             </div>
                         </div>
+                        
+                        <!-- Інший отримувач -->
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="isGift" name="isGift" onchange="toggleGiftInfo()">
+                                <span class="checkmark"></span>
+                                Інший отримувач
+                            </label>
+                        </div>
+                        
+                        <div id="gift-info-section" style="display: none;">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="recipientName">Ім'я отримувача *</label>
+                                    <input type="text" id="recipientName" name="recipientName" placeholder="Введіть ім'я отримувача">
+                                </div>
+                                <div class="form-group">
+                                    <label for="recipientPhone">Телефон отримувача</label>
+                                    <input type="tel" id="recipientPhone" name="recipientPhone" placeholder="+380 (__) ___-__-__">
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- ======================================== -->
@@ -258,59 +280,6 @@
                         </div>
                     </div>
 
-
-                    <!-- ======================================== -->
-                    <!-- ПІДСЕКЦІЯ 1.2.5: ПОДАРУНКОВА ІНФОРМАЦІЯ -->
-                    <!-- ======================================== -->
-                    <div class="form-section">
-                        <h3><i class="fas fa-gift"></i> Подарункова інформація</h3>
-                        <div class="form-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="isGift" name="isGift" onchange="toggleGiftInfo()">
-                                <span class="checkmark"></span>
-                                Це подарунок
-                            </label>
-                        </div>
-                        
-                        <div id="gift-info-section" style="display: none;">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="recipientName">Ім'я отримувача *</label>
-                                    <input type="text" id="recipientName" name="recipientName" placeholder="Введіть ім'я отримувача">
-                                </div>
-                                <div class="form-group">
-                                    <label for="recipientPhone">Телефон отримувача</label>
-                                    <input type="tel" id="recipientPhone" name="recipientPhone" placeholder="+380 (__) ___-__-__">
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="giftOccasion">Привід для подарунка</label>
-                                <select id="giftOccasion" name="giftOccasion">
-                                    <option value="">Оберіть привід</option>
-                                    <option value="birthday">День народження</option>
-                                    <option value="anniversary">Річниця</option>
-                                    <option value="valentine">День закоханих</option>
-                                    <option value="mothers-day">День матері</option>
-                                    <option value="womens-day">8 Березня</option>
-                                    <option value="graduation">Випускний</option>
-                                    <option value="wedding">Весілля</option>
-                                    <option value="apology">Вибачення</option>
-                                    <option value="congratulations">Вітання</option>
-                                    <option value="other">Інше</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="giftDeliveryType">Тип доставки подарунка</label>
-                                <select id="giftDeliveryType" name="giftDeliveryType">
-                                    <option value="surprise">Сюрприз (без попередження)</option>
-                                    <option value="announced">З попередженням</option>
-                                    <option value="hand-delivery">Вручення особисто</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
 
                     <!-- ======================================== -->
                     <!-- ПІДСЕКЦІЯ 1.2.6: ДОДАТКОВІ ПОБАЖАННЯ -->

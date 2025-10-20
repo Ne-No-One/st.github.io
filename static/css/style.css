@@ -5357,17 +5357,6 @@ Z-INDEX СТРУКТУРА:
     transition: all 0.3s ease;
 }
 
-@keyframes cartItemAppear {
-    0% {
-        opacity: 0;
-        transform: translateX(-20px) scale(0.9);
-    }
-    100% {
-        opacity: 1;
-        transform: translateX(0) scale(1);
-    }
-}
-
 .cart-item:hover {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
     border-color: rgba(255, 255, 255, 0.2);
@@ -6854,36 +6843,37 @@ Z-INDEX СТРУКТУРА:
 
 /* Бонуси в підсумку */
 .summary-rewards {
-    margin: 10px 0;
-    padding: 12px 0;
-    border-top: 2px solid rgba(16, 185, 129, 0.2);
-    border-bottom: 2px solid rgba(16, 185, 129, 0.2);
-    background: rgba(16, 185, 129, 0.05);
-    border-radius: 8px;
+    margin: 8px 0;
+    padding: 0;
 }
 
 .summary-rewards .rewards-header {
-    padding: 8px 0;
+    padding: 6px 0;
     border-bottom: 1px solid rgba(16, 185, 129, 0.15);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .summary-rewards .reward-item {
-    padding: 10px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-    transition: background 0.2s ease;
+    padding: 6px 8px !important;
+    margin-bottom: 6px !important;
+    border-radius: 6px !important;
+    font-size: 0.85rem;
 }
 
-.summary-rewards .reward-item:hover {
-    background: rgba(16, 185, 129, 0.08);
-    border-radius: 4px;
-    margin: 0 -8px;
-    padding: 10px 8px;
+.summary-rewards .reward-item span {
+    font-size: 0.85rem !important;
+}
+
+.summary-rewards .reward-item .emoji {
+    font-size: 14px !important;
+}
+
+.summary-rewards .reward-item .checkmark {
+    font-size: 14px !important;
 }
 
 .summary-rewards .reward-item:last-child {
-    border-bottom: none;
-    padding-bottom: 5px;
+    margin-bottom: 0 !important;
 }
 
 .summary-row.delivery-info.achieved {
@@ -7136,7 +7126,9 @@ Z-INDEX СТРУКТУРА:
         grid-template-columns: 110px 1fr;
         gap: 15px;
         padding: 15px;
+        padding-right: 50px;
         min-height: auto;
+        position: relative;
     }
     
     .cart-item-image {
@@ -7183,14 +7175,15 @@ Z-INDEX СТРУКТУРА:
     }
     
     .cart-item-actions {
-        grid-column: 1 / -1;
-        justify-content: center;
-        margin-top: 10px;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        margin-top: 0;
     }
     
     .remove-item-btn {
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
     }
     
     .form-row {
@@ -7212,10 +7205,6 @@ Z-INDEX СТРУКТУРА:
         opacity: 1;
         transform: translateY(0);
     }
-}
-
-.cart-item {
-    animation: slideInUp 0.3s ease;
 }
 
 /* Стилі для чекбокса згоди з умовами */
