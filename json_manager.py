@@ -14,20 +14,22 @@ logger = logging.getLogger('json_manager')
 class JSONManager:
     """Клас для управління JSON файлом з даними"""
     
+    # Кеш для даних щоб не читати файл кожного разу
+    _cache = None
+    _cache_timestamp = None
+    _cache_duration = 5  # Кеш на 5 секунд
+    
     def __init__(self):
-        logger.info("🔧 Ініціалізація JSONManager")
+        # Видалено зайве логування для оптимізації
         try:
             self.data_file = os.path.join(settings.BASE_DIR, 'data.json')
-            logger.info(f"📁 Шлях до файлу: {self.data_file}")
             self._ensure_data_file()
-            logger.info("✅ JSONManager успішно ініціалізовано")
         except Exception as e:
             logger.error(f"❌ Помилка ініціалізації JSONManager: {e}")
             raise
     
     def _ensure_data_file(self):
         """Перевіряємо чи існує файл даних, якщо ні - створюємо"""
-        logger.info("🔍 Перевірка існування файлу даних")
         if not os.path.exists(self.data_file):
             logger.warning("⚠️ Файл даних не існує, створюємо новий")
             default_data = {
@@ -127,8 +129,18 @@ class JSONManager:
             self.save_data(default_data)
     
     def load_data(self):
-        """Завантажуємо дані з JSON файлу"""
-        logger.info("📖 Завантаження даних з JSON файлу")
+        """Завантажуємо дані з JSON файлу з кешуванням"""
+        # Перевіряємо кеш
+        import time
+        current_time = time.time()
+        
+        if (JSONManager._cache is not None and 
+            JSONManager._cache_timestamp is not None and 
+            (current_time - JSONManager._cache_timestamp) < JSONManager._cache_duration):
+            # Використовуємо кешовані дані
+            return JSONManager._cache
+        
+        # Завантажуємо дані з файлу (без зайвого логування)
         try:
             if not os.path.exists(self.data_file):
                 logger.error(f"❌ Файл {self.data_file} не існує")
@@ -136,7 +148,12 @@ class JSONManager:
             
             with open(self.data_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-                logger.info(f"✅ Дані завантажено успішно, розмір: {len(str(data))} символів")
+                # Оновлюємо кеш
+                JSONManager._cache = data
+                JSONManager._cache_timestamp = current_time
+                # Логуємо тільки якщо це перше завантаження
+                if JSONManager._cache_timestamp == current_time:
+                    logger.debug(f"✅ Дані завантажено, розмір: {len(str(data))} символів")
                 return data
         except json.JSONDecodeError as e:
             logger.error(f"❌ Помилка парсингу JSON: {e}")
@@ -147,6 +164,9 @@ class JSONManager:
     
     def save_data(self, data):
         """Зберігаємо дані в JSON файл"""
+        # Очищаємо кеш при збереженні
+        JSONManager._cache = None
+        JSONManager._cache_timestamp = None
         logger.info("💾 Збереження даних в JSON файл")
         try:
             # Перевіряємо валідність даних
@@ -172,7 +192,7 @@ class JSONManager:
     
     def get_site_settings(self):
         """Отримуємо налаштування сайту"""
-        logger.info("🔧 Отримання налаштувань сайту")
+        # Видалено зайве логування для оптимізації
         try:
             data = self.load_data()
             settings = data.get('site_settings', {})
@@ -180,15 +200,11 @@ class JSONManager:
             # Забезпечуємо дефолтні значення для секцій тільки якщо вони відсутні
             if 'show_services_section' not in settings:
                 settings['show_services_section'] = True
-                logger.info("🔧 Встановлено дефолтне значення show_services_section = True")
             if 'show_contact_section' not in settings:
                 settings['show_contact_section'] = True
-                logger.info("🔧 Встановлено дефолтне значення show_contact_section = True")
             if 'show_about_section' not in settings:
                 settings['show_about_section'] = True
-                logger.info("🔧 Встановлено дефолтне значення show_about_section = True")
             
-            logger.info(f"✅ Налаштування сайту отримано: {settings}")
             return settings
         except Exception as e:
             logger.error(f"❌ Помилка отримання налаштувань сайту: {e}")
@@ -319,9 +335,15 @@ class JSONManager:
         data['color_options'] = [c for c in colors if c.get('id') != color_id]
         return self.save_data(data)
     
-    def add_quantity_image_for_color(self, color_id, quantity, image_url, is_active=True, in_stock=True):
-        """Додаємо фото для конкретної кількості кольору з статусами"""
-        print(f"🖼️ add_quantity_image_for_color: color_id={color_id}, quantity={quantity}, image_url={image_url}, active={is_active}, stock={in_stock}")
+    def add_quantity_image_for_color(self, color_id, quantity, image_url, is_active=True, in_stock=True, zoom=100, zoom_desktop=None, zoom_mobile=None):
+        """Додаємо фото для конкретної кількості кольору з статусами та zoom"""
+        # Зворотна сумісність
+        if zoom_desktop is None:
+            zoom_desktop = zoom
+        if zoom_mobile is None:
+            zoom_mobile = zoom
+            
+        print(f"🖼️ add_quantity_image: color={color_id}, qty={quantity}, active={is_active}, stock={in_stock}, zoom_desktop={zoom_desktop}%, zoom_mobile={zoom_mobile}%")
         data = self.load_data()
         colors = data.get('color_options', [])
         found = False
@@ -331,8 +353,12 @@ class JSONManager:
                     color['quantity_images'] = {}
                 if 'quantity_statuses' not in color:
                     color['quantity_statuses'] = {}
+                if 'quantity_zoom_desktop' not in color:
+                    color['quantity_zoom_desktop'] = {}
+                if 'quantity_zoom_mobile' not in color:
+                    color['quantity_zoom_mobile'] = {}
                 
-                # URL як простий рядок (для JavaScript)
+                # URL як простий рядок
                 color['quantity_images'][str(quantity)] = image_url
                 
                 # Статуси в окремому полі
@@ -340,15 +366,17 @@ class JSONManager:
                     'is_active': is_active,
                     'in_stock': in_stock
                 }
-                print(f"✅ Додано фото та статуси для кольору {color_id}, кількість {quantity}")
-                print(f"   └─ URL: {image_url}")
-                print(f"   └─ is_active: {is_active}, in_stock: {in_stock}")
-                print(f"   └─ quantity_statuses: {color['quantity_statuses']}")
+                
+                # Zoom окремо для desktop та mobile
+                color['quantity_zoom_desktop'][str(quantity)] = zoom_desktop
+                color['quantity_zoom_mobile'][str(quantity)] = zoom_mobile
+                
+                print(f"✅ Додано: qty={quantity}, zoom_desktop={zoom_desktop}%, zoom_mobile={zoom_mobile}%")
                 found = True
                 break
         
         if not found:
-            print(f"❌ Колір з ID {color_id} не знайдено!")
+            print(f"❌ ПОМИЛКА: Колір з ID {color_id} не знайдено!")
             return False
             
         data['color_options'] = colors
@@ -356,9 +384,9 @@ class JSONManager:
         print(f"💾 Результат збереження: {result}")
         return result
     
-    def update_quantity_image_for_color(self, color_id, quantity, image_url, is_active=True, in_stock=True):
-        """Оновлюємо фото для конкретної кількості кольору з статусами"""
-        return self.add_quantity_image_for_color(color_id, quantity, image_url, is_active, in_stock)
+    def update_quantity_image_for_color(self, color_id, quantity, image_url, is_active=True, in_stock=True, zoom=100, zoom_desktop=None, zoom_mobile=None):
+        """Оновлюємо фото для конкретної кількості кольору з статусами та zoom"""
+        return self.add_quantity_image_for_color(color_id, quantity, image_url, is_active, in_stock, zoom, zoom_desktop, zoom_mobile)
     
     def delete_quantity_image_for_color(self, color_id, quantity):
         """Видаляємо фото для конкретної кількості кольору"""
@@ -420,6 +448,10 @@ class JSONManager:
             'quantity_statuses': {}  # Статуси окремо
         }
         
+        # Ініціалізуємо quantity_zoom якщо його немає
+        if 'quantity_zoom' not in new_color:
+            new_color['quantity_zoom'] = {}
+        
         # Додаємо фото та статуси для кількостей
         if quantities_data:
             for qty_data in quantities_data:
@@ -427,6 +459,7 @@ class JSONManager:
                 image_url = qty_data.get('image_url')
                 qty_active = qty_data.get('is_active', True)
                 qty_stock = qty_data.get('in_stock', True)
+                qty_zoom = qty_data.get('zoom', 100)
                 
                 if quantity and image_url:
                     # URL як простий рядок
@@ -436,6 +469,8 @@ class JSONManager:
                         'is_active': qty_active,
                         'in_stock': qty_stock
                     }
+                    # Zoom окремо
+                    new_color['quantity_zoom'][str(quantity)] = qty_zoom
         
         colors.append(new_color)
         data['color_options'] = colors
@@ -638,24 +673,21 @@ class JSONManager:
     
     def get_orders(self):
         """Отримуємо всі замовлення"""
-        logger.info("📋 Отримання списку замовлень")
+        # Видалено зайве логування для оптимізації
         data = self.load_data()
         orders = data.get('orders', [])
         # Сортуємо за датою замовлення (новіші спочатку)
         orders.sort(key=lambda x: x.get('order_date', ''), reverse=True)
-        logger.info(f"✅ Знайдено {len(orders)} замовлень")
         return orders
     
     def get_order_by_id(self, order_id):
         """Отримуємо замовлення за ID"""
-        logger.info(f"🔍 Пошук замовлення з ID: {order_id}")
+        # Видалено зайве логування для оптимізації
         orders = self.get_orders()
         for order in orders:
             # Порівнюємо як string, бо ID може бути UUID
             if str(order.get('id')) == str(order_id):
-                logger.info(f"✅ Замовлення знайдено: {order.get('order_number')}")
                 return order
-        logger.warning(f"⚠️ Замовлення з ID {order_id} не знайдено")
         return None
     
     def update_order_status(self, order_id, new_status):
@@ -691,10 +723,9 @@ class JSONManager:
     
     def get_orders_by_status(self, status):
         """Отримуємо замовлення за статусом"""
-        logger.info(f"📊 Отримання замовлень зі статусом: {status}")
+        # Видалено зайве логування для оптимізації
         orders = self.get_orders()
         filtered_orders = [order for order in orders if order.get('status') == status]
-        logger.info(f"✅ Знайдено {len(filtered_orders)} замовлень зі статусом '{status}'")
         return filtered_orders
     
     def save_order(self, order_data):
@@ -724,23 +755,20 @@ class JSONManager:
     
     def get_customers(self):
         """Отримуємо всіх клієнтів"""
-        logger.info("👥 Отримання списку клієнтів")
+        # Видалено зайве логування для оптимізації
         data = self.load_data()
         customers = data.get('customers', [])
         # Сортуємо за загальною сумою покупок (VIP спочатку)
         customers.sort(key=lambda x: x.get('total_spent', 0), reverse=True)
-        logger.info(f"✅ Знайдено {len(customers)} клієнтів")
         return customers
     
     def get_customer_by_id(self, customer_id):
         """Отримуємо клієнта за ID"""
-        logger.info(f"🔍 Пошук клієнта з ID: {customer_id}")
+        # Видалено зайве логування для оптимізації
         customers = self.get_customers()
         for customer in customers:
             if customer.get('id') == int(customer_id):
-                logger.info(f"✅ Клієнт знайдений: {customer.get('name')}")
                 return customer
-        logger.warning(f"⚠️ Клієнт з ID {customer_id} не знайдений")
         return None
     
     def add_customer(self, customer_data):
@@ -792,15 +820,14 @@ class JSONManager:
     
     def get_financial_reports(self):
         """Отримуємо фінансові звіти"""
-        logger.info("💰 Отримання фінансових звітів")
+        # Видалено зайве логування для оптимізації
         data = self.load_data()
         reports = data.get('financial_reports', {})
-        logger.info("✅ Фінансові звіти отримано")
         return reports
     
     def get_daily_sales(self, limit=30):
         """Отримуємо щоденні продажі"""
-        logger.info(f"📊 Отримання щоденних продажів (останні {limit} днів)")
+        # Видалено зайве логування для оптимізації
         reports = self.get_financial_reports()
         daily_sales = reports.get('daily_sales', [])
         # Сортуємо за датою (новіші спочатку) і обмежуємо кількість
@@ -809,7 +836,7 @@ class JSONManager:
     
     def get_monthly_summary(self):
         """Отримуємо місячний звіт"""
-        logger.info("📈 Отримання місячного звіту")
+        # Видалено зайве логування для оптимізації
         reports = self.get_financial_reports()
         return reports.get('monthly_summary', {})
     
@@ -893,7 +920,7 @@ class JSONManager:
     
     def get_progress_bar_settings(self):
         """Отримуємо налаштування прогрес-бару"""
-        logger.info("📊 Отримання налаштувань прогрес-бару")
+        # Видалено зайве логування для оптимізації
         data = self.load_data()
         progress_bar = data.get('site_settings', {}).get('progress_bar', {
             'enabled': True,
@@ -997,13 +1024,12 @@ class JSONManager:
     
     def get_milestone_by_id(self, milestone_id):
         """Отримуємо етап по ID"""
-        logger.info(f"🔍 Пошук етапу #{milestone_id}")
+        # Видалено зайве логування для оптимізації
         data = self.load_data()
         milestones = data.get('site_settings', {}).get('progress_bar', {}).get('milestones', [])
         
         for milestone in milestones:
             if milestone.get('id') == milestone_id:
-                logger.info(f"✅ Етап #{milestone_id} знайдено")
                 return milestone
         
         logger.warning(f"⚠️ Етап #{milestone_id} не знайдено")

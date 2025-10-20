@@ -237,6 +237,65 @@ def site_settings(request):
     except Exception as e:
         return HttpResponse(f"Помилка: {e}")
 
+
+def zoom_settings(request):
+    """Налаштування масштабу зображень для всіх кольорів"""
+    try:
+        from json_manager import JSONManager
+        json_manager = JSONManager()
+        
+        colors = json_manager.get_color_options()
+        quantities = json_manager.get_quantity_options()
+        
+        if request.method == 'POST':
+            # Оновлюємо zoom для кожного кольору та кількості
+            for color in colors:
+                color_id = color['id']
+                
+                if 'quantity_zoom_desktop' not in color:
+                    color['quantity_zoom_desktop'] = {}
+                if 'quantity_zoom_mobile' not in color:
+                    color['quantity_zoom_mobile'] = {}
+                
+                for qty in quantities:
+                    quantity = qty['quantity']
+                    desktop_key = f'zoom_desktop_{color_id}_{quantity}'
+                    mobile_key = f'zoom_mobile_{color_id}_{quantity}'
+                    
+                    zoom_desktop = int(request.POST.get(desktop_key, '100'))
+                    zoom_mobile = int(request.POST.get(mobile_key, '100'))
+                    
+                    color['quantity_zoom_desktop'][str(quantity)] = zoom_desktop
+                    color['quantity_zoom_mobile'][str(quantity)] = zoom_mobile
+            
+            # Зберігаємо оновлені дані
+            json_manager.update_color_options(colors)
+            messages.success(request, '✅ Налаштування zoom успішно збережено для всіх кольорів!')
+            return redirect('admin_panel:zoom_settings')
+        
+        # Підготовка даних для template з zoom значеннями для кожної кількості
+        import json as json_module
+        for color in colors:
+            # Ініціалізуємо порожні словники якщо їх немає
+            if 'quantity_zoom_desktop' not in color or not color['quantity_zoom_desktop']:
+                color['quantity_zoom_desktop'] = color.get('quantity_zoom', {}).copy()
+            if 'quantity_zoom_mobile' not in color or not color['quantity_zoom_mobile']:
+                color['quantity_zoom_mobile'] = color.get('quantity_zoom', {}).copy()
+            
+            # Серіалізуємо в JSON для передачі в data атрибути
+            color['quantity_zoom_desktop'] = json_module.dumps(color.get('quantity_zoom_desktop', {}))
+            color['quantity_zoom_mobile'] = json_module.dumps(color.get('quantity_zoom_mobile', {}))
+        
+        context = {
+            'colors': colors,
+            'quantities': quantities
+        }
+        return render(request, 'admin_panel/zoom_settings.html', context)
+    except Exception as e:
+        messages.error(request, f'Помилка: {e}')
+        return redirect('admin_panel:main_product_settings')
+
+
 def main_product_settings(request):
     """Налаштування головного товару та його варіантів"""
     try:
@@ -711,6 +770,8 @@ def create_color_with_quantities(request):
                     file_key = f'quantity_{quantity}_file'
                     active_key = f'qty_{quantity}_active'
                     stock_key = f'qty_{quantity}_stock'
+                    zoom_desktop_key = f'quantity_{quantity}_zoom_desktop'
+                    zoom_mobile_key = f'quantity_{quantity}_zoom_mobile'
                     
                     # Спочатку перевіряємо чи є завантажений файл
                     uploaded_file = request.FILES.get(file_key)
@@ -727,8 +788,10 @@ def create_color_with_quantities(request):
                     
                     qty_active = request.POST.get(active_key) == 'on'
                     qty_stock = request.POST.get(stock_key) == 'on'
+                    qty_zoom_desktop = int(request.POST.get(zoom_desktop_key, '100'))
+                    qty_zoom_mobile = int(request.POST.get(zoom_mobile_key, '100'))
                     
-                    print(f"📝 Кількість {quantity}: має_фото={bool(quantity_image_url)}, active={qty_active}, stock={qty_stock}")
+                    print(f"📝 Кількість {quantity}: фото={bool(quantity_image_url)}, active={qty_active}, stock={qty_stock}, zoom_desktop={qty_zoom_desktop}%, zoom_mobile={qty_zoom_mobile}%")
                     
                     # Додаємо кількість з фото або без (фото необов'язкове)
                     if quantity_image_url:
@@ -736,7 +799,9 @@ def create_color_with_quantities(request):
                             'quantity': quantity,
                             'image_url': quantity_image_url,
                             'is_active': qty_active,
-                            'in_stock': qty_stock
+                            'in_stock': qty_stock,
+                            'zoom_desktop': qty_zoom_desktop,
+                            'zoom_mobile': qty_zoom_mobile
                         })
                     # Зберігаємо статуси навіть якщо немає фото
                     # (backend має зберегти quantity_statuses окремо від quantity_images)
@@ -757,14 +822,17 @@ def create_color_with_quantities(request):
                                             json_manager.delete_quantity_image_for_color(int(edit_color_id), quantity)
                                 break
                         
-                        # Потім додаємо нові фото зі статусами
+                        # Потім додаємо нові фото зі статусами та zoom
                         for qty_data in quantities_data:
                             json_manager.update_quantity_image_for_color(
                                 int(edit_color_id), 
                                 qty_data['quantity'], 
                                 qty_data['image_url'],
                                 qty_data.get('is_active', True),
-                                qty_data.get('in_stock', True)
+                                qty_data.get('in_stock', True),
+                                100,  # zoom (для зворотньої сумісності)
+                                qty_data.get('zoom_desktop', 100),
+                                qty_data.get('zoom_mobile', 100)
                             )
                         
                         # Повідомлення зі статусом
@@ -779,7 +847,8 @@ def create_color_with_quantities(request):
                         
                         photo_info = f"з {len(quantities_data)} фото" if quantities_data else "без фото"
                         messages.success(request, f'✅ Колір "{name}" {photo_info} оновлено! Статус: {status[0]}')
-                        return redirect('admin_panel:main_product_settings')
+                        # Залишаємось на сторінці редагування
+                        return redirect(f'/admin-panel/main-product/create-color-with-quantities/?edit={edit_color_id}')
                     else:
                         messages.error(request, 'Помилка оновлення кольору!')
                 else:

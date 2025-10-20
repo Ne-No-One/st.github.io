@@ -62,6 +62,13 @@ urlpatterns = [
     # Тестова сторінка ефектів свічення
     path('glow-test/', views.glow_test, name='glow_test'),
     
+    # Тестові сторінки zoom системи
+    path('test-zoom/', views.test_zoom, name='test_zoom'),
+    path('test-zoom/admin/', views.test_zoom_admin, name='test_zoom_admin'),
+    path('test-zoom/preview/', views.test_zoom_preview, name='test_zoom_preview'),
+    path('api/test-zoom/save/', views.save_test_zoom_settings, name='save_test_zoom_settings'),
+    path('api/test-zoom/load/', views.load_test_zoom_settings, name='load_test_zoom_settings'),
+    
     # Тестова симуляція оплати
     path('payment/test/simulation/', views.test_payment_simulation, name='test_payment_simulation'),
     path('payment/test/success/', views.test_payment_success, name='test_payment_sim_success'),

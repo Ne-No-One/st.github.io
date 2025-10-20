@@ -306,7 +306,19 @@
       "Custom modal CSS in static/css/clear-cart-modal.css",
       "Red gradient button with pulse animation",
       "Backdrop blur effect for modern look",
-      "Responsive modal design for mobile devices"
+      "Responsive modal design for mobile devices",
+      "Universal zoom system for product images",
+      "Zoom works on ALL devices (desktop, tablet, mobile)",
+      "Removed device-specific zoom restrictions (media queries)",
+      "CSS variable --image-zoom controls image scaling universally",
+      "quantityZoom settings applied to all screen sizes",
+      "Test zoom slider available on all devices",
+      "Fixed image display to use .flowers-layer background-image instead of <img> tags",
+      "Zoom now correctly applies via background-size: var(--image-zoom)",
+      "Quantity images displayed on flowers-layer with proper zoom control",
+      "Admin panel zoom settings (50-150%) fully functional",
+      "Test pages created: /test-zoom/admin/ (settings) and /test-zoom/preview/ (result)",
+      "Zoom applies on quantity button click with visual feedback in console"
     ]
   },
   "projectStructure": {
@@ -465,11 +477,11 @@
     ]
   },
   "currentTask": {
-    "name": "Admin Panel UI Size Optimization & Overlay Styling",
-    "description": "COMPLETED: Reduced element sizes across admin panel and added professional overlay design. USER REQUEST: 'всі елементи гарні але надто великі зменьши трішки але щоб гарно і нічоо не поламалось і не виходило за межі і тут виправ дизайн для changeStatusOverlay'. CHANGES MADE: 1) DASHBOARD ELEMENTS: Reduced padding in stat-card-modern (lg to md), stat-icon and stat-value (2xl to xl), quick-action-btn (lg to md, gap sm to xs), quick-action-btn icons (2xl to xl), quick-action-btn text (md to sm), dashboard-section (xl to lg), section-header spacing (lg to md, md to sm), section-title (lg to md). 2) ORDER ITEMS: Reduced order-item padding (md to sm), margin (sm to xs), order-number font (lg to md), order-status padding (4px 12px to 3px 10px), order-amount font (lg to md). 3) NOTIFICATIONS: Reduced notification-icon size (35px to 30px, font lg to md). 4) EMPTY STATE: Reduced padding (40px to 30px), icon (3rem to 2.5rem). 5) GRIDS: Reduced stats-grid minmax (250px to 220px), gap (lg to md), margin (2xl to xl), quick-actions minmax (180px to 150px), gap (md to sm), main-grid gap (xl to lg). 6) TABLE: Reduced admin-table th padding (sm+md to xs+sm), font (sm to xs), td padding (md to sm), added font-size sm. 7) OVERLAY DESIGN: Added complete professional overlay styling in admin-components.css: dark gradient background with backdrop-blur, slideUp animation, modern header with gradient, close button with rotation hover, styled form controls with focus states, responsive design. RESULT: All elements 15-25% smaller, better space utilization, no layout breaks, professional overlay modal. STATUS: COMPLETED.",
+    "name": "Universal Zoom System - Fixed Image Display",
+    "description": "COMPLETED: Fixed zoom system to work properly with quantity images. PROBLEM: Zoom was setting CSS variable correctly (CSS=75%) but computed background-size was wrong (114.21%) because images were displayed as <img> tags instead of background-image on .flowers-layer. The updateQuantityImage() function created <img id='product-image'> elements which used object-fit: cover instead of background-size, so zoom didn't apply. SOLUTION: Completely rewrote updateQuantityImage() to use .flowers-layer background-image instead of creating <img> tags. Now when quantity changes, image is set as flowersLayer.style.backgroundImage and zoom via background-size: var(--image-zoom) works perfectly. ADDITIONAL FIXES: 1) Added zoom application on quantity button click in handleClick function. 2) Admin panel 'Update color' button now stays on edit page instead of redirecting. 3) Created test pages /test-zoom/admin/ and /test-zoom/preview/ for testing. 4) Fixed main/views.py to pass quantity_zoom data to template context. TESTING: quantityZoom values (21: 100%, 51: 115%, 101: 75%) now apply correctly - CSS variable and computed style match. STATUS: COMPLETED.",
     "status": "completed",
-    "startedAt": "2025-10-14",
-    "completedAt": "2025-10-14"
+    "startedAt": "2025-10-20",
+    "completedAt": "2025-10-20"
   },
   "aiInternalState": {
     "hypotheses": [
@@ -563,9 +575,16 @@
         "status": "confirmed",
         "created": "2025-10-14",
         "lesson": "CART COUNTER MANAGEMENT: When implementing cart systems with auto-add items (gifts, bonuses), ALWAYS recalculate counters from items array, never cache. Problem: After clearCart(), gift items remained visible, cart.count showed wrong number, order details not updated. Cause: cart.count was cached value not recalculated, updateCartDisplay() didn't recalculate count, gifts re-added by autoAddGiftToCart() before cart fully cleared. Solution: 1) updateCartCount() - ALWAYS recalculate: cart.count = items.reduce((sum, item) => sum + item.quantity, 0). 2) updateCartDisplay() - recalculate count AND update all detail fields (totalFlowerCount, totalItemsCount, totalOrderPrice). 3) clearCart() - reset ALL properties (items, total, count, itemsTotal, discount) then call all update functions (updateCartDisplay, updateCartCount, updateProgressBar). 4) Create removeGiftFromCart() to explicitly filter isGift items. 5) autoAddGiftToCart() - check if cart has non-gift items before adding, remove gifts if no reward or cart empty. 6) Export removeGiftFromCart() for cross-module access. Result: Counters always accurate, clear cart truly empties everything, no ghost items, order details always current. Critical for cart reliability."
+      },
+      {
+        "id": 14,
+        "hypothesis": "CSS custom properties (--image-zoom) only work with background-image, not with <img> tags using object-fit.",
+        "status": "confirmed",
+        "created": "2025-10-20",
+        "lesson": "IMAGE ZOOM SYSTEM: When implementing zoom/scale system with CSS variables, images MUST be displayed as background-image, not as <img> tags. Problem: updateQuantityImage() created <img id='product-image'> elements with object-fit: cover. CSS variable --image-zoom was set correctly (75%) but computed background-size was wrong (114.21%) because <img> doesn't use background-size. Solution: Changed updateQuantityImage() to set images on .flowers-layer as background-image instead of creating <img> tags. Now flowersLayer.style.backgroundImage = url(...) and background-size: var(--image-zoom) works perfectly. Critical: 1) CSS custom properties in background-size only affect background-image, not <img>. 2) For zoom to work, must use background-image with background-size. 3) object-fit: cover on <img> ignores background-size CSS. 4) Always verify image display method matches CSS properties being used. Result: Zoom now works perfectly - CSS variable and computed style match exactly."
       }
     ],
-    "lastAnalysis": "CART CLEAR BUG FIX: User reported critical bugs after clearing cart: 1) Gift item remained visible (ghost item), 2) Cart counters not updated (cart-count, total-items-count, total-order-price), 3) Order details section showed old values. Root causes: cart.count cached value not recalculated, updateCartDisplay() relied on cached count, autoAddGiftToCart() re-added gifts after clear, removeGiftFromCart() didn't exist. Solutions implemented: 1) CLEAR CART FIX: clearCart() now resets ALL properties (items=[], total=0, count=0, itemsTotal=0, discount=0), calls all update functions, explicitly calls removeGiftFromCart(). 2) COUNTER RECALCULATION: updateCartCount() and updateCartDisplay() now ALWAYS recalculate cart.count from items.reduce(). Never trust cached values. 3) GIFT REMOVAL: Created removeGiftFromCart() function that filters isGift items, exported to window.progressBarManager. autoAddGiftToCart() now checks if cart has non-gift items before adding, removes gifts if no reward. 4) ORDER DETAILS UPDATE: Added explicit recalculation and logging for totalFlowers, totalItemsCount, totalOrderPrice. 5) LOGGING: Added detailed console logs at each step of clear operation for debugging. Testing: After clear cart shows: items=[], count=0, total=0, cart icon shows 0, order details show 0, no ghost gifts. Result: Cart clearing now completely reliable, all counters accurate, no ghost items, proper gift lifecycle management (add when earned, remove when lost or cart cleared).",
+    "lastAnalysis": "ZOOM SYSTEM FIX: User reported zoom not working on main site despite working in test pages. Investigation revealed critical issue: images displayed as <img> tags with object-fit: cover instead of background-image, so background-size: var(--image-zoom) had no effect. Logs showed: CSS variable set correctly (CSS=75%) but computed background-size wrong (114.21%). ROOT CAUSE: updateQuantityImage() created <img id='product-image'> elements. CSS custom properties in background-size only affect background-image, not <img> tags. FIXES: 1) Rewrote updateQuantityImage() to use flowersLayer.style.backgroundImage instead of creating <img>. 2) Removed productImage references from changeColorWithMask() and changeQuantityWithLayers(). 3) Added zoom application in quantity button click handler. 4) Fixed main/views.py to pass quantity_zoom in template context. 5) Fixed admin panel redirect to stay on edit page after save. 6) Added extensive console logging for diagnostics. TESTING: After fix, zoom values apply correctly: 21→100%, 51→115%, 101→75%. CSS variable and computed style now match exactly. User can configure zoom 50-150% in admin panel per color+quantity combination. Result: Zoom works universally on all devices, images scale to fit elements properly.",
     "cleanupActions": [
       "Moved 14 API documentation files to docs/ folder",
       "Moved 3 test files to tests/ folder",

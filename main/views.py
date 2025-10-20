@@ -37,7 +37,7 @@ def home(request):
             if 'in_stock' not in product:
                 product['in_stock'] = True
         
-        # Додаємо quantity_images та quantity_statuses для кожного кольору
+        # Додаємо quantity_images, quantity_statuses та quantity_zoom для кожного кольору
         import json
         for color in color_options_sorted:
             # quantity_images - прості URL
@@ -45,8 +45,13 @@ def home(request):
             # quantity_statuses - статуси для кожної кількості
             qty_statuses = color.get('quantity_statuses', {})
             color['quantity_statuses_json'] = json.dumps(qty_statuses)
+            # quantity_zoom - для зворотньої сумісності та desktop
+            zoom_desktop = color.get('quantity_zoom_desktop', color.get('quantity_zoom', {}))
+            zoom_mobile = color.get('quantity_zoom_mobile', color.get('quantity_zoom', {}))
+            color['quantity_zoom_desktop'] = zoom_desktop
+            color['quantity_zoom_mobile'] = zoom_mobile
             
-            print(f"🎨 Колір {color.get('name')}: quantity_statuses = {qty_statuses}")
+            print(f"🎨 Колір {color.get('name')}: zoom_desktop={zoom_desktop}, zoom_mobile={zoom_mobile}")
             
             # Зворотна сумісність
             if 'in_stock' not in color:
@@ -86,6 +91,68 @@ def home(request):
 def glow_test(request):
     """Тестова сторінка з ефектами свічення"""
     return render(request, 'glow_test.html')
+
+
+def test_zoom(request):
+    """Тестова сторінка для налагодження zoom системи"""
+    return render(request, 'test_zoom.html')
+
+
+def test_zoom_admin(request):
+    """Тестова сторінка налаштувань zoom (адмін)"""
+    return render(request, 'test_zoom_admin.html')
+
+
+def test_zoom_preview(request):
+    """Тестова сторінка перегляду zoom (результат)"""
+    return render(request, 'test_zoom_preview.html')
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def save_test_zoom_settings(request):
+    """API для збереження тестових налаштувань zoom"""
+    try:
+        data = json.loads(request.body)
+        
+        # Зберігаємо в session
+        request.session['test_zoom_settings'] = data
+        
+        print(f"💾 Збережено налаштування zoom: {len(data)} комбінацій")
+        for key, value in list(data.items())[:3]:
+            print(f"   - {key}: {value}%")
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Налаштування збережено',
+            'count': len(data)
+        })
+    except Exception as e:
+        print(f"❌ Помилка збереження zoom: {e}")
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
+@require_http_methods(["GET"])
+def load_test_zoom_settings(request):
+    """API для завантаження тестових налаштувань zoom"""
+    try:
+        settings = request.session.get('test_zoom_settings', {})
+        
+        print(f"📥 Завантажено налаштування zoom: {len(settings)} комбінацій")
+        
+        return JsonResponse({
+            'success': True,
+            'settings': settings
+        })
+    except Exception as e:
+        print(f"❌ Помилка завантаження zoom: {e}")
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
 
 
 def cart(request):

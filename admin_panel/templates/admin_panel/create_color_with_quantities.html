@@ -59,45 +59,6 @@
                         </div>
                     </div>
                     
-                    <!-- Статуси активності та наявності -->
-                    <div class="row mb-4">
-                        <div class="col-12">
-                            <div class="card bg-light">
-                                <div class="card-body">
-                                    <h6 class="mb-3">
-                                        <i class="fas fa-toggle-on me-2"></i>
-                                        Статуси видимості та наявності
-                                    </h6>
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" id="is_active" name="is_active" 
-                                                       {% if is_edit_mode and color_data %}{% if color_data.is_active %}checked{% endif %}{% else %}checked{% endif %}>
-                                                <label class="form-check-label" for="is_active">
-                                                    <i class="fas fa-eye me-2"></i>
-                                                    <strong>Активний</strong> - показувати колір на сайті
-                                                </label>
-                                            </div>
-                                            <div class="form-text">Якщо вимкнено, колір повністю зникне з сайту</div>
-                                        </div>
-                                        
-                                        <div class="col-md-6 mb-3">
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" id="in_stock" name="in_stock" 
-                                                       {% if is_edit_mode and color_data %}{% if color_data.in_stock %}checked{% endif %}{% else %}checked{% endif %}>
-                                                <label class="form-check-label" for="in_stock">
-                                                    <i class="fas fa-box me-2"></i>
-                                                    <strong>В наявності</strong> - колір доступний для замовлення
-                                                </label>
-                                            </div>
-                                            <div class="form-text">Якщо вимкнено, колір буде показуватися з перекресленою іконкою та неактивною кнопкою</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
                     <!-- Кількості та фото -->
                     <div class="row mb-4">
                         <div class="col-12">
@@ -112,14 +73,14 @@
                     <div class="row" id="quantitiesContainer">
                         {% for qty in quantities %}
                         <div class="col-md-6 col-lg-4 mb-3">
-                            <div class="card h-100">
-                                <div class="card-header">
-                                    <h6 class="mb-0">
-                                        <i class="fas fa-hashtag me-2"></i>
+                            <div class="card h-100 border-0 shadow-sm" style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.98) 100%); border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.2);">
+                                <div class="card-header border-0" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(14, 165, 233, 0.1) 100%); border-radius: 12px 12px 0 0; border-bottom: 1px solid rgba(59, 130, 246, 0.2);">
+                                    <h6 class="mb-0" style="color: rgba(255, 255, 255, 0.95); font-weight: 600;">
+                                        <i class="fas fa-hashtag me-2" style="color: #3b82f6;"></i>
                                         {{ qty.quantity }} шт
                                     </h6>
                                 </div>
-                                <div class="card-body">
+                                <div class="card-body" style="padding: 1.25rem; color: rgba(255, 255, 255, 0.9);">
                                     <!-- URL зображення -->
                                     <label for="quantity_{{ qty.quantity }}_image" class="form-label">
                                         <i class="fas fa-link me-1"></i>URL зображення
@@ -138,9 +99,9 @@
                                     </div>
                                     
                                     <!-- Розділювач -->
-                                    <div class="text-center text-muted my-2" style="font-size: 0.85rem;">
-                                        <span style="background: white; padding: 0 10px;">АБО</span>
-                                        <hr style="margin-top: -12px; border-top: 1px solid #dee2e6;">
+                                    <div class="text-center my-2" style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.5);">
+                                        <span style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.98) 100%); padding: 0 10px;">АБО</span>
+                                        <hr style="margin-top: -12px; border-top: 1px solid rgba(59, 130, 246, 0.2);">
                                     </div>
                                     
                                     <!-- Завантаження файлу -->
@@ -154,14 +115,52 @@
                                            onchange="previewUploadedImage(this, {{ qty.quantity }})">
                                     <div class="form-text">Підтримуються: JPG, PNG, WebP (макс. 5MB)</div>
                                     
+                                    <!-- Масштаб зображення для Desktop -->
+                                    <div class="mt-3">
+                                        <label for="quantity_{{ qty.quantity }}_zoom_desktop" class="form-label d-flex justify-content-between align-items-center">
+                                            <span><i class="fas fa-desktop me-1"></i>🖥️ Zoom Desktop</span>
+                                            <span class="badge bg-primary" id="zoom_desktop_value_{{ qty.quantity }}">100%</span>
+                                        </label>
+                                        <input type="range" class="form-range" 
+                                               id="quantity_{{ qty.quantity }}_zoom_desktop" 
+                                               name="quantity_{{ qty.quantity }}_zoom_desktop" 
+                                               min="50" max="150" value="100" step="5"
+                                               oninput="updateZoomValue({{ qty.quantity }}, this.value, 'desktop')">
+                                        <div class="d-flex justify-content-between">
+                                            <small class="text-muted">50%</small>
+                                            <small class="text-muted">100%</small>
+                                            <small class="text-muted">150%</small>
+                                        </div>
+                                        <div class="form-text">Zoom для ПК версії сайту</div>
+                                    </div>
+                                    
+                                    <!-- Масштаб зображення для Mobile -->
+                                    <div class="mt-3">
+                                        <label for="quantity_{{ qty.quantity }}_zoom_mobile" class="form-label d-flex justify-content-between align-items-center">
+                                            <span><i class="fas fa-mobile-alt me-1"></i>📱 Zoom Mobile</span>
+                                            <span class="badge bg-success" id="zoom_mobile_value_{{ qty.quantity }}">100%</span>
+                                        </label>
+                                        <input type="range" class="form-range" 
+                                               id="quantity_{{ qty.quantity }}_zoom_mobile" 
+                                               name="quantity_{{ qty.quantity }}_zoom_mobile" 
+                                               min="50" max="150" value="100" step="5"
+                                               oninput="updateZoomValue({{ qty.quantity }}, this.value, 'mobile')">
+                                        <div class="d-flex justify-content-between">
+                                            <small class="text-muted">50%</small>
+                                            <small class="text-muted">100%</small>
+                                            <small class="text-muted">150%</small>
+                                        </div>
+                                        <div class="form-text">Zoom для мобільної версії сайту</div>
+                                    </div>
+                                    
                                     <!-- Превью зображення -->
                                     <div class="mt-3" id="preview_{{ qty.quantity }}" style="display: none;">
-                                        <img src="" alt="Превью" class="img-fluid rounded" style="max-height: 120px; border: 2px solid #dee2e6;">
+                                        <img src="" alt="Превью" class="img-fluid rounded" id="preview_img_{{ qty.quantity }}" style="max-height: 120px; border: 2px solid #dee2e6; transform: scale(1);">
                                     </div>
                                     
                                     <!-- Статуси для цієї кількості -->
-                                    <div class="mt-3 pt-3 border-top">
-                                        <small class="text-muted d-block mb-2"><i class="fas fa-toggle-on me-1"></i>Статуси {{ qty.quantity }} шт:</small>
+                                    <div class="mt-3 pt-3" style="border-top: 1px solid rgba(59, 130, 246, 0.2);">
+                                        <small class="d-block mb-2" style="color: rgba(255, 255, 255, 0.7);"><i class="fas fa-toggle-on me-1"></i>Статуси {{ qty.quantity }} шт:</small>
                                         <div class="form-check form-switch mb-2">
                                             <input class="form-check-input" type="checkbox" 
                                                    id="qty_{{ qty.quantity }}_active" 
@@ -211,6 +210,21 @@
 
 {% block extra_js %}
 <script>
+// Оновлення значення zoom
+function updateZoomValue(quantity, value, type) {
+    type = type || 'desktop'; // За замовчуванням desktop
+    const badgeId = type === 'desktop' ? 'zoom_desktop_value_' : 'zoom_mobile_value_';
+    const badge = document.getElementById(badgeId + quantity);
+    const previewImg = document.getElementById('preview_img_' + quantity);
+    
+    if (badge) {
+        badge.textContent = value + '%';
+    }
+    if (previewImg && type === 'desktop') {
+        previewImg.style.transform = 'scale(' + (value / 100) + ')';
+    }
+}
+
 // Превью завантаженого файлу
 function previewUploadedImage(input, quantity) {
     const file = input.files[0];
@@ -513,6 +527,28 @@ document.addEventListener('DOMContentLoaded', function() {
             const img = previewDiv.querySelector('img');
             img.src = '{{ img_url }}';
             previewDiv.style.display = 'block';
+        }
+        {% endfor %}
+    {% endif %}
+    
+    // Завантажуємо збережені zoom values для desktop
+    {% if color_data.quantity_zoom_desktop %}
+        {% for qty, zoom in color_data.quantity_zoom_desktop.items %}
+        const zoomDesktopInput_{{ qty }} = document.getElementById('quantity_{{ qty }}_zoom_desktop');
+        if (zoomDesktopInput_{{ qty }}) {
+            zoomDesktopInput_{{ qty }}.value = {{ zoom }};
+            updateZoomValue({{ qty }}, {{ zoom }}, 'desktop');
+        }
+        {% endfor %}
+    {% endif %}
+    
+    // Завантажуємо збережені zoom values для mobile
+    {% if color_data.quantity_zoom_mobile %}
+        {% for qty, zoom in color_data.quantity_zoom_mobile.items %}
+        const zoomMobileInput_{{ qty }} = document.getElementById('quantity_{{ qty }}_zoom_mobile');
+        if (zoomMobileInput_{{ qty }}) {
+            zoomMobileInput_{{ qty }}.value = {{ zoom }};
+            updateZoomValue({{ qty }}, {{ zoom }}, 'mobile');
         }
         {% endfor %}
     {% endif %}

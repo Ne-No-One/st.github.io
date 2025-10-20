@@ -26,6 +26,11 @@ def main():
         print("\n📍 Доступні сторінки:")
         print("   🌐 Основний сайт:  http://127.0.0.1:8000/")
         print("   ⚙️  Адмін панель:   http://127.0.0.1:8000/admin-panel/")
+        print("")
+        print("   🔍 Тест Zoom:")
+        print("      ⚙️  Налаштування: http://127.0.0.1:8000/test-zoom/admin/")
+        print("      👁️  Перегляд:     http://127.0.0.1:8000/test-zoom/preview/")
+        print("")
         print("   💚 Health check:   http://127.0.0.1:8000/health/")
         print("   🛒 Кошик:          http://127.0.0.1:8000/cart/")
         

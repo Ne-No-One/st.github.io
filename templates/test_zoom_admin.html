@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚙️ Налаштування Zoom - Адмін</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f1419 0%, #1a1d2e 100%);
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #3b82f6;
+        }
+        
+        .header p {
+            color: rgba(255,255,255,0.6);
+            font-size: 1rem;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        
+        .nav-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+        }
+        
+        .nav-btn.secondary {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .admin-panel {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .panel-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: #3b82f6;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .color-section {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid rgba(59, 130, 246, 0.2);
+        }
+        
+        .color-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .color-preview {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        .color-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .quantity-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .quantity-item {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .quantity-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .quantity-name {
+            color: #fff;
+        }
+        
+        .zoom-value-display {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .zoom-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.1);
+            outline: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+        
+        .zoom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.5);
+        }
+        
+        .zoom-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.5);
+        }
+        
+        .slider-markers {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.4);
+        }
+        
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.15);
+        }
+        
+        .status-message {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .status-message.success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #10b981;
+        }
+        
+        .status-message.error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #ef4444;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .info-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .info-box strong {
+            color: #3b82f6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚙️ Налаштування Zoom - Адмін Панель</h1>
+            <p>Налаштуйте масштаб зображень для кожної кількості та кожного кольору</p>
+            <div class="nav-buttons">
+                <a href="/test-zoom/preview/" class="nav-btn">👁️ Переглянути результат</a>
+                <a href="/" class="nav-btn secondary">🏠 На головну</a>
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <strong>ℹ️ Інструкція:</strong> Налаштуйте zoom для кожної комбінації колір+кількість. 
+            Менші значення (50-90%) - віддаляють зображення, більші (110-150%) - наближають. 
+            Після збереження перейдіть на сторінку перегляду щоб побачити результат.
+        </div>
+        
+        <div class="admin-panel">
+            <div class="panel-title">
+                🎨 Налаштування Zoom для кольорів та кількостей
+            </div>
+            
+            <div id="colorSections">
+                <!-- Буде заповнено через JavaScript -->
+            </div>
+            
+            <div class="actions">
+                <button class="btn btn-primary" onclick="saveSettings()">💾 Зберегти налаштування</button>
+                <button class="btn btn-secondary" onclick="resetToDefaults()">🔄 Скинути до 100%</button>
+                <button class="btn btn-secondary" onclick="loadSettings()">📥 Завантажити збережене</button>
+            </div>
+            
+            <div id="statusMessage" class="status-message"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Тестові дані (в реальності це буде з бекенду)
+        const testData = {
+            colors: [
+                { id: 'yellow', name: 'Жовтий', hex: '#FFD700' },
+                { id: 'pink', name: 'Рожевий', hex: '#FF69B4' },
+                { id: 'purple', name: 'Фіолетовий', hex: '#9370DB' }
+            ],
+            quantities: [5, 9, 15, 21, 25, 51, 101]
+        };
+        
+        // Поточні налаштування
+        let zoomSettings = {};
+        
+        // Ініціалізація при завантаженні
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Ініціалізація сторінки налаштувань');
+            initializeColorSections();
+            loadSettings();
+        });
+        
+        // Створення секцій для кожного кольору
+        function initializeColorSections() {
+            const container = document.getElementById('colorSections');
+            
+            testData.colors.forEach(color => {
+                const section = document.createElement('div');
+                section.className = 'color-section';
+                section.dataset.colorId = color.id;
+                
+                let quantitiesHTML = '';
+                testData.quantities.forEach(qty => {
+                    const settingKey = `${color.id}_${qty}`;
+                    const currentZoom = zoomSettings[settingKey] || 100;
+                    
+                    quantitiesHTML += `
+                        <div class="quantity-item">
+                            <div class="quantity-label">
+                                <span class="quantity-name">${qty} квітів</span>
+                                <span class="zoom-value-display" id="value_${settingKey}">${currentZoom}%</span>
+                            </div>
+                            <input type="range" 
+                                   class="zoom-slider" 
+                                   id="slider_${settingKey}"
+                                   min="50" 
+                                   max="150" 
+                                   value="${currentZoom}" 
+                                   step="5"
+                                   data-setting-key="${settingKey}"
+                                   oninput="updateZoomValue('${settingKey}', this.value)">
+                            <div class="slider-markers">
+                                <span>50%</span>
+                                <span>100%</span>
+                                <span>150%</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                section.innerHTML = `
+                    <div class="color-header">
+                        <div class="color-preview" style="background-color: ${color.hex};"></div>
+                        <div class="color-name">${color.name}</div>
+                    </div>
+                    <div class="quantity-controls">
+                        ${quantitiesHTML}
+                    </div>
+                `;
+                
+                container.appendChild(section);
+            });
+            
+            console.log('✅ Секції кольорів створено');
+        }
+        
+        // Оновлення значення zoom
+        function updateZoomValue(settingKey, value) {
+            zoomSettings[settingKey] = parseInt(value);
+            const valueDisplay = document.getElementById(`value_${settingKey}`);
+            if (valueDisplay) {
+                valueDisplay.textContent = value + '%';
+            }
+            console.log(`🎚️ Оновлено ${settingKey}: ${value}%`);
+        }
+        
+        // Збереження налаштувань
+        function saveSettings() {
+            console.log('💾 Збереження налаштувань...', zoomSettings);
+            
+            // Зберігаємо в localStorage
+            localStorage.setItem('test_zoom_settings', JSON.stringify(zoomSettings));
+            
+            // Також можна відправити на бекенд
+            fetch('/api/test-zoom/save/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(zoomSettings)
+            })
+            .then(response => response.json())
+            .then(data => {
+                showStatus('✅ Налаштування успішно збережено!', 'success');
+                console.log('✅ Збережено на сервері:', data);
+            })
+            .catch(error => {
+                showStatus('✅ Збережено локально (сервер недоступний)', 'success');
+                console.log('⚠️ Збережено тільки в localStorage:', error);
+            });
+        }
+        
+        // Завантаження налаштувань
+        function loadSettings() {
+            console.log('📥 Завантаження налаштувань...');
+            
+            // Спочатку пробуємо з localStorage
+            const savedSettings = localStorage.getItem('test_zoom_settings');
+            if (savedSettings) {
+                zoomSettings = JSON.parse(savedSettings);
+                console.log('📥 Завантажено з localStorage:', zoomSettings);
+                applySettings();
+            }
+            
+            // Також пробуємо з бекенду
+            fetch('/api/test-zoom/load/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.settings) {
+                        zoomSettings = data.settings;
+                        console.log('📥 Завантажено з сервера:', zoomSettings);
+                        applySettings();
+                    }
+                })
+                .catch(error => {
+                    console.log('ℹ️ Використовуємо локальні налаштування');
+                });
+        }
+        
+        // Застосування налаштувань до UI
+        function applySettings() {
+            Object.keys(zoomSettings).forEach(key => {
+                const slider = document.getElementById(`slider_${key}`);
+                const valueDisplay = document.getElementById(`value_${key}`);
+                
+                if (slider) {
+                    slider.value = zoomSettings[key];
+                }
+                if (valueDisplay) {
+                    valueDisplay.textContent = zoomSettings[key] + '%';
+                }
+            });
+            
+            console.log('✅ Налаштування застосовано до UI');
+        }
+        
+        // Скидання до значень за замовчуванням
+        function resetToDefaults() {
+            if (confirm('Скинути всі налаштування до 100%?')) {
+                testData.colors.forEach(color => {
+                    testData.quantities.forEach(qty => {
+                        const settingKey = `${color.id}_${qty}`;
+                        zoomSettings[settingKey] = 100;
+                    });
+                });
+                
+                applySettings();
+                showStatus('🔄 Налаштування скинуто до 100%', 'success');
+                console.log('🔄 Скинуто до 100%');
+            }
+        }
+        
+        // Показ статус повідомлення
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = message;
+            statusEl.className = `status-message ${type}`;
+            statusEl.style.display = 'block';
+            
+            setTimeout(() => {
+                statusEl.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
+

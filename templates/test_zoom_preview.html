@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👁️ Перегляд Zoom - Результат</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #000;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0f1419 0%, #1a1d2e 100%);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: #3b82f6;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+        }
+        
+        .nav-btn.secondary {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .preview-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        
+        .color-selector {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .selector-title {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .color-dots {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .color-dot {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .color-dot:hover {
+            transform: scale(1.1);
+        }
+        
+        .color-dot.active {
+            border-color: #3b82f6;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+            transform: scale(1.15);
+        }
+        
+        .quantity-selector {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .quantity-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .quantity-btn {
+            padding: 12px 20px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .quantity-btn:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+        
+        .quantity-btn.active {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+        
+        .image-preview {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .image-container {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+        }
+        
+        .product-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=800');
+            background-position: center;
+            background-repeat: no-repeat;
+            /* Ключова властивість для zoom */
+            background-size: var(--image-zoom, 100%) var(--image-zoom, 100%);
+            transition: background-size 0.3s ease;
+        }
+        
+        .info-panel {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        
+        .info-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #3b82f6;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .info-value {
+            font-weight: 600;
+            color: #3b82f6;
+            font-family: 'Courier New', monospace;
+        }
+        
+        @media (max-width: 768px) {
+            .image-container {
+                height: 400px;
+            }
+            
+            .color-dot {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .quantity-btn {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>👁️ Перегляд Zoom - Результат налаштувань</h1>
+        <div class="nav-buttons">
+            <a href="/test-zoom/admin/" class="nav-btn">⚙️ Редагувати налаштування</a>
+            <a href="/" class="nav-btn secondary">🏠 На головну</a>
+        </div>
+    </div>
+    
+    <div class="preview-container">
+        <div class="color-selector">
+            <div class="selector-title">🎨 Оберіть колір:</div>
+            <div class="color-dots" id="colorDots">
+                <!-- Буде заповнено через JavaScript -->
+            </div>
+        </div>
+        
+        <div class="quantity-selector">
+            <div class="selector-title">🌸 Оберіть кількість:</div>
+            <div class="quantity-buttons" id="quantityButtons">
+                <!-- Буде заповнено через JavaScript -->
+            </div>
+        </div>
+        
+        <div class="image-preview">
+            <div class="image-container">
+                <div class="product-image" id="productImage"></div>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <div class="info-title">📊 Поточна інформація</div>
+            <div class="info-row">
+                <span class="info-label">Колір:</span>
+                <span class="info-value" id="currentColor">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Кількість:</span>
+                <span class="info-value" id="currentQuantity">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Zoom рівень:</span>
+                <span class="info-value" id="currentZoom">100%</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">background-size:</span>
+                <span class="info-value" id="bgSize">-</span>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Тестові дані (мають співпадати з admin сторінкою)
+        const testData = {
+            colors: [
+                { id: 'yellow', name: 'Жовтий', hex: '#FFD700' },
+                { id: 'pink', name: 'Рожевий', hex: '#FF69B4' },
+                { id: 'purple', name: 'Фіолетовий', hex: '#9370DB' }
+            ],
+            quantities: [5, 9, 15, 21, 25, 51, 101]
+        };
+        
+        let zoomSettings = {};
+        let currentColor = null;
+        let currentQuantity = null;
+        
+        // Ініціалізація
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Ініціалізація сторінки перегляду');
+            loadSettings();
+            initializeColorDots();
+            initializeQuantityButtons();
+            
+            // Автоматично вибираємо перший колір та кількість
+            setTimeout(() => {
+                selectColor(testData.colors[0].id);
+                selectQuantity(testData.quantities[0]);
+            }, 100);
+        });
+        
+        // Завантаження налаштувань
+        function loadSettings() {
+            console.log('📥 Завантаження налаштувань zoom...');
+            
+            // Спочатку з localStorage
+            const savedSettings = localStorage.getItem('test_zoom_settings');
+            if (savedSettings) {
+                zoomSettings = JSON.parse(savedSettings);
+                console.log('📥 Налаштування завантажено:', zoomSettings);
+            } else {
+                console.log('ℹ️ Немає збережених налаштувань, використовуємо 100%');
+            }
+            
+            // Також пробуємо з сервера
+            fetch('/api/test-zoom/load/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.settings) {
+                        zoomSettings = data.settings;
+                        console.log('📥 Оновлено з сервера:', zoomSettings);
+                        updateZoomDisplay();
+                    }
+                })
+                .catch(error => {
+                    console.log('ℹ️ Використовуємо локальні налаштування');
+                });
+        }
+        
+        // Створення кольорових кружечків
+        function initializeColorDots() {
+            const container = document.getElementById('colorDots');
+            
+            testData.colors.forEach((color, index) => {
+                const dot = document.createElement('div');
+                dot.className = 'color-dot';
+                dot.style.backgroundColor = color.hex;
+                dot.dataset.colorId = color.id;
+                dot.title = color.name;
+                dot.onclick = () => selectColor(color.id);
+                
+                if (index === 0) {
+                    dot.classList.add('active');
+                }
+                
+                container.appendChild(dot);
+            });
+        }
+        
+        // Створення кнопок кількості
+        function initializeQuantityButtons() {
+            const container = document.getElementById('quantityButtons');
+            
+            testData.quantities.forEach((qty, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'quantity-btn';
+                btn.textContent = qty;
+                btn.dataset.quantity = qty;
+                btn.onclick = () => selectQuantity(qty);
+                
+                if (index === 0) {
+                    btn.classList.add('active');
+                }
+                
+                container.appendChild(btn);
+            });
+        }
+        
+        // Вибір кольору
+        function selectColor(colorId) {
+            currentColor = colorId;
+            
+            // Оновлюємо активний стан
+            document.querySelectorAll('.color-dot').forEach(dot => {
+                dot.classList.toggle('active', dot.dataset.colorId === colorId);
+            });
+            
+            const color = testData.colors.find(c => c.id === colorId);
+            document.getElementById('currentColor').textContent = color.name;
+            
+            console.log(`🎨 Обрано колір: ${color.name}`);
+            updateZoomDisplay();
+        }
+        
+        // Вибір кількості
+        function selectQuantity(quantity) {
+            currentQuantity = quantity;
+            
+            // Оновлюємо активний стан
+            document.querySelectorAll('.quantity-btn').forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.quantity) === quantity);
+            });
+            
+            document.getElementById('currentQuantity').textContent = quantity + ' квітів';
+            
+            console.log(`🌸 Обрано кількість: ${quantity}`);
+            updateZoomDisplay();
+        }
+        
+        // Оновлення відображення zoom
+        function updateZoomDisplay() {
+            if (!currentColor || !currentQuantity) {
+                console.log('⚠️ Ще не обрано колір або кількість');
+                return;
+            }
+            
+            const settingKey = `${currentColor}_${currentQuantity}`;
+            const zoomValue = zoomSettings[settingKey] || 100;
+            
+            console.log(`🔍 Застосування zoom: ${settingKey} = ${zoomValue}%`);
+            
+            const productImage = document.getElementById('productImage');
+            
+            // Встановлюємо CSS змінну
+            productImage.style.setProperty('--image-zoom', `${zoomValue}%`);
+            
+            // Оновлюємо інформаційну панель
+            document.getElementById('currentZoom').textContent = zoomValue + '%';
+            
+            // Читаємо computed background-size
+            setTimeout(() => {
+                const computedStyle = window.getComputedStyle(productImage);
+                const bgSize = computedStyle.backgroundSize;
+                document.getElementById('bgSize').textContent = bgSize;
+                
+                console.log(`✅ Zoom застосовано: ${zoomValue}%, background-size: ${bgSize}`);
+            }, 50);
+        }
+    </script>
+</body>
+</html>
+

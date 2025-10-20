@@ -86,16 +86,14 @@
                         <!-- Шар пакувального паперу (найнижчий) -->
                         <div class="packaging-layer"></div>
                         
-                        <!-- Основне зображення товару (видалено - використовуємо тільки фото для кількості) -->
-                        
                         <!-- Маска для кольору -->
                         <div class="color-mask"></div>
                         
                         <!-- Шар квітів (найвищий) -->
                         <div class="flowers-layer"></div>
                     </div>
-                    <!-- Навігація по зображеннях видалена -->
                     
+                    <!-- Основне фото створюється динамічно через JavaScript -->
                 </div>
             </div>
         </div>
@@ -370,7 +368,9 @@
                 colors: {
                     {% for color in color_options %}
                     "{{ color.name|lower }}": {
-                        availableQuantities: {{ color.available_quantities|default:"[]"|safe }}
+                        availableQuantities: {{ color.available_quantities|default:"[]"|safe }},
+                        quantityZoomDesktop: {{ color.quantity_zoom_desktop|default:"{}"|safe }},
+                        quantityZoomMobile: {{ color.quantity_zoom_mobile|default:"{}"|safe }}
                     }{% if not forloop.last %},{% endif %}
                     {% endfor %}
                 },

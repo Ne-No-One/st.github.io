@@ -1,0 +1,165 @@
+{% extends 'admin_panel/base.html' %}
+{% load static %}
+
+{% block title %}Налаштування Zoom{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">
+                        <i class="fas fa-search-plus me-2"></i>
+                        Налаштування Масштабу (Zoom)
+                    </h2>
+                    <p class="text-muted mb-0">Налаштуйте масштаб зображень для ПК та мобільних пристроїв</p>
+                </div>
+                <a href="{% url 'admin_panel:main_product_settings' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Назад
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>
+        <strong>Як використовувати:</strong> Налаштуйте масштаб для кожної комбінації колір+кількість окремо для ПК та мобільних пристроїв. 
+        Менші значення (50-80%) віддаляють зображення, більші (110-150%) наближають. Зміни застосовуються до всіх кольорів одночасно.
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        
+        {% for color in colors %}
+        <div class="card mb-4" style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.98) 100%); border: 1px solid rgba(59, 130, 246, 0.2);">
+            <div class="card-header" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(14, 165, 233, 0.1) 100%); border-bottom: 1px solid rgba(59, 130, 246, 0.2);">
+                <div class="d-flex align-items-center gap-3">
+                    <div style="width: 40px; height: 40px; border-radius: 8px; background-color: {{ color.hex_code }}; border: 2px solid rgba(255,255,255,0.3);"></div>
+                    <h5 class="mb-0" style="color: rgba(255, 255, 255, 0.95);">{{ color.name }}</h5>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for qty in quantities %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="p-3 rounded" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(59, 130, 246, 0.15);">
+                            <h6 class="mb-3" style="color: #3b82f6;">
+                                <i class="fas fa-hashtag me-2"></i>{{ qty.quantity }} шт
+                            </h6>
+                            
+                            <!-- Desktop Zoom -->
+                            <div class="mb-3">
+                                <label class="form-label d-flex justify-content-between align-items-center">
+                                    <span style="color: rgba(255,255,255,0.9); font-size: 0.9rem;">
+                                        <i class="fas fa-desktop me-1"></i>🖥️ Desktop
+                                    </span>
+                                    {% with key='zoom_desktop_'|add:qty.quantity|stringformat:"s" %}
+                                    <span class="badge bg-primary" id="zoom_desktop_{{ color.id }}_{{ qty.quantity }}">
+                                        100%
+                                    </span>
+                                    {% endwith %}
+                                </label>
+                                <input type="range" class="form-range" 
+                                       name="zoom_desktop_{{ color.id }}_{{ qty.quantity }}"
+                                       min="50" max="150" 
+                                       value="100" 
+                                       step="5"
+                                       data-color-id="{{ color.id }}"
+                                       data-quantity="{{ qty.quantity }}"
+                                       data-zoom-desktop='{{ color.quantity_zoom_desktop|safe }}'
+                                       oninput="document.getElementById('zoom_desktop_{{ color.id }}_{{ qty.quantity }}').textContent = this.value + '%'">
+                                <div class="d-flex justify-content-between">
+                                    <small class="text-muted">50%</small>
+                                    <small class="text-muted">100%</small>
+                                    <small class="text-muted">150%</small>
+                                </div>
+                            </div>
+                            
+                            <!-- Mobile Zoom -->
+                            <div>
+                                <label class="form-label d-flex justify-content-between align-items-center">
+                                    <span style="color: rgba(255,255,255,0.9); font-size: 0.9rem;">
+                                        <i class="fas fa-mobile-alt me-1"></i>📱 Mobile
+                                    </span>
+                                    <span class="badge bg-success" id="zoom_mobile_{{ color.id }}_{{ qty.quantity }}">
+                                        100%
+                                    </span>
+                                </label>
+                                <input type="range" class="form-range" 
+                                       name="zoom_mobile_{{ color.id }}_{{ qty.quantity }}"
+                                       min="50" max="150" 
+                                       value="100" 
+                                       step="5"
+                                       data-color-id="{{ color.id }}"
+                                       data-quantity="{{ qty.quantity }}"
+                                       data-zoom-mobile='{{ color.quantity_zoom_mobile|safe }}'
+                                       oninput="document.getElementById('zoom_mobile_{{ color.id }}_{{ qty.quantity }}').textContent = this.value + '%'">
+                                <div class="d-flex justify-content-between">
+                                    <small class="text-muted">50%</small>
+                                    <small class="text-muted">100%</small>
+                                    <small class="text-muted">150%</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="fas fa-save me-2"></i>
+                        Зберегти всі налаштування zoom
+                    </button>
+                    <a href="{% url 'admin_panel:main_product_settings' %}" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-times me-2"></i>
+                        Скасувати
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Ініціалізуємо всі слайдери зі збережених значень
+    const sliders = document.querySelectorAll('input[type="range"][data-color-id]');
+    
+    sliders.forEach(slider => {
+        const colorId = slider.dataset.colorId;
+        const quantity = slider.dataset.quantity;
+        const isDesktop = slider.name.includes('desktop');
+        const dataAttr = isDesktop ? slider.dataset.zoomDesktop : slider.dataset.zoomMobile;
+        
+        try {
+            const zoomData = JSON.parse(dataAttr);
+            const savedZoom = zoomData[quantity];
+            
+            if (savedZoom) {
+                slider.value = savedZoom;
+                const badgeId = isDesktop ? 
+                    `zoom_desktop_${colorId}_${quantity}` : 
+                    `zoom_mobile_${colorId}_${quantity}`;
+                const badge = document.getElementById(badgeId);
+                if (badge) {
+                    badge.textContent = savedZoom + '%';
+                }
+            }
+        } catch (e) {
+            console.log('Помилка завантаження zoom для', quantity, ':', e);
+        }
+    });
+    
+    console.log('✅ Zoom налаштування ініціалізовано');
+});
+</script>
+{% endblock %}
+

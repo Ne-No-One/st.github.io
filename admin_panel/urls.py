@@ -18,6 +18,7 @@ urlpatterns = [
     path('', views.admin_dashboard, name='dashboard'),
     path('site-settings/', views.site_settings, name='site_settings'),
     path('main-product/', views.main_product_settings, name='main_product_settings'),
+    path('main-product/zoom-settings/', views.zoom_settings, name='zoom_settings'),
     path('main-product/create-color-with-quantities/', views.create_color_with_quantities, name='create_color_with_quantities'),
     path('main-product/edit-color/<int:color_id>/', views.edit_color_variant, name='edit_color_variant'),
     path('main-product/delete-color/<int:color_id>/', views.delete_color_from_main, name='delete_color_from_main'),

@@ -100,13 +100,13 @@
       "name": "Жовтий",
       "hex_code": "#ffff00",
       "image_url": "",
-      "is_active": true,
-      "order": 4,
+      "is_active": false,
+      "order": 5,
       "quantity_images": {
-        "21": "/media/products/main/%D0%B2%D0%B2%20(3).jpg",
-        "51": "https://i.pinimg.com/736x/62/a1/34/62a134c929940df0bfa69f20bec0037b.jpg",
-        "101": "https://i.pinimg.com/736x/9d/a8/8c/9da88ca8b4b9ebe243954c132907b2b9.jpg",
-        "201": "https://i.pinimg.com/736x/78/62/39/786239f89af246d265b0ac9e7d68e9e4.jpg"
+        "201": "https://i.pinimg.com/736x/78/62/39/786239f89af246d265b0ac9e7d68e9e4.jpg",
+        "21": "/media/products/main/%D0%B6%D0%BE%D0%B2%D1%82%D0%B8%D0%B9.png",
+        "51": "/media/products/main/%D0%B6%D0%BE%D0%B2%D1%82%D0%B8%D0%B9_8sQ5HMA.png",
+        "101": "/media/products/main/%D0%B6%D0%BE%D0%B2%D1%82%D0%B8%D0%B9_TuNiMyG.png"
       },
       "in_stock": true,
       "quantity_statuses": {
@@ -119,8 +119,8 @@
           "in_stock": true
         },
         "101": {
-          "is_active": false,
-          "in_stock": false
+          "is_active": true,
+          "in_stock": true
         },
         "201": {
           "is_active": true,
@@ -159,6 +159,21 @@
           "is_active": true,
           "in_stock": true
         }
+      },
+      "quantity_zoom": {
+        "21": 100,
+        "51": 150,
+        "101": 100
+      },
+      "quantity_zoom_desktop": {
+        "21": 100,
+        "51": 100,
+        "101": 100
+      },
+      "quantity_zoom_mobile": {
+        "21": 100,
+        "51": 100,
+        "101": 100
       }
     },
     {
@@ -166,12 +181,12 @@
       "name": "рожевий",
       "hex_code": "#ff69b4",
       "image_url": "",
-      "is_active": false,
-      "order": 3,
+      "is_active": true,
+      "order": 4,
       "quantity_images": {
-        "21": "https://i.pinimg.com/736x/60/cf/50/60cf50654bb6f54de25b733b084c79b1.jpg",
-        "51": "https://i.pinimg.com/736x/60/cf/50/60cf50654bb6f54de25b733b084c79b1.jpg",
-        "101": "https://i.pinimg.com/736x/60/cf/50/60cf50654bb6f54de25b733b084c79b1.jpg"
+        "21": "/media/products/main/%D1%80%D0%BE%D0%B6%D0%B5%D0%B2%D0%B8%D0%B9.png",
+        "51": "/media/products/main/%D1%80%D0%BE%D0%B6%D0%B5%D0%B2%D0%B8%D0%B9_OCDCNxQ.png",
+        "101": "/media/products/main/%D1%80%D0%BE%D0%B6%D0%B5%D0%B2%D0%B8%D0%B9_nWgnLOn.png"
       },
       "in_stock": true,
       "quantity_statuses": {
@@ -195,7 +210,7 @@
       "hex_code": "#0000ff",
       "image_url": "",
       "is_active": true,
-      "order": 5,
+      "order": 6,
       "quantity_images": {
         "101": "https://imgur.com/oail6UD.png",
         "21": "https://imgur.com/OxMXHpE.png",
@@ -242,6 +257,21 @@
           "is_active": true,
           "in_stock": true
         }
+      },
+      "quantity_zoom": {
+        "21": 100,
+        "51": 150,
+        "101": 90
+      },
+      "quantity_zoom_desktop": {
+        "21": 100,
+        "51": 100,
+        "101": 100
+      },
+      "quantity_zoom_mobile": {
+        "21": 150,
+        "51": 100,
+        "101": 100
       }
     },
     {
@@ -249,14 +279,14 @@
       "name": "Червоний",
       "hex_code": "#ff0000",
       "image_url": "",
-      "is_active": false,
-      "order": 6,
+      "is_active": true,
+      "order": 3,
       "quantity_images": {
         "21": "https://imgur.com/P1ZKSyb.png",
         "51": "https://imgur.com/QVO3gWZ.png",
         "101": "https://imgur.com/ZmdOLgm.png"
       },
-      "in_stock": false,
+      "in_stock": true,
       "quantity_statuses": {
         "21": {
           "is_active": true,
