@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% if site_settings %}{{ site_settings.site_title }} - Кошик{% else %}Кошик покупок{% endif %}</title>
     <meta name="description" content="Кошик покупок - оформити замовлення">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/clear-cart-modal.css' %}">
@@ -535,21 +536,28 @@
 <script>
     // Функція для перемикання подарункової інформації
     function toggleGiftInfo() {
-        const isGift = document.getElementById('isGift').checked;
+        const isGift = document.getElementById('isGift');
+        if (!isGift) return;
+        
         const giftSection = document.getElementById('gift-info-section');
         const recipientName = document.getElementById('recipientName');
         
-        if (isGift) {
-            giftSection.style.display = 'block';
-            recipientName.required = true;
+        if (isGift.checked) {
+            if (giftSection) giftSection.style.display = 'block';
+            if (recipientName) recipientName.required = true;
         } else {
-            giftSection.style.display = 'none';
-            recipientName.required = false;
+            if (giftSection) giftSection.style.display = 'none';
+            if (recipientName) recipientName.required = false;
             // Очищаємо поля подарункової інформації
-            document.getElementById('recipientName').value = '';
-            document.getElementById('recipientPhone').value = '';
-            document.getElementById('giftOccasion').value = '';
-            document.getElementById('giftDeliveryType').value = 'surprise';
+            const recipientNameField = document.getElementById('recipientName');
+            const recipientPhoneField = document.getElementById('recipientPhone');
+            const giftOccasionField = document.getElementById('giftOccasion');
+            const giftDeliveryTypeField = document.getElementById('giftDeliveryType');
+            
+            if (recipientNameField) recipientNameField.value = '';
+            if (recipientPhoneField) recipientPhoneField.value = '';
+            if (giftOccasionField) giftOccasionField.value = '';
+            if (giftDeliveryTypeField) giftDeliveryTypeField.value = 'surprise';
         }
     }
 
@@ -732,7 +740,9 @@
         });
         
         // Ініціалізуємо подарункову секцію
-        toggleGiftInfo();
+        if (document.getElementById('isGift')) {
+            toggleGiftInfo();
+        }
         
         console.log('✅ Ініціалізація обробки способів оплати завершена');
     });

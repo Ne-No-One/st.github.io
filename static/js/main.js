@@ -111,19 +111,24 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeContactForm();
     
     // Оновлюємо видимість кнопок кількостей для першого активного кольору
-    const firstActiveColor = document.querySelector('.color-dot.active');
-    if (firstActiveColor) {
-        const colorName = firstActiveColor.dataset.color;
-        updateQuantityButtonsVisibility(colorName);
+    const colorDots = document.querySelectorAll('.color-dot');
+    if (colorDots.length > 0) {
+        const firstActiveColor = document.querySelector('.color-dot.active');
+        if (firstActiveColor) {
+            const colorName = firstActiveColor.dataset.color;
+            updateQuantityButtonsVisibility(colorName);
+        } else {
+            console.log('⚠️ ПОМИЛКА: Не знайдено активного кольору при завантаженні');
+            // Приховуємо всі кнопки якщо немає активного кольору
+            const quantityButtons = document.querySelectorAll('.quantity-btn');
+            quantityButtons.forEach(button => {
+                button.style.display = 'none';
+                button.disabled = true;
+                button.classList.add('hidden');
+            });
+        }
     } else {
-        console.log('⚠️ ПОМИЛКА: Не знайдено активного кольору при завантаженні');
-        // Приховуємо всі кнопки якщо немає активного кольору
-        const quantityButtons = document.querySelectorAll('.quantity-btn');
-        quantityButtons.forEach(button => {
-            button.style.display = 'none';
-            button.disabled = true;
-            button.classList.add('hidden');
-        });
+        console.log('ℹ️ Елементи кольору відсутні на цій сторінці');
     }
 });
 
@@ -812,7 +817,7 @@ function initializePriceCalculation() {
     const finalPriceDisplay = document.querySelector('.final-price');
     
     if (!priceElement || quantityButtons.length === 0) {
-        console.log('❌ ПОМИЛКА: Не знайдено елементи для розрахунку ціни');
+        console.log('ℹ️ Елементи для розрахунку ціни відсутні на цій сторінці');
         return;
     }
     
