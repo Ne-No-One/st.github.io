@@ -126,7 +126,18 @@
           "is_active": true,
           "in_stock": true
         }
-      }
+      },
+      "quantity_zoom_desktop": {
+        "21": 100,
+        "51": 100,
+        "101": 100
+      },
+      "quantity_zoom_mobile": {
+        "21": 100,
+        "51": 100,
+        "101": 100
+      },
+      "default_image": "https://i.pinimg.com/736x/78/62/39/786239f89af246d265b0ac9e7d68e9e4.jpg"
     },
     {
       "id": 6,
@@ -166,15 +177,16 @@
         "101": 100
       },
       "quantity_zoom_desktop": {
-        "21": 100,
+        "21": 50,
         "51": 100,
         "101": 100
       },
       "quantity_zoom_mobile": {
-        "21": 100,
+        "21": 50,
         "51": 100,
         "101": 100
-      }
+      },
+      "default_image": "/media/products/main/%D0%B1%D0%B5%D0%B7%20%D0%BF%D0%B0%D0%BA%D1%83%D0%B2%D0%B0%D0%BD%D0%BD%D1%8F_6v7aLFX.png"
     },
     {
       "id": 7,
@@ -202,7 +214,18 @@
           "is_active": true,
           "in_stock": true
         }
-      }
+      },
+      "quantity_zoom_desktop": {
+        "21": 100,
+        "51": 100,
+        "101": 100
+      },
+      "quantity_zoom_mobile": {
+        "21": 100,
+        "51": 100,
+        "101": 100
+      },
+      "default_image": "/media/products/main/%D1%80%D0%BE%D0%B6%D0%B5%D0%B2%D0%B8%D0%B9_nWgnLOn.png"
     },
     {
       "id": 8,
@@ -230,7 +253,18 @@
           "is_active": true,
           "in_stock": true
         }
-      }
+      },
+      "quantity_zoom_desktop": {
+        "21": 100,
+        "51": 100,
+        "101": 100
+      },
+      "quantity_zoom_mobile": {
+        "21": 100,
+        "51": 100,
+        "101": 100
+      },
+      "default_image": "https://imgur.com/oail6UD.png"
     },
     {
       "id": 9,
@@ -241,7 +275,8 @@
       "order": 2,
       "quantity_images": {
         "21": "/media/products/main/%D1%84%D1%96%D0%BE%D0%BB%D0%B5%D1%82%D0%BE%D0%B2%D0%B8%D0%B9.png",
-        "51": "/media/products/main/%D1%84%D1%96%D0%BE%D0%BB%D0%B5%D1%82%D0%BE%D0%B2%D0%B8%D0%B9_4CpafxB.png"
+        "51": "/media/products/main/%D1%84%D1%96%D0%BE%D0%BB%D0%B5%D1%82%D0%BE%D0%B2%D0%B8%D0%B9_4CpafxB.png",
+        "101": "/media/products/main/%D1%84%D1%96%D0%BE%D0%BB%D0%B5%D1%82%D0%BE%D0%B2%D0%B8%D0%B9_4M7RqbT.png"
       },
       "in_stock": true,
       "quantity_statuses": {
@@ -269,10 +304,11 @@
         "101": 100
       },
       "quantity_zoom_mobile": {
-        "21": 150,
+        "21": 100,
         "51": 100,
         "101": 100
-      }
+      },
+      "default_image": "/media/products/main/%D1%84%D1%96%D0%BE%D0%BB%D0%B5%D1%82%D0%BE%D0%B2%D0%B8%D0%B9_4M7RqbT.png"
     },
     {
       "id": 10,
@@ -300,7 +336,18 @@
           "is_active": true,
           "in_stock": true
         }
-      }
+      },
+      "quantity_zoom_desktop": {
+        "21": 100,
+        "51": 100,
+        "101": 100
+      },
+      "quantity_zoom_mobile": {
+        "21": 100,
+        "51": 100,
+        "101": 100
+      },
+      "default_image": "https://imgur.com/ZmdOLgm.png"
     }
   ],
   "quantity_options": [

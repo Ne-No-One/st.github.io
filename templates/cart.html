@@ -8,6 +8,7 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/clear-cart-modal.css' %}">
+    <link rel="stylesheet" href="{% static 'css/empty-cart-modal.css' %}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -556,6 +557,22 @@
     function confirmOrder() {
         console.log('🔄 Підтвердження замовлення...');
         
+        // КРИТИЧНА ВАЛІДАЦІЯ: Перевіряємо чи є товари в кошику
+        const cartData = getCartDataForPayment();
+        if (!cartData || !cartData.items || cartData.items.length === 0) {
+            console.error('❌ Спроба підтвердити замовлення з порожнім кошиком');
+            // Використовуємо функцію з cart.js для показу красивого модального вікна
+            if (typeof showEmptyCartModal === 'function') {
+                showEmptyCartModal();
+            } else {
+                alert('❌ Ваш кошик порожній! Додайте товари перед оформленням замовлення.');
+                window.location.href = '/';
+            }
+            return;
+        }
+        
+        console.log('✅ Кошик містить', cartData.items.length, 'товарів. Продовжуємо...');
+        
         // Валідація форми
         if (!validateOrderForm()) {
             return;
@@ -890,11 +907,21 @@
         try {
             const cartData = getCartDataForPayment();
             
-            if (!cartData.items || cartData.items.length === 0) {
-                console.error('❌ Кошик порожній!');
-                showNotification('Кошик порожній! Додайте товари перед оплатою.', 'error');
+            // КРИТИЧНА ВАЛІДАЦІЯ: Не дозволяємо оплату без товарів
+            if (!cartData || !cartData.items || cartData.items.length === 0) {
+                console.error('❌ КРИТИЧНА ПОМИЛКА: Спроба оплатити порожній кошик!');
+                // Використовуємо функцію з cart.js для показу красивого модального вікна
+                if (typeof showEmptyCartModal === 'function') {
+                    showEmptyCartModal();
+                } else {
+                    alert('❌ Ваш кошик порожній! Додайте товари перед оплатою.');
+                    showNotification('Кошик порожній! Додайте товари перед оплатою.', 'error');
+                    window.location.href = '/';
+                }
                 return;
             }
+            
+            console.log('✅ Валідація пройдена. Товарів у кошику:', cartData.items.length);
             
             const orderId = `ORDER-${Date.now()}`;
             let amount = Math.round(cartData.itemsTotal || cartData.total || 0);
@@ -918,8 +945,12 @@
         try {
             const cartData = getCartDataForPayment();
             
-            if (!cartData.items || cartData.items.length === 0) {
-                showNotification('Кошик порожній! Додайте товари перед оплатою.', 'error');
+            if (!cartData || !cartData.items || cartData.items.length === 0) {
+                if (typeof showEmptyCartModal === 'function') {
+                    showEmptyCartModal();
+                } else {
+                    showNotification('Кошик порожній! Додайте товари перед оплатою.', 'error');
+                }
                 return;
             }
             
@@ -945,8 +976,12 @@
         try {
             const cartData = getCartDataForPayment();
             
-            if (!cartData.items || cartData.items.length === 0) {
-                showNotification('Кошик порожній! Додайте товари перед оплатою.', 'error');
+            if (!cartData || !cartData.items || cartData.items.length === 0) {
+                if (typeof showEmptyCartModal === 'function') {
+                    showEmptyCartModal();
+                } else {
+                    showNotification('Кошик порожній! Додайте товари перед оплатою.', 'error');
+                }
                 return;
             }
             
@@ -972,8 +1007,12 @@
         try {
             const cartData = getCartDataForPayment();
             
-            if (!cartData.items || cartData.items.length === 0) {
-                showNotification('Кошик порожній! Додайте товари перед оплатою.', 'error');
+            if (!cartData || !cartData.items || cartData.items.length === 0) {
+                if (typeof showEmptyCartModal === 'function') {
+                    showEmptyCartModal();
+                } else {
+                    showNotification('Кошик порожній! Додайте товари перед оплатою.', 'error');
+                }
                 return;
             }
             

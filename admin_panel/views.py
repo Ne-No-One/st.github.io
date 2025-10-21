@@ -275,19 +275,25 @@ def zoom_settings(request):
         
         # Підготовка даних для template з zoom значеннями для кожної кількості
         import json as json_module
+        colors_for_template = []
         for color in colors:
-            # Ініціалізуємо порожні словники якщо їх немає
-            if 'quantity_zoom_desktop' not in color or not color['quantity_zoom_desktop']:
-                color['quantity_zoom_desktop'] = color.get('quantity_zoom', {}).copy()
-            if 'quantity_zoom_mobile' not in color or not color['quantity_zoom_mobile']:
-                color['quantity_zoom_mobile'] = color.get('quantity_zoom', {}).copy()
+            # Створюємо копію для template щоб не зіпсувати оригінальні дані
+            color_copy = color.copy()
             
-            # Серіалізуємо в JSON для передачі в data атрибути
-            color['quantity_zoom_desktop'] = json_module.dumps(color.get('quantity_zoom_desktop', {}))
-            color['quantity_zoom_mobile'] = json_module.dumps(color.get('quantity_zoom_mobile', {}))
+            # Ініціалізуємо порожні словники якщо їх немає
+            if 'quantity_zoom_desktop' not in color_copy or not color_copy['quantity_zoom_desktop']:
+                color_copy['quantity_zoom_desktop'] = color.get('quantity_zoom', {}).copy()
+            if 'quantity_zoom_mobile' not in color_copy or not color_copy['quantity_zoom_mobile']:
+                color_copy['quantity_zoom_mobile'] = color.get('quantity_zoom', {}).copy()
+            
+            # Серіалізуємо в JSON для передачі в data атрибути (тільки для відображення)
+            color_copy['quantity_zoom_desktop_json'] = json_module.dumps(color_copy.get('quantity_zoom_desktop', {}))
+            color_copy['quantity_zoom_mobile_json'] = json_module.dumps(color_copy.get('quantity_zoom_mobile', {}))
+            
+            colors_for_template.append(color_copy)
         
         context = {
-            'colors': colors,
+            'colors': colors_for_template,
             'quantities': quantities
         }
         return render(request, 'admin_panel/zoom_settings.html', context)

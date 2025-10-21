@@ -1,0 +1,194 @@
+/* ================================================== */
+/* МОДАЛЬНЕ ВІКНО ПОРОЖНЬОГО КОШИКА */
+/* ================================================== */
+
+.empty-cart-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.empty-cart-modal.show {
+    opacity: 1;
+}
+
+.empty-cart-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    cursor: pointer;
+}
+
+.empty-cart-content {
+    position: relative;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-radius: 24px;
+    padding: 40px 30px;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    transform: scale(0.8);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.empty-cart-modal.show .empty-cart-content {
+    transform: scale(1);
+}
+
+.empty-cart-icon {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 24px;
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    animation: emptyCartIconPulse 2s ease-in-out infinite;
+}
+
+@keyframes emptyCartIconPulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 20px rgba(251, 191, 36, 0);
+    }
+}
+
+.empty-cart-icon i {
+    font-size: 48px;
+    color: #0f172a;
+}
+
+.empty-cart-content h3 {
+    color: #fbbf24;
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 16px;
+    text-shadow: 0 2px 10px rgba(251, 191, 36, 0.3);
+}
+
+.empty-cart-content p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 12px;
+}
+
+.empty-cart-content .info-text {
+    color: rgba(251, 191, 36, 0.9);
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 32px;
+}
+
+.empty-cart-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.btn-continue-shopping {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px 32px;
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    color: #0f172a;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 800;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(251, 191, 36, 0.3);
+}
+
+.btn-continue-shopping:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(251, 191, 36, 0.5);
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.btn-continue-shopping:active {
+    transform: translateY(0);
+}
+
+.btn-continue-shopping i {
+    font-size: 18px;
+}
+
+/* ================================================== */
+/* МОБІЛЬНА АДАПТАЦІЯ */
+/* ================================================== */
+
+@media (max-width: 768px) {
+    .empty-cart-content {
+        padding: 32px 24px;
+        max-width: 90%;
+        border-radius: 20px;
+    }
+    
+    .empty-cart-icon {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 20px;
+    }
+    
+    .empty-cart-icon i {
+        font-size: 40px;
+    }
+    
+    .empty-cart-content h3 {
+        font-size: 24px;
+        margin-bottom: 12px;
+    }
+    
+    .empty-cart-content p {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+    
+    .empty-cart-content .info-text {
+        font-size: 14px;
+        margin-bottom: 24px;
+    }
+    
+    .btn-continue-shopping {
+        padding: 14px 28px;
+        font-size: 15px;
+    }
+}
+
+/* ================================================== */
+/* АНІМАЦІЇ */
+/* ================================================== */
+
+@keyframes emptyCartShake {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px) rotate(-2deg); }
+    20%, 40%, 60%, 80% { transform: translateX(5px) rotate(2deg); }
+}
+
+.empty-cart-icon {
+    animation: emptyCartIconPulse 2s ease-in-out infinite, emptyCartShake 0.5s ease-in-out;
+}
+

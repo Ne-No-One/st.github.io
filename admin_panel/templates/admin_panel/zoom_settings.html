@@ -28,6 +28,83 @@
         Менші значення (50-80%) віддаляють зображення, більші (110-150%) наближають. Зміни застосовуються до всіх кольорів одночасно.
     </div>
 
+    <!-- ========================================= -->
+    <!-- СЕКЦІЯ МАСОВОГО РЕДАГУВАННЯ -->
+    <!-- ========================================= -->
+    <div class="card mb-4" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.1) 100%); border: 2px solid rgba(16, 185, 129, 0.3);">
+        <div class="card-header" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.15) 100%); border-bottom: 2px solid rgba(16, 185, 129, 0.3);">
+            <h4 class="mb-0" style="color: #10b981;">
+                <i class="fas fa-magic me-2"></i>
+                ⚡ Масове редагування зуму
+            </h4>
+            <p class="mb-0 mt-2" style="color: rgba(255, 255, 255, 0.8); font-size: 0.9rem;">
+                Змініть зум для однієї кількості <strong>для всіх кольорів одночасно</strong>
+            </p>
+        </div>
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <label class="form-label" style="color: rgba(255,255,255,0.95); font-weight: 600;">
+                        <i class="fas fa-hashtag me-1"></i>Оберіть кількість:
+                    </label>
+                    <select id="bulk-quantity" class="form-select" style="background: rgba(0,0,0,0.3); color: white; border: 1px solid rgba(16, 185, 129, 0.3);">
+                        <option value="">-- Оберіть кількість --</option>
+                        {% for qty in quantities %}
+                        <option value="{{ qty.quantity }}">{{ qty.quantity }} шт</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-4">
+                    <label class="form-label d-flex justify-content-between align-items-center" style="color: rgba(255,255,255,0.95); font-weight: 600;">
+                        <span><i class="fas fa-desktop me-1"></i>🖥️ Desktop Zoom:</span>
+                        <span class="badge bg-primary" id="bulk-zoom-desktop-value">100%</span>
+                    </label>
+                    <input type="range" class="form-range" id="bulk-zoom-desktop" min="50" max="150" value="100" step="5" 
+                           style="cursor: pointer;" disabled
+                           oninput="document.getElementById('bulk-zoom-desktop-value').textContent = this.value + '%'">
+                    <div class="d-flex justify-content-between mt-1">
+                        <small class="text-muted">50%</small>
+                        <small class="text-muted">100%</small>
+                        <small class="text-muted">150%</small>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <label class="form-label d-flex justify-content-between align-items-center" style="color: rgba(255,255,255,0.95); font-weight: 600;">
+                        <span><i class="fas fa-mobile-alt me-1"></i>📱 Mobile Zoom:</span>
+                        <span class="badge bg-success" id="bulk-zoom-mobile-value">100%</span>
+                    </label>
+                    <input type="range" class="form-range" id="bulk-zoom-mobile" min="50" max="150" value="100" step="5" 
+                           style="cursor: pointer;" disabled
+                           oninput="document.getElementById('bulk-zoom-mobile-value').textContent = this.value + '%'">
+                    <div class="d-flex justify-content-between mt-1">
+                        <small class="text-muted">50%</small>
+                        <small class="text-muted">100%</small>
+                        <small class="text-muted">150%</small>
+                    </div>
+                </div>
+                
+                <div class="col-md-1 d-flex align-items-end" style="padding-bottom: 8px;">
+                    <button type="button" class="btn btn-success w-100" id="apply-bulk-zoom" disabled onclick="applyBulkZoom()" style="height: 38px;">
+                        <i class="fas fa-check"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="alert alert-warning mt-3 mb-0" style="background: rgba(251, 191, 36, 0.1); border-color: rgba(251, 191, 36, 0.3);">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <small style="color: rgba(255, 255, 255, 0.9);">
+                    <strong>Увага:</strong> Після застосування масового зуму, значення замінять поточні налаштування для обраної кількості у <strong>всіх кольорах</strong>.
+                    Не забудьте натиснути "Зберегти всі налаштування zoom" внизу сторінки!
+                </small>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ========================================= -->
+    <!-- ФОРМА ІНДИВІДУАЛЬНОГО РЕДАГУВАННЯ -->
+    <!-- ========================================= -->
     <form method="post">
         {% csrf_token %}
         
@@ -67,7 +144,7 @@
                                        step="5"
                                        data-color-id="{{ color.id }}"
                                        data-quantity="{{ qty.quantity }}"
-                                       data-zoom-desktop='{{ color.quantity_zoom_desktop|safe }}'
+                                       data-zoom-desktop='{{ color.quantity_zoom_desktop_json|safe }}'
                                        oninput="document.getElementById('zoom_desktop_{{ color.id }}_{{ qty.quantity }}').textContent = this.value + '%'">
                                 <div class="d-flex justify-content-between">
                                     <small class="text-muted">50%</small>
@@ -93,7 +170,7 @@
                                        step="5"
                                        data-color-id="{{ color.id }}"
                                        data-quantity="{{ qty.quantity }}"
-                                       data-zoom-mobile='{{ color.quantity_zoom_mobile|safe }}'
+                                       data-zoom-mobile='{{ color.quantity_zoom_mobile_json|safe }}'
                                        oninput="document.getElementById('zoom_mobile_{{ color.id }}_{{ qty.quantity }}').textContent = this.value + '%'">
                                 <div class="d-flex justify-content-between">
                                     <small class="text-muted">50%</small>
@@ -159,7 +236,95 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     console.log('✅ Zoom налаштування ініціалізовано');
+    
+    // ========================================
+    // ЛОГІКА МАСОВОГО РЕДАГУВАННЯ
+    // ========================================
+    
+    const bulkQuantitySelect = document.getElementById('bulk-quantity');
+    const bulkZoomDesktop = document.getElementById('bulk-zoom-desktop');
+    const bulkZoomMobile = document.getElementById('bulk-zoom-mobile');
+    const applyBulkBtn = document.getElementById('apply-bulk-zoom');
+    
+    // Активуємо слайдери коли обрано кількість
+    bulkQuantitySelect.addEventListener('change', function() {
+        const isSelected = this.value !== '';
+        bulkZoomDesktop.disabled = !isSelected;
+        bulkZoomMobile.disabled = !isSelected;
+        applyBulkBtn.disabled = !isSelected;
+        
+        if (isSelected) {
+            console.log('📊 Обрано кількість для масового редагування:', this.value);
+        }
+    });
 });
+
+// Функція застосування масового зуму
+function applyBulkZoom() {
+    const bulkQuantity = document.getElementById('bulk-quantity').value;
+    const bulkZoomDesktop = document.getElementById('bulk-zoom-desktop').value;
+    const bulkZoomMobile = document.getElementById('bulk-zoom-mobile').value;
+    
+    if (!bulkQuantity) {
+        alert('⚠️ Будь ласка, оберіть кількість!');
+        return;
+    }
+    
+    console.log('⚡ Застосування масового зуму:');
+    console.log('   Кількість:', bulkQuantity);
+    console.log('   Desktop:', bulkZoomDesktop + '%');
+    console.log('   Mobile:', bulkZoomMobile + '%');
+    
+    let updatedCount = 0;
+    
+    // Знаходимо всі слайдери для цієї кількості
+    const allSliders = document.querySelectorAll(`input[type="range"][data-quantity="${bulkQuantity}"]`);
+    
+    allSliders.forEach(slider => {
+        const isDesktop = slider.name.includes('desktop');
+        const newValue = isDesktop ? bulkZoomDesktop : bulkZoomMobile;
+        
+        // Встановлюємо нове значення
+        slider.value = newValue;
+        
+        // Оновлюємо відображення badge
+        const colorId = slider.dataset.colorId;
+        const badgeId = isDesktop ? 
+            `zoom_desktop_${colorId}_${bulkQuantity}` : 
+            `zoom_mobile_${colorId}_${bulkQuantity}`;
+        const badge = document.getElementById(badgeId);
+        if (badge) {
+            badge.textContent = newValue + '%';
+        }
+        
+        updatedCount++;
+    });
+    
+    // Показуємо повідомлення про успіх
+    const successMessage = document.createElement('div');
+    successMessage.className = 'alert alert-success alert-dismissible fade show';
+    successMessage.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    successMessage.innerHTML = `
+        <i class="fas fa-check-circle me-2"></i>
+        <strong>Готово!</strong> Оновлено ${updatedCount} налаштувань для кількості ${bulkQuantity} шт.
+        <br><small>Не забудьте натиснути "Зберегти всі налаштування zoom" внизу!</small>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(successMessage);
+    
+    // Автоматично закриваємо через 5 секунд
+    setTimeout(() => {
+        successMessage.remove();
+    }, 5000);
+    
+    console.log(`✅ Масовий зум застосовано: ${updatedCount} налаштувань оновлено`);
+    
+    // Скролимо до першого зміненого кольору
+    const firstCard = document.querySelector('.card.mb-4:not(:first-child)');
+    if (firstCard) {
+        firstCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
 </script>
 {% endblock %}
 

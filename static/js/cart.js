@@ -608,10 +608,53 @@ function confirmClearCart() {
     closeClearCartModal();
 }
 
+// Функція для показу модального вікна порожнього кошика
+function showEmptyCartModal() {
+    const modal = document.createElement('div');
+    modal.className = 'empty-cart-modal';
+    modal.innerHTML = `
+        <div class="empty-cart-overlay" onclick="closeEmptyCartModal()"></div>
+        <div class="empty-cart-content">
+            <div class="empty-cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <h3>Кошик порожній</h3>
+            <p>Ви не можете оформити замовлення без товарів.</p>
+            <p class="info-text">Додайте квіти до кошика, щоб продовжити покупки!</p>
+            <div class="empty-cart-actions">
+                <a href="/" class="btn-continue-shopping">
+                    <i class="fas fa-arrow-left"></i>
+                    Повернутись до покупок
+                </a>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Анімація появи
+    setTimeout(() => {
+        modal.classList.add('show');
+    }, 10);
+}
+
+// Функція для закриття модального вікна порожнього кошика
+function closeEmptyCartModal() {
+    const modal = document.querySelector('.empty-cart-modal');
+    if (modal) {
+        modal.classList.remove('show');
+        setTimeout(() => {
+            modal.remove();
+        }, 300);
+    }
+}
+
 // Функція для оформлення замовлення
 function checkout() {
-    if (cart.items.length === 0) {
-        // Повідомлення видалено - замість них показуємо лічильник на іконці кошику
+    // Перевіряємо чи є товари в кошику
+    if (!cart.items || cart.items.length === 0) {
+        showEmptyCartModal();
+        console.error('❌ Спроба відкрити форму замовлення з порожнім кошиком');
         return;
     }
     
@@ -707,8 +750,10 @@ function initializePaymentMethods() {
 
 // Функція для підтвердження замовлення
 function submitOrder() {
-    if (cart.items.length === 0) {
-        // Повідомлення видалено - замість них показуємо лічильник на іконці кошику
+    // Перевіряємо чи є товари в кошику (КРИТИЧНА ВАЛІДАЦІЯ)
+    if (!cart.items || cart.items.length === 0) {
+        showEmptyCartModal();
+        console.error('❌ Спроба оформити замовлення з порожнім кошиком');
         return;
     }
     
