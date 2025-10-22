@@ -12,7 +12,7 @@ import django
 from django.core.management import execute_from_command_line
 
 def main():
-    """Запуск проєкту"""
+    """Запуск проєкту в"""
     print("=" * 60)
     print("🌸 КВІТКОВИЙ МАГАЗИН - ЗАПУСК СИСТЕМИ")
     print("=" * 60)
